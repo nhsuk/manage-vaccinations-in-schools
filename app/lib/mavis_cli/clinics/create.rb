@@ -5,7 +5,6 @@ module MavisCLI
     class Create < Dry::CLI::Command
       desc "Create a new clinic location"
 
-      argument :ods_code, required: true, desc: "The ODS code of the clinic"
       argument :name, required: true, desc: "The name of the clinic"
       argument :address_line_1,
                required: true,
@@ -15,12 +14,14 @@ module MavisCLI
                required: true,
                desc: "The postcode of the address"
 
+      option :ods_code, desc: "The ODS code of the clinic"
+
       def call(
-        ods_code:,
         name:,
         address_line_1:,
         address_town:,
         address_postcode:,
+        ods_code: nil,
         **
       )
         MavisCLI.load_rails

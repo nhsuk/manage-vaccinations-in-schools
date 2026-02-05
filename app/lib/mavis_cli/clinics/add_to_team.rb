@@ -9,12 +9,12 @@ module MavisCLI
                required: true,
                desc: "The workgroup of the team"
       argument :subteam_name, required: true, desc: "The name of the subteam"
-      argument :ods_codes,
+      argument :names,
                type: :array,
                required: true,
-               desc: "The ODS code of the clinic"
+               desc: "The names of the clinics"
 
-      def call(team_workgroup:, subteam_name:, ods_codes:, **)
+      def call(team_workgroup:, subteam_name:, names:, **)
         MavisCLI.load_rails
 
         team = Team.find_by(workgroup: team_workgroup)
@@ -33,11 +33,11 @@ module MavisCLI
         end
 
         ActiveRecord::Base.transaction do
-          ods_codes.each do |ods_code|
-            location = Location.clinic.find_by(ods_code:)
+          names.each do |name|
+            location = Location.clinic.find_by(name:)
 
             if location.nil?
-              warn "Could not find clinic with ODS code #{ods_code}."
+              warn "Could not find clinic with name #{name}."
               next
             end
 
@@ -49,7 +49,7 @@ module MavisCLI
                      .where(academic_year:)
                )
               existing_team_locations.each do |existing_team_location|
-                warn "#{ods_code} previously belonged to #{existing_team_location.name}."
+                warn "#{name} previously belonged to #{existing_team_location.name}."
               end
             end
 
