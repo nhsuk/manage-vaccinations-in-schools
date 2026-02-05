@@ -32,21 +32,7 @@ module ParentInterface
 
       model.wizard_step = current_step
 
-      if is_health_question_step?
-        @health_answer.assign_attributes(health_answer_params)
-        model.health_question_number = @question_number
-      elsif step == "school"
-        school_id = update_params[:school_id]
-        if school_id == HOME_EDUCATED_SCHOOL_ID
-          model.school = nil
-          model.education_setting = "home"
-        else
-          model.school_id = school_id
-          model.education_setting = "school"
-        end
-      else
-        model.assign_attributes(update_params)
-      end
+      assign_attributes_for_current_step(model)
 
       if current_step == :parent
         if @consent_form.parental_responsibility == "no"
@@ -68,23 +54,45 @@ module ParentInterface
       elsif is_response_step?
         @consent_form.update_programme_responses
         @consent_form.seed_health_questions
+      elsif ethnicity_flow_complete?
+        handle_ethnicity_completion!(model)
+        return
       end
 
       reload_steps
 
       skip_to_confirm_or_next_health_question
 
-      if ethnicity_flow_complete?
-        model.save!
-        ProcessConsentFormJob.perform_later(model)
-        redirect_to submitted_parent_interface_consent_form_path(model)
-        return
-      end
-
       render_wizard model, context:
     end
 
     private
+
+    def assign_attributes_for_current_step(model)
+      if is_health_question_step?
+        @health_answer.assign_attributes(health_answer_params)
+        model.health_question_number = @question_number
+      elsif step == "school"
+        school_id = update_params[:school_id]
+        if school_id == HOME_EDUCATED_SCHOOL_ID
+          model.school = nil
+          model.education_setting = "home"
+        else
+          model.school_id = school_id
+          model.education_setting = "school"
+        end
+      else
+        model.assign_attributes(update_params)
+      end
+    end
+
+    def handle_ethnicity_completion!(model)
+      model.save!
+
+      ProcessConsentFormJob.perform_later(model)
+
+      redirect_to submitted_parent_interface_consent_form_path(model)
+    end
 
     def context
       if @consent_form.ethnicity_steps.include?(current_step)
