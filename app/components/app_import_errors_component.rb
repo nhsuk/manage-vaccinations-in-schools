@@ -35,7 +35,7 @@ class AppImportErrorsComponent < ViewComponent::Base
     <% end %>
   ERB
 
-  def initialize(errors: nil, title: "Records could not be imported")
+  def initialize(errors: nil, title: "Upload failed")
     @errors = errors
     @title = title
   end
