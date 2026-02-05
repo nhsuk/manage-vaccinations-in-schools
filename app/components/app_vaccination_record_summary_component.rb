@@ -257,7 +257,7 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
         end
       end
 
-      if @show_notes
+      if @show_notes && !@vaccination_record.sourced_from_national_reporting?
         summary_list.with_row do |row|
           row.with_key { "Notes" }
 
