@@ -51,11 +51,7 @@ class DraftSchoolSitesController < ApplicationController
   end
 
   def set_school_options
-    @school_options =
-      policy_scope(Location)
-        .school
-        .select("DISTINCT ON (urn) *")
-        .order(:urn, :name)
+    @school_options = policy_scope(Location).school.order(:urn, :name)
   end
 
   def set_steps
