@@ -38,7 +38,15 @@ module CSVImportable
             )
           end
     scope :status_for_imported_records,
-          -> { where(status: %i[processed partially_processed]) }
+          -> do
+            where(
+              status: %i[
+                processed
+                partially_processed
+                removing_parent_relationships
+              ]
+            )
+          end
 
     enum :status,
          {
@@ -52,7 +60,8 @@ module CSVImportable
            in_re_review: 7,
            committing: 8,
            partially_processed: 9,
-           cancelled: 10
+           cancelled: 10,
+           removing_parent_relationships: 11
          },
          default: :pending_import,
          validate: true
