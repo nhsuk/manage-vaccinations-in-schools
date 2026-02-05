@@ -38,6 +38,9 @@ describe "Manage teams" do
     when_i_confirm
     then_i_see_the_school_site_confirmation_banner
     and_a_school_site_is_created
+
+    when_i_go_back
+    then_i_am_redirected_to_the_start_of_the_wizard
   end
 
   def given_my_team_exists
@@ -93,6 +96,9 @@ describe "Manage teams" do
     expect(page).to have_content("Which school do you want to add a site to?")
   end
 
+  alias_method :then_i_am_redirected_to_the_start_of_the_wizard,
+               :then_i_see_the_select_school_site_form
+
   def when_i_select_a_school
     select @team.schools.first.name
   end
@@ -140,5 +146,9 @@ describe "Manage teams" do
     expect(site.urn).to eq("12345")
     expect(site.site).to eq("B")
     expect(site.teams).to include(@team)
+  end
+
+  def when_i_go_back
+    visit draft_school_site_path("confirm")
   end
 end

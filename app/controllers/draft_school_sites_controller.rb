@@ -3,6 +3,7 @@
 class DraftSchoolSitesController < ApplicationController
   before_action :set_draft_school
   before_action :set_school
+  before_action :redirect_if_session_cleared, only: %i[show update]
 
   include WizardControllerConcern
 
@@ -148,5 +149,13 @@ class DraftSchoolSitesController < ApplicationController
     return "B" if existing_sites.empty?
 
     existing_sites.max_by { [it.length, it] }.next
+  end
+
+  def redirect_if_session_cleared
+    return if params[:id] == "wicked_finish"
+    return if session[:draft_school_site].present?
+    return if params[:id] == "school"
+
+    redirect_to wizard_path(:school) if @draft_school_site.urn.blank?
   end
 end
