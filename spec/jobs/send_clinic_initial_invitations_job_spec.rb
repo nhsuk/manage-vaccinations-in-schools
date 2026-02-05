@@ -148,7 +148,7 @@ describe SendClinicInitialInvitationsJob do
         team:
       )
 
-      StatusUpdater.call(patient:)
+      PatientStatusUpdater.call(patient:)
     end
 
     it "doesn't send any notifications" do
