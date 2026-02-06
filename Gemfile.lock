@@ -458,7 +458,7 @@ GEM
       racc
     pg (1.6.3-arm64-darwin)
     pg (1.6.3-x86_64-linux)
-    phonelib (0.10.15)
+    phonelib (0.10.16)
     pp (0.6.3)
       prettyprint
     prettier_print (1.2.1)
