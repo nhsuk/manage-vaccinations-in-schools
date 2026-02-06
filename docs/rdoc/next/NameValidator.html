@@ -5,17 +5,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>class SendClinicInitialInvitationsJob - Mavis Documentation</title>
+<title>class NameValidator - Mavis Documentation</title>
 
 
   <meta
     name="keywords"
-    content="ruby,class,SendClinicInitialInvitationsJob"
+    content="ruby,class,NameValidator"
   >
 
     <meta
       name="description"
-      content="Documentation for the SendClinicInitialInvitationsJob class"
+      content="Documentation for the NameValidator class"
     >
 
 
@@ -24,13 +24,13 @@
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content="website">
-<meta property="og:title" content="class SendClinicInitialInvitationsJob - Mavis Documentation">
+<meta property="og:title" content="class NameValidator - Mavis Documentation">
 
 
 
     <meta
       property="og:description"
-      content="Documentation for SendClinicInitialInvitationsJob class - API reference and code examples"
+      content="Documentation for NameValidator class - API reference and code examples"
     >
 
 
@@ -39,13 +39,13 @@
 
 <!-- Twitter -->
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="class SendClinicInitialInvitationsJob - Mavis Documentation">
+<meta name="twitter:title" content="class NameValidator - Mavis Documentation">
 
 
 
     <meta
       name="twitter:description"
-      content="Documentation for SendClinicInitialInvitationsJob class - API reference and code examples"
+      content="Documentation for NameValidator class - API reference and code examples"
     >
 
 
@@ -528,7 +528,7 @@
         <svg><use href="#icon-chevron"></use></svg>
       </span>
     </summary>
-    <ul><li><a href="ApplicationJob.html">ApplicationJob</a><ul><li>ActiveJob::Base</li></ul></li></ul>
+    <ul><li>ActiveModel::EachValidator</li></ul>
   </details>
 </div>
 
@@ -553,11 +553,7 @@
       </summary>
       <ul class="nav-list" role="directory">
 
-        <li ><a href="#method-i-patients">patients</a></li>
-
-        <li ><a href="#method-i-perform">perform</a></li>
-
-        <li ><a href="#method-i-should_send_notification-3F">should_send_notification?</a></li>
+        <li ><a href="#method-i-validate_each">validate_each</a></li>
 
       </ul>
     </details>
@@ -582,13 +578,13 @@
 
 </nav>
 
-<main role="main" aria-labelledby="class-sendclinicinitialinvitationsjob">
+<main role="main" aria-labelledby="class-namevalidator">
   
   
 
-  <span id="class-SendClinicInitialInvitationsJob" class="legacy-anchor"></span>
-  <h1 id="class-sendclinicinitialinvitationsjob" class="anchor-link class">
-    class SendClinicInitialInvitationsJob
+  <span id="class-NameValidator" class="legacy-anchor"></span>
+  <h1 id="class-namevalidator" class="anchor-link class">
+    class NameValidator
   </h1>
 
   <section class="description">
@@ -602,6 +598,31 @@
 
 
 
+
+    <section class="constants-list">
+      <header>
+        <h3 id="constants"><a href="#constants">Constants</a></h3>
+      </header>
+      <dl>
+
+        <dt id="PERSON_NAME_CHARS">PERSON_NAME_CHARS</dt>
+
+        <dd>
+
+          
+        </dd>
+
+
+        <dt id="SCHOOL_NAME_CHARS">SCHOOL_NAME_CHARS</dt>
+
+        <dd>
+
+          
+        </dd>
+
+
+      </dl>
+    </section>
 
 
 
@@ -622,13 +643,13 @@
        </header>
 
 
-      <div id="method-i-patients" class="method-detail anchor-link ">
+      <div id="method-i-validate_each" class="method-detail anchor-link ">
         <div class="method-header">
 
             <div class="method-heading">
-              <a href="#method-i-patients" title="Link to this method">
-                <span class="method-name">patients</span>
-                <span class="method-args">(session)</span>
+              <a href="#method-i-validate_each" title="Link to this method">
+                <span class="method-name">validate_each</span>
+                <span class="method-args">(record, attribute, value)</span>
               </a>
             </div>
 
@@ -640,144 +661,20 @@
               <summary>Source</summary>
             </details>
           </div>
-          <div class="method-source-code" id="patients-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/jobs/send_clinic_initial_invitations_job.rb, line 23</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">patients</span>(<span class="ruby-identifier">session</span>)
-  <span class="ruby-identifier">team</span> = <span class="ruby-identifier">session</span>.<span class="ruby-identifier">team</span>
-  <span class="ruby-identifier">academic_year</span> = <span class="ruby-identifier">session</span>.<span class="ruby-identifier">academic_year</span>
+          <div class="method-source-code" id="validate_each-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/validators/name_validator.rb, line 36</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_each</span>(<span class="ruby-identifier">record</span>, <span class="ruby-identifier">attribute</span>, <span class="ruby-identifier">value</span>)
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">blank?</span>
 
-  <span class="ruby-identifier">session</span>
-    .<span class="ruby-identifier">patients</span>
-    .<span class="ruby-identifier">includes_statuses</span>
-    .<span class="ruby-identifier">includes</span>(
-      <span class="ruby-value">:clinic_notifications</span>,
-      <span class="ruby-value">:consents</span>,
-      <span class="ruby-value">:parents</span>,
-      <span class="ruby-value">:vaccination_records</span>
-    )
-    .<span class="ruby-identifier">select</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">patient</span><span class="ruby-operator">|</span>
-      <span class="ruby-identifier">programmes</span> = <span class="ruby-identifier">session</span>.<span class="ruby-identifier">programmes_for</span>(<span class="ruby-value">patient:</span>)
-      <span class="ruby-identifier">should_send_notification?</span>(<span class="ruby-value">patient:</span>, <span class="ruby-value">team:</span>, <span class="ruby-value">academic_year:</span>, <span class="ruby-value">programmes:</span>)
-    <span class="ruby-keyword">end</span>
-<span class="ruby-keyword">end</span></pre>
-          </div>
+  <span class="ruby-identifier">chars</span> = <span class="ruby-identifier">options</span>[<span class="ruby-value">:school_name</span>] <span class="ruby-operator">?</span> <span class="ruby-constant">SCHOOL_NAME_CHARS</span> <span class="ruby-operator">:</span> <span class="ruby-constant">PERSON_NAME_CHARS</span>
+  <span class="ruby-identifier">regex</span> = <span class="ruby-regexp">/\A[#{chars.join}]+\z/</span>
 
-
-
-        <div class="method-description">
-
-
-          
-
-
-        </div>
-
-
-
-
-
-      </div>
-
-
-      <div id="method-i-perform" class="method-detail anchor-link ">
-        <div class="method-header">
-
-            <div class="method-heading">
-              <a href="#method-i-perform" title="Link to this method">
-                <span class="method-name">perform</span>
-                <span class="method-args">(session)</span>
-              </a>
-            </div>
-
-        </div>
-
-
-          <div class="method-controls">
-            <details class="method-source-toggle">
-              <summary>Source</summary>
-            </details>
-          </div>
-          <div class="method-source-code" id="perform-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/jobs/send_clinic_initial_invitations_job.rb, line 6</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">perform</span>(<span class="ruby-identifier">session</span>)
-  <span class="ruby-identifier">raise</span> <span class="ruby-constant">InvalidLocation</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">session</span>.<span class="ruby-identifier">clinic?</span>
-
-  <span class="ruby-identifier">date</span> = <span class="ruby-identifier">session</span>.<span class="ruby-identifier">next_date</span>(<span class="ruby-value">include_today:</span> <span class="ruby-keyword">true</span>)
-  <span class="ruby-identifier">raise</span> <span class="ruby-constant">NoSessionDates</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">date</span>.<span class="ruby-identifier">nil?</span>
-
-  <span class="ruby-identifier">patients</span>(<span class="ruby-identifier">session</span>).<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">patient</span><span class="ruby-operator">|</span>
-    <span class="ruby-constant">ClinicNotification</span>.<span class="ruby-identifier">create_and_send!</span>(
-      <span class="ruby-value">patient:</span>,
-      <span class="ruby-value">programmes:</span> <span class="ruby-identifier">session</span>.<span class="ruby-identifier">programmes_for</span>(<span class="ruby-value">patient:</span>),
-      <span class="ruby-value">team:</span> <span class="ruby-identifier">session</span>.<span class="ruby-identifier">team</span>,
-      <span class="ruby-value">academic_year:</span> <span class="ruby-identifier">session</span>.<span class="ruby-identifier">academic_year</span>,
-      <span class="ruby-value">type:</span> <span class="ruby-value">:initial_invitation</span>
+  <span class="ruby-keyword">unless</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">match?</span>(<span class="ruby-identifier">regex</span>)
+    <span class="ruby-identifier">record</span>.<span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(
+      <span class="ruby-identifier">attribute</span>,
+      <span class="ruby-identifier">options</span>[<span class="ruby-value">:message</span>] <span class="ruby-operator">||</span> <span class="ruby-string">&quot;includes invalid character(s)&quot;</span>
     )
   <span class="ruby-keyword">end</span>
-<span class="ruby-keyword">end</span></pre>
-          </div>
-
-
-
-        <div class="method-description">
-
-
-          
-
-
-        </div>
-
-
-
-
-
-      </div>
-
-
-      <div id="method-i-should_send_notification-3F" class="method-detail anchor-link ">
-        <div class="method-header">
-
-            <div class="method-heading">
-              <a href="#method-i-should_send_notification-3F" title="Link to this method">
-                <span class="method-name">should_send_notification?</span>
-                <span class="method-args">(patient:, team:, academic_year:, programmes:)</span>
-              </a>
-            </div>
-
-        </div>
-
-
-          <div class="method-controls">
-            <details class="method-source-toggle">
-              <summary>Source</summary>
-            </details>
-          </div>
-          <div class="method-source-code" id="should_send_notification-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/jobs/send_clinic_initial_invitations_job.rb, line 42</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">should_send_notification?</span>(<span class="ruby-value">patient:</span>, <span class="ruby-value">team:</span>, <span class="ruby-value">academic_year:</span>, <span class="ruby-value">programmes:</span>)
-  <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">send_notifications?</span>(<span class="ruby-value">team:</span>)
-
-  <span class="ruby-identifier">eligible_programmes</span> =
-    <span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">select</span> <span class="ruby-keyword">do</span>
-      <span class="ruby-identifier">programme_status</span> = <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">programme_status</span>(<span class="ruby-identifier">it</span>, <span class="ruby-value">academic_year:</span>)
-      <span class="ruby-operator">!</span><span class="ruby-identifier">programme_status</span>.<span class="ruby-identifier">vaccinated?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">programme_status</span>.<span class="ruby-identifier">consent_refused?</span>
-    <span class="ruby-keyword">end</span>
-
-  <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">eligible_programmes</span>.<span class="ruby-identifier">empty?</span>
-
-  <span class="ruby-identifier">programme_types</span> = <span class="ruby-identifier">eligible_programmes</span>.<span class="ruby-identifier">map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:type</span>)
-
-  <span class="ruby-identifier">already_invited</span> =
-    <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">clinic_notifications</span>.<span class="ruby-identifier">any?</span> <span class="ruby-keyword">do</span>
-      <span class="ruby-identifier">it</span>.<span class="ruby-identifier">initial_invitation?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">it</span>.<span class="ruby-identifier">team_id</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">team</span>.<span class="ruby-identifier">id</span> <span class="ruby-operator">&amp;&amp;</span>
-        <span class="ruby-identifier">it</span>.<span class="ruby-identifier">academic_year</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">academic_year</span> <span class="ruby-operator">&amp;&amp;</span>
-        (<span class="ruby-identifier">programme_types</span> <span class="ruby-operator">-</span> <span class="ruby-identifier">it</span>.<span class="ruby-identifier">programme_types</span>).<span class="ruby-identifier">empty?</span> <span class="ruby-comment"># is subset</span>
-    <span class="ruby-keyword">end</span>
-
-  <span class="ruby-comment"># We only send initial invitations to patients who haven&#39;t already</span>
-  <span class="ruby-comment"># received an invitation.</span>
-
-  <span class="ruby-operator">!</span><span class="ruby-identifier">already_invited</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
 
