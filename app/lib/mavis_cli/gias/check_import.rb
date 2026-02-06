@@ -24,14 +24,18 @@ module MavisCLI
                 .merge(Session.scheduled)
                 .pluck(:urn)
             ),
-          closed: Set.new,
-          closing: Set.new,
+          closed: {
+          },
+          closing: {
+          },
           year_group_changes: {
           }
         }
         schools_without_future_sessions = {
-          closed: Set.new,
-          closing: Set.new,
+          closed: {
+          },
+          closing: {
+          },
           year_group_changes: {
           }
         }
@@ -48,13 +52,29 @@ module MavisCLI
         new_schools = Set.new
 
         Zip::File.open(input_file) do |zip|
-          csv_entry = zip.glob("edubasealldata*.csv").first
-          csv_content = csv_entry.get_input_stream.read
+          links_csv = zip.glob("links_edubasealldata*.csv").first
+          links_csv_content = links_csv.get_input_stream.read
 
-          progress_bar = MavisCLI.progress_bar(csv_content.lines.count + 1)
+          @school_successors = {}
+          CSV.parse(
+            links_csv_content,
+            headers: true,
+            encoding: "ISO-8859-1:UTF-8"
+          ) do |row|
+            next unless row["LinkType"]&.include?("Successor")
+
+            @school_successors[row["URN"]] ||= []
+            @school_successors[row["URN"]] << row["LinkURN"]
+          end
+
+          school_data_csv = zip.glob("edubasealldata*.csv").first
+          school_csv_content = school_data_csv.get_input_stream.read
+
+          progress_bar =
+            MavisCLI.progress_bar(school_csv_content.lines.count + 1)
 
           CSV.parse(
-            csv_content,
+            school_csv_content,
             headers: true,
             encoding: "ISO-8859-1:UTF-8"
           ) do |row|
@@ -115,17 +135,29 @@ That are proposed to be closed in import: #{schools_with_future_sessions[:closin
             That have year group changes: #{schools_with_future_sessions[:year_group_changes].count} (#{schools_with_changed_year_groups_pct * 100}%)
         OUTPUT
 
-        puts <<~OUTPUT if schools_with_future_sessions[:closed].any?
+        if schools_with_future_sessions[:closed].any?
+          puts "\nURNs of closed schools with future sessions:"
+          schools_with_future_sessions[:closed].sort.each do |urn, successors|
+            if successors.any?
+              successor_info = format_successors_with_teams(successors)
+              puts "  #{urn} -> successor(s): #{successor_info}"
+            else
+              puts "  #{urn}"
+            end
+          end
+        end
 
-URNs of closed schools with future sessions:
-  #{schools_with_future_sessions[:closed].to_a.sort.join("\n  ")}
-          OUTPUT
-
-        puts <<~OUTPUT if schools_with_future_sessions[:closing].any?
-
-URNs of schools that will be closing, with future sessions:
-  #{schools_with_future_sessions[:closing].to_a.sort.join("\n  ")}
-          OUTPUT
+        if schools_with_future_sessions[:closing].any?
+          puts "\nURNs of schools that will be closing, with future sessions:"
+          schools_with_future_sessions[:closing].sort.each do |urn, successors|
+            if successors.any?
+              successor_info = format_successors_with_teams(successors)
+              puts "  #{urn} -> successor(s): #{successor_info}"
+            else
+              puts "  #{urn}"
+            end
+          end
+        end
 
         if schools_with_future_sessions[:year_group_changes].any?
           puts "\nURNs of schools with year group changes, with future sessions:"
@@ -141,6 +173,37 @@ URNs of schools that will be closing, with future sessions:
 
       private
 
+      def format_successors_with_teams(successor_urns)
+        successor_urns
+          .map do |successor_urn|
+            locations = Location.school.where(urn: successor_urn)
+
+            if locations.count == 1
+              teams = locations.sole.teams.uniq
+              if teams.any?
+                team_names = teams.map(&:name).join(", ")
+                "#{successor_urn} (Team: #{team_names})"
+              else
+                "#{successor_urn} (no team)"
+              end
+            elsif locations.count > 1
+              site_urns =
+                locations.where.not(site: nil).map(&:urn_and_site).join(", ")
+              team_names =
+                locations
+                  .where.not(site: nil)
+                  .flat_map(&:teams)
+                  .uniq
+                  .map(&:name)
+                  .join(", ")
+              "#{site_urns} (Teams: #{team_names})"
+            else
+              "#{successor_urn} (not found)"
+            end
+          end
+          .join(", ")
+      end
+
       def calculate_percentage(schools_set, metric)
         if schools_set[:existing].count.positive?
           schools_set[metric].count.to_f / schools_set[:existing].count
@@ -152,11 +215,12 @@ URNs of schools that will be closing, with future sessions:
       def check_for_school_closure(row, school_set)
         urn = row["URN"]
         new_status = row["EstablishmentStatus (name)"]
+        successors = @school_successors[urn] || []
 
         if new_status == "Closed"
-          school_set[:closed] << urn
+          school_set[:closed][urn] = successors
         elsif new_status == "Open, but proposed to close"
-          school_set[:closing] << urn
+          school_set[:closing][urn] = successors
         end
       end
 

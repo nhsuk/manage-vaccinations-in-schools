@@ -32,6 +32,9 @@ describe "mavis gias check_import" do
         team: @team
       )
 
+    @successor_school =
+      create(:school, name: "The Aldgate Academy", urn: "100004", team: @team)
+
     @school2_with_future_session =
       create(
         :school,
@@ -90,7 +93,7 @@ describe "mavis gias check_import" do
     expect(@output).to include("That have year group changes: 1")
 
     expect(@output).to include(
-      "URNs of closed schools with future sessions:\n  100000"
+      "URNs of closed schools with future sessions:\n  100000 -> successor(s): 100004 (Team: #{@team.name})"
     )
     expect(@output).to include(
       "URNs of schools that will be closing, with future sessions:\n  100002"
