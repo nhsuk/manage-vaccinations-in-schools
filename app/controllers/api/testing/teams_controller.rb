@@ -78,6 +78,9 @@ class API::Testing::TeamsController < API::Testing::BaseController
     log_destroy(ImportantNotice.where(patient_id: patient_ids))
 
     log_destroy(ParentRelationship.where(patient_id: patient_ids))
+    log_destroy(
+      PatientProgrammeVaccinationsSearch.where(patient_id: patient_ids)
+    )
     log_destroy(Patient.where(id: patient_ids))
 
     log_destroy(
