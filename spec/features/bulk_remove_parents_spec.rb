@@ -15,6 +15,7 @@ describe "Bulk remove parents" do
       when_i_click_continue
 
       then_i_should_see_the_all_parent_relationships_are_being_removed_success_flash
+      and_i_am_on_the_completed_imports_tab
       when_i_go_to_the_page_for_the_class_import
       and_i_see_the_parent_removal_status_message_on_import_screen
       and_the_bulk_remove_job_should_be_enqueued_with_remove_option(nil)
@@ -64,6 +65,7 @@ describe "Bulk remove parents" do
       when_i_click_continue
 
       then_i_should_see_the_all_parent_relationships_are_being_removed_success_flash
+      and_i_am_on_the_completed_imports_tab
       when_i_go_to_the_page_for_the_class_import
       and_i_see_the_parent_removal_status_message_on_import_screen
       and_the_bulk_remove_job_should_be_enqueued_with_remove_option("all")
@@ -159,6 +161,10 @@ describe "Bulk remove parents" do
     expect(page).to have_content(
       "All parent-child relationships included in this import are being removed"
     )
+  end
+
+  def and_i_am_on_the_completed_imports_tab
+    expect(page).to have_css("td.nhsuk-table__cell", text: "Completed")
   end
 
   def and_i_see_the_parent_removal_status_message_on_import_screen
