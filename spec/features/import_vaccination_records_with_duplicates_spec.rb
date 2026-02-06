@@ -95,9 +95,9 @@ describe "Immunisation imports duplicates" do
       create(:patient_location, patient: @third_patient, session: @session)
     @vaccine = @programme.vaccines.find_by(upload_name: "Gardasil9")
     @other_vaccine = @programme.vaccines.find_by(upload_name: "Cervarix")
-    @batch = create(:batch, vaccine: @vaccine, name: "SomethingElse")
+    @batch = create(:batch, vaccine: @vaccine, number: "SomethingElse")
     @other_batch =
-      create(:batch, vaccine: @other_vaccine, name: "CervarixBatch")
+      create(:batch, vaccine: @other_vaccine, number: "CervarixBatch")
     @previous_vaccination_record =
       create(
         :vaccination_record,

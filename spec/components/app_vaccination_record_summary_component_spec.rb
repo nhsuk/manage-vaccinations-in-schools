@@ -15,10 +15,10 @@ describe AppVaccinationRecordSummaryComponent do
   let(:patient) { create(:patient) }
   let(:vaccine) { programme.vaccines.find_by!(brand: "Gardasil 9") }
   let(:batch) do
-    create(:batch, name: "ABC", expiry: Date.new(2026, 1, 1), vaccine:)
+    create(:batch, number: "ABC", expiry: Date.new(2026, 1, 1), vaccine:)
   end
   let(:other_batch) do
-    create(:batch, name: "DEF", expiry: Date.new(2027, 1, 1), vaccine:)
+    create(:batch, number: "DEF", expiry: Date.new(2027, 1, 1), vaccine:)
   end
   let(:notes) { "Some notes." }
   let(:location_name) { nil }
@@ -43,7 +43,8 @@ describe AppVaccinationRecordSummaryComponent do
       location_name:,
       protocol:,
       pending_changes: {
-        batch_id: other_batch&.id,
+        batch_number: other_batch&.number,
+        batch_expiry: other_batch&.expiry,
         delivery_method: :nasal_spray,
         delivery_site: :nose
       },

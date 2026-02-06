@@ -203,7 +203,6 @@ describe ImmunisationImport do
           .to change(immunisation_import, :processed_at).from(nil)
           .and change(immunisation_import.vaccination_records, :count).by(11)
           .and change(immunisation_import.patients, :count).by(11)
-          .and change(immunisation_import.batches, :count).by(4)
           .and not_change(immunisation_import.patient_locations, :count)
 
         # Second import should not duplicate the vaccination records if they're
@@ -215,7 +214,6 @@ describe ImmunisationImport do
           .and not_change(VaccinationRecord, :count)
           .and not_change(Patient, :count)
           .and not_change(PatientLocation, :count)
-          .and not_change(Batch, :count)
       end
 
       it "stores statistics on the import" do
@@ -257,7 +255,6 @@ describe ImmunisationImport do
           .to change(immunisation_import, :processed_at).from(nil)
           .and change(immunisation_import.vaccination_records, :count).by(11)
           .and change(immunisation_import.patients, :count).by(10)
-          .and change(immunisation_import.batches, :count).by(8)
           .and not_change(immunisation_import.patient_locations, :count)
 
         # Second import should not duplicate the vaccination records if they're
@@ -269,7 +266,6 @@ describe ImmunisationImport do
           .and not_change(VaccinationRecord, :count)
           .and not_change(Patient, :count)
           .and not_change(PatientLocation, :count)
-          .and not_change(Batch, :count)
       end
 
       it "stores statistics on the import" do
@@ -311,7 +307,6 @@ describe ImmunisationImport do
           .to change(immunisation_import, :processed_at).from(nil)
           .and change(immunisation_import.vaccination_records, :count).by(11)
           .and change(immunisation_import.patients, :count).by(10)
-          .and change(immunisation_import.batches, :count).by(7)
           .and not_change(immunisation_import.patient_locations, :count)
 
         # Second import should not duplicate the vaccination records if they're
@@ -323,7 +318,6 @@ describe ImmunisationImport do
           .and not_change(VaccinationRecord, :count)
           .and not_change(Patient, :count)
           .and not_change(PatientLocation, :count)
-          .and not_change(Batch, :count)
       end
 
       it "stores statistics on the import" do
@@ -365,7 +359,6 @@ describe ImmunisationImport do
           .to change(immunisation_import, :processed_at).from(nil)
           .and change(immunisation_import.vaccination_records, :count).by(4)
           .and change(immunisation_import.patients, :count).by(4)
-          .and change(immunisation_import.batches, :count).by(1)
           .and not_change(immunisation_import.patient_locations, :count)
 
         # Second import should not duplicate the vaccination records if they're
@@ -377,7 +370,6 @@ describe ImmunisationImport do
           .and not_change(VaccinationRecord, :count)
           .and not_change(Patient, :count)
           .and not_change(PatientLocation, :count)
-          .and not_change(Batch, :count)
       end
     end
 

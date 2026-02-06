@@ -195,8 +195,8 @@ def write_vaccination_records_to_file(vaccination_records)
         vaccination_record.patient.address_postcode,
         vaccination_record.performed_at.to_date.to_fs(:dps),
         vaccination_record.vaccine.brand.gsub(" ", ""),
-        vaccination_record.batch.name,
-        vaccination_record.batch.expiry.to_fs(:dps),
+        vaccination_record.batch_number,
+        vaccination_record.batch_expiry.to_fs(:dps),
         ImmunisationImportRow::DELIVERY_SITES.key(
           vaccination_record.delivery_site
         ),
@@ -257,7 +257,7 @@ def create_students_and_vaccinations_for(school:, team:, year_size_estimate:)
           team:,
           location: school || team.generic_clinic
         )
-      batch = FactoryBot.create(:batch, team:, vaccine:)
+      batch = FactoryBot.build(:batch, team:, vaccine:)
 
       session_participants = [dose_1_cohort, dose_2_cohort].flatten.compact
 
@@ -271,7 +271,8 @@ def create_students_and_vaccinations_for(school:, team:, year_size_estimate:)
         create_vaccination_record(
           patient_session,
           vaccine:,
-          batch:,
+          batch_number: batch.name,
+          batch_expiry: batch.expiry,
           dose_sequence:,
           programme:
         )

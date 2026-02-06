@@ -117,9 +117,9 @@ describe Reports::OfflineSessionExporter do
         subject(:rows) { worksheet_to_hashes(workbook.worksheets[0]) }
 
         let(:performed_at) { Time.zone.local(2024, 1, 1, 12, 5, 20) }
-        let(:batch) do
-          create(:batch, :not_expired, vaccine: programme.vaccines.active.first)
-        end
+        let(:batch) { build(:batch, :not_expired) }
+        let(:batch_number) { batch.number }
+        let(:batch_expiry) { batch.expiry }
         let(:patient_location) { create(:patient_location, patient:, session:) }
         let(:patient) { create(:patient, year_group:) }
 
@@ -263,7 +263,8 @@ describe Reports::OfflineSessionExporter do
             create(
               :vaccination_record,
               performed_at:,
-              batch:,
+              batch_number:,
+              batch_expiry:,
               patient:,
               session:,
               programme: programme.variant_for(patient:),
@@ -283,7 +284,7 @@ describe Reports::OfflineSessionExporter do
             ).to eq(
               {
                 "ANATOMICAL_SITE" => "left upper arm",
-                "BATCH_NUMBER" => batch.name,
+                "BATCH_NUMBER" => batch_number,
                 "CARE_SETTING" => 1,
                 "CLINIC_NAME" => "",
                 "CONSENT_DETAILS" => "",
@@ -320,7 +321,7 @@ describe Reports::OfflineSessionExporter do
                 "REGISTRATION" => patient.registration
               }
             )
-            expect(rows.first["BATCH_EXPIRY_DATE"].to_date).to eq(batch.expiry)
+            expect(rows.first["BATCH_EXPIRY_DATE"].to_date).to eq(batch_expiry)
             expect(rows.first["PERSON_DOB"].to_date).to eq(
               patient.date_of_birth
             )
@@ -375,7 +376,8 @@ describe Reports::OfflineSessionExporter do
             create(
               :vaccination_record,
               performed_at:,
-              batch:,
+              batch_number:,
+              batch_expiry:,
               patient:,
               programme: programme.variant_for(patient:),
               performed_by: user,
@@ -395,7 +397,7 @@ describe Reports::OfflineSessionExporter do
             ).to eq(
               {
                 "ANATOMICAL_SITE" => "left upper arm",
-                "BATCH_NUMBER" => batch.name,
+                "BATCH_NUMBER" => batch_number,
                 "CARE_SETTING" => nil,
                 "CLINIC_NAME" => "",
                 "CONSENT_DETAILS" => "",
@@ -432,7 +434,7 @@ describe Reports::OfflineSessionExporter do
                 "REGISTRATION" => patient.registration
               }
             )
-            expect(rows.first["BATCH_EXPIRY_DATE"].to_date).to eq(batch.expiry)
+            expect(rows.first["BATCH_EXPIRY_DATE"].to_date).to eq(batch_expiry)
             expect(rows.first["PERSON_DOB"].to_date).to eq(
               patient.date_of_birth
             )
@@ -456,7 +458,8 @@ describe Reports::OfflineSessionExporter do
             create(
               :vaccination_record,
               performed_at:,
-              batch:,
+              batch_number:,
+              batch_expiry:,
               patient:,
               session: clinic_session,
               programme: programme.variant_for(patient:),
@@ -482,7 +485,7 @@ describe Reports::OfflineSessionExporter do
             ).to eq(
               {
                 "ANATOMICAL_SITE" => "left upper arm",
-                "BATCH_NUMBER" => batch.name,
+                "BATCH_NUMBER" => batch_number,
                 "CARE_SETTING" => 2,
                 "CLINIC_NAME" => "Waterloo Hospital",
                 "CONSENT_DETAILS" => "",
@@ -519,7 +522,7 @@ describe Reports::OfflineSessionExporter do
                 "REGISTRATION" => patient.registration
               }
             )
-            expect(rows.first["BATCH_EXPIRY_DATE"].to_date).to eq(batch.expiry)
+            expect(rows.first["BATCH_EXPIRY_DATE"].to_date).to eq(batch_expiry)
             expect(rows.first["PERSON_DOB"].to_date).to eq(
               patient.date_of_birth
             )
@@ -538,7 +541,8 @@ describe Reports::OfflineSessionExporter do
             create(
               :vaccination_record,
               performed_at:,
-              batch:,
+              batch_number:,
+              batch_expiry:,
               patient:,
               programme: Programme.find(other_programme_type),
               performed_by: user,
@@ -693,7 +697,7 @@ describe Reports::OfflineSessionExporter do
             create(
               :batch,
               :not_expired,
-              name: "BATCH12345",
+              number: "BATCH12345",
               vaccine: programme.vaccines.active.first,
               team:
             )
@@ -773,14 +777,14 @@ describe Reports::OfflineSessionExporter do
           create(
             :batch,
             :not_expired,
-            name: "OTHERBATCH",
+            number: "OTHERBATCH",
             vaccine: Programme.find(other_programme_type).vaccines.first
           )
         end
 
         it "lists all the batch numbers for the programme" do
           batch_numbers = worksheet[1..].map { it.cells.first.value }
-          expect(batch_numbers).to include(*batches.map(&:name))
+          expect(batch_numbers).to include(*batches.map(&:number))
         end
 
         its(:state) { should eq "hidden" }
@@ -914,19 +918,15 @@ describe Reports::OfflineSessionExporter do
               school: create(:school, urn: "123456", name: "Waterloo Road")
             )
           end
-          let(:batch) do
-            create(
-              :batch,
-              :not_expired,
-              vaccine: programme.vaccines.active.first
-            )
-          end
+          let(:batch_number) { build(:batch).number }
+          let(:batch_expiry) { build(:batch, :not_expired).expiry }
           let(:performed_at) { Time.zone.local(2024, 1, 1, 12, 5, 20) }
           let!(:vaccination_record) do
             create(
               :vaccination_record,
               performed_at:,
-              batch:,
+              batch_number:,
+              batch_expiry:,
               patient:,
               session:,
               programme: programme.variant_for(patient:),
@@ -949,7 +949,7 @@ describe Reports::OfflineSessionExporter do
             ).to eq(
               {
                 "ANATOMICAL_SITE" => "left upper arm",
-                "BATCH_NUMBER" => batch.name,
+                "BATCH_NUMBER" => batch_number,
                 "CARE_SETTING" => 2,
                 "CONSENT_DETAILS" => "",
                 "CONSENT_STATUS" => "",
@@ -986,7 +986,7 @@ describe Reports::OfflineSessionExporter do
                 "REGISTRATION" => patient.registration
               }
             )
-            expect(rows.first["BATCH_EXPIRY_DATE"].to_date).to eq(batch.expiry)
+            expect(rows.first["BATCH_EXPIRY_DATE"].to_date).to eq(batch_expiry)
             expect(rows.first["PERSON_DOB"].to_date).to eq(
               patient.date_of_birth
             )
@@ -1022,7 +1022,7 @@ describe Reports::OfflineSessionExporter do
             create(
               :batch,
               :not_expired,
-              name: "BATCH12345",
+              number: "BATCH12345",
               vaccine: programme.vaccines.active.first,
               team:
             )
@@ -1085,14 +1085,14 @@ describe Reports::OfflineSessionExporter do
           create(
             :batch,
             :not_expired,
-            name: "OTHERBATCH",
+            number: "OTHERBATCH",
             vaccine: Programme.find(other_programme_type).vaccines.first
           )
         end
 
         it "lists all the batch numbers for the programme" do
           batch_numbers = worksheet[1..].map { it.cells.first.value }
-          expect(batch_numbers).to match_array(batches.map(&:name))
+          expect(batch_numbers).to match_array(batches.map(&:number))
         end
 
         its(:state) { should eq "hidden" }

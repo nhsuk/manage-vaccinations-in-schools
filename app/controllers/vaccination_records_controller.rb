@@ -50,7 +50,6 @@ class VaccinationRecordsController < ApplicationController
   def set_vaccination_record
     @vaccination_record =
       authorize policy_scope(VaccinationRecord).includes(
-                  :batch,
                   :immunisation_imports,
                   :location,
                   :performed_by_user,

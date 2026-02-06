@@ -220,7 +220,7 @@ class GraphRecords
       knows_side_effects
       created_at
     ],
-    batch: %i[name expiry archived_at],
+    batch: %i[number expiry archived_at],
     user: %i[fallback_role uid],
     consent_form: %i[response recorded_at archived_at],
     parent_relationship: %i[type],

@@ -180,7 +180,7 @@ describe "Flu vaccination" do
 
     batch = nasal ? @nasal_batch : @injection_batch
 
-    choose batch.name
+    choose batch.number
     click_on "Continue"
 
     click_on "Change supplier"
@@ -205,7 +205,7 @@ describe "Flu vaccination" do
     end
     click_on "Continue"
 
-    choose @injection_batch.name
+    choose @injection_batch.number
     click_on "Continue"
 
     expect(page).to have_content("ProtocolNational")

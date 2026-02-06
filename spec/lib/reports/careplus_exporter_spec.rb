@@ -116,7 +116,7 @@ describe Reports::CareplusExporter do
       )
       expect(row[vaccine_code_index]).to eq(expected_vaccine_code)
       expect(row[dose_index]).to eq("1P")
-      expect(row[batch_index]).to eq(vaccination_record.batch.name)
+      expect(row[batch_index]).to eq(vaccination_record.batch_number)
       expect(row[site_index]).to eq("ULA")
       expect(row[staff_type_index]).to eq("PQ")
       expect(row[staff_code_index]).to eq("ABCD")

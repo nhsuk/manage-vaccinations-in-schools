@@ -41,7 +41,10 @@ class PatientSessions::VaccinationsController < PatientSessions::BaseController
         steps.delete(:delivery)
       end
       steps.delete(:vaccine) if draft_vaccination_record.vaccine.present?
-      steps.delete(:batch) if draft_vaccination_record.batch.present?
+      if draft_vaccination_record.batch_number.present? &&
+           draft_vaccination_record.batch_expiry.present?
+        steps.delete(:batch)
+      end
 
       draft_vaccination_record.update!(first_active_wizard_step: steps.first)
 

@@ -166,7 +166,6 @@ class ImmunisationImportRow
     end
 
     attributes_to_stage_if_already_exists = {
-      batch_id: batch&.id,
       batch_number: batch_name&.to_s,
       batch_expiry: batch_expiry&.to_date,
       notes: notes&.to_s,
@@ -437,23 +436,6 @@ class ImmunisationImportRow
         team.vaccines.find_by(nivs_name: vaccine_upload_name)
   end
 
-  def batch
-    return unless valid?
-
-    @batch ||=
-      if administered && vaccine && batch_name.present?
-        Batch.create_with(
-          archived_at: Time.current,
-          number: batch_name.to_s
-        ).find_or_create_by!(
-          expiry: batch_expiry&.to_date,
-          name: batch_name.to_s,
-          team_id: session&.team_id,
-          vaccine:
-        )
-      end
-  end
-
   def programmes_by_name
     @programmes_by_name ||=
       (session || team)
@@ -658,7 +640,7 @@ class ImmunisationImportRow
           errors.add(batch_name.header, "must be at most 100 characters long")
         elsif batch_name.to_s.length < 2
           errors.add(batch_name.header, "must be at least 2 characters long")
-        elsif batch_name.to_s !~ BatchNameValidator::FORMAT
+        elsif batch_name.to_s !~ BatchNumberValidator::FORMAT
           errors.add(batch_name.header, "must be only letters and numbers")
         end
       elsif offline_recording? || national_reporting?
