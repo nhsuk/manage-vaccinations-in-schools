@@ -1,0 +1,28 @@
+<%= h1 "Find contact details for your child's school vaccinations team" %>
+
+<p class="nhsuk-body">
+  Select your child's school to find contact details for the team that manages vaccination sessions there.
+</p>
+
+<%= form_with url: wizard_path, method: :get do %>
+  <%= render AppSearchInputComponent.new(name: :q, value: @query, label: { text: "Search for a school" }) %>
+<% end %>
+
+<% if @query.present? %>
+  <%= form_with model: @school_team_contact_form, url: wizard_path, method: :put, builder: GOVUKDesignSystemFormBuilder::FormBuilder do |f| %>
+    <%= hidden_field_tag :q, @query %>
+    <%= render AppSearchResultsComponent.new(@pagy, label: "schools", heading: "School search results", no_results_text: "No schools matching search criteria found.") do %>
+      <%= f.govuk_radio_buttons_fieldset :school_id,
+                                         legend: { text: "Select a school", size: "s", class: "nhsuk-u-visually-hidden" } do %>
+        <% @schools.each do |school| %>
+          <%= f.govuk_radio_button :school_id, school.id,
+                                   label: { text: location_display_name(school) },
+                                   hint: { text: format_address_single_line(school) } %>
+        <% end %>
+      <% end %>
+    <% end %>
+    <% if @schools.any? %>
+      <%= f.govuk_submit "Find contact details" %>
+    <% end %>
+  <% end %>
+<% end %>

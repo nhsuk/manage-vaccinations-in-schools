@@ -86,6 +86,11 @@ Rails.application.routes.draw do
   get "/csrf", to: "csrf#new"
 
   namespace :parent_interface, path: "/" do
+    resource :school_team_contact,
+             only: %i[show update],
+             path: "find-team-contact/:id",
+             controller: "school_team_contacts"
+
     resources :consent_forms, path: "/consents", only: %i[create] do
       collection do
         get ":session_slug/:programme_types/start", action: "start", as: :start

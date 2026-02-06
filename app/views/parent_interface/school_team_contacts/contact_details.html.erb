@@ -1,0 +1,50 @@
+<% content_for :before_main do %>
+  <%= govuk_back_link(href: wizard_path(:school)) %>
+<% end %>
+
+<%= h1 "Contact details" %>
+
+<p class="nhsuk-body">
+  Contact details for teams managing vaccination sessions at:
+</p>
+
+<%= govuk_inset_text classes: "nhsuk-u-margin-top-2 nhsuk-u-margin-bottom-4" do %>
+  <p>
+    <span class="nhsuk-heading-m nhsuk-u-margin-bottom-0">
+      <%= @school.name %>
+    </span>
+    <% if @school.address_postcode.present? %>
+      <%= format_address_single_line(@school) %>
+    <% end %>
+  </p>
+<% end %>
+
+<% @team_locations.group_by(&:team).each do |team, team_locations| %>
+  <div class="nhsuk-u-margin-bottom-6">
+    <h2 class="nhsuk-heading-m"><%= team.name %></h2>
+
+    <% team_locations.each do |team_location| %>
+      <% if team_location.subteam.present? %>
+        <h3 class="nhsuk-heading-s nhsuk-u-margin-top-4">
+          <%= team_location.subteam.name %>
+        </h3>
+      <% end %>
+
+      <%= govuk_summary_list do |summary_list|
+            summary_list.with_row do |row|
+              row.with_key { "Email address" }
+              row.with_value { mail_to team_location.email }
+            end
+
+            summary_list.with_row do |row|
+              row.with_key { "Phone number" }
+              row.with_value { format_phone_with_instructions(team_location) }
+            end
+          end %>
+    <% end %>
+  </div>
+<% end %>
+
+<p class="nhsuk-body">
+  <%= link_to "Search for another school", wizard_path(:school), class: "nhsuk-link" %>
+</p>
