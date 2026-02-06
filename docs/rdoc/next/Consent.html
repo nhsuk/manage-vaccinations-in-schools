@@ -620,7 +620,13 @@
 
         <li ><a href="#method-i-can_withdraw-3F">can_withdraw?</a></li>
 
+        <li ><a href="#method-i-invalidate_all_triages_and_patient_specific_directions-21">invalidate_all_triages_and_patient_specific_directions!</a></li>
+
         <li ><a href="#method-i-invalidate_existing_triage_and_patient_specific_directions-21">invalidate_existing_triage_and_patient_specific_directions!</a></li>
+
+        <li ><a href="#method-i-invalidate_patient_specific_directions-21">invalidate_patient_specific_directions!</a></li>
+
+        <li ><a href="#method-i-invalidate_triages-21">invalidate_triages!</a></li>
 
         <li ><a href="#method-i-matched_manually-3F">matched_manually?</a></li>
 
@@ -773,7 +779,7 @@ fk_rails_...  (team_id =&gt; teams.id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="from_consent_form-21-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/consent.rb, line 168</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/consent.rb, line 173</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">from_consent_form!</span>(<span class="ruby-identifier">consent_form</span>, <span class="ruby-value">patient:</span>, <span class="ruby-value">current_user:</span>)
   <span class="ruby-identifier">raise</span> <span class="ruby-constant">ConsentFormNotRecorded</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">consent_form</span>.<span class="ruby-identifier">recorded?</span>
 
@@ -899,17 +905,22 @@ fk_rails_...  (team_id =&gt; teams.id)</pre>
   <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">flu?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">vaccine_method_nasal?</span>
 <span class="ruby-keyword">end</span>
 
+<span class="ruby-comment"># Conditionally invalidate triages and PSDs when recording a new consent.</span>
+<span class="ruby-comment"># Only invalidates if the new consent has health answers requiring triage,</span>
+<span class="ruby-comment"># meaning it supersedes any existing triages.</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">invalidate_existing_triage_and_patient_specific_directions!</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">should_invalidate_existing_patient_specific_directions?</span>
-    <span class="ruby-identifier">patient</span>
-      .<span class="ruby-identifier">patient_specific_directions</span>
-      .<span class="ruby-identifier">where</span>(<span class="ruby-value">academic_year:</span>, <span class="ruby-value">programme_type:</span>)
-      .<span class="ruby-identifier">invalidate_all</span>
+    <span class="ruby-identifier">invalidate_patient_specific_directions!</span>
   <span class="ruby-keyword">end</span>
+  <span class="ruby-identifier">invalidate_triages!</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">should_invalidate_existing_triages?</span>
+<span class="ruby-keyword">end</span>
 
-  <span class="ruby-keyword">if</span> <span class="ruby-identifier">should_invalidate_existing_triages?</span>
-    <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">triages</span>.<span class="ruby-identifier">where</span>(<span class="ruby-value">academic_year:</span>, <span class="ruby-value">programme_type:</span>).<span class="ruby-identifier">invalidate_all</span>
-  <span class="ruby-keyword">end</span>
+<span class="ruby-comment"># Unconditionally invalidate all triages and PSDs for this consent&#39;s</span>
+<span class="ruby-comment"># patient/programme/academic year. Used when withdrawing or invalidating</span>
+<span class="ruby-comment"># an existing consent.</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">invalidate_all_triages_and_patient_specific_directions!</span>
+  <span class="ruby-identifier">invalidate_triages!</span>
+  <span class="ruby-identifier">invalidate_patient_specific_directions!</span>
 <span class="ruby-keyword">end</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">parent_relationship</span>
@@ -970,7 +981,19 @@ fk_rails_...  (team_id =&gt; teams.id)</pre>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">notifier</span> = <span class="ruby-constant">Notifier</span><span class="ruby-operator">::</span><span class="ruby-constant">Consent</span>.<span class="ruby-identifier">new</span>(<span class="ruby-keyword">self</span>)
 
-<span class="ruby-keyword">class</span> </pre>
+<span class="ruby-keyword">class</span> <span class="ruby-constant">ConsentFormNotRecorded</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">StandardError</span>
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-identifier">private</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">invalidate_triages!</span>
+  <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">triages</span>.<span class="ruby-identifier">where</span>(<span class="ruby-value">academic_year:</span>, <span class="ruby-value">programme_type:</span>).<span class="ruby-identifier">invalidate_all</span>
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">invalidate_patient_specific_directions!</span>
+  <span class="ruby-identifier">patient</span>
+    .<span class="ruby-identifier">patient_specific_directions</span>
+    .<span class="ruby-identifier">where</span>(<span class="ruby-value">academic_year:</span>, <span class="ruby-value">programme_type:</span></pre>
           </div>
 
 
@@ -1043,17 +1066,22 @@ fk_rails_...  (team_id =&gt; teams.id)</pre>
   <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">flu?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">vaccine_method_nasal?</span>
 <span class="ruby-keyword">end</span>
 
+<span class="ruby-comment"># Conditionally invalidate triages and PSDs when recording a new consent.</span>
+<span class="ruby-comment"># Only invalidates if the new consent has health answers requiring triage,</span>
+<span class="ruby-comment"># meaning it supersedes any existing triages.</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">invalidate_existing_triage_and_patient_specific_directions!</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">should_invalidate_existing_patient_specific_directions?</span>
-    <span class="ruby-identifier">patient</span>
-      .<span class="ruby-identifier">patient_specific_directions</span>
-      .<span class="ruby-identifier">where</span>(<span class="ruby-value">academic_year:</span>, <span class="ruby-value">programme_type:</span>)
-      .<span class="ruby-identifier">invalidate_all</span>
+    <span class="ruby-identifier">invalidate_patient_specific_directions!</span>
   <span class="ruby-keyword">end</span>
+  <span class="ruby-identifier">invalidate_triages!</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">should_invalidate_existing_triages?</span>
+<span class="ruby-keyword">end</span>
 
-  <span class="ruby-keyword">if</span> <span class="ruby-identifier">should_invalidate_existing_triages?</span>
-    <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">triages</span>.<span class="ruby-identifier">where</span>(<span class="ruby-value">academic_year:</span>, <span class="ruby-value">programme_type:</span>).<span class="ruby-identifier">invalidate_all</span>
-  <span class="ruby-keyword">end</span>
+<span class="ruby-comment"># Unconditionally invalidate all triages and PSDs for this consent&#39;s</span>
+<span class="ruby-comment"># patient/programme/academic year. Used when withdrawing or invalidating</span>
+<span class="ruby-comment"># an existing consent.</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">invalidate_all_triages_and_patient_specific_directions!</span>
+  <span class="ruby-identifier">invalidate_triages!</span>
+  <span class="ruby-identifier">invalidate_patient_specific_directions!</span>
 <span class="ruby-keyword">end</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">parent_relationship</span>
@@ -1115,6 +1143,19 @@ fk_rails_...  (team_id =&gt; teams.id)</pre>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">notifier</span> = <span class="ruby-constant">Notifier</span><span class="ruby-operator">::</span><span class="ruby-constant">Consent</span>.<span class="ruby-identifier">new</span>(<span class="ruby-keyword">self</span>)
 
 <span class="ruby-keyword">class</span> <span class="ruby-constant">ConsentFormNotRecorded</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">StandardError</span>
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-identifier">private</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">invalidate_triages!</span>
+  <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">triages</span>.<span class="ruby-identifier">where</span>(<span class="ruby-value">academic_year:</span>, <span class="ruby-value">programme_type:</span>).<span class="ruby-identifier">invalidate_all</span>
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">invalidate_patient_specific_directions!</span>
+  <span class="ruby-identifier">patient</span>
+    .<span class="ruby-identifier">patient_specific_directions</span>
+    .<span class="ruby-identifier">where</span>(<span class="ruby-value">academic_year:</span>, <span class="ruby-value">programme_type:</span>)
+    .<span class="ruby-identifier">invalidate_all</span>
 </pre>
           </div>
 
@@ -1219,6 +1260,49 @@ fk_rails_...  (team_id =&gt; teams.id)</pre>
       </div>
 
 
+      <div id="method-i-invalidate_all_triages_and_patient_specific_directions-21" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-invalidate_all_triages_and_patient_specific_directions-21" title="Link to this method">
+                <span class="method-name">invalidate_all_triages_and_patient_specific_directions!</span>
+                <span class="method-args">()</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="invalidate_all_triages_and_patient_specific_directions-21-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/models/consent.rb, line 160</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">invalidate_all_triages_and_patient_specific_directions!</span>
+  <span class="ruby-identifier">invalidate_triages!</span>
+  <span class="ruby-identifier">invalidate_patient_specific_directions!</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          <p>Unconditionally invalidate all triages and PSDs for this consent’s patient/programme/academic year. Used when withdrawing or invalidating an existing consent.</p>
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
       <div id="method-i-invalidate_existing_triage_and_patient_specific_directions-21" class="method-detail anchor-link ">
         <div class="method-header">
 
@@ -1238,18 +1322,99 @@ fk_rails_...  (team_id =&gt; teams.id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="invalidate_existing_triage_and_patient_specific_directions-21-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/consent.rb, line 147</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/consent.rb, line 150</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">invalidate_existing_triage_and_patient_specific_directions!</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">should_invalidate_existing_patient_specific_directions?</span>
-    <span class="ruby-identifier">patient</span>
-      .<span class="ruby-identifier">patient_specific_directions</span>
-      .<span class="ruby-identifier">where</span>(<span class="ruby-value">academic_year:</span>, <span class="ruby-value">programme_type:</span>)
-      .<span class="ruby-identifier">invalidate_all</span>
+    <span class="ruby-identifier">invalidate_patient_specific_directions!</span>
   <span class="ruby-keyword">end</span>
+  <span class="ruby-identifier">invalidate_triages!</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">should_invalidate_existing_triages?</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
 
-  <span class="ruby-keyword">if</span> <span class="ruby-identifier">should_invalidate_existing_triages?</span>
-    <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">triages</span>.<span class="ruby-identifier">where</span>(<span class="ruby-value">academic_year:</span>, <span class="ruby-value">programme_type:</span>).<span class="ruby-identifier">invalidate_all</span>
-  <span class="ruby-keyword">end</span>
+
+
+        <div class="method-description">
+
+
+          <p>Conditionally invalidate triages and PSDs when recording a new consent. Only invalidates if the new consent has health answers requiring triage, meaning it supersedes any existing triages.</p>
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-i-invalidate_patient_specific_directions-21" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-invalidate_patient_specific_directions-21" title="Link to this method">
+                <span class="method-name">invalidate_patient_specific_directions!</span>
+                <span class="method-args">()</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="invalidate_patient_specific_directions-21-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/models/consent.rb, line 232</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">invalidate_patient_specific_directions!</span>
+  <span class="ruby-identifier">patient</span>
+    .<span class="ruby-identifier">patient_specific_directions</span>
+    .<span class="ruby-identifier">where</span>(<span class="ruby-value">academic_year:</span>, <span class="ruby-value">programme_type:</span>)
+    .<span class="ruby-identifier">invalidate_all</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-i-invalidate_triages-21" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-invalidate_triages-21" title="Link to this method">
+                <span class="method-name">invalidate_triages!</span>
+                <span class="method-args">()</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="invalidate_triages-21-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/models/consent.rb, line 228</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">invalidate_triages!</span>
+  <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">triages</span>.<span class="ruby-identifier">where</span>(<span class="ruby-value">academic_year:</span>, <span class="ruby-value">programme_type:</span>).<span class="ruby-identifier">invalidate_all</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -1289,7 +1454,7 @@ fk_rails_...  (team_id =&gt; teams.id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="matched_manually-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/consent.rb, line 164</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/consent.rb, line 169</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">matched_manually?</span>
   <span class="ruby-operator">!</span><span class="ruby-identifier">consent_form</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">recorded_by_user_id</span>.<span class="ruby-identifier">nil?</span>
 <span class="ruby-keyword">end</span></pre>
@@ -1415,10 +1580,23 @@ fk_rails_...  (team_id =&gt; teams.id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="notifier-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/consent.rb, line 216</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/consent.rb, line 221</span>
   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">notifier</span> = <span class="ruby-constant">Notifier</span><span class="ruby-operator">::</span><span class="ruby-constant">Consent</span>.<span class="ruby-identifier">new</span>(<span class="ruby-keyword">self</span>)
 
   <span class="ruby-keyword">class</span> <span class="ruby-constant">ConsentFormNotRecorded</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">StandardError</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-identifier">private</span>
+
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">invalidate_triages!</span>
+    <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">triages</span>.<span class="ruby-identifier">where</span>(<span class="ruby-value">academic_year:</span>, <span class="ruby-value">programme_type:</span>).<span class="ruby-identifier">invalidate_all</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">invalidate_patient_specific_directions!</span>
+    <span class="ruby-identifier">patient</span>
+      .<span class="ruby-identifier">patient_specific_directions</span>
+      .<span class="ruby-identifier">where</span>(<span class="ruby-value">academic_year:</span>, <span class="ruby-value">programme_type:</span>)
+      .<span class="ruby-identifier">invalidate_all</span>
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
@@ -1459,7 +1637,7 @@ fk_rails_...  (team_id =&gt; teams.id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="parent_relationship-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/consent.rb, line 160</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/consent.rb, line 165</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">parent_relationship</span>
   <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">parent_relationships</span>.<span class="ruby-identifier">find</span> { <span class="ruby-identifier">it</span>.<span class="ruby-identifier">parent_id</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">parent_id</span> }
 <span class="ruby-keyword">end</span></pre>
@@ -1519,17 +1697,22 @@ fk_rails_...  (team_id =&gt; teams.id)</pre>
   <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">flu?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">vaccine_method_nasal?</span>
 <span class="ruby-keyword">end</span>
 
+<span class="ruby-comment"># Conditionally invalidate triages and PSDs when recording a new consent.</span>
+<span class="ruby-comment"># Only invalidates if the new consent has health answers requiring triage,</span>
+<span class="ruby-comment"># meaning it supersedes any existing triages.</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">invalidate_existing_triage_and_patient_specific_directions!</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">should_invalidate_existing_patient_specific_directions?</span>
-    <span class="ruby-identifier">patient</span>
-      .<span class="ruby-identifier">patient_specific_directions</span>
-      .<span class="ruby-identifier">where</span>(<span class="ruby-value">academic_year:</span>, <span class="ruby-value">programme_type:</span>)
-      .<span class="ruby-identifier">invalidate_all</span>
+    <span class="ruby-identifier">invalidate_patient_specific_directions!</span>
   <span class="ruby-keyword">end</span>
+  <span class="ruby-identifier">invalidate_triages!</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">should_invalidate_existing_triages?</span>
+<span class="ruby-keyword">end</span>
 
-  <span class="ruby-keyword">if</span> <span class="ruby-identifier">should_invalidate_existing_triages?</span>
-    <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">triages</span>.<span class="ruby-identifier">where</span>(<span class="ruby-value">academic_year:</span>, <span class="ruby-value">programme_type:</span>).<span class="ruby-identifier">invalidate_all</span>
-  <span class="ruby-keyword">end</span>
+<span class="ruby-comment"># Unconditionally invalidate all triages and PSDs for this consent&#39;s</span>
+<span class="ruby-comment"># patient/programme/academic year. Used when withdrawing or invalidating</span>
+<span class="ruby-comment"># an existing consent.</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">invalidate_all_triages_and_patient_specific_directions!</span>
+  <span class="ruby-identifier">invalidate_triages!</span>
+  <span class="ruby-identifier">invalidate_patient_specific_directions!</span>
 <span class="ruby-keyword">end</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">parent_relationship</span>
@@ -1591,6 +1774,19 @@ fk_rails_...  (team_id =&gt; teams.id)</pre>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">notifier</span> = <span class="ruby-constant">Notifier</span><span class="ruby-operator">::</span><span class="ruby-constant">Consent</span>.<span class="ruby-identifier">new</span>(<span class="ruby-keyword">self</span>)
 
 <span class="ruby-keyword">class</span> <span class="ruby-constant">ConsentFormNotRecorded</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">StandardError</span>
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-identifier">private</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">invalidate_triages!</span>
+  <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">triages</span>.<span class="ruby-identifier">where</span>(<span class="ruby-value">academic_year:</span>, <span class="ruby-value">programme_type:</span>).<span class="ruby-identifier">invalidate_all</span>
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">invalidate_patient_specific_directions!</span>
+  <span class="ruby-identifier">patient</span>
+    .<span class="ruby-identifier">patient_specific_directions</span>
+    .<span class="ruby-identifier">where</span>(<span class="ruby-value">academic_year:</span>, <span class="ruby-value">programme_type:</span>)
+    .<span class="ruby-identifier">invalidate_all</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -1652,17 +1848,22 @@ fk_rails_...  (team_id =&gt; teams.id)</pre>
   <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">flu?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">vaccine_method_nasal?</span>
 <span class="ruby-keyword">end</span>
 
+<span class="ruby-comment"># Conditionally invalidate triages and PSDs when recording a new consent.</span>
+<span class="ruby-comment"># Only invalidates if the new consent has health answers requiring triage,</span>
+<span class="ruby-comment"># meaning it supersedes any existing triages.</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">invalidate_existing_triage_and_patient_specific_directions!</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">should_invalidate_existing_patient_specific_directions?</span>
-    <span class="ruby-identifier">patient</span>
-      .<span class="ruby-identifier">patient_specific_directions</span>
-      .<span class="ruby-identifier">where</span>(<span class="ruby-value">academic_year:</span>, <span class="ruby-value">programme_type:</span>)
-      .<span class="ruby-identifier">invalidate_all</span>
+    <span class="ruby-identifier">invalidate_patient_specific_directions!</span>
   <span class="ruby-keyword">end</span>
+  <span class="ruby-identifier">invalidate_triages!</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">should_invalidate_existing_triages?</span>
+<span class="ruby-keyword">end</span>
 
-  <span class="ruby-keyword">if</span> <span class="ruby-identifier">should_invalidate_existing_triages?</span>
-    <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">triages</span>.<span class="ruby-identifier">where</span>(<span class="ruby-value">academic_year:</span>, <span class="ruby-value">programme_type:</span>).<span class="ruby-identifier">invalidate_all</span>
-  <span class="ruby-keyword">end</span>
+<span class="ruby-comment"># Unconditionally invalidate all triages and PSDs for this consent&#39;s</span>
+<span class="ruby-comment"># patient/programme/academic year. Used when withdrawing or invalidating</span>
+<span class="ruby-comment"># an existing consent.</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">invalidate_all_triages_and_patient_specific_directions!</span>
+  <span class="ruby-identifier">invalidate_triages!</span>
+  <span class="ruby-identifier">invalidate_patient_specific_directions!</span>
 <span class="ruby-keyword">end</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">parent_relationship</span>
@@ -1723,7 +1924,20 @@ fk_rails_...  (team_id =&gt; teams.id)</pre>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">notifier</span> = <span class="ruby-constant">Notifier</span><span class="ruby-operator">::</span><span class="ruby-constant">Consent</span>.<span class="ruby-identifier">new</span>(<span class="ruby-keyword">self</span>)
 
-<span class="ruby-keyword">class</span> <span class="ruby-constant">ConsentFormNotRecorded</span> <span class="ruby-operator">&lt;</span> </pre>
+<span class="ruby-keyword">class</span> <span class="ruby-constant">ConsentFormNotRecorded</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">StandardError</span>
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-identifier">private</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">invalidate_triages!</span>
+  <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">triages</span>.<span class="ruby-identifier">where</span>(<span class="ruby-value">academic_year:</span>, <span class="ruby-value">programme_type:</span>).<span class="ruby-identifier">invalidate_all</span>
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">invalidate_patient_specific_directions!</span>
+  <span class="ruby-identifier">patient</span>
+    .<span class="ruby-identifier">patient_specific_directions</span>
+    .<span class="ruby-identifier">where</span>(<span class="ruby-value">academic_year:</span>, <span class="ruby-value">programme_type:</span>)
+    .</pre>
           </div>
 
 
@@ -1890,17 +2104,22 @@ fk_rails_...  (team_id =&gt; teams.id)</pre>
   <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">flu?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">vaccine_method_nasal?</span>
 <span class="ruby-keyword">end</span>
 
+<span class="ruby-comment"># Conditionally invalidate triages and PSDs when recording a new consent.</span>
+<span class="ruby-comment"># Only invalidates if the new consent has health answers requiring triage,</span>
+<span class="ruby-comment"># meaning it supersedes any existing triages.</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">invalidate_existing_triage_and_patient_specific_directions!</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">should_invalidate_existing_patient_specific_directions?</span>
-    <span class="ruby-identifier">patient</span>
-      .<span class="ruby-identifier">patient_specific_directions</span>
-      .<span class="ruby-identifier">where</span>(<span class="ruby-value">academic_year:</span>, <span class="ruby-value">programme_type:</span>)
-      .<span class="ruby-identifier">invalidate_all</span>
+    <span class="ruby-identifier">invalidate_patient_specific_directions!</span>
   <span class="ruby-keyword">end</span>
+  <span class="ruby-identifier">invalidate_triages!</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">should_invalidate_existing_triages?</span>
+<span class="ruby-keyword">end</span>
 
-  <span class="ruby-keyword">if</span> <span class="ruby-identifier">should_invalidate_existing_triages?</span>
-    <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">triages</span>.<span class="ruby-identifier">where</span>(<span class="ruby-value">academic_year:</span>, <span class="ruby-value">programme_type:</span>).<span class="ruby-identifier">invalidate_all</span>
-  <span class="ruby-keyword">end</span>
+<span class="ruby-comment"># Unconditionally invalidate all triages and PSDs for this consent&#39;s</span>
+<span class="ruby-comment"># patient/programme/academic year. Used when withdrawing or invalidating</span>
+<span class="ruby-comment"># an existing consent.</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">invalidate_all_triages_and_patient_specific_directions!</span>
+  <span class="ruby-identifier">invalidate_triages!</span>
+  <span class="ruby-identifier">invalidate_patient_specific_directions!</span>
 <span class="ruby-keyword">end</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">parent_relationship</span>
@@ -1961,7 +2180,20 @@ fk_rails_...  (team_id =&gt; teams.id)</pre>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">notifier</span> = <span class="ruby-constant">Notifier</span><span class="ruby-operator">::</span><span class="ruby-constant">Consent</span>.<span class="ruby-identifier">new</span>(<span class="ruby-keyword">self</span>)
 
-<span class="ruby-keyword">class</span> <span class="ruby-constant">ConsentFormNotRecorded</span> </pre>
+<span class="ruby-keyword">class</span> <span class="ruby-constant">ConsentFormNotRecorded</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">StandardError</span>
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-identifier">private</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">invalidate_triages!</span>
+  <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">triages</span>.<span class="ruby-identifier">where</span>(<span class="ruby-value">academic_year:</span>, <span class="ruby-value">programme_type:</span>).<span class="ruby-identifier">invalidate_all</span>
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">invalidate_patient_specific_directions!</span>
+  <span class="ruby-identifier">patient</span>
+    .<span class="ruby-identifier">patient_specific_directions</span>
+    .<span class="ruby-identifier">where</span>(<span class="ruby-value">academic_year:</span>, <span class="ruby-value">programme_type:</span>)
+</pre>
           </div>
 
 
@@ -2047,7 +2279,7 @@ fk_rails_...  (team_id =&gt; teams.id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="update_vaccination_records_no_notify-21-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/consent.rb, line 204</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/consent.rb, line 209</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">update_vaccination_records_no_notify!</span>
   <span class="ruby-identifier">vaccination_records</span> =
     <span class="ruby-constant">VaccinationRecord</span>.<span class="ruby-identifier">for_programme</span>(<span class="ruby-identifier">programme</span>).<span class="ruby-identifier">where</span>(<span class="ruby-value">patient:</span>)
