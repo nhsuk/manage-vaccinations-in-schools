@@ -129,10 +129,6 @@ class ImmunisationImport < ApplicationRecord
       on_duplicate_key_update: :all
     )
 
-    vaccination_records.each do |vaccination_record|
-      AlreadyHadNotificationSender.call(vaccination_record:)
-    end
-
     PatientLocation.import(patient_locations, on_duplicate_key_ignore: :all)
 
     ArchiveReason.import(archive_reasons, on_duplicate_key_ignore: :all)
@@ -175,6 +171,12 @@ class ImmunisationImport < ApplicationRecord
 
     PatientTeamUpdater.call(patient_scope: patients)
     PatientStatusUpdater.call(patient_scope: patients)
+
+    vaccination_records
+      .includes(:patient, :team)
+      .find_each do |vaccination_record|
+        AlreadyHadNotificationSender.call(vaccination_record:)
+      end
   end
 
   def post_commit!
