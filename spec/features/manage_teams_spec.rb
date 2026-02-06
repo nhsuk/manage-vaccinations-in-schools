@@ -37,6 +37,7 @@ describe "Manage teams" do
 
     when_i_confirm
     then_i_see_the_school_site_confirmation_banner
+    and_i_am_redirected_to_the_team_schools_page
     and_a_school_site_is_created
 
     when_i_go_back
@@ -79,6 +80,9 @@ describe "Manage teams" do
     expect(page).to have_content(@team.schools.first.name)
     expect(page).to have_content(@team.schools.first.address_line_1)
   end
+
+  alias_method :and_i_am_redirected_to_the_team_schools_page,
+               :then_i_see_the_team_schools
 
   def when_i_click_on_sessions
     find(".app-sub-navigation__link", text: "Sessions").click
