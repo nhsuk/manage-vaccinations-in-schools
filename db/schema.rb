@@ -103,12 +103,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_05_080017) do
     t.index ["vaccine_id"], name: "index_batches_on_vaccine_id"
   end
 
-  create_table "batches_immunisation_imports", id: false, force: :cascade do |t|
-    t.bigint "batch_id", null: false
-    t.bigint "immunisation_import_id", null: false
-    t.index ["immunisation_import_id", "batch_id"], name: "idx_on_immunisation_import_id_batch_id_d039b76103", unique: true
-  end
-
   create_table "class_imports", force: :cascade do |t|
     t.integer "academic_year", null: false
     t.integer "changed_record_count"
@@ -926,7 +920,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_05_080017) do
 
   create_table "vaccination_records", force: :cascade do |t|
     t.date "batch_expiry"
-    t.bigint "batch_id"
     t.string "batch_number"
     t.datetime "confirmation_sent_at"
     t.datetime "created_at", null: false
@@ -968,7 +961,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_05_080017) do
     t.datetime "updated_at", null: false
     t.uuid "uuid", default: -> { "gen_random_uuid()" }, null: false
     t.bigint "vaccine_id"
-    t.index ["batch_id"], name: "index_vaccination_records_on_batch_id"
     t.index ["discarded_at"], name: "index_vaccination_records_on_discarded_at"
     t.index ["id"], name: "index_vaccination_records_on_pending_changes_not_empty", where: "(pending_changes <> '{}'::jsonb)"
     t.index ["location_id"], name: "index_vaccination_records_on_location_id"
@@ -1019,8 +1011,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_05_080017) do
   add_foreign_key "attendance_records", "patients"
   add_foreign_key "batches", "teams"
   add_foreign_key "batches", "vaccines"
-  add_foreign_key "batches_immunisation_imports", "batches", on_delete: :cascade
-  add_foreign_key "batches_immunisation_imports", "immunisation_imports", on_delete: :cascade
   add_foreign_key "class_imports", "locations"
   add_foreign_key "class_imports", "teams"
   add_foreign_key "class_imports", "users", column: "uploaded_by_user_id"
@@ -1127,7 +1117,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_05_080017) do
   add_foreign_key "triages", "patients"
   add_foreign_key "triages", "teams"
   add_foreign_key "triages", "users", column: "performed_by_user_id"
-  add_foreign_key "vaccination_records", "batches"
   add_foreign_key "vaccination_records", "patients"
   add_foreign_key "vaccination_records", "sessions"
   add_foreign_key "vaccination_records", "triages", column: "next_dose_delay_triage_id"
