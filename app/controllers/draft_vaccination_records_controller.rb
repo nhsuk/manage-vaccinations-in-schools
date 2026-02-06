@@ -284,11 +284,11 @@ class DraftVaccinationRecordsController < ApplicationController
     @batches =
       scope
         .where(
-          name: @draft_vaccination_record.batch_number,
+          number: @draft_vaccination_record.batch_number,
           expiry: @draft_vaccination_record.batch_expiry
         )
         .or(scope.not_archived.not_expired.where(vaccine: vaccines))
-        .order_by_name_and_expiration
+        .order_by_number_and_expiration
   end
 
   def set_locations

@@ -281,7 +281,7 @@ describe "End-to-end journey" do
       click_button "Continue"
     end
 
-    choose @batch.name
+    choose @batch.number
     click_button "Continue"
 
     click_button "Confirm"

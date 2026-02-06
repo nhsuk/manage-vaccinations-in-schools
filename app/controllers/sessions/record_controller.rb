@@ -81,7 +81,7 @@ class Sessions::RecordController < Sessions::BaseController
         .where(vaccine: vaccines)
         .not_archived
         .not_expired
-        .order_by_name_and_expiration
+        .order_by_number_and_expiration
   end
 
   def filter_on_vaccine_method_or_patient_specific_direction(scope)

@@ -151,7 +151,7 @@ describe "Flu vaccination" do
     end
     click_on "Continue"
 
-    choose @batch.name
+    choose @batch.number
     click_on "Continue"
 
     click_on "Change supplier"

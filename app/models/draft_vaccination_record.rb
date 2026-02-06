@@ -102,7 +102,7 @@ class DraftVaccinationRecord
               presence: true,
               if: :national_reporting_user_and_record?
     validates :batch_number,
-              batch_name: true,
+              batch_number: true,
               if: :national_reporting_user_and_record?
     validates :batch_expiry,
               presence: true,
@@ -268,7 +268,7 @@ class DraftVaccinationRecord
   end
 
   def batch_number
-    batch&.name || super
+    batch&.number || super
   end
 
   def batch_expiry

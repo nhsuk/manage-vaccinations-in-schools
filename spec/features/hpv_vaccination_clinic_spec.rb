@@ -72,7 +72,7 @@ describe "HPV vaccination" do
   end
 
   def and_i_select_the_batch
-    choose @active_batch.name
+    choose @active_batch.number
     click_button "Continue"
   end
 
@@ -84,7 +84,7 @@ describe "HPV vaccination" do
   def then_i_see_the_confirmation_page
     expect(page).to have_content("Check and confirm")
     expect(page).to have_content("Child#{@patient.full_name}")
-    expect(page).to have_content("Batch number#{@active_batch.name}")
+    expect(page).to have_content("Batch number#{@active_batch.number}")
     expect(page).to have_content("MethodIntramuscular")
     expect(page).to have_content("SiteLeft arm")
     expect(page).to have_content("OutcomeVaccinated")

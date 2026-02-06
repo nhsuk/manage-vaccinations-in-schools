@@ -118,7 +118,7 @@ describe Reports::OfflineSessionExporter do
 
         let(:performed_at) { Time.zone.local(2024, 1, 1, 12, 5, 20) }
         let(:batch) { build(:batch, :not_expired) }
-        let(:batch_number) { batch.name }
+        let(:batch_number) { batch.number }
         let(:batch_expiry) { batch.expiry }
         let(:patient_location) { create(:patient_location, patient:, session:) }
         let(:patient) { create(:patient, year_group:) }
@@ -697,7 +697,7 @@ describe Reports::OfflineSessionExporter do
             create(
               :batch,
               :not_expired,
-              name: "BATCH12345",
+              number: "BATCH12345",
               vaccine: programme.vaccines.active.first,
               team:
             )
@@ -777,14 +777,14 @@ describe Reports::OfflineSessionExporter do
           create(
             :batch,
             :not_expired,
-            name: "OTHERBATCH",
+            number: "OTHERBATCH",
             vaccine: Programme.find(other_programme_type).vaccines.first
           )
         end
 
         it "lists all the batch numbers for the programme" do
           batch_numbers = worksheet[1..].map { it.cells.first.value }
-          expect(batch_numbers).to include(*batches.map(&:name))
+          expect(batch_numbers).to include(*batches.map(&:number))
         end
 
         its(:state) { should eq "hidden" }
@@ -918,7 +918,7 @@ describe Reports::OfflineSessionExporter do
               school: create(:school, urn: "123456", name: "Waterloo Road")
             )
           end
-          let(:batch_number) { build(:batch).name }
+          let(:batch_number) { build(:batch).number }
           let(:batch_expiry) { build(:batch, :not_expired).expiry }
           let(:performed_at) { Time.zone.local(2024, 1, 1, 12, 5, 20) }
           let!(:vaccination_record) do
@@ -1022,7 +1022,7 @@ describe Reports::OfflineSessionExporter do
             create(
               :batch,
               :not_expired,
-              name: "BATCH12345",
+              number: "BATCH12345",
               vaccine: programme.vaccines.active.first,
               team:
             )
@@ -1085,14 +1085,14 @@ describe Reports::OfflineSessionExporter do
           create(
             :batch,
             :not_expired,
-            name: "OTHERBATCH",
+            number: "OTHERBATCH",
             vaccine: Programme.find(other_programme_type).vaccines.first
           )
         end
 
         it "lists all the batch numbers for the programme" do
           batch_numbers = worksheet[1..].map { it.cells.first.value }
-          expect(batch_numbers).to match_array(batches.map(&:name))
+          expect(batch_numbers).to match_array(batches.map(&:number))
         end
 
         its(:state) { should eq "hidden" }
