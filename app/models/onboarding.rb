@@ -50,7 +50,7 @@ class Onboarding
 
   USER_ATTRIBUTES = {
     point_of_care: %i[email fallback_role family_name given_name password],
-    national_reporting: []
+    national_reporting: %i[email fallback_role family_name given_name password]
   }.freeze
 
   DEFAULT_PROGRAMMES = {
