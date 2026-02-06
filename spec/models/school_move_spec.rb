@@ -766,7 +766,7 @@ describe SchoolMove do
       it { should be false }
     end
 
-    context "when moving to home educated" do
+    context "when moving to home educated with same team" do
       let(:current_school) { create(:school, team: team_a) }
       let(:patient) { create(:patient, school: current_school) }
       let(:school_move) do
@@ -782,7 +782,25 @@ describe SchoolMove do
       it { should be false }
     end
 
-    context "when moving to unknown school" do
+    context "when moving to home educated with different team" do
+      let(:current_school) { create(:school, team: team_a) }
+      let(:patient) do
+        create(:patient, school: current_school, location: current_school)
+      end
+      let(:school_move) do
+        create(
+          :school_move,
+          :to_home_educated,
+          patient:,
+          team: team_b,
+          academic_year:
+        )
+      end
+
+      it { should be true }
+    end
+
+    context "when moving to unknown school with same team" do
       let(:current_school) { create(:school, team: team_a) }
       let(:patient) { create(:patient, school: current_school) }
       let(:school_move) do
@@ -796,6 +814,24 @@ describe SchoolMove do
       end
 
       it { should be false }
+    end
+
+    context "when moving to unknown school with different team" do
+      let(:current_school) { create(:school, team: team_a) }
+      let(:patient) do
+        create(:patient, school: current_school, location: current_school)
+      end
+      let(:school_move) do
+        create(
+          :school_move,
+          :to_unknown_school,
+          patient:,
+          team: team_b,
+          academic_year:
+        )
+      end
+
+      it { should be true }
     end
 
     context "when moving within the same team" do
@@ -838,7 +874,9 @@ describe SchoolMove do
     context "when moving to a different team" do
       let(:current_school) { create(:school, team: team_a) }
       let(:new_school) { create(:school, team: team_b) }
-      let(:patient) { create(:patient, school: current_school) }
+      let(:patient) do
+        create(:patient, school: current_school, location: current_school)
+      end
       let(:school_move) do
         create(:school_move, patient:, school: new_school, academic_year:)
       end
@@ -850,7 +888,9 @@ describe SchoolMove do
       let(:team_c) { create(:team) }
       let(:current_school) { create(:school, team: team_a) }
       let(:new_school) { create(:school) }
-      let(:patient) { create(:patient, school: current_school) }
+      let(:patient) do
+        create(:patient, school: current_school, location: current_school)
+      end
       let(:school_move) do
         create(:school_move, patient:, school: new_school, academic_year:)
       end
