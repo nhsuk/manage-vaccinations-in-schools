@@ -4,20 +4,6 @@ class PatientImportRow
   include ActiveModel::Model
 
   MAX_FIELD_LENGTH = 300
-  VALID_NAME_REGEX = Regexp.new(<<~REGEXP, Regexp::EXTENDED).freeze
-    ^[
-      \\w            # ASCII alphanumeric characters
-      \u00C0-\u00D6  # Latin 1 Supplement letters
-      \u00D8-\u00F6  # Latin 1 Supplement letters
-      \u00F8-\u017F  # Latin 1 Supplement & Latin Extended A letters
-      \u0020         # Space
-      \u0027         # Apostrophe
-      \u0060         # Grave accent, will be normalised to apostrophe
-      \u2019         # Preferred Unicode apostrophe, will be normalised to apostrophe
-      \u02BC         # Modifier apostrophe, will be normalised to apostrophe
-      \u002E         # Full stop
-    -]+$ # Hyphen has to come at the very end, even for an extended regexp
-  REGEXP
 
   validate :validate_date_of_birth,
            :validate_existing_patients,
@@ -248,8 +234,12 @@ class PatientImportRow
         first_name.header,
         "is greater than #{MAX_FIELD_LENGTH} characters long"
       )
-    elsif !first_name.to_s.match?(VALID_NAME_REGEX)
-      errors.add(first_name.header, "includes invalid character(s)")
+    else
+      NameValidator.new(attributes: [first_name.header]).validate_each(
+        self,
+        first_name.header,
+        first_name.to_s
+      )
     end
   end
 
@@ -267,8 +257,14 @@ class PatientImportRow
         preferred_first_name.header,
         "is greater than #{MAX_FIELD_LENGTH} characters long"
       )
-    elsif !preferred_first_name.to_s.match?(VALID_NAME_REGEX)
-      errors.add(preferred_first_name.header, "includes invalid character(s)")
+    else
+      NameValidator.new(
+        attributes: [preferred_first_name.header]
+      ).validate_each(
+        self,
+        preferred_first_name.header,
+        preferred_first_name.to_s
+      )
     end
   end
 
@@ -282,8 +278,12 @@ class PatientImportRow
         last_name.header,
         "is greater than #{MAX_FIELD_LENGTH} characters long"
       )
-    elsif !last_name.to_s.match?(VALID_NAME_REGEX)
-      errors.add(last_name.header, "includes invalid character(s)")
+    else
+      NameValidator.new(attributes: [last_name.header]).validate_each(
+        self,
+        last_name.header,
+        last_name.to_s
+      )
     end
   end
 
@@ -294,8 +294,12 @@ class PatientImportRow
         preferred_last_name.header,
         "is greater than #{MAX_FIELD_LENGTH} characters long"
       )
-    elsif !preferred_last_name.to_s.match?(VALID_NAME_REGEX)
-      errors.add(preferred_last_name.header, "includes invalid character(s)")
+    else
+      NameValidator.new(attributes: [preferred_last_name.header]).validate_each(
+        self,
+        preferred_last_name.header,
+        preferred_last_name.to_s
+      )
     end
   end
 
@@ -317,8 +321,12 @@ class PatientImportRow
         parent_1_name.header,
         "is greater than #{MAX_FIELD_LENGTH} characters long"
       )
-    elsif !parent_1_name.to_s.match?(VALID_NAME_REGEX)
-      errors.add(parent_1_name.header, "includes invalid character(s)")
+    else
+      NameValidator.new(attributes: [parent_1_name.header]).validate_each(
+        self,
+        parent_1_name.header,
+        parent_1_name.to_s
+      )
     end
   end
 
@@ -357,8 +365,12 @@ class PatientImportRow
         parent_2_name.header,
         "is greater than #{MAX_FIELD_LENGTH} characters long"
       )
-    elsif !parent_2_name.to_s.match?(VALID_NAME_REGEX)
-      errors.add(parent_2_name.header, "includes invalid character(s)")
+    else
+      NameValidator.new(attributes: [parent_2_name.header]).validate_each(
+        self,
+        parent_2_name.header,
+        parent_2_name.to_s
+      )
     end
   end
 

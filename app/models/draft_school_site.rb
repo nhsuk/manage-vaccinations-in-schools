@@ -18,6 +18,22 @@ class DraftSchoolSite
     super(request_session:, **attributes)
   end
 
+  def name=(value)
+    super(ApostropheNormaliser.call(value.presence&.normalise_whitespace))
+  end
+
+  def address_line_1=(value)
+    super(ApostropheNormaliser.call(value.presence&.normalise_whitespace))
+  end
+
+  def address_line_2=(value)
+    super(ApostropheNormaliser.call(value.presence&.normalise_whitespace))
+  end
+
+  def address_town=(value)
+    super(ApostropheNormaliser.call(value.presence&.normalise_whitespace))
+  end
+
   def wizard_steps
     %i[school details confirm]
   end
@@ -28,6 +44,7 @@ class DraftSchoolSite
 
   on_wizard_step :details, exact: true do
     validates :name, presence: true
+    validates :name, name: { school_name: true }
     validates :name,
               exclusion: {
                 in: ->(record) { record.existing_names },
