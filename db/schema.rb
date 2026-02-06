@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_05_081730) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_06_094417) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -757,9 +757,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_05_081730) do
     t.boolean "home_educated"
     t.bigint "patient_id", null: false
     t.bigint "school_id"
+    t.bigint "team_id"
     t.bigint "user_id"
     t.index ["patient_id"], name: "index_school_move_log_entries_on_patient_id"
     t.index ["school_id"], name: "index_school_move_log_entries_on_school_id"
+    t.index ["team_id"], name: "index_school_move_log_entries_on_team_id"
     t.index ["user_id"], name: "index_school_move_log_entries_on_user_id"
   end
 
@@ -1098,6 +1100,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_05_081730) do
   add_foreign_key "reporting_api_one_time_tokens", "users"
   add_foreign_key "school_move_log_entries", "locations", column: "school_id"
   add_foreign_key "school_move_log_entries", "patients"
+  add_foreign_key "school_move_log_entries", "teams"
   add_foreign_key "school_move_log_entries", "users"
   add_foreign_key "school_moves", "locations", column: "school_id"
   add_foreign_key "school_moves", "patients"
