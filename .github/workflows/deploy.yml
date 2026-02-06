@@ -107,7 +107,7 @@ jobs:
         with:
           ref: ${{ needs.determine-git-sha.outputs.git-sha }}
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v5
+        uses: aws-actions/configure-aws-credentials@v6
         with:
           role-to-assume: arn:aws:iam::${{ env.aws_account_id }}:role/GithubDeployECSService
           aws-region: eu-west-2
@@ -181,7 +181,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v5
+        uses: aws-actions/configure-aws-credentials@v6
         with:
           role-to-assume: arn:aws:iam::${{ env.aws_account_id }}:role/GithubDeployECSService
           aws-region: eu-west-2
@@ -308,7 +308,7 @@ jobs:
         service: ${{ inputs.server_types == 'all' && fromJSON('["web", "sidekiq", "ops"]') || fromJSON(format('["{0}"]', inputs.server_types)) }}
     steps:
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v5
+        uses: aws-actions/configure-aws-credentials@v6
         with:
           role-to-assume: arn:aws:iam::${{ env.aws_account_id }}:role/GithubDeployECSService
           aws-region: eu-west-2
