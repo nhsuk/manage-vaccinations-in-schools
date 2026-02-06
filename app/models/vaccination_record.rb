@@ -33,6 +33,7 @@
 #  performed_ods_code                      :string
 #  programme_type                          :enum             not null
 #  protocol                                :integer
+#  reported_at                             :datetime
 #  source                                  :integer          not null
 #  uuid                                    :uuid             not null
 #  created_at                              :datetime         not null
@@ -44,6 +45,7 @@
 #  nhs_immunisations_api_id                :string
 #  patient_id                              :bigint           not null
 #  performed_by_user_id                    :bigint
+#  reported_by_id                          :bigint
 #  session_id                              :bigint
 #  supplied_by_user_id                     :bigint
 #  vaccine_id                              :bigint
@@ -62,6 +64,7 @@
 #  index_vaccination_records_on_performed_by_user_id               (performed_by_user_id)
 #  index_vaccination_records_on_performed_ods_code_and_patient_id  (performed_ods_code,patient_id) WHERE (session_id IS NULL)
 #  index_vaccination_records_on_programme_type                     (programme_type)
+#  index_vaccination_records_on_reported_by_id                     (reported_by_id)
 #  index_vaccination_records_on_session_id                         (session_id)
 #  index_vaccination_records_on_supplied_by_user_id                (supplied_by_user_id)
 #  index_vaccination_records_on_uuid                               (uuid) UNIQUE
@@ -73,6 +76,7 @@
 #  fk_rails_...  (next_dose_delay_triage_id => triages.id)
 #  fk_rails_...  (patient_id => patients.id)
 #  fk_rails_...  (performed_by_user_id => users.id)
+#  fk_rails_...  (reported_by_id => users.id)
 #  fk_rails_...  (session_id => sessions.id)
 #  fk_rails_...  (supplied_by_user_id => users.id)
 #  fk_rails_...  (vaccine_id => vaccines.id)
@@ -114,6 +118,10 @@ class VaccinationRecord < ApplicationRecord
   belongs_to :vaccine, optional: true
 
   belongs_to :performed_by_user, class_name: "User", optional: true
+  belongs_to :reported_by,
+             class_name: "User",
+             foreign_key: :reported_by_id,
+             optional: true
   belongs_to :supplied_by,
              class_name: "User",
              foreign_key: :supplied_by_user_id,
@@ -266,6 +274,10 @@ class VaccinationRecord < ApplicationRecord
   delegate :academic_year, to: :performed_at_date
 
   def not_administered? = !administered?
+
+  def new_already_vaccinated_flow?
+    already_had? && reported_by_id.present?
+  end
 
   def show_in_academic_year?(current_academic_year)
     if programme.seasonal?
