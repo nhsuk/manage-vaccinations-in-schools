@@ -396,6 +396,19 @@ describe AppVaccinationRecordSummaryComponent do
         )
       end
     end
+
+    context "when the vaccination record was sourced from a national reporting" do
+      let(:vaccination_record) do
+        create(:vaccination_record, :sourced_from_national_reporting)
+      end
+
+      it do
+        expect(rendered).not_to have_css(
+          ".nhsuk-summary-list__row",
+          text: "Notes"
+        )
+      end
+    end
   end
 
   describe "source row" do

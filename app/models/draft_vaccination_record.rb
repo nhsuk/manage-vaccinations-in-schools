@@ -58,7 +58,7 @@ class DraftVaccinationRecord
   def wizard_steps
     [
       :identity,
-      :notes,
+      (:notes unless national_reporting_user_and_record?),
       :date_and_time,
       (:outcome if can_change_outcome?),
       (:supplier if requires_supplied_by?),
