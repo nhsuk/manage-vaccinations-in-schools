@@ -21,6 +21,20 @@ describe "Parent interface school team contacts" do
       end
     end
 
+    context "with a search query that matches no schools" do
+      before { get "/find-team-contact/school", params: { q: "Nonexistent XYZ" } }
+
+      it "returns success" do
+        expect(response).to have_http_status(:ok)
+      end
+
+      it "renders the search results section with no results message" do
+        expect(response.body).to include(
+          "No schools matching search criteria found"
+        )
+      end
+    end
+
     context "with a search query that matches a school" do
       before { get "/find-team-contact/school", params: { q: "Test" } }
 

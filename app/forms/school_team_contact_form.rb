@@ -16,6 +16,7 @@ class SchoolTeamContactForm
 
   on_wizard_step :school, exact: true do
     validates :school_id, presence: { message: "Select a school" }
+    validate :school_must_have_team
   end
 
   def school
@@ -24,10 +25,20 @@ class SchoolTeamContactForm
     @school ||=
       Location
         .school
+        .with_team(academic_year: AcademicYear.pending)
         .find_by(id: school_id)
   end
 
   def request_session_key
     "school_team_contact"
+  end
+
+  private
+
+  def school_must_have_team
+    return if school_id.blank?
+    return if school.present?
+
+    errors.add(:school_id, "Select a school")
   end
 end

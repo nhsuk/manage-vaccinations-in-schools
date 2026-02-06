@@ -54,6 +54,7 @@ module ParentInterface
       scope =
         Location
           .school
+          .with_team(academic_year: AcademicYear.pending)
           .search_by_name(@query)
       @pagy, @schools = pagy(scope, limit: 10)
     end
