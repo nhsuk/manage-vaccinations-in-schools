@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_04_073325) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_04_103927) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -1346,6 +1346,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_04_073325) do
       pps.academic_year,
       pps.programme_type,
       pps.status,
+      pps.consent_status,
       tl.team_id,
       pl.location_id AS session_location_id,
           CASE pat.gender_code
