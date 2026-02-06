@@ -62,7 +62,13 @@ class BulkRemoveParentRelationshipsJob < ApplicationJob
       "Consent invalidated on #{timestamp} " \
         "because #{user.full_name} removed all parent-child relationships from an import."
 
-    consents.update_all(notes: invalidation_note, invalidated_at: Time.current)
+    consents.find_each do |consent|
+      consent.update!(notes: invalidation_note, invalidated_at: Time.current)
+
+      consent.update_vaccination_records_no_notify!
+
+      consent.invalidate_all_triages_and_patient_specific_directions!
+    end
   end
 
   def mark_complete_if_finished(import, remove_option)
