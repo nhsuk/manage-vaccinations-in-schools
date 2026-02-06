@@ -4181,7 +4181,7 @@
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">wizard_steps</span>
   [
     <span class="ruby-value">:identity</span>,
-    <span class="ruby-value">:notes</span>,
+    (<span class="ruby-value">:notes</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">national_reporting_user_and_record?</span>),
     <span class="ruby-value">:date_and_time</span>,
     (<span class="ruby-value">:outcome</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">can_change_outcome?</span>),
     (<span class="ruby-value">:supplier</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">requires_supplied_by?</span>),
