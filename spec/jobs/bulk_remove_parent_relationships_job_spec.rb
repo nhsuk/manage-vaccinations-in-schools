@@ -53,6 +53,8 @@ describe BulkRemoveParentRelationshipsJob do
 
     context "remove all parents" do
       let(:remove_option) { "all" }
+      let(:consent_with_given_response) { Consent.response_given.sample }
+      let(:consent_with_refused_response) { Consent.response_refused.sample }
 
       it "removes all parents" do
         expect(import.parent_relationships.count).to eq(5)
@@ -69,6 +71,123 @@ describe BulkRemoveParentRelationshipsJob do
       it "updates import status" do
         perform_job
         expect(import.reload.status).to eq("processed")
+      end
+
+      context "when consents have associated vaccination records" do
+        let!(:vaccination_record) do
+          create(
+            :vaccination_record,
+            :administered,
+            patient: consent_with_given_response.patient,
+            programme: consent_with_given_response.programme,
+            notify_parents: true
+          )
+        end
+
+        it "updates vaccination records' notify_parents flag" do
+          expect { perform_job }.to(
+            change { vaccination_record.reload.notify_parents }
+          )
+        end
+      end
+
+      context "when consents have associated triages" do
+        let!(:triage) do
+          create(
+            :triage,
+            :safe_to_vaccinate,
+            patient: consent_with_given_response.patient,
+            programme_type: consent_with_given_response.programme_type,
+            academic_year: consent_with_given_response.academic_year
+          )
+        end
+
+        it "invalidates triages for the consent's patient/programme/academic year" do
+          expect(triage).not_to be_invalidated
+          perform_job
+          expect(triage.reload).to be_invalidated
+        end
+
+        it "does not invalidate triages for different academic years" do
+          different_year_triage =
+            create(
+              :triage,
+              :safe_to_vaccinate,
+              patient: consent_with_given_response.patient,
+              programme_type: consent_with_given_response.programme_type,
+              academic_year: consent_with_given_response.academic_year - 1
+            )
+
+          perform_job
+          expect(different_year_triage.reload).not_to be_invalidated
+        end
+
+        it "does not invalidate triages for different programme types" do
+          different_programme_type =
+            (
+              Programme.all.map(&:type) -
+                [consent_with_given_response.programme_type]
+            ).sample
+          different_programme_triage =
+            create(
+              :triage,
+              :safe_to_vaccinate,
+              patient: consent_with_given_response.patient,
+              programme_type: different_programme_type,
+              academic_year: consent_with_given_response.academic_year
+            )
+
+          perform_job
+          expect(different_programme_triage.reload).not_to be_invalidated
+        end
+      end
+
+      context "when consents have associated patient specific directions" do
+        let!(:patient_specific_direction) do
+          create(
+            :patient_specific_direction,
+            patient: consent_with_given_response.patient,
+            programme_type: consent_with_given_response.programme_type,
+            academic_year: consent_with_given_response.academic_year
+          )
+        end
+
+        it "invalidates patient specific directions for the consent's patient/programme/academic year" do
+          expect(patient_specific_direction).not_to be_invalidated
+          perform_job
+          expect(patient_specific_direction.reload).to be_invalidated
+        end
+
+        it "does not invalidate patient specific directions for different academic years" do
+          different_year_psd =
+            create(
+              :patient_specific_direction,
+              patient: consent_with_given_response.patient,
+              programme_type: consent_with_given_response.programme_type,
+              academic_year: consent_with_given_response.academic_year + 1
+            )
+
+          perform_job
+          expect(different_year_psd.reload).not_to be_invalidated
+        end
+
+        it "does not invalidate patient specific directions for different programme types" do
+          different_programme_type =
+            (
+              Programme.all.map(&:type) -
+                [consent_with_given_response.programme_type]
+            ).sample
+          different_programme_psd =
+            create(
+              :patient_specific_direction,
+              patient: consent_with_given_response.patient,
+              programme_type: different_programme_type,
+              academic_year: consent_with_given_response.academic_year
+            )
+
+          perform_job
+          expect(different_programme_psd.reload).not_to be_invalidated
+        end
       end
     end
   end
