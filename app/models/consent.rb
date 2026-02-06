@@ -172,6 +172,8 @@ class Consent < ApplicationRecord
       parent =
         consent_form.find_or_create_parent_with_relationship_to!(patient:)
 
+      patient.assign_ethnicity_from!(consent_form)
+
       consents =
         consent_form.consent_form_programmes.map do |consent_form_programme|
           patient.consents.create!(

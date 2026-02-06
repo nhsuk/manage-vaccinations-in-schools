@@ -30,6 +30,39 @@ class Patients::EditController < Patients::BaseController
     end
   end
 
+  def edit_ethnic_group
+    render :ethnic_group
+  end
+
+  def update_ethnic_group
+    @patient.ethnic_group = ethnic_group
+
+    redirect_to edit_patient_path(@patient) and return unless @patient.changed?
+
+    if @patient.save
+      redirect_to edit_ethnic_background_patient_path(@patient)
+    else
+      render :ethnic_group, status: :unprocessable_content
+    end
+  end
+
+  def edit_ethnic_background
+    render :ethnic_background
+  end
+
+  def update_ethnic_background
+    @patient.ethnic_background = ethnic_background
+    @patient.ethnic_background_other = ethnic_background_other
+
+    redirect_to edit_patient_path(@patient) and return unless @patient.changed?
+
+    if @patient.save
+      redirect_to edit_patient_path(@patient)
+    else
+      render :ethnic_background, status: :unprocessable_content
+    end
+  end
+
   def update_nhs_number_merge
     if @form.save
       redirect_to edit_patient_path(@existing_patient)
@@ -88,6 +121,18 @@ class Patients::EditController < Patients::BaseController
   def nhs_number
     params.dig(:patient, :nhs_number) ||
       params.dig(:patient_merge_form, :nhs_number)
+  end
+
+  def ethnic_group
+    params.dig(:patient, :ethnic_group)
+  end
+
+  def ethnic_background
+    params.dig(:patient, :ethnic_background)
+  end
+
+  def ethnic_background_other
+    params.dig(:patient, :ethnic_background_other)
   end
 
   def school_id

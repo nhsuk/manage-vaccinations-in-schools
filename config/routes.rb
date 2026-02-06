@@ -98,6 +98,7 @@ Rails.application.routes.draw do
         get "cannot-consent-responsibility"
         get "confirm"
         put "record"
+        get "submitted"
       end
 
       resources :edit, only: %i[show update], controller: "consent_forms/edit"
@@ -222,6 +223,12 @@ Rails.application.routes.draw do
       put "edit/nhs-number-merge",
           controller: "patients/edit",
           action: "update_nhs_number_merge"
+
+      get "edit/ethnic-group", to: "patients/edit#edit_ethnic_group"
+      put "edit/ethnic-group", to: "patients/edit#update_ethnic_group"
+
+      get "edit/ethnic-background", to: "patients/edit#edit_ethnic_background"
+      put "edit/ethnic-background", to: "patients/edit#update_ethnic_background"
 
       get "edit/school", controller: "patients/edit", action: "edit_school"
       put "edit/school", controller: "patients/edit", action: "update_school"

@@ -14,6 +14,7 @@ describe "Parental consent create patient" do
     when_i_give_consent
     and_i_answer_no_to_all_the_medical_questions
     and_i_submit_the_consent_form
+    and_i_refuse_to_answer_questions_on_ethnicity
     then_i_see_the_consent_confirmation_page
     and_i_wait_for_background_jobs_to_complete
 
@@ -41,6 +42,7 @@ describe "Parental consent create patient" do
     when_i_give_consent
     and_i_answer_no_to_all_the_medical_questions
     and_i_submit_the_consent_form
+    and_i_refuse_to_answer_questions_on_ethnicity
     then_i_see_the_consent_confirmation_page
     and_i_wait_for_background_jobs_to_complete
 
@@ -208,5 +210,10 @@ describe "Parental consent create patient" do
     expect(Patient.last.birth_academic_year).to eq(
       @child.date_of_birth.academic_year
     )
+  end
+
+  def and_i_refuse_to_answer_questions_on_ethnicity
+    choose "No, skip the ethnicity questions"
+    click_on "Continue"
   end
 end

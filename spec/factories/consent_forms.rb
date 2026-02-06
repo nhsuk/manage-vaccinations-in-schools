@@ -13,6 +13,9 @@
 #  confirmation_sent_at                :datetime
 #  date_of_birth                       :date
 #  education_setting                   :integer
+#  ethnic_background                   :integer
+#  ethnic_background_other             :string
+#  ethnic_group                        :integer
 #  family_name                         :text
 #  given_name                          :text
 #  health_answers                      :jsonb            not null
@@ -116,6 +119,18 @@ FactoryBot.define do
 
     school { location.school? ? location : association(:school, team:) }
     school_confirmed { true }
+
+    ethnic_group { ConsentForm.ethnic_backgrounds_by_group.keys.sample }
+
+    ethnic_background do
+      ConsentForm.ethnic_backgrounds_for_group(ethnic_group).sample
+    end
+
+    ethnic_background_other do
+      if ConsentForm.any_other_ethnic_backgrounds.include?(ethnic_background)
+        "Any other background details"
+      end
+    end
 
     health_answers do
       [

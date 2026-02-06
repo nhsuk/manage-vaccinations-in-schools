@@ -13,6 +13,9 @@
 #  confirmation_sent_at                :datetime
 #  date_of_birth                       :date
 #  education_setting                   :integer
+#  ethnic_background                   :integer
+#  ethnic_background_other             :string
+#  ethnic_group                        :integer
 #  family_name                         :text
 #  given_name                          :text
 #  health_answers                      :jsonb            not null
@@ -59,6 +62,7 @@ class ConsentForm < ApplicationRecord
   include Archivable
   include BelongsToTeamLocation
   include Confirmable
+  include EthnicityConcern
   include FullNameConcern
   include GelatineVaccinesConcern
   include HasHealthAnswers
@@ -98,7 +102,8 @@ class ConsentForm < ApplicationRecord
                 :chosen_programme,
                 :injection_alternative,
                 :without_gelatine,
-                :vaccine_stock_is_available
+                :vaccine_stock_is_available,
+                :ethnicity_question
 
   belongs_to :original_session, class_name: "Session", optional: true
   belongs_to :school, class_name: "Location", optional: true
@@ -196,6 +201,23 @@ class ConsentForm < ApplicationRecord
   validates :parent_relationship_other_name,
             presence: true,
             if: :parent_relationship_other?
+
+  validates :ethnicity_question,
+            inclusion: {
+              in: %w[yes no]
+            },
+            on: :ethnicity_update,
+            if: -> { wizard_step == :ethnicity_question }
+
+  validates :ethnic_group,
+            presence: true,
+            on: :ethnicity_update,
+            if: -> { wizard_step == :ethnic_group }
+
+  validates :ethnic_background,
+            presence: true,
+            on: :ethnicity_update,
+            if: -> { wizard_step == :ethnic_background }
 
   normalizes :nhs_number, with: -> { _1.presence&.gsub(/\s/, "") }
 
@@ -300,6 +322,10 @@ class ConsentForm < ApplicationRecord
     validate :health_answers_valid?
   end
 
+  ETHNICITY_STEPS = %i[ethnicity ethnic_group ethnic_background].freeze
+
+  def ethnicity_steps = ETHNICITY_STEPS
+
   def wizard_steps
     refused_and_not_given = response_refused? && !response_given?
     refused_and_given = response_refused? && response_given?
@@ -336,7 +362,7 @@ class ConsentForm < ApplicationRecord
             :reason_for_refusal_notes
           end
         )
-      ].compact
+      ].compact + (recorded? ? ETHNICITY_STEPS : [])
   end
 
   def recorded? = recorded_at != nil

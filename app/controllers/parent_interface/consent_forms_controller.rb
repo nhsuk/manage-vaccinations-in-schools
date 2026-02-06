@@ -58,11 +58,23 @@ module ParentInterface
     def record
       @consent_form.update!(recorded_at: Time.zone.now)
 
-      session.delete(:consent_form_id)
-
       TeamCachedCounts.new(@team).reset_unmatched_consent_responses!
 
-      ProcessConsentFormJob.perform_later(@consent_form)
+      # We enqueue ProcessConsentFormJob here as a backup: ethnicity
+      # is optional and the parent may abandon the journey before
+      # answering. Running the job ensures the consent form is still
+      # processed and, if ethnicity was provided, it gets copied
+      # onto the matched patient.
+      ProcessConsentFormJob.perform_later(@consent_form.id)
+
+      redirect_to parent_interface_consent_form_edit_path(
+                    @consent_form,
+                    "ethnicity"
+                  )
+    end
+
+    def submitted
+      session.delete(:consent_form_id)
     end
 
     private

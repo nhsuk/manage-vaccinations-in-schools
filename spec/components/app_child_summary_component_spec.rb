@@ -24,6 +24,8 @@ describe AppChildSummaryComponent do
       school:,
       gp_practice:,
       restricted_at: restricted ? Time.current : nil,
+      ethnic_group: :mixed_or_multiple_ethnic_groups,
+      ethnic_background: :mixed_white_and_black_caribbean,
       pending_changes: {
         given_name: "Jane",
         date_of_birth: Date.new(2001, 1, 1),
@@ -49,6 +51,14 @@ describe AppChildSummaryComponent do
 
   it { should have_content("Date of birth") }
   it { should have_content("1 January 2000") }
+
+  it { should have_content("Ethnicity") }
+
+  it do
+    expect(rendered).to have_content(
+      "Mixed or multiple ethnic groups (White and Black Caribbean)"
+    )
+  end
 
   it { should have_content("Gender") }
   it { should have_content("Male") }

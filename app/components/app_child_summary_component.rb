@@ -63,6 +63,19 @@ class AppChildSummaryComponent < ViewComponent::Base
               row.with_key { "Date of birth" }
               row.with_value { format_date_of_birth }
             end
+            if @child.ethnic_group.present?
+              summary_list.with_row do |row|
+                row.with_key { "Ethnicity" }
+                row.with_value { format_ethnic_group_and_background(@child) }
+                if (href = @change_links[:ethnicity])
+                  row.with_action(
+                    text: "Change",
+                    href:,
+                    visually_hidden_text: "Ethnicity"
+                  )
+                end
+              end
+            end
             if @child.try(:deceased?)
               summary_list.with_row do |row|
                 row.with_key { "Date of death" }
@@ -156,6 +169,7 @@ class AppChildSummaryComponent < ViewComponent::Base
   private
 
   delegate :format_address_multi_line,
+           :format_ethnic_group_and_background,
            :format_parent_with_relationship,
            :govuk_button_to,
            :govuk_summary_list,

@@ -400,6 +400,12 @@ en:
               too_long: Enter notes that are less than %{count} characters long
         consent_form:
           attributes:
+            ethnic_group:
+              blank: Choose an ethnic group
+            ethnic_background:
+              blank: Choose an ethnic background
+            ethnic_background_other:
+              blank: Enter details about your child’s background
             address_line_1:
               blank: Enter the first line of your address
               too_long: >-
@@ -536,6 +542,8 @@ en:
               too_long: Enter a relationship that is less than 300 characters long
         patient:
           attributes:
+            ethnic_background_other:
+              blank: Enter details about your child's background
             nhs_number:
               invalid: Enter a valid NHS number
               wrong_length: Enter a valid NHS number with 10 characters
