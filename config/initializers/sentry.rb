@@ -60,6 +60,12 @@ Sentry.init do |config|
 
   config.before_send =
     lambda do |event, hint|
+      # We don't want to send these errors to Sentry as they are too noisy. We
+      # don't want to not raise them, however, since they trigger a retry with
+      # Sidekiq, which we want. It can also be handy to have them in Splunk and
+      # Cloudwatch to help with debugging.
+      next if hint[:exception].is_a?(Faraday::TooManyRequestsError)
+
       unless Rails.env.production?
         team_only_api_key_error =
           hint[:exception].is_a?(Notifications::Client::BadRequestError) &&
