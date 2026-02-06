@@ -181,7 +181,13 @@ class SchoolMove < ApplicationRecord
   end
 
   def create_log_entry!(user:)
-    SchoolMoveLogEntry.create!(home_educated:, patient:, school:, user:)
+    SchoolMoveLogEntry.create!(
+      home_educated:,
+      patient:,
+      school:,
+      user:,
+      team_id:
+    )
   end
 
   def create_important_notice!(old_teams, school_move_log_entry)
