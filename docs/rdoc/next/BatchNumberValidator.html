@@ -5,17 +5,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>module TriagesHelper - Mavis Documentation</title>
+<title>class BatchNumberValidator - Mavis Documentation</title>
 
 
   <meta
     name="keywords"
-    content="ruby,module,TriagesHelper"
+    content="ruby,class,BatchNumberValidator"
   >
 
     <meta
       name="description"
-      content="Documentation for the TriagesHelper module"
+      content="Documentation for the BatchNumberValidator class"
     >
 
 
@@ -24,13 +24,13 @@
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content="website">
-<meta property="og:title" content="module TriagesHelper - Mavis Documentation">
+<meta property="og:title" content="class BatchNumberValidator - Mavis Documentation">
 
 
 
     <meta
       property="og:description"
-      content="Documentation for TriagesHelper module - API reference and code examples"
+      content="Documentation for BatchNumberValidator class - API reference and code examples"
     >
 
 
@@ -39,13 +39,13 @@
 
 <!-- Twitter -->
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="module TriagesHelper - Mavis Documentation">
+<meta name="twitter:title" content="class BatchNumberValidator - Mavis Documentation">
 
 
 
     <meta
       name="twitter:description"
-      content="Documentation for TriagesHelper module - API reference and code examples"
+      content="Documentation for BatchNumberValidator class - API reference and code examples"
     >
 
 
@@ -97,7 +97,7 @@
 
 
 
-<body role="document" class="module has-toc">
+<body role="document" class="class has-toc">
 <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
   <!-- Chevron (right arrow) - used for expand/collapse -->
   <symbol
@@ -517,6 +517,21 @@
   
 
   
+<div id="parent-class-section" class="nav-section">
+  <details class="nav-section-collapsible" open>
+    <summary class="nav-section-header">
+      <span class="nav-section-icon">
+        <svg><use href="#icon-ancestors"></use></svg>
+      </span>
+      <span class="nav-section-title">Ancestors</span>
+      <span class="nav-section-chevron">
+        <svg><use href="#icon-chevron"></use></svg>
+      </span>
+    </summary>
+    <ul><li>ActiveModel::EachValidator</li></ul>
+  </details>
+</div>
+
 
   
 
@@ -538,11 +553,7 @@
       </summary>
       <ul class="nav-list" role="directory">
 
-        <li ><a href="#method-i-triage_status_tag">triage_status_tag</a></li>
-
-        <li ><a href="#method-i-triage_status_text">triage_status_text</a></li>
-
-        <li ><a href="#method-i-triage_summary">triage_summary</a></li>
+        <li ><a href="#method-i-validate_each">validate_each</a></li>
 
       </ul>
     </details>
@@ -567,13 +578,13 @@
 
 </nav>
 
-<main role="main" aria-labelledby="module-triageshelper">
+<main role="main" aria-labelledby="class-batchnumbervalidator">
   
   
 
-  <span id="module-TriagesHelper" class="legacy-anchor"></span>
-  <h1 id="module-triageshelper" class="anchor-link module">
-    module TriagesHelper
+  <span id="class-BatchNumberValidator" class="legacy-anchor"></span>
+  <h1 id="class-batchnumbervalidator" class="anchor-link class">
+    class BatchNumberValidator
   </h1>
 
   <section class="description">
@@ -587,6 +598,39 @@
 
 
 
+
+    <section class="constants-list">
+      <header>
+        <h3 id="constants"><a href="#constants">Constants</a></h3>
+      </header>
+      <dl>
+
+        <dt id="FORMAT">FORMAT</dt>
+
+        <dd>
+
+          
+        </dd>
+
+
+        <dt id="MAX_LENGTH">MAX_LENGTH</dt>
+
+        <dd>
+
+          
+        </dd>
+
+
+        <dt id="MIN_LENGTH">MIN_LENGTH</dt>
+
+        <dd>
+
+          
+        </dd>
+
+
+      </dl>
+    </section>
 
 
 
@@ -607,13 +651,13 @@
        </header>
 
 
-      <div id="method-i-triage_status_tag" class="method-detail anchor-link ">
+      <div id="method-i-validate_each" class="method-detail anchor-link ">
         <div class="method-header">
 
             <div class="method-heading">
-              <a href="#method-i-triage_status_tag" title="Link to this method">
-                <span class="method-name">triage_status_tag</span>
-                <span class="method-args">(triage)</span>
+              <a href="#method-i-validate_each" title="Link to this method">
+                <span class="method-name">validate_each</span>
+                <span class="method-args">(record, attribute, value)</span>
               </a>
             </div>
 
@@ -625,157 +669,18 @@
               <summary>Source</summary>
             </details>
           </div>
-          <div class="method-source-code" id="triage_status_tag-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/helpers/triages_helper.rb, line 22</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">triage_status_tag</span>(<span class="ruby-identifier">triage</span>)
-  <span class="ruby-identifier">text</span> = <span class="ruby-identifier">triage_status_text</span>(<span class="ruby-identifier">triage</span>)
-
-  <span class="ruby-identifier">colour</span> =
-    <span class="ruby-keyword">if</span> <span class="ruby-identifier">triage</span>.<span class="ruby-identifier">invalidated?</span>
-      <span class="ruby-string">&quot;grey&quot;</span>
-    <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">triage</span>.<span class="ruby-identifier">safe_to_vaccinate?</span>
-      <span class="ruby-string">&quot;aqua-green&quot;</span>
-    <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">triage</span>.<span class="ruby-identifier">do_not_vaccinate?</span>
-      <span class="ruby-string">&quot;red&quot;</span>
-    <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">triage</span>.<span class="ruby-identifier">delay_vaccination?</span>
-      <span class="ruby-string">&quot;dark-orange&quot;</span>
-    <span class="ruby-keyword">else</span>
-      <span class="ruby-string">&quot;blue&quot;</span>
-    <span class="ruby-keyword">end</span>
-
-  <span class="ruby-comment"># We can’t use the colour param as NHS.UK frontend uses different colour</span>
-  <span class="ruby-comment"># names (aqua-green) than those supported by GOV.UK Frontend (turquoise)</span>
-  <span class="ruby-keyword">if</span> <span class="ruby-identifier">triage</span>.<span class="ruby-identifier">invalidated?</span>
-    <span class="ruby-identifier">safe_join</span>(
-      [
-        <span class="ruby-identifier">govuk_tag</span>(<span class="ruby-value">text:</span> <span class="ruby-identifier">tag</span>.<span class="ruby-identifier">s</span>(<span class="ruby-identifier">text</span>), <span class="ruby-value">classes:</span> <span class="ruby-node">&quot;nhsuk-tag--#{colour}&quot;</span>),
-        <span class="ruby-identifier">tag</span>.<span class="ruby-identifier">span</span>(<span class="ruby-string">&quot;Invalid&quot;</span>, <span class="ruby-value">class:</span> <span class="ruby-string">&quot;nhsuk-u-secondary-text-colour&quot;</span>)
-      ]
-    )
-  <span class="ruby-keyword">else</span>
-    <span class="ruby-identifier">govuk_tag</span>(<span class="ruby-value">text:</span>, <span class="ruby-value">classes:</span> <span class="ruby-node">&quot;nhsuk-tag--#{colour}&quot;</span>)
+          <div class="method-source-code" id="validate_each-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/validators/batch_number_validator.rb, line 8</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_each</span>(<span class="ruby-identifier">record</span>, <span class="ruby-identifier">attribute</span>, <span class="ruby-identifier">value</span>)
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">blank?</span>
+    <span class="ruby-identifier">record</span>.<span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">attribute</span>, <span class="ruby-value">:blank</span>)
+  <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">MIN_LENGTH</span>
+    <span class="ruby-identifier">record</span>.<span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">attribute</span>, <span class="ruby-value">:too_short</span>, <span class="ruby-value">count:</span> <span class="ruby-constant">MIN_LENGTH</span>)
+  <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&gt;</span> <span class="ruby-constant">MAX_LENGTH</span>
+    <span class="ruby-identifier">record</span>.<span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">attribute</span>, <span class="ruby-value">:too_long</span>, <span class="ruby-value">count:</span> <span class="ruby-constant">MAX_LENGTH</span>)
+  <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">value</span> <span class="ruby-operator">!~</span> <span class="ruby-constant">FORMAT</span>
+    <span class="ruby-identifier">record</span>.<span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">attribute</span>, <span class="ruby-value">:invalid</span>)
   <span class="ruby-keyword">end</span>
-<span class="ruby-keyword">end</span></pre>
-          </div>
-
-
-
-        <div class="method-description">
-
-
-          
-
-
-        </div>
-
-
-
-
-
-      </div>
-
-
-      <div id="method-i-triage_status_text" class="method-detail anchor-link ">
-        <div class="method-header">
-
-            <div class="method-heading">
-              <a href="#method-i-triage_status_text" title="Link to this method">
-                <span class="method-name">triage_status_text</span>
-                <span class="method-args">(triage)</span>
-              </a>
-            </div>
-
-        </div>
-
-
-          <div class="method-controls">
-            <details class="method-source-toggle">
-              <summary>Source</summary>
-            </details>
-          </div>
-          <div class="method-source-code" id="triage_status_text-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/helpers/triages_helper.rb, line 4</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">triage_status_text</span>(<span class="ruby-identifier">triage</span>)
-  <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">triage</span>.<span class="ruby-identifier">nil?</span>
-
-  <span class="ruby-keyword">if</span> <span class="ruby-identifier">triage</span>.<span class="ruby-identifier">delay_vaccination?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">triage</span>.<span class="ruby-identifier">delay_vaccination_until</span>.<span class="ruby-identifier">present?</span>
-    <span class="ruby-node">&quot;Delay vaccination until #{triage.delay_vaccination_until.to_fs(:long)}&quot;</span>
-  <span class="ruby-keyword">else</span>
-    <span class="ruby-identifier">status_method</span> =
-      <span class="ruby-keyword">if</span> <span class="ruby-identifier">triage</span>.<span class="ruby-identifier">programme</span>.<span class="ruby-identifier">has_multiple_vaccine_methods?</span> <span class="ruby-operator">&amp;&amp;</span>
-           <span class="ruby-identifier">triage</span>.<span class="ruby-identifier">vaccine_method</span>.<span class="ruby-identifier">present?</span>
-        <span class="ruby-identifier">triage</span>.<span class="ruby-identifier">status</span> <span class="ruby-operator">+</span> <span class="ruby-node">&quot;_#{triage.vaccine_method}&quot;</span>
-      <span class="ruby-keyword">else</span>
-        <span class="ruby-identifier">triage</span>.<span class="ruby-identifier">status</span>
-      <span class="ruby-keyword">end</span>
-
-    <span class="ruby-constant">Triage</span>.<span class="ruby-identifier">human_enum_name</span>(<span class="ruby-value">:status</span>, <span class="ruby-identifier">status_method</span>)
-  <span class="ruby-keyword">end</span>
-<span class="ruby-keyword">end</span></pre>
-          </div>
-
-
-
-        <div class="method-description">
-
-
-          
-
-
-        </div>
-
-
-
-
-
-      </div>
-
-
-      <div id="method-i-triage_summary" class="method-detail anchor-link ">
-        <div class="method-header">
-
-            <div class="method-heading">
-              <a href="#method-i-triage_summary" title="Link to this method">
-                <span class="method-name">triage_summary</span>
-                <span class="method-args">(triage)</span>
-              </a>
-            </div>
-
-        </div>
-
-
-          <div class="method-controls">
-            <details class="method-source-toggle">
-              <summary>Source</summary>
-            </details>
-          </div>
-          <div class="method-source-code" id="triage_summary-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/helpers/triages_helper.rb, line 52</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">triage_summary</span>(<span class="ruby-identifier">triage</span>)
-  <span class="ruby-identifier">prefix</span> =
-    <span class="ruby-keyword">if</span> (<span class="ruby-identifier">performed_by</span> = <span class="ruby-identifier">triage</span>.<span class="ruby-identifier">performed_by</span>)
-      <span class="ruby-node">&quot;#{performed_by.full_name} decided that &quot;</span>
-    <span class="ruby-keyword">else</span>
-      <span class="ruby-string">&quot;&quot;</span>
-    <span class="ruby-keyword">end</span>
-
-  <span class="ruby-identifier">suffix</span> =
-    <span class="ruby-keyword">if</span> <span class="ruby-identifier">triage</span>.<span class="ruby-identifier">safe_to_vaccinate?</span>
-      <span class="ruby-keyword">if</span> <span class="ruby-identifier">triage</span>.<span class="ruby-identifier">vaccine_method</span>.<span class="ruby-identifier">present?</span> <span class="ruby-operator">&amp;&amp;</span>
-           <span class="ruby-identifier">triage</span>.<span class="ruby-identifier">programme</span>.<span class="ruby-identifier">has_multiple_vaccine_methods?</span>
-        <span class="ruby-identifier">vaccination_method</span> =
-          <span class="ruby-constant">Vaccine</span>.<span class="ruby-identifier">human_enum_name</span>(<span class="ruby-value">:method_prefix</span>, <span class="ruby-identifier">triage</span>.<span class="ruby-identifier">vaccine_method</span>)
-        <span class="ruby-node">&quot;is safe to vaccinate using the #{vaccination_method} vaccine only.&quot;</span>
-      <span class="ruby-keyword">else</span>
-        <span class="ruby-string">&quot;is safe to vaccinate.&quot;</span>
-      <span class="ruby-keyword">end</span>
-    <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">triage</span>.<span class="ruby-identifier">do_not_vaccinate?</span>
-      <span class="ruby-string">&quot;should not be vaccinated.&quot;</span>
-    <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">triage</span>.<span class="ruby-identifier">delay_vaccination?</span>
-      <span class="ruby-string">&quot;’s vaccination should be delayed.&quot;</span>
-    <span class="ruby-keyword">end</span>
-
-  <span class="ruby-node">&quot;#{prefix}#{triage.patient.full_name} #{suffix}&quot;</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">suffix</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
 
