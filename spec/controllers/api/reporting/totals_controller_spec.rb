@@ -252,6 +252,40 @@ describe API::Reporting::TotalsController do
       expect(unknown_data["vaccinated"]).to eq(0)
       expect(unknown_data["not_vaccinated"]).to eq(1)
     end
+
+    it "includes consent columns in grouped JSON response" do
+      team = Team.last
+      programme = Programme.hpv
+      team.programmes << programme
+      session = create(:session, team:, programmes: [programme])
+
+      school = create(:school, name: "Test School", urn: "123456")
+
+      patient1 = create(:patient, session:, school:, year_group: 8)
+      create(:consent, :given, patient: patient1, programme:, team:)
+      PatientStatusUpdater.call(patient: patient1)
+
+      patient2 = create(:patient, session:, school:, year_group: 8)
+      create(:consent, :refused, patient: patient2, programme:, team:)
+      PatientStatusUpdater.call(patient: patient2)
+
+      create(:patient, session:, school:, year_group: 8)
+
+      refresh_reporting_views!
+
+      get :index, params: { group: "school", programme: "hpv" }
+
+      expect(response).to have_http_status(:ok)
+
+      school_data = parsed_response.find { it["school_urn"] == "123456" }
+      expect(school_data).to include(
+        "consent_given" => 1,
+        "no_consent" => 2,
+        "consent_no_response" => 1,
+        "consent_refused" => 1,
+        "consent_conflicts" => 0
+      )
+    end
   end
 
   describe "#index.csv" do

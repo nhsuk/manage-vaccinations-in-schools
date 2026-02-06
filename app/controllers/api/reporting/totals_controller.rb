@@ -139,7 +139,12 @@ class API::Reporting::TotalsController < API::Reporting::BaseController
       .merge(
         cohort: record.cohort,
         vaccinated: record.vaccinated,
-        not_vaccinated: record.not_vaccinated
+        not_vaccinated: record.not_vaccinated,
+        consent_given: record.consent_given,
+        no_consent: record.no_consent,
+        consent_no_response: record.consent_no_response,
+        consent_refused: record.consent_refused,
+        consent_conflicts: record.consent_conflicts
       )
   end
 
