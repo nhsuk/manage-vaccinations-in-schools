@@ -27,6 +27,7 @@ describe("National reporting immunisation imports") do
     when_i_go_back_to_the_upload_page
     and_i_upload_a_valid_mixed_file
     then_i_should_see_the_upload
+    and_i_should_see_some_stats_about_the_import
     and_i_should_see_the_vaccination_records
     and_the_patients_should_now_be_associated_with_the_team
     and_the_newly_created_patients_should_be_archived
@@ -181,6 +182,12 @@ describe("National reporting immunisation imports") do
 
   def then_i_should_see_the_upload
     expect(page).to have_content("Uploaded byUSER, Test")
+  end
+
+  def and_i_should_see_some_stats_about_the_import
+    expect(page).to have_content("Total rows in import3")
+    expect(page).to have_content("Valid rows in import2")
+    expect(page).to have_content("Ignored not vaccinated1")
   end
 
   def and_the_patients_should_now_be_associated_with_the_team
