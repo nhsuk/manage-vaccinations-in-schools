@@ -35,7 +35,7 @@ module Imports
         )
 
       if @form.save!
-        redirect_to imports_path, flash: { success: success_flash_text }
+        redirect_to records_imports_path, flash: { success: success_flash_text }
       else
         render :new, status: :unprocessable_content
       end
