@@ -157,13 +157,15 @@ describe "Edit vaccination record" do
       given_i_am_signed_in
       and_an_administered_vaccination_record_exists
       and_the_original_batch_has_been_archived
+      and_there_exists_a_different_batch_with_the_same_number_and_expiry
 
       when_i_go_to_the_vaccination_record_for_the_patient
       and_i_click_on_edit_vaccination_record
       then_i_see_the_edit_vaccination_record_page
 
       when_i_click_on_change_batch
-      and_i_choose_the_original_batch
+      then_i_should_not_see_the_similar_batch
+      when_i_choose_the_original_batch
       then_i_see_the_edit_vaccination_record_page
 
       when_i_click_on_save_changes
@@ -175,13 +177,15 @@ describe "Edit vaccination record" do
       given_i_am_signed_in
       and_an_administered_vaccination_record_exists
       and_the_original_batch_has_expired
+      and_there_exists_a_different_batch_with_the_same_number_and_expiry
 
       when_i_go_to_the_vaccination_record_for_the_patient
       and_i_click_on_edit_vaccination_record
       then_i_see_the_edit_vaccination_record_page
 
       when_i_click_on_change_batch
-      and_i_choose_the_original_batch
+      then_i_should_not_see_the_similar_batch
+      when_i_choose_the_original_batch
       then_i_see_the_edit_vaccination_record_page
 
       when_i_click_on_save_changes
@@ -432,6 +436,7 @@ describe "Edit vaccination record" do
 
   def given_an_hpv_programme_is_underway
     @programme = Programme.hpv
+    @other_programme = Programme.flu
 
     @team =
       create(
@@ -439,12 +444,13 @@ describe "Edit vaccination record" do
         :with_generic_clinic,
         :with_one_nurse,
         ods_code: "R1L",
-        programmes: [@programme]
+        programmes: [@programme, @other_programme]
       )
 
     @vaccine = @programme.vaccines.first
 
-    @original_batch = create(:batch, team: @team, vaccine: @vaccine)
+    @original_batch =
+      create(:batch, :not_expired, team: @team, vaccine: @vaccine)
     @replacement_batch =
       create(:batch, :not_expired, team: @team, vaccine: @vaccine)
 
@@ -521,6 +527,7 @@ describe "Edit vaccination record" do
       create(
         :vaccination_record,
         batch: @original_batch,
+        vaccine: @original_batch.vaccine,
         patient: @patient,
         session: @session,
         programme: @programme
@@ -645,6 +652,17 @@ describe "Edit vaccination record" do
 
     @vaccination_record.batch_expiry = @original_batch.expiry
     @vaccination_record.save!
+  end
+
+  def and_there_exists_a_different_batch_with_the_same_number_and_expiry
+    @different_batch =
+      create(
+        :batch,
+        team: @original_batch.team,
+        number: @original_batch.number,
+        expiry: @original_batch.expiry,
+        vaccine: @other_programme.vaccines.first
+      )
   end
 
   def when_i_go_to_the_vaccination_record_for_the_patient
@@ -778,7 +796,7 @@ describe "Edit vaccination record" do
     click_on "Change batch"
   end
 
-  def and_i_choose_the_original_batch
+  def when_i_choose_the_original_batch
     choose @original_batch.number
     click_on "Continue"
   end
@@ -872,6 +890,10 @@ describe "Edit vaccination record" do
 
   def when_i_click_on_change_batch
     click_on "Change batch"
+  end
+
+  def then_i_should_not_see_the_similar_batch
+    expect(page).not_to have_content(@different_batch.vaccine.brand)
   end
 
   def and_i_click_on_change_vaccine
