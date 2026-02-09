@@ -759,6 +759,9 @@
   <span class="ruby-identifier">log_destroy</span>(<span class="ruby-constant">ImportantNotice</span>.<span class="ruby-identifier">where</span>(<span class="ruby-value">patient_id:</span> <span class="ruby-identifier">patient_ids</span>))
 
   <span class="ruby-identifier">log_destroy</span>(<span class="ruby-constant">ParentRelationship</span>.<span class="ruby-identifier">where</span>(<span class="ruby-value">patient_id:</span> <span class="ruby-identifier">patient_ids</span>))
+  <span class="ruby-identifier">log_destroy</span>(
+    <span class="ruby-constant">PatientProgrammeVaccinationsSearch</span>.<span class="ruby-identifier">where</span>(<span class="ruby-value">patient_id:</span> <span class="ruby-identifier">patient_ids</span>)
+  )
   <span class="ruby-identifier">log_destroy</span>(<span class="ruby-constant">Patient</span>.<span class="ruby-identifier">where</span>(<span class="ruby-value">id:</span> <span class="ruby-identifier">patient_ids</span>))
 
   <span class="ruby-identifier">log_destroy</span>(
@@ -832,7 +835,7 @@
             </details>
           </div>
           <div class="method-source-code" id="destroy_locations-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/controllers/api/testing/teams_controller.rb, line 117</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/controllers/api/testing/teams_controller.rb, line 120</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">destroy_locations</span>
   <span class="ruby-identifier">keep_base_locations</span> =
     <span class="ruby-constant">ActiveModel</span><span class="ruby-operator">::</span><span class="ruby-constant">Type</span><span class="ruby-operator">::</span><span class="ruby-constant">Boolean</span>.<span class="ruby-identifier">new</span>.<span class="ruby-identifier">cast</span>(<span class="ruby-identifier">params</span>[<span class="ruby-value">:keep_base_locations</span>])
