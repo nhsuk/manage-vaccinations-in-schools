@@ -17,6 +17,15 @@ class AppConsentPatientSummaryComponent < ViewComponent::Base
         row.with_value { consent_form_or_patient.date_of_birth.to_fs(:long) }
       end
 
+      if consent_form_or_patient.ethnic_group.present?
+        summary_list.with_row do |row|
+          row.with_key { "Ethnicity" }
+          row.with_value do
+            format_ethnic_group_and_background(consent_form_or_patient)
+          end
+        end
+      end
+
       unless restricted?
         summary_list.with_row do |row|
           row.with_key { "Home address" }
@@ -34,6 +43,7 @@ class AppConsentPatientSummaryComponent < ViewComponent::Base
   private
 
   delegate :format_address_multi_line,
+           :format_ethnic_group_and_background,
            :govuk_summary_list,
            :patient_school,
            to: :helpers
