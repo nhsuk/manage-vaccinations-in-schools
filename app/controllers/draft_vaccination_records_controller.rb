@@ -285,7 +285,8 @@ class DraftVaccinationRecordsController < ApplicationController
       scope
         .where(
           number: @draft_vaccination_record.batch_number,
-          expiry: @draft_vaccination_record.batch_expiry
+          expiry: @draft_vaccination_record.batch_expiry,
+          vaccine: @draft_vaccination_record.vaccine
         )
         .or(scope.not_archived.not_expired.where(vaccine: vaccines))
         .order_by_number_and_expiration
