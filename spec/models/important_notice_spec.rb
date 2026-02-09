@@ -91,7 +91,7 @@ describe ImportantNotice do
 
   describe "#can_dismiss?" do
     subject(:notice) do
-      create(:important_notice, :invalidated, team:, patient:)
+      create(:important_notice, :invalidated, team_id: team.id, patient:)
     end
 
     context "important notices for archived patients can be dismissed" do
