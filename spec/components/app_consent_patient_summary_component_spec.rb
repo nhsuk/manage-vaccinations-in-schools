@@ -24,6 +24,8 @@ describe AppConsentPatientSummaryComponent do
         date_of_birth: Date.new(2000, 1, 1),
         given_name: "John",
         family_name: "Doe",
+        ethnic_group: :mixed_or_multiple_ethnic_groups,
+        ethnic_background: :mixed_white_and_black_caribbean,
         session:
       )
     end
@@ -33,6 +35,14 @@ describe AppConsentPatientSummaryComponent do
 
     it { should have_content("Date of birth") }
     it { should have_content("1 January 2000") }
+
+    it { should have_content("Ethnicity") }
+
+    it do
+      expect(rendered).to have_content(
+        "Mixed or multiple ethnic groups (White and Black Caribbean)"
+      )
+    end
 
     it { should have_content("Home address") }
     it { should have_content("SW1A 1AA") }
