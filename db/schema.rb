@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_06_094417) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_09_161431) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -850,6 +850,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_06_094417) do
     t.integer "days_before_invitations", default: 21, null: false
     t.string "email"
     t.text "name", null: false
+    t.date "national_reporting_cut_off_date"
     t.bigint "organisation_id", null: false
     t.string "phone"
     t.string "phone_instructions"
