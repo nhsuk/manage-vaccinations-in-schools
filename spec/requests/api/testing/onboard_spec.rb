@@ -4,7 +4,9 @@ describe "/api/testing/onboard" do
   before { Flipper.enable(:testing_api) }
   after { Flipper.disable(:testing_api) }
 
-  let(:config) { YAML.safe_load(file_fixture(filename).read) }
+  let(:config) do
+    YAML.safe_load(file_fixture(filename).read, permitted_classes: [Date])
+  end
 
   describe "POST" do
     subject(:request) do
@@ -15,7 +17,7 @@ describe "/api/testing/onboard" do
            }
     end
 
-    context "with a valid configuration file" do
+    context "with a valid configuration file for a point of care team" do
       let(:filename) { "onboarding/point_of_care_valid.yaml" }
 
       before do
@@ -25,6 +27,20 @@ describe "/api/testing/onboard" do
         create(:school, :secondary, :open, urn: "345678")
         create(:school, :secondary, :open, urn: "456789")
       end
+
+      it "responds with created" do
+        request
+        expect(response).to have_http_status(:created)
+      end
+
+      it "creates the team" do
+        request
+        expect(Team.count).to eq(1)
+      end
+    end
+
+    context "with a valid configuration file for a national reporting team" do
+      let(:filename) { "onboarding/national_reporting_valid.yaml" }
 
       it "responds with created" do
         request
