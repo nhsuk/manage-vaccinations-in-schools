@@ -719,6 +719,15 @@
       <span class="ruby-identifier">row</span>.<span class="ruby-identifier">with_value</span> { <span class="ruby-identifier">consent_form_or_patient</span>.<span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">to_fs</span>(<span class="ruby-value">:long</span>) }
     <span class="ruby-keyword">end</span>
 
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">consent_form_or_patient</span>.<span class="ruby-identifier">ethnic_group</span>.<span class="ruby-identifier">present?</span>
+      <span class="ruby-identifier">summary_list</span>.<span class="ruby-identifier">with_row</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">row</span><span class="ruby-operator">|</span>
+        <span class="ruby-identifier">row</span>.<span class="ruby-identifier">with_key</span> { <span class="ruby-string">&quot;Ethnicity&quot;</span> }
+        <span class="ruby-identifier">row</span>.<span class="ruby-identifier">with_value</span> <span class="ruby-keyword">do</span>
+          <span class="ruby-identifier">format_ethnic_group_and_background</span>(<span class="ruby-identifier">consent_form_or_patient</span>)
+        <span class="ruby-keyword">end</span>
+      <span class="ruby-keyword">end</span>
+    <span class="ruby-keyword">end</span>
+
     <span class="ruby-keyword">unless</span> <span class="ruby-identifier">restricted?</span>
       <span class="ruby-identifier">summary_list</span>.<span class="ruby-identifier">with_row</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">row</span><span class="ruby-operator">|</span>
         <span class="ruby-identifier">row</span>.<span class="ruby-identifier">with_key</span> { <span class="ruby-string">&quot;Home address&quot;</span> }
