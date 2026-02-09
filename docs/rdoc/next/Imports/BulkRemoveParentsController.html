@@ -705,7 +705,7 @@
     )
 
   <span class="ruby-keyword">if</span> <span class="ruby-ivar">@form</span>.<span class="ruby-identifier">save!</span>
-    <span class="ruby-identifier">redirect_to</span> <span class="ruby-identifier">imports_path</span>, <span class="ruby-value">flash:</span> { <span class="ruby-value">success:</span> <span class="ruby-identifier">success_flash_text</span> }
+    <span class="ruby-identifier">redirect_to</span> <span class="ruby-identifier">records_imports_path</span>, <span class="ruby-value">flash:</span> { <span class="ruby-value">success:</span> <span class="ruby-identifier">success_flash_text</span> }
   <span class="ruby-keyword">else</span>
     <span class="ruby-identifier">render</span> <span class="ruby-value">:new</span>, <span class="ruby-value">status:</span> <span class="ruby-value">:unprocessable_content</span>
   <span class="ruby-keyword">end</span>
