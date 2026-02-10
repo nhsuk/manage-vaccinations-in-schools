@@ -6,6 +6,7 @@ describe "MMR/MMRV" do
   scenario "record a patient born after January 2020 as already had their 1st MMR dose outside the school session" do
     given_an_mmr_programme_with_a_session
     and_a_patient_is_in_the_session_born_after_january_2020
+    and_the_patient_has_a_parent_with_a_consent_request
     and_the_patient_doesnt_need_triage
     and_the_patient_has_not_had_a_first_dose
 
@@ -37,7 +38,9 @@ describe "MMR/MMRV" do
     and_had_been_vaccinated_with_mmr
     and_the_dose_number_is_first
     and_the_consent_requests_are_sent
+
     then_the_parent_doesnt_receive_a_consent_request
+    and_the_parent_receives_an_already_vaccinated_email
   end
 
   scenario "record a patient born before January 2020 as already had their 1st MMR dose outside the school session" do
@@ -116,6 +119,18 @@ describe "MMR/MMRV" do
   def and_a_patient_is_in_the_session_born_after_january_2020
     @patient =
       create(:patient, session: @session, date_of_birth: Date.new(2020, 1, 1))
+  end
+
+  def and_the_patient_has_a_parent_with_a_consent_request
+    @parent = create(:parent, family_name: @patient.family_name)
+    create(:parent_relationship, :mother, parent: @parent, patient: @patient)
+
+    create(
+      :consent_notification,
+      :request,
+      session: @session,
+      patient: @patient
+    )
   end
 
   def and_a_patient_is_in_the_session_born_before_january_2020
@@ -289,6 +304,10 @@ describe "MMR/MMRV" do
   end
 
   def then_the_parent_doesnt_receive_a_consent_request
-    expect(EmailDeliveryJob.deliveries).to be_empty
+    expect_no_email_to(@parent.email, :consent_school_request_mmr)
+  end
+
+  def and_the_parent_receives_an_already_vaccinated_email
+    expect_email_to(@parent.email, :vaccination_already_had)
   end
 end

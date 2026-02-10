@@ -178,6 +178,7 @@ class DraftVaccinationRecordsController < ApplicationController
           @vaccination_record.outcome_changed? ||
             @vaccination_record.batch_number_changed? ||
             @vaccination_record.batch_expiry_changed? ||
+            @vaccination_record.recorded_at_changed? ||
             performed_at_date_changed
         )
     if is_new_record
@@ -185,6 +186,7 @@ class DraftVaccinationRecordsController < ApplicationController
         VaccinationNotificationCriteria.call(
           vaccination_record: @vaccination_record
         )
+      should_notify_parents = @vaccination_record.notify_parents
     end
 
     @vaccination_record.save!

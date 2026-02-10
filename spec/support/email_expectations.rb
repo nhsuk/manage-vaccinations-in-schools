@@ -18,6 +18,16 @@ module EmailExpectations
     expect(email[:template_id]).to eq(template_id)
   end
 
+  def expect_no_email_to(email_address, template_name)
+    template_id = GOVUK_NOTIFY_EMAIL_TEMPLATES.fetch(template_name)
+
+    expect(
+      email_deliveries.any? do
+        it[:email_address] == email_address && it[:template_id] == template_id
+      end
+    ).to be false
+  end
+
   def email_deliveries
     perform_enqueued_jobs(only: EmailDeliveryJob)
 
