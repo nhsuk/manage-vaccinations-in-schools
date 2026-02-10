@@ -167,7 +167,7 @@ module MavisCLI
 
         puts "Enqueueing jobs to update statuses for" \
                " #{patient_ids_to_update.size} patient(s) left over..."
-        StatusUpdaterJob.perform_bulk(patient_ids_to_update.zip)
+        PatientStatusUpdaterJob.perform_bulk(patient_ids_to_update.zip)
       end
 
       def find_patients_for_team(team)

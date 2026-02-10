@@ -406,6 +406,6 @@ create_imports(user, team)
 create_school_moves(team)
 
 PatientTeamUpdater.call
-StatusUpdater.call
+PatientStatusUpdater.call
 
 Rake::Task["smoke:seed"].execute

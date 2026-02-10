@@ -159,13 +159,13 @@ describe "Tallying" do
   end
 
   def then_i_see_my_vaccination_tallies_for_today_with_default_batches
-    expect(page).to have_content("Fluenz 1 #{@fluenz_batch.name} Change")
+    expect(page).to have_content("Fluenz 1 #{@fluenz_batch.number} Change")
     expect(page).to have_content("Gardasil 9 2 Not set")
-    expect(page).to have_content("Cervarix 1 #{@cervarix_batch.name} Change")
+    expect(page).to have_content("Cervarix 1 #{@cervarix_batch.number} Change")
   end
 
   def then_i_see_my_vaccination_tallies_with_all_zero_values_with_default_batches
-    expect(page).to have_content("Fluenz 0 #{@fluenz_batch.name} Change")
+    expect(page).to have_content("Fluenz 0 #{@fluenz_batch.number} Change")
     expect(page).to have_content("Gardasil 9 0 Not set")
   end
 

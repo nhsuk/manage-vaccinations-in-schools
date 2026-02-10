@@ -22,6 +22,17 @@ GIT
       activerecord (>= 5.2, < 8.2)
       activesupport (>= 5.2, < 8.2)
 
+GIT
+  remote: https://github.com/x-govuk/govuk-form-builder.git
+  revision: 8fb16627dec7d2786e481029e1645a85e4d7df15
+  ref: main
+  specs:
+    govuk_design_system_formbuilder (5.13.0)
+      actionview (>= 6.1)
+      activemodel (>= 6.1)
+      activesupport (>= 6.1)
+      html-attributes-utils (~> 1)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -111,7 +122,7 @@ GEM
       public_suffix (>= 2.0.2, < 8.0)
     aes_key_wrap (1.1.0)
     amazing_print (2.0.0)
-    annotaterb (4.20.0)
+    annotaterb (4.21.0)
       activerecord (>= 6.0.0)
       activesupport (>= 6.0.0)
     array_enum (1.6.0)
@@ -165,9 +176,9 @@ GEM
     bigdecimal (4.0.1)
     bindata (2.5.1)
     bindex (0.8.1)
-    bootsnap (1.21.1)
+    bootsnap (1.22.0)
       msgpack (~> 1.2)
-    brakeman (8.0.0)
+    brakeman (8.0.2)
       racc
     builder (3.3.0)
     capybara (3.40.0)
@@ -289,11 +300,6 @@ GEM
       html-attributes-utils (~> 1.0.0, >= 1.0.0)
       pagy (>= 6, < 10)
       view_component (>= 4.0, < 4.2)
-    govuk_design_system_formbuilder (5.13.0)
-      actionview (>= 6.1)
-      activemodel (>= 6.1)
-      activesupport (>= 6.1)
-      html-attributes-utils (~> 1)
     govuk_markdown (2.0.3)
       activesupport
       redcarpet
@@ -452,7 +458,7 @@ GEM
       racc
     pg (1.6.3-arm64-darwin)
     pg (1.6.3-x86_64-linux)
-    phonelib (0.10.15)
+    phonelib (0.10.16)
     pp (0.6.3)
       prettyprint
     prettier_print (1.2.1)
@@ -734,8 +740,8 @@ GEM
       unicode-display_width (~> 3.1)
     temple (0.10.4)
     thor (1.5.0)
-    thruster (0.1.17-arm64-darwin)
-    thruster (0.1.17-x86_64-linux)
+    thruster (0.1.18-arm64-darwin)
+    thruster (0.1.18-x86_64-linux)
     tilt (2.7.0)
     timeout (0.6.0)
     tsort (0.2.0)
@@ -840,7 +846,7 @@ DEPENDENCIES
   flipper-active_record
   flipper-ui
   govuk-components
-  govuk_design_system_formbuilder
+  govuk_design_system_formbuilder!
   govuk_markdown
   hotwire-livereload
   indefinite_article

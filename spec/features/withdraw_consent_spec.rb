@@ -65,7 +65,7 @@ describe "Withdraw consent" do
   def and_consent_has_been_given
     @consent =
       create(:consent, :given, patient: @patient, programme: @programme)
-    StatusUpdater.call(patient: @patient.reload)
+    PatientStatusUpdater.call(patient: @patient.reload)
     @parent = @consent.parent
   end
 
@@ -76,7 +76,7 @@ describe "Withdraw consent" do
       patient: @patient,
       programme: @programme
     )
-    StatusUpdater.call(patient: @patient.reload)
+    PatientStatusUpdater.call(patient: @patient.reload)
   end
 
   def and_the_patient_is_ready_for_the_nurse

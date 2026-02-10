@@ -3,6 +3,8 @@ basic_auth: Require users to sign in with basic authentication before they
 
 dev_tools: Developer tools useful for testing and debugging.
 
+ethnicity_capture: Enable optional ethnicity capture after parent consent
+
 imms_api_enqueue_rolling_searches: |
   Enables enqueueing of vaccination searches for patients not in sessions,
   spread over a period of 28 days, in the EnqueueVaccinationsSearchInNHSJob.

@@ -20,7 +20,7 @@ describe "Verbal consent" do
     @parent = create(:parent)
     @patient = create(:patient, session: @session, parents: [@parent])
 
-    StatusUpdater.call
+    PatientStatusUpdater.call
 
     sign_in team.users.first
   end

@@ -98,6 +98,7 @@ Rails.application.routes.draw do
         get "cannot-consent-responsibility"
         get "confirm"
         put "record"
+        get "submitted"
       end
 
       resources :edit, only: %i[show update], controller: "consent_forms/edit"
@@ -162,6 +163,9 @@ Rails.application.routes.draw do
   resource :draft_vaccination_record,
            only: %i[show update],
            path: "draft-vaccination-record/:id"
+  resource :draft_school_site,
+           only: %i[show update],
+           path: "draft-school-site/:id"
 
   resources :immunisation_imports,
             path: "immunisation-imports",
@@ -220,6 +224,12 @@ Rails.application.routes.draw do
           controller: "patients/edit",
           action: "update_nhs_number_merge"
 
+      get "edit/ethnic-group", to: "patients/edit#edit_ethnic_group"
+      put "edit/ethnic-group", to: "patients/edit#update_ethnic_group"
+
+      get "edit/ethnic-background", to: "patients/edit#edit_ethnic_background"
+      put "edit/ethnic-background", to: "patients/edit#update_ethnic_background"
+
       get "edit/school", controller: "patients/edit", action: "edit_school"
       put "edit/school", controller: "patients/edit", action: "update_school"
     end
@@ -255,6 +265,7 @@ Rails.application.routes.draw do
     get "import"
     get "patients"
     get "sessions"
+    collection { get "new-site", to: redirect("/draft-school-site/school") }
   end
 
   resources :sessions, only: %i[index new show edit], param: :slug do

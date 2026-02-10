@@ -13,6 +13,9 @@
 #  date_of_birth              :date             not null
 #  date_of_death              :date
 #  date_of_death_recorded_at  :datetime
+#  ethnic_background          :integer
+#  ethnic_background_other    :string
+#  ethnic_group               :integer
 #  family_name                :string           not null
 #  gender_code                :integer          default("not_known"), not null
 #  given_name                 :string           not null
@@ -118,6 +121,18 @@ FactoryBot.define do
     address_line_2 { Faker::Address.secondary_address }
     address_town { Faker::Address.city }
     address_postcode { Faker::Address.uk_postcode }
+
+    ethnic_group { ConsentForm.ethnic_backgrounds_by_group.keys.sample }
+
+    ethnic_background do
+      ConsentForm.ethnic_backgrounds_for_group(ethnic_group).sample
+    end
+
+    ethnic_background_other do
+      if ConsentForm.any_other_ethnic_backgrounds.include?(ethnic_background)
+        "Any other background details"
+      end
+    end
 
     parent_relationships do
       parents.map do |parent|

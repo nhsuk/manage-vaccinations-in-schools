@@ -32,21 +32,7 @@ module ParentInterface
 
       model.wizard_step = current_step
 
-      if is_health_question_step?
-        @health_answer.assign_attributes(health_answer_params)
-        model.health_question_number = @question_number
-      elsif step == "school"
-        school_id = update_params[:school_id]
-        if school_id == HOME_EDUCATED_SCHOOL_ID
-          model.school = nil
-          model.education_setting = "home"
-        else
-          model.school_id = school_id
-          model.education_setting = "school"
-        end
-      else
-        model.assign_attributes(update_params)
-      end
+      assign_attributes_for_current_step(model)
 
       if current_step == :parent
         if @consent_form.parental_responsibility == "no"
@@ -68,16 +54,71 @@ module ParentInterface
       elsif is_response_step?
         @consent_form.update_programme_responses
         @consent_form.seed_health_questions
+      elsif ethnicity_flow_complete?
+        handle_ethnicity_completion!(model)
+        return
       end
 
       reload_steps
 
       skip_to_confirm_or_next_health_question
 
-      render_wizard model
+      render_wizard model, context:
     end
 
     private
+
+    def assign_attributes_for_current_step(model)
+      if is_health_question_step?
+        @health_answer.assign_attributes(health_answer_params)
+        model.health_question_number = @question_number
+      elsif step == "school"
+        school_id = update_params[:school_id]
+        if school_id == HOME_EDUCATED_SCHOOL_ID
+          model.school = nil
+          model.education_setting = "home"
+        else
+          model.school_id = school_id
+          model.education_setting = "school"
+        end
+      else
+        model.assign_attributes(update_params)
+      end
+    end
+
+    def handle_ethnicity_completion!(model)
+      model.save!
+
+      # This job will have already been scheduled in the
+      # background after recording the consent. If the
+      # parent decides to answer "Yes" or "No" (they might not)
+      # to the ethnicity questions, the job will make sure the
+      # ethnicity information is copied to the matched patient.
+      ProcessConsentFormJob.perform_later(model.id)
+
+      redirect_to submitted_parent_interface_consent_form_path(model)
+    end
+
+    def context
+      if @consent_form.ethnicity_steps.include?(current_step)
+        :ethnicity_update
+      else
+        :update
+      end
+    end
+
+    def ethnicity_flow_complete?
+      if current_step == :ethnicity && @consent_form.ethnicity_question == "no"
+        return true
+      end
+
+      if current_step == :ethnic_background &&
+           @consent_form.ethnic_background.present?
+        return true
+      end
+
+      false
+    end
 
     def finish_wizard_path
       confirm_parent_interface_consent_form_path(@consent_form)
@@ -102,6 +143,9 @@ module ParentInterface
           date_of_birth(1i)
         ],
         education_setting: %i[education_setting],
+        ethnicity: %i[ethnicity_question],
+        ethnic_group: %i[ethnic_group],
+        ethnic_background: %i[ethnic_background ethnic_background_other],
         injection_alternative: %i[injection_alternative],
         name: %i[
           given_name
@@ -137,7 +181,12 @@ module ParentInterface
     end
 
     def set_steps
-      self.steps = @consent_form.wizard_steps
+      self.steps =
+        if @consent_form.recorded?
+          @consent_form.ethnicity_steps
+        else
+          @consent_form.wizard_steps
+        end
     end
 
     def set_health_answer

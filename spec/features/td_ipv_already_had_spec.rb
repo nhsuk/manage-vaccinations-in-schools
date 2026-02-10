@@ -99,7 +99,7 @@ describe "Td/IPV" do
   end
 
   def and_the_patient_doesnt_need_triage
-    StatusUpdater.call(patient: @patient.reload)
+    PatientStatusUpdater.call(patient: @patient.reload)
   end
 
   def and_the_patient_needs_triage
@@ -110,7 +110,7 @@ describe "Td/IPV" do
       patient: @patient,
       programme: @programme
     )
-    StatusUpdater.call(patient: @patient.reload)
+    PatientStatusUpdater.call(patient: @patient.reload)
   end
 
   def when_i_go_the_session

@@ -13,6 +13,9 @@
 #  date_of_birth              :date             not null
 #  date_of_death              :date
 #  date_of_death_recorded_at  :datetime
+#  ethnic_background          :integer
+#  ethnic_background_other    :string
+#  ethnic_group               :integer
 #  family_name                :string           not null
 #  gender_code                :integer          default("not_known"), not null
 #  given_name                 :string           not null
@@ -52,6 +55,7 @@
 class Patient < ApplicationRecord
   include AddressConcern
   include AgeConcern
+  include EthnicityConcern
   include FullNameConcern
   include Invalidatable
   include PendingChangesConcern
@@ -117,8 +121,7 @@ class Patient < ApplicationRecord
     AND team_locations.academic_year = patient_locations.academic_year
     INNER JOIN sessions
     ON sessions.team_location_id = team_locations.id
-    AND (patient_locations.date_range IS NULL OR sessions.dates = '{}'
-        OR patient_locations.date_range @> ANY(sessions.dates))
+    AND (sessions.dates = '{}' OR patient_locations.date_range @> ANY(sessions.dates))
   SQL
 
   scope :joins_session_programme_year_groups, -> { joins(<<-SQL) }

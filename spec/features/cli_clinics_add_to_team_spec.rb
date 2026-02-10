@@ -58,7 +58,7 @@ describe "mavis clinics add-to-team" do
 
   def command
     Dry::CLI.new(MavisCLI).call(
-      arguments: %w[clinics add-to-team abc Team 123456]
+      arguments: %w[clinics add-to-team abc Team Clinic]
     )
   end
 
@@ -101,11 +101,11 @@ describe "mavis clinics add-to-team" do
   end
 
   def then_a_clinic_not_found_error_message_is_displayed
-    expect(@output).to include("Could not find clinic with ODS code 123456.")
+    expect(@output).to include("Could not find clinic with name Clinic.")
   end
 
   def then_a_clinic_belongs_to_another_team_warning_message_is_displayed
-    expect(@output).to include("123456 previously belonged to Other Subteam.")
+    expect(@output).to include("Clinic previously belonged to Other Subteam.")
   end
 
   def then_the_clinic_is_added_to_the_team

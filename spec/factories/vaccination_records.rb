@@ -26,8 +26,7 @@
 #  notify_parents                          :boolean
 #  outcome                                 :integer          not null
 #  pending_changes                         :jsonb            not null
-#  performed_at                            :datetime         not null
-#  performed_at_date                       :date
+#  performed_at_date                       :date             not null
 #  performed_at_time                       :time
 #  performed_by_family_name                :string
 #  performed_by_given_name                 :string
@@ -107,6 +106,8 @@ FactoryBot.define do
         association(:batch, :not_expired, team:, vaccine:, strategy: :create)
       end
     end
+    batch_number { batch&.number }
+    batch_expiry { batch&.expiry }
 
     performed_by
 

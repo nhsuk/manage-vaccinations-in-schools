@@ -15,10 +15,10 @@ describe AppVaccinationRecordSummaryComponent do
   let(:patient) { create(:patient) }
   let(:vaccine) { programme.vaccines.find_by!(brand: "Gardasil 9") }
   let(:batch) do
-    create(:batch, name: "ABC", expiry: Date.new(2026, 1, 1), vaccine:)
+    create(:batch, number: "ABC", expiry: Date.new(2026, 1, 1), vaccine:)
   end
   let(:other_batch) do
-    create(:batch, name: "DEF", expiry: Date.new(2027, 1, 1), vaccine:)
+    create(:batch, number: "DEF", expiry: Date.new(2027, 1, 1), vaccine:)
   end
   let(:notes) { "Some notes." }
   let(:location_name) { nil }
@@ -43,7 +43,8 @@ describe AppVaccinationRecordSummaryComponent do
       location_name:,
       protocol:,
       pending_changes: {
-        batch_id: other_batch&.id,
+        batch_number: other_batch&.number,
+        batch_expiry: other_batch&.expiry,
         delivery_method: :nasal_spray,
         delivery_site: :nose
       },
@@ -253,6 +254,19 @@ describe AppVaccinationRecordSummaryComponent do
         text: "Time12:00pm"
       )
     end
+
+    context "when the time is not specified" do
+      let(:vaccination_record) do
+        create(:vaccination_record, performed_at: Date.new(2020, 1, 1))
+      end
+
+      it do
+        expect(rendered).to have_css(
+          ".nhsuk-summary-list__row",
+          text: "TimeUnknown"
+        )
+      end
+    end
   end
 
   describe "vaccinator row" do
@@ -380,6 +394,19 @@ describe AppVaccinationRecordSummaryComponent do
         expect(rendered).to have_css(
           ".nhsuk-summary-list__row",
           text: "NotesNot provided"
+        )
+      end
+    end
+
+    context "when the vaccination record was sourced from a national reporting" do
+      let(:vaccination_record) do
+        create(:vaccination_record, :sourced_from_national_reporting)
+      end
+
+      it do
+        expect(rendered).not_to have_css(
+          ".nhsuk-summary-list__row",
+          text: "Notes"
         )
       end
     end

@@ -28,7 +28,7 @@ describe AttendanceRecordPolicy do
           performed_at: Time.current
         )
 
-        StatusUpdater.call(patient:)
+        PatientStatusUpdater.call(patient:)
       end
 
       it { should be(true) }
@@ -48,7 +48,7 @@ describe AttendanceRecordPolicy do
           )
         end
 
-        StatusUpdater.call(patient:)
+        PatientStatusUpdater.call(patient:)
       end
 
       it { should be(false) }
@@ -70,7 +70,7 @@ describe AttendanceRecordPolicy do
           )
         end
 
-        StatusUpdater.call(patient:)
+        PatientStatusUpdater.call(patient:)
       end
 
       it { should be(false) }

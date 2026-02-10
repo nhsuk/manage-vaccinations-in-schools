@@ -68,7 +68,7 @@ module MavisCLI
             )
           end
 
-          PatientTeamUpdater.call(team_scope: Team.where(id: team.id))
+          PatientTeamUpdater.call(team:)
         end
       end
 

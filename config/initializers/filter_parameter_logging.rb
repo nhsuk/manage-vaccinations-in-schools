@@ -27,6 +27,9 @@ FILTER_STARTING_WITH = %w[
   date_of_birth
   identity_check_confirmed_by
   parent
+  ethnic_group
+  ethnic_background
+  ethnic_background_other
 ].freeze
 
 Rails.application.config.filter_parameters +=

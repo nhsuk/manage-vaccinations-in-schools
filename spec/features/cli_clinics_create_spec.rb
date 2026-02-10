@@ -14,7 +14,7 @@ describe "mavis clinics create" do
 
   def command
     Dry::CLI.new(MavisCLI).call(
-      arguments: %w[clinics create 123456 Clinic Line Town SW1A1AA]
+      arguments: %w[clinics create Clinic Line Town SW1A1AA]
     )
   end
 
@@ -23,9 +23,8 @@ describe "mavis clinics create" do
   end
 
   def then_the_clinic_is_created
-    clinic = Location.community_clinic.find_by!(ods_code: "123456")
+    clinic = Location.community_clinic.find_by!(name: "Clinic")
 
-    expect(clinic.name).to eq("Clinic")
     expect(clinic.address_line_1).to eq("Line")
     expect(clinic.address_town).to eq("Town")
     expect(clinic.address_postcode).to eq("SW1A 1AA")

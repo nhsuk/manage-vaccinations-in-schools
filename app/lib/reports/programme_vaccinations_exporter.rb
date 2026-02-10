@@ -94,7 +94,6 @@ class Reports::ProgrammeVaccinationsExporter
         .for_programme(programme)
         .for_academic_year(academic_year)
         .includes(
-          :batch,
           :location,
           :performed_by_user,
           :session,
@@ -240,8 +239,8 @@ class Reports::ProgrammeVaccinationsExporter
       vaccination_record.supplied_by&.email || "",
       vaccination_record.supplied_by&.given_name || "",
       vaccination_record.supplied_by&.family_name || "",
-      vaccination_record.batch&.name || "",
-      vaccination_record.batch&.expiry&.iso8601 || "",
+      vaccination_record.batch_number || "",
+      vaccination_record.batch_expiry&.iso8601 || "",
       anatomical_site(vaccination_record:),
       route_of_vaccination(vaccination_record:),
       dose_sequence(vaccination_record:),

@@ -477,7 +477,7 @@ describe "Import child records" do
   end
 
   def then_i_should_see_the_import_is_invalid
-    expect(page).to have_content("Records could not be imported")
+    expect(page).to have_content("Upload failed")
     expect(page).to have_content(
       "This may include errors identified after Mavis added a missing NHS number or replaced an incorrect NHS number."
     )

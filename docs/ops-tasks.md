@@ -26,7 +26,7 @@ session.patients.update_all(
 session.patient_locations.destroy_all
 
 # update all the patient-team associations
-PatientTeamUpdater.call(team_scope: Team.where(id: team.id))
+PatientTeamUpdater.call(team:)
 ```
 
 ## Add a patient from community clinic to school session

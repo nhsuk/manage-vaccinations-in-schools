@@ -12,10 +12,7 @@ class ClinicPatientLocationsFactory
         on_duplicate_key_ignore: true
       )
 
-      PatientTeamUpdater.call(
-        patient_scope: patients_in_school,
-        team_scope: Team.where(id: team.id)
-      )
+      PatientTeamUpdater.call(patient_scope: patients_in_school, team:)
     end
   end
 

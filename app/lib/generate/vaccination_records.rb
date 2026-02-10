@@ -53,7 +53,7 @@ class Generate::VaccinationRecords
       patient_scope: Patient.where(id: patients.map(&:id))
     )
 
-    StatusUpdater.call(patient: patients)
+    PatientStatusUpdater.call(patient: patients)
   end
 
   def check_sessions_have_enough_patients
@@ -101,7 +101,8 @@ class Generate::VaccinationRecords
         performed_by:,
         session:,
         vaccine:,
-        batch:,
+        batch_number: batch&.number,
+        batch_expiry: batch&.expiry,
         location_name:
       )
 

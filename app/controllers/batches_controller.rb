@@ -21,13 +21,13 @@ class BatchesController < ApplicationController
 
     batch.archived_at = nil if batch.archived?
 
-    @form = BatchForm.new(**batch_form_params.except(:number), batch:)
+    @form = BatchForm.new(**batch_form_params, batch:)
 
     if expiry_validator.date_params_valid? && @form.save
       redirect_to vaccines_path,
                   flash: {
                     success:
-                      "Batch <span class=\"nhsuk-u-text-break-word\">#{batch.name}</span> added".html_safe
+                      "Batch <span class=\"nhsuk-u-text-break-word\">#{batch.number}</span> added".html_safe
                   }
     else
       @form.expiry = expiry_validator.date_params_as_struct
@@ -65,11 +65,10 @@ class BatchesController < ApplicationController
 
   def batch_form_params
     raw_params =
-      params.expect(batch_form: %i[name expiry(3i) expiry(2i) expiry(1i)])
+      params.expect(batch_form: %i[number expiry(3i) expiry(2i) expiry(1i)])
 
     {
-      name: raw_params[:name],
-      number: raw_params[:name],
+      number: raw_params[:number],
       expiry:
         begin
           Date.new(

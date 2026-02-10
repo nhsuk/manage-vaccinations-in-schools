@@ -26,7 +26,7 @@ describe NHS::ImmunisationsAPI do
   let(:location) { create(:community_clinic, team:, ods_code: nil) }
   let(:vaccine) { programme.vaccines.find_by!(brand: "Gardasil") }
   let(:batch) do
-    create(:batch, vaccine:, expiry: "2023-03-20", name: "X8U375AL")
+    create(:batch, vaccine:, expiry: "2023-03-20", number: "X8U375AL")
   end
   let(:session) { create(:session, team:, programmes: [programme], location:) }
   let(:user) do

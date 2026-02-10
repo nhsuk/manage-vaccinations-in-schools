@@ -13,6 +13,7 @@ class Reports::CareplusExporter
     CSV.generate(headers:, write_headers: true) do |csv|
       vaccination_records
         .group_by(&:patient)
+        .transform_values(&:reverse)
         .each do |patient, vaccination_records|
           rows(patient:, vaccination_records:).each { |row| csv << row }
         end
@@ -73,13 +74,8 @@ class Reports::CareplusExporter
         .where(team_location: { team_id: team.id })
         .for_academic_year(academic_year)
         .administered
-        .order(:performed_at)
-        .includes(
-          :batch,
-          :patient,
-          :vaccine,
-          session: %i[location team_location]
-        )
+        .order_by_performed_at
+        .includes(:patient, :vaccine, session: %i[location team_location])
 
     if start_date.present?
       scope =
@@ -173,7 +169,7 @@ class Reports::CareplusExporter
       "", # Reason Not Given X
       coded_site(record.delivery_site), # Site X; Coded value
       record.vaccine.manufacturer, # Manufacturer X
-      record.batch.name # Batch No X
+      record.batch_number # Batch No X
     ]
   end
 

@@ -144,17 +144,22 @@ class Consent < ApplicationRecord
     programme.flu? && !vaccine_method_nasal?
   end
 
+  # Conditionally invalidate triages and PSDs when recording a new consent.
+  # Only invalidates if the new consent has health answers requiring triage,
+  # meaning it supersedes any existing triages.
   def invalidate_existing_triage_and_patient_specific_directions!
     if should_invalidate_existing_patient_specific_directions?
-      patient
-        .patient_specific_directions
-        .where(academic_year:, programme_type:)
-        .invalidate_all
+      invalidate_patient_specific_directions!
     end
+    invalidate_triages! if should_invalidate_existing_triages?
+  end
 
-    if should_invalidate_existing_triages?
-      patient.triages.where(academic_year:, programme_type:).invalidate_all
-    end
+  # Unconditionally invalidate all triages and PSDs for this consent's
+  # patient/programme/academic year. Used when withdrawing or invalidating
+  # an existing consent.
+  def invalidate_all_triages_and_patient_specific_directions!
+    invalidate_triages!
+    invalidate_patient_specific_directions!
   end
 
   def parent_relationship
@@ -171,6 +176,8 @@ class Consent < ApplicationRecord
     ActiveRecord::Base.transaction do
       parent =
         consent_form.find_or_create_parent_with_relationship_to!(patient:)
+
+      patient.assign_ethnicity_from!(consent_form)
 
       consents =
         consent_form.consent_form_programmes.map do |consent_form_programme|
@@ -193,7 +200,7 @@ class Consent < ApplicationRecord
           )
         end
 
-      StatusUpdater.call(patient:)
+      PatientStatusUpdater.call(patient:)
 
       consents
     end
@@ -214,5 +221,18 @@ class Consent < ApplicationRecord
   def notifier = Notifier::Consent.new(self)
 
   class ConsentFormNotRecorded < StandardError
+  end
+
+  private
+
+  def invalidate_triages!
+    patient.triages.where(academic_year:, programme_type:).invalidate_all
+  end
+
+  def invalidate_patient_specific_directions!
+    patient
+      .patient_specific_directions
+      .where(academic_year:, programme_type:)
+      .invalidate_all
   end
 end

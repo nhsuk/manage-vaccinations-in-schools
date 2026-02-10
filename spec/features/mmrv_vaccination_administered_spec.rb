@@ -96,7 +96,7 @@ describe "MMRV vaccination" do
           )
         ]
       )
-    StatusUpdater.call(patient: @patient)
+    PatientStatusUpdater.call(patient: @patient)
     @community_clinic = create(:community_clinic, team: @team)
   end
 
@@ -209,19 +209,19 @@ describe "MMRV vaccination" do
   def then_i_should_only_see_the_mmrv_batch_options
     expect(page).to have_content(@mmrv_vaccine.brand)
     expect(page).not_to have_content(@mmr_vaccine.brand)
-    expect(page).to have_content(@mmrv_batch.name)
-    expect(page).not_to have_content(@mmr_batch.name)
+    expect(page).to have_content(@mmrv_batch.number)
+    expect(page).not_to have_content(@mmr_batch.number)
   end
 
   def then_i_should_only_see_the_mmr_batch_options
     expect(page).to have_content(@mmr_vaccine.brand)
     expect(page).not_to have_content(@mmrv_vaccine.brand)
-    expect(page).to have_content(@mmr_batch.name)
-    expect(page).not_to have_content(@mmrv_batch.name)
+    expect(page).to have_content(@mmr_batch.number)
+    expect(page).not_to have_content(@mmrv_batch.number)
   end
 
   def when_i_choose_an_mmrv_batch_for_the_vaccine
-    choose @mmrv_batch.name
+    choose @mmrv_batch.number
     click_button "Continue"
 
     expect(page).to have_content("Where was the MMRV vaccination offered?")

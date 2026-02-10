@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe StatusUpdater do
+describe PatientStatusUpdater do
   subject(:call) { described_class.call }
 
   around { |example| travel_to(Date.new(2025, 7, 31)) { example.run } }

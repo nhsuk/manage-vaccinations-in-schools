@@ -1206,9 +1206,7 @@ describe ImmunisationImportRow do
         let(:data) { valid_data.merge("DATE_OF_VACCINATION" => "20230901") }
 
         it "sets the administered at time" do
-          expect(vaccination_record.performed_at).to eq(
-            Time.new(2023, 9, 1, 0, 0, 0, "+01:00")
-          )
+          expect(vaccination_record.performed_at).to eq(Date.new(2023, 9, 1))
         end
       end
 
@@ -1216,9 +1214,7 @@ describe ImmunisationImportRow do
         let(:data) { valid_data.merge("DATE_OF_VACCINATION" => "01/09/2023") }
 
         it "parses the date and sets the administered at time" do
-          expect(vaccination_record.performed_at).to eq(
-            Time.new(2023, 9, 1, 0, 0, 0, "+01:00")
-          )
+          expect(vaccination_record.performed_at).to eq(Date.new(2023, 9, 1))
         end
       end
 
@@ -1226,9 +1222,7 @@ describe ImmunisationImportRow do
         let(:data) { valid_data.merge("DATE_OF_VACCINATION" => "2023-09-01") }
 
         it "parses the date and sets the administered at time" do
-          expect(vaccination_record.performed_at).to eq(
-            Time.new(2023, 9, 1, 0, 0, 0, "+01:00")
-          )
+          expect(vaccination_record.performed_at).to eq(Date.new(2023, 9, 1))
         end
       end
 
@@ -1248,6 +1242,21 @@ describe ImmunisationImportRow do
         it "sets the administered at time" do
           expect(vaccination_record.performed_at).to eq(
             Time.new(2024, 1, 1, 10, 30, 0, "+00:00")
+          )
+        end
+      end
+
+      context "with a daylight saving time" do
+        let(:data) do
+          valid_data.merge(
+            "DATE_OF_VACCINATION" => "20230901",
+            "TIME_OF_VACCINATION" => "1030"
+          )
+        end
+
+        it "sets the administered at time" do
+          expect(vaccination_record.performed_at).to eq(
+            Time.new(2023, 9, 1, 10, 30, 0, "+01:00")
           )
         end
       end
@@ -1324,47 +1333,6 @@ describe ImmunisationImportRow do
           it "stages changes discarded at to nil" do
             expect(vaccination_record.pending_changes["discarded_at"]).to be_nil
           end
-        end
-      end
-
-      describe "#batch" do
-        subject(:batch) { vaccination_record.batch }
-
-        let(:data) { valid_data }
-
-        it { should be_archived }
-
-        its(:team) { should be_nil }
-
-        context "without a vaccine" do
-          before { data.delete("VACCINE_GIVEN") }
-
-          it { should be_nil }
-        end
-
-        context "without a batch number or expiry date" do
-          before do
-            data.delete("BATCH_NUMBER")
-            data.delete("BATCH_EXPIRY_DATE")
-          end
-
-          it { should be_nil }
-        end
-
-        context "when recording offline" do
-          let(:data) do
-            valid_data.merge(
-              "DATE_OF_VACCINATION" => session.dates.first.strftime("%Y%m%d"),
-              "SESSION_ID" => session.id.to_s,
-              "ORGANISATION_CODE" => team.organisation.ods_code,
-              "PERFORMING_PROFESSIONAL_EMAIL" => create(:user).email,
-              "DOSE_SEQUENCE" => "1"
-            )
-          end
-
-          let(:session) { create(:session, team:, programmes:) }
-
-          its(:team) { should eq(session.team) }
         end
       end
 
@@ -2430,13 +2398,16 @@ describe ImmunisationImportRow do
             location: nil,
             location_name: location.name,
             performed_by_user: nil,
-            performed_at: valid_hpv_data["DATE_OF_VACCINATION"].to_time,
+            performed_at_date: valid_hpv_data["DATE_OF_VACCINATION"],
+            performed_at_time: nil,
             source: :nhs_immunisations_api,
             nhs_immunisations_api_identifier_system: "ABC",
             nhs_immunisations_api_identifier_value: "123",
             protocol: nil,
             delivery_site: existing_delivery_site,
-            delivery_method: existing_delivery_method
+            delivery_method: existing_delivery_method,
+            batch_number: nil,
+            batch_expiry: nil
           )
         end
 
@@ -2665,7 +2636,7 @@ describe ImmunisationImportRow do
               :sourced_from_national_reporting,
               patient:,
               programme:,
-              performed_at: Time.zone.local(2026, 1, 5, 0, 0, 0),
+              performed_at: Date.new(2026, 1, 5),
               location:,
               local_patient_id: "CIN-OXFORD-pat123456",
               local_patient_id_uri: "https://cinnamon.nhs.uk/0de/system1",
@@ -2674,15 +2645,7 @@ describe ImmunisationImportRow do
               performed_by_family_name: vaccinator.family_name,
               vaccine:,
               batch_number: "456", # different
-              batch_expiry: Date.new(2026, 1, 6), # identical
-              batch:
-                create(
-                  :batch,
-                  team: nil,
-                  name: "456",
-                  expiry: Date.new(2026, 1, 6),
-                  vaccine:
-                ) # different
+              batch_expiry: Date.new(2026, 1, 6) # identical
             )
           end
 
@@ -2699,7 +2662,7 @@ describe ImmunisationImportRow do
               :sourced_from_national_reporting,
               patient:,
               programme:,
-              performed_at: Time.zone.local(2026, 1, 5, 0, 0, 0),
+              performed_at: Date.new(2026, 1, 5),
               location:,
               local_patient_id: "CIN-OXFORD-pat123456",
               local_patient_id_uri: "https://cinnamon.nhs.uk/0de/system1",
@@ -2708,15 +2671,7 @@ describe ImmunisationImportRow do
               performed_by_family_name: vaccinator.family_name,
               vaccine:,
               batch_number: "123", # identical
-              batch_expiry: Date.new(2026, 1, 6), # identical
-              batch:
-                create(
-                  :batch,
-                  team: nil,
-                  name: "123",
-                  expiry: Date.new(2026, 1, 6),
-                  vaccine:
-                ) # identical
+              batch_expiry: Date.new(2026, 1, 6) # identical
             )
           end
 

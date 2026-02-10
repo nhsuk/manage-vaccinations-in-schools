@@ -14,11 +14,15 @@ en:
     date_of_birth: date-of-birth
     dates: dates
     dates_check: dates-check
+    details: details
     delegation: delegation
     delivery: delivery
     dose: dose
     dose_sequence: dose-sequence
     education_setting: education-setting
+    ethnic_background: ethnic-background
+    ethnic_group: ethnic-group
+    ethnicity: ethnicity
     file_format: file-format
     gp: gp
     health_question: health-question

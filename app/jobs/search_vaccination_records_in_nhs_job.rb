@@ -52,7 +52,7 @@ class SearchVaccinationRecordsInNHSJob < ImmunisationsAPIJob
 
       update_vaccination_search_timestamps if patient.nhs_number.present?
 
-      StatusUpdater.call(patient:)
+      PatientStatusUpdater.call(patient:)
     end
   end
 

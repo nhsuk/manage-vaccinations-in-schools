@@ -40,6 +40,7 @@ RSpec.feature "Parental consent change answers" do
     and_i_answer_no_to_the_last_health_question
 
     when_i_click_the_confirm_button
+    and_i_refuse_to_answer_questions_on_ethnicity
     then_i_see_the_needs_triage_confirmation_page
   end
 
@@ -70,6 +71,7 @@ RSpec.feature "Parental consent change answers" do
     then_i_see_the_consent_form_confirmation_page
 
     when_i_click_the_confirm_button
+    and_i_refuse_to_answer_questions_on_ethnicity
     then_i_see_the_given_confirmation_page
   end
 
@@ -294,6 +296,13 @@ RSpec.feature "Parental consent change answers" do
 
   def and_i_choose_my_phone_contact_method
     choose "I can only receive text messages"
+    click_on "Continue"
+  end
+
+  def and_i_refuse_to_answer_questions_on_ethnicity
+    return unless Flipper.enabled?(:ethnicity_capture)
+
+    choose "No, skip the ethnicity questions"
     click_on "Continue"
   end
 end

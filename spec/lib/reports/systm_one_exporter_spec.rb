@@ -52,8 +52,8 @@ describe Reports::SystmOneExporter do
         "Part" => "",
         "Admin date" =>
           vaccination_record.performed_at.to_date.strftime("%d/%m/%Y"),
-        "Batch number" => vaccination_record.batch.name,
-        "Expiry date" => vaccination_record.batch.expiry.strftime("%d/%m/%Y"),
+        "Batch number" => vaccination_record.batch_number,
+        "Expiry date" => vaccination_record.batch_expiry.strftime("%d/%m/%Y"),
         "Dose" => vaccination_record.dose_volume_ml.to_s,
         "Reason" => "Routine",
         "Site" => "Left deltoid",

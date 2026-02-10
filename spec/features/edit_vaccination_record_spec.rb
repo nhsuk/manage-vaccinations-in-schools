@@ -157,13 +157,15 @@ describe "Edit vaccination record" do
       given_i_am_signed_in
       and_an_administered_vaccination_record_exists
       and_the_original_batch_has_been_archived
+      and_there_exists_a_different_batch_with_the_same_number_and_expiry
 
       when_i_go_to_the_vaccination_record_for_the_patient
       and_i_click_on_edit_vaccination_record
       then_i_see_the_edit_vaccination_record_page
 
       when_i_click_on_change_batch
-      and_i_choose_the_original_batch
+      then_i_should_not_see_the_similar_batch
+      when_i_choose_the_original_batch
       then_i_see_the_edit_vaccination_record_page
 
       when_i_click_on_save_changes
@@ -175,13 +177,15 @@ describe "Edit vaccination record" do
       given_i_am_signed_in
       and_an_administered_vaccination_record_exists
       and_the_original_batch_has_expired
+      and_there_exists_a_different_batch_with_the_same_number_and_expiry
 
       when_i_go_to_the_vaccination_record_for_the_patient
       and_i_click_on_edit_vaccination_record
       then_i_see_the_edit_vaccination_record_page
 
       when_i_click_on_change_batch
-      and_i_choose_the_original_batch
+      then_i_should_not_see_the_similar_batch
+      when_i_choose_the_original_batch
       then_i_see_the_edit_vaccination_record_page
 
       when_i_click_on_save_changes
@@ -361,22 +365,6 @@ describe "Edit vaccination record" do
       then_i_should_see_the_vaccination_record
     end
 
-    scenario "Edits notes" do
-      given_i_am_signed_in
-      and_a_national_reporting_vaccination_record_exists
-
-      when_i_navigate_to_the_edit_vaccination_record_page
-
-      when_i_click_on_change_notes
-      then_i_should_see_different_help_text
-      when_i_enter_some_notes
-      then_i_see_the_edit_vaccination_record_page
-      and_i_should_see_the_new_notes
-
-      when_i_click_on_save_changes
-      then_i_should_see_the_vaccination_record
-    end
-
     scenario "Edits the batch" do
       given_i_am_signed_in
       and_a_national_reporting_vaccination_record_exists
@@ -408,7 +396,6 @@ describe "Edit vaccination record" do
 
       when_i_click_on_save_changes
       then_i_should_see_the_vaccination_record
-      and_the_batch_should_be_a_new_batch_object
     end
 
     scenario "Parent details are not visible when viewing vaccination records" do
@@ -449,6 +436,7 @@ describe "Edit vaccination record" do
 
   def given_an_hpv_programme_is_underway
     @programme = Programme.hpv
+    @other_programme = Programme.flu
 
     @team =
       create(
@@ -456,12 +444,13 @@ describe "Edit vaccination record" do
         :with_generic_clinic,
         :with_one_nurse,
         ods_code: "R1L",
-        programmes: [@programme]
+        programmes: [@programme, @other_programme]
       )
 
     @vaccine = @programme.vaccines.first
 
-    @original_batch = create(:batch, team: @team, vaccine: @vaccine)
+    @original_batch =
+      create(:batch, :not_expired, team: @team, vaccine: @vaccine)
     @replacement_batch =
       create(:batch, :not_expired, team: @team, vaccine: @vaccine)
 
@@ -538,6 +527,7 @@ describe "Edit vaccination record" do
       create(
         :vaccination_record,
         batch: @original_batch,
+        vaccine: @original_batch.vaccine,
         patient: @patient,
         session: @session,
         programme: @programme
@@ -635,7 +625,8 @@ describe "Edit vaccination record" do
       create(
         :vaccination_record,
         :not_administered,
-        batch: @original_batch,
+        batch_number: @original_batch.number,
+        batch_expiry: @original_batch.expiry,
         patient: @patient,
         session: @session,
         programme: @programme
@@ -658,6 +649,20 @@ describe "Edit vaccination record" do
   def and_the_original_batch_has_expired
     @original_batch.expiry = 1.day.ago
     @original_batch.save!(validate: false)
+
+    @vaccination_record.batch_expiry = @original_batch.expiry
+    @vaccination_record.save!
+  end
+
+  def and_there_exists_a_different_batch_with_the_same_number_and_expiry
+    @different_batch =
+      create(
+        :batch,
+        team: @original_batch.team,
+        number: @original_batch.number,
+        expiry: @original_batch.expiry,
+        vaccine: @other_programme.vaccines.first
+      )
   end
 
   def when_i_go_to_the_vaccination_record_for_the_patient
@@ -791,18 +796,18 @@ describe "Edit vaccination record" do
     click_on "Change batch"
   end
 
-  def and_i_choose_the_original_batch
-    choose @original_batch.name
+  def when_i_choose_the_original_batch
+    choose @original_batch.number
     click_on "Continue"
   end
 
   def and_i_choose_a_batch
-    choose @replacement_batch.name
+    choose @replacement_batch.number
     click_on "Continue"
   end
 
   def and_i_should_see_the_updated_batch
-    expect(page).to have_content("Batch number#{@replacement_batch.name}")
+    expect(page).to have_content("Batch number#{@replacement_batch.number}")
   end
 
   def when_i_click_change_notes
@@ -883,27 +888,12 @@ describe "Edit vaccination record" do
     expect(page).to have_content("LocationA New School")
   end
 
-  def when_i_click_on_change_notes
-    click_on "Add notes"
-  end
-
-  def then_i_should_see_different_help_text
-    expect(page).to have_content(
-      "You can add notes here for your own use. They will not be sent to NHS England."
-    )
-  end
-
-  def when_i_enter_some_notes
-    fill_in "Notes", with: "Some notes."
-    click_on "Continue"
-  end
-
-  def and_i_should_see_the_new_notes
-    expect(page).to have_content("NotesSome notes.")
-  end
-
   def when_i_click_on_change_batch
     click_on "Change batch"
+  end
+
+  def then_i_should_not_see_the_similar_batch
+    expect(page).not_to have_content(@different_batch.vaccine.brand)
   end
 
   def and_i_click_on_change_vaccine
@@ -957,10 +947,6 @@ describe "Edit vaccination record" do
     expect(page).to have_content("Batch expiry date1 December 2027")
   end
 
-  def and_the_batch_should_be_a_new_batch_object
-    expect(@vaccination_record.reload.batch).not_to eq(@batch)
-  end
-
   def when_i_click_on_save_changes
     travel 1.minute
     click_on "Save changes"
@@ -1007,14 +993,14 @@ describe "Edit vaccination record" do
   def and_the_records_batch_fields_are_assigned
     @vaccination_record.reload
 
-    expect(@vaccination_record.batch_number).to eq(@replacement_batch.name)
+    expect(@vaccination_record.batch_number).to eq(@replacement_batch.number)
     expect(@vaccination_record.batch_expiry).to eq(@replacement_batch.expiry)
   end
 
   def and_the_records_batch_fields_are_assigned_with_the_original_batch_details
     @vaccination_record.reload
 
-    expect(@vaccination_record.batch_number).to eq(@original_batch.name)
+    expect(@vaccination_record.batch_number).to eq(@original_batch.number)
     expect(@vaccination_record.batch_expiry).to eq(@original_batch.expiry)
   end
 

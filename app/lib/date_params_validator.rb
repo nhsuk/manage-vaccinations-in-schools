@@ -21,7 +21,6 @@ class DateParamsValidator
   def date_params_valid?
     date = date_params_as_struct
 
-    # Let the model decide if this is valid
     return true if [date.year, date.month, date.day].all?(&:blank?)
 
     if date.day.blank?

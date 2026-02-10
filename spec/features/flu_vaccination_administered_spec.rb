@@ -237,7 +237,7 @@ describe "Flu vaccination" do
       click_button "Continue"
     end
 
-    choose @nasal_batch.name
+    choose @nasal_batch.number
     click_button "Continue"
 
     expect(page).not_to have_content("Did they get the full dose?")
@@ -254,7 +254,7 @@ describe "Flu vaccination" do
       click_button "Continue"
     end
 
-    choose @injection_batch.name
+    choose @injection_batch.number
     click_button "Continue"
   end
 
@@ -269,14 +269,14 @@ describe "Flu vaccination" do
       click_button "Continue"
     end
 
-    choose @injection_batch.name
+    choose @injection_batch.number
     click_button "Continue"
   end
 
   def then_i_see_the_check_and_confirm_page_for_nasal_spray
     expect(page).to have_content("Check and confirm")
     expect(page).to have_content(@patient.full_name)
-    expect(page).to have_content(@nasal_batch.name)
+    expect(page).to have_content(@nasal_batch.number)
     expect(page).to have_content("Nasal spray")
     expect(page).to have_content("Nose")
     expect(page).to have_content("Dose volume0.2 ml")
@@ -292,7 +292,7 @@ describe "Flu vaccination" do
   def then_i_see_the_check_and_confirm_page_for_injection
     expect(page).to have_content("Check and confirm")
     expect(page).to have_content(@patient.full_name)
-    expect(page).to have_content(@injection_batch.name)
+    expect(page).to have_content(@injection_batch.number)
     expect(page).to have_content("Intramuscular")
     expect(page).to have_content("Left arm (upper position)")
     expect(page).to have_content(@location.name)
@@ -307,9 +307,9 @@ describe "Flu vaccination" do
   end
 
   def and_i_pick_a_batch_for_injection
-    expect(page).not_to have_content(@nasal_batch.name)
+    expect(page).not_to have_content(@nasal_batch.number)
     expect(page).not_to have_checked_field
-    choose @injection_batch.name
+    choose @injection_batch.number
     click_button "Continue"
   end
 

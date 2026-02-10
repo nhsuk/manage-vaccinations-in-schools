@@ -12,7 +12,7 @@ describe DraftVaccinationRecord do
 
   let(:programme) { Programme.hpv }
   let(:session) { create(:session, team:, programmes: [programme]) }
-  let(:patient) { create(:patient, session:) }
+  let(:patient) { create(:patient, :in_attendance, session:) }
   let(:vaccine) { programme.vaccines.first }
   let(:batch) { create(:batch, team:, vaccine:, expiry: Date.new(2026, 11, 1)) }
 
@@ -49,7 +49,7 @@ describe DraftVaccinationRecord do
   describe "validations" do
     context "when performed_at is in the future" do
       let(:attributes) do
-        valid_administered_attributes.merge(performed_at: 1.second.from_now)
+        valid_administered_attributes.merge(performed_at: 1.day.from_now)
       end
 
       around { |example| freeze_time { example.run } }
@@ -58,8 +58,8 @@ describe DraftVaccinationRecord do
 
       it "has an error" do
         expect(draft_vaccination_record.save(context: :update)).to be(false)
-        expect(draft_vaccination_record.errors[:performed_at]).to include(
-          "The vaccination cannot take place after #{Time.current.to_fs(:long)}"
+        expect(draft_vaccination_record.errors[:performed_at_date]).to include(
+          "The vaccination cannot take place after #{Date.current.to_fs(:long)}"
         )
       end
     end
@@ -77,8 +77,8 @@ describe DraftVaccinationRecord do
 
       it "has an error" do
         expect(draft_vaccination_record.save(context: :update)).to be(false)
-        expect(draft_vaccination_record.errors[:performed_at]).to include(
-          "The vaccination cannot take place before 1 September 2024 at 12:00am"
+        expect(draft_vaccination_record.errors[:performed_at_date]).to include(
+          "The vaccination cannot take place before 1 September 2024"
         )
       end
     end
@@ -106,8 +106,8 @@ describe DraftVaccinationRecord do
 
       it "has an error" do
         expect(draft_vaccination_record.save(context: :update)).to be(false)
-        expect(draft_vaccination_record.errors[:performed_at]).to include(
-          "The vaccination cannot take place after 31 August 2024 at 11:59pm"
+        expect(draft_vaccination_record.errors[:performed_at_date]).to include(
+          "The vaccination cannot take place after 31 August 2024"
         )
       end
     end
@@ -126,6 +126,42 @@ describe DraftVaccinationRecord do
       before { draft_vaccination_record.wizard_step = :confirm }
 
       it { should validate_length_of(:notes).is_at_most(1000).on(:update) }
+    end
+
+    context "when the patient is marked not attending" do
+      let(:attributes) { valid_administered_attributes }
+      let(:patient) { create(:patient, session:) }
+
+      before do
+        draft_vaccination_record.wizard_step = :confirm
+        create(:attendance_record, :today, :absent, patient:, session:)
+      end
+
+      it "raises an error when attempting to save the record" do
+        expect(draft_vaccination_record.save(context: :update)).to be(false)
+        expect(draft_vaccination_record.errors[:base]).to include(
+          "Child is marked as not attending this session. Mark them as attending to record a vaccination."
+        )
+      end
+
+      context "when editing an existing vaccination record" do
+        let(:existing_vaccination_record) do
+          create(:vaccination_record, patient:, session:)
+        end
+
+        let(:attributes) do
+          valid_administered_attributes.merge(
+            editing_id: existing_vaccination_record.id
+          )
+        end
+
+        it "does not raise an attendance error" do
+          expect(draft_vaccination_record.save(context: :update)).to be(true)
+          expect(draft_vaccination_record.errors[:base]).not_to include(
+            "Child is marked as not attending this session. Mark them as attending to record a vaccination."
+          )
+        end
+      end
     end
 
     context "on delivery step" do
@@ -332,7 +368,7 @@ describe DraftVaccinationRecord do
 
     it "sets the batch number" do
       expect { write_to! }.to change(vaccination_record, :batch_number).to(
-        batch.name
+        batch.number
       )
     end
 

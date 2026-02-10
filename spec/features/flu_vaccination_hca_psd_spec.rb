@@ -118,6 +118,7 @@ describe "Flu vaccination" do
       create(
         :patient,
         :consent_given_nasal_only_triage_not_needed,
+        :in_attendance,
         session: @session
       )
     @patient_injection_only =
@@ -239,7 +240,7 @@ describe "Flu vaccination" do
       click_button "Continue"
     end
 
-    choose @batch.name
+    choose @batch.number
     click_button "Continue"
 
     expect(page).to have_content("ProtocolPatient Specific Direction")

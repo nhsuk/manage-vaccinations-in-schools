@@ -55,7 +55,7 @@ class Patient::ProgrammeStatus < ApplicationRecord
            through: :patient
 
   has_many :vaccination_records,
-           -> { kept.order(performed_at: :desc) },
+           -> { kept.order_by_performed_at },
            through: :patient
 
   has_one :attendance_record,

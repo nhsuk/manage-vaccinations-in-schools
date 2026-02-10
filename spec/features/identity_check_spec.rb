@@ -109,7 +109,7 @@ describe "HPV vaccination identity check" do
       click_button "Continue"
     end
 
-    choose @batch.name
+    choose @batch.number
     click_button "Continue"
   end
 

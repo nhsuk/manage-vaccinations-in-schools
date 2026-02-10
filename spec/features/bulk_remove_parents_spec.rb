@@ -14,8 +14,15 @@ describe "Bulk remove parents" do
 
       when_i_click_continue
 
-      then_i_should_see_the_all_parent_relationships_removed_success_flash
-      and_all_parent_relationships_from_the_import_should_be_deleted
+      then_i_should_see_the_all_parent_relationships_are_being_removed_success_flash
+      and_i_am_on_the_completed_imports_tab
+      when_i_go_to_the_page_for_the_class_import
+      and_i_see_the_parent_removal_status_message_on_import_screen
+      and_the_bulk_remove_job_should_be_enqueued_with_remove_option(nil)
+
+      when_the_bulk_remove_job_is_processed
+      then_all_parent_relationships_from_the_import_should_be_deleted
+      and_i_no_longer_see_a_parent_removal_status_message_on_import_screen
     end
   end
 
@@ -35,9 +42,17 @@ describe "Bulk remove parents" do
       when_i_choose_only_parent_child_relationships_with_no_associated_consents
       when_i_click_continue
 
-      then_i_should_see_the_parent_relationships_without_associated_consents_removed_success_flash
-      and_all_parent_relationships_without_associated_consent_from_the_import_should_be_deleted
+      then_i_should_see_the_parent_relationships_without_associated_consents_are_being_removed_success_flash
+      when_i_go_to_the_page_for_the_class_import
+      and_i_see_the_parent_removal_status_message_on_import_screen
+      and_the_bulk_remove_job_should_be_enqueued_with_remove_option(
+        "unconsented_only"
+      )
+
+      when_the_bulk_remove_job_is_processed
+      then_all_parent_relationships_without_associated_consent_from_the_import_should_be_deleted
       and_the_parent_relationship_with_associated_consent_from_the_import_should_not_be_deleted
+      and_i_no_longer_see_a_parent_removal_status_message_on_import_screen
     end
 
     scenario "All parent relationships are removed and consent invalidated" do
@@ -49,9 +64,16 @@ describe "Bulk remove parents" do
       when_i_choose_remove_all_parent_child_relationships
       when_i_click_continue
 
-      then_i_should_see_the_all_parent_relationships_removed_success_flash
-      and_all_parent_relationships_from_the_import_should_be_deleted
+      then_i_should_see_the_all_parent_relationships_are_being_removed_success_flash
+      and_i_am_on_the_completed_imports_tab
+      when_i_go_to_the_page_for_the_class_import
+      and_i_see_the_parent_removal_status_message_on_import_screen
+      and_the_bulk_remove_job_should_be_enqueued_with_remove_option("all")
+
+      when_the_bulk_remove_job_is_processed
+      then_all_parent_relationships_from_the_import_should_be_deleted
       and_the_consent_should_be_invalidated
+      and_i_no_longer_see_a_parent_removal_status_message_on_import_screen
     end
   end
 
@@ -135,23 +157,53 @@ describe "Bulk remove parents" do
     click_on "Continue"
   end
 
-  def then_i_should_see_the_all_parent_relationships_removed_success_flash
+  def then_i_should_see_the_all_parent_relationships_are_being_removed_success_flash
     expect(page).to have_content(
-      "All parent-child relationships included in this import have been removed"
+      "All parent-child relationships included in this import are being removed"
     )
   end
 
-  def then_i_should_see_the_parent_relationships_without_associated_consents_removed_success_flash
+  def and_i_am_on_the_completed_imports_tab
+    expect(page).to have_css("td.nhsuk-table__cell", text: "Completed")
+  end
+
+  def and_i_see_the_parent_removal_status_message_on_import_screen
     expect(page).to have_content(
-      "Parent–child relationships without a submitted consent response have been removed."
+      "Parent-child relationships are currently being removed from this import"
     )
   end
 
-  def and_all_parent_relationships_from_the_import_should_be_deleted
+  def and_i_no_longer_see_a_parent_removal_status_message_on_import_screen
+    page.refresh
+    expect(page).not_to have_content(
+      "Parent-child relationships are currently being removed from this import"
+    )
+  end
+
+  def then_i_should_see_the_parent_relationships_without_associated_consents_are_being_removed_success_flash
+    expect(page).to have_content(
+      "Parent–child relationships without a submitted consent response are being removed."
+    )
+  end
+
+  def and_the_bulk_remove_job_should_be_enqueued_with_remove_option(option)
+    expect(BulkRemoveParentRelationshipsJob).to have_been_enqueued.with(
+      @class_import.to_global_id.to_s,
+      @class_import.parent_relationship_ids,
+      @user.id,
+      option
+    )
+  end
+
+  def when_the_bulk_remove_job_is_processed
+    perform_enqueued_jobs
+  end
+
+  def then_all_parent_relationships_from_the_import_should_be_deleted
     @patients.each { |patient| expect(patient.reload.parents).to be_empty }
   end
 
-  def and_all_parent_relationships_without_associated_consent_from_the_import_should_be_deleted
+  def then_all_parent_relationships_without_associated_consent_from_the_import_should_be_deleted
     @patients
       .drop(1)
       .each { |patient| expect(patient.reload.parents).to be_empty }

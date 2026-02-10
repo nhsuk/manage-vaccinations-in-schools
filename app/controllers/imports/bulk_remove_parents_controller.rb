@@ -35,7 +35,7 @@ module Imports
         )
 
       if @form.save!
-        redirect_to imports_path, flash: { success: success_flash_text }
+        redirect_to records_imports_path, flash: { success: success_flash_text }
       else
         render :new, status: :unprocessable_content
       end
@@ -51,14 +51,7 @@ module Imports
     end
 
     def set_consents
-      @consents =
-        Consent
-          .includes(patient: { parent_relationships: :parent })
-          .joins(patient: :parent_relationships)
-          .merge(@import.patients)
-          .merge(@import.parent_relationships)
-          .where("consents.parent_id = parent_relationships.parent_id")
-          .not_invalidated
+      @consents = @import.parent_relationship_consents
     end
 
     def success_flash_text

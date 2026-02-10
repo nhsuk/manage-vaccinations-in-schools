@@ -135,7 +135,7 @@ describe Reports::ProgrammeVaccinationsExporter do
               {
                 "ANATOMICAL_SITE" => "left upper arm",
                 "BATCH_EXPIRY_DATE" => "2025-12-01",
-                "BATCH_NUMBER" => batch.name,
+                "BATCH_NUMBER" => batch.number,
                 "CARE_SETTING" => "1",
                 "CLINIC_NAME" => "",
                 "CONSENT_DETAILS" => "",
@@ -307,7 +307,7 @@ describe Reports::ProgrammeVaccinationsExporter do
               {
                 "ANATOMICAL_SITE" => "left upper arm",
                 "BATCH_EXPIRY_DATE" => "2025-12-01",
-                "BATCH_NUMBER" => batch.name,
+                "BATCH_NUMBER" => batch.number,
                 "CARE_SETTING" => "2",
                 "CLINIC_NAME" => "A Clinic",
                 "CONSENT_DETAILS" => "",

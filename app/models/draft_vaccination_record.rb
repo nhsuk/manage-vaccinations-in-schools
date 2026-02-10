@@ -6,11 +6,12 @@ class DraftVaccinationRecord
   include WizardStepConcern
 
   include HasDoseVolume
+  include PerformableAtDateAndTime
+  include PerformableBy
   include Programmable
-  include VaccinationRecordPerformedByConcern
 
   attribute :batch_id, :integer
-  attribute :batch_name, :string
+  attribute :batch_number, :string
   attribute :batch_expiry, :date
   attribute :delivery_method, :string
   attribute :delivery_site, :string
@@ -27,7 +28,8 @@ class DraftVaccinationRecord
   attribute :notes, :string
   attribute :outcome, :string
   attribute :patient_id, :integer
-  attribute :performed_at, :datetime
+  attribute :performed_at_date, :date
+  attribute :performed_at_time, :time
   attribute :performed_by_family_name, :string
   attribute :performed_by_given_name, :string
   attribute :performed_by_user_id, :integer
@@ -56,7 +58,7 @@ class DraftVaccinationRecord
   def wizard_steps
     [
       :identity,
-      :notes,
+      (:notes unless national_reporting_user_and_record?),
       :date_and_time,
       (:outcome if can_change_outcome?),
       (:supplier if requires_supplied_by?),
@@ -75,8 +77,8 @@ class DraftVaccinationRecord
   end
 
   on_wizard_step :date_and_time, exact: true do
-    validates :performed_at, presence: true
-    validate :performed_at_within_range
+    validates :performed_at_date, :performed_at_time, presence: true
+    validate :performed_at_date_within_range
   end
 
   on_wizard_step :outcome, exact: true do
@@ -99,8 +101,8 @@ class DraftVaccinationRecord
     validates :vaccine_id,
               presence: true,
               if: :national_reporting_user_and_record?
-    validates :batch_name,
-              batch_name: true,
+    validates :batch_number,
+              batch_number: true,
               if: :national_reporting_user_and_record?
     validates :batch_expiry,
               presence: true,
@@ -134,6 +136,7 @@ class DraftVaccinationRecord
   on_wizard_step :confirm, exact: true do
     validates :outcome, presence: true
     validates :notes, length: { maximum: 1000 }
+    validate :validate_patient_attendance
   end
 
   on_wizard_step :vaccinator, exact: true do
@@ -153,12 +156,16 @@ class DraftVaccinationRecord
                if: -> do
                  required_for_step?(:confirm, exact: true) && administered?
                end do
-    validates :batch_id,
-              :delivery_method,
+    validates :delivery_method,
               :delivery_site,
-              :performed_at,
+              :performed_at_date,
+              :performed_at_time,
               :protocol,
               presence: true
+    validates :batch_number,
+              :batch_expiry,
+              presence: true,
+              if: :national_reporting_user_and_record?
     validates :full_dose, inclusion: { in: [true, false] }
     validates :source, inclusion: { in: VaccinationRecord.sources.keys }
   end
@@ -175,30 +182,6 @@ class DraftVaccinationRecord
 
   # So that a form error matches to a field in this model
   alias_method :administered, :administered?
-
-  def batch
-    if batch_expiry && batch_name && vaccine_id &&
-         national_reporting_user_and_record?
-      return(
-        Batch.create_with(
-          archived_at: Time.current,
-          number: batch_name
-        ).find_or_create_by!(
-          expiry: batch_expiry,
-          name: batch_name,
-          team_id: nil,
-          vaccine_id: vaccine_id
-        )
-      )
-    end
-
-    return nil if batch_id.nil?
-    Batch.find(batch_id)
-  end
-
-  def batch=(value)
-    self.batch_id = value.id
-  end
 
   def location
     return nil if location_id.nil?
@@ -271,9 +254,26 @@ class DraftVaccinationRecord
     self.batch_id = nil unless previous_value == new_value
   end
 
-  delegate :vaccine, to: :batch, allow_nil: true
+  def vaccine
+    return nil if vaccine_id.nil?
+    Vaccine.find(vaccine_id)
+  end
 
-  def vaccine_id_changed? = batch_id_changed?
+  def vaccine=(value)
+    self.vaccine_id = value.id
+  end
+
+  def vaccine_id
+    super || batch&.vaccine_id
+  end
+
+  def batch_number
+    batch&.number || super
+  end
+
+  def batch_expiry
+    batch&.expiry || super
+  end
 
   def location_is_school
     return if location_id.blank?
@@ -366,37 +366,16 @@ class DraftVaccinationRecord
       sourced_from_national_reporting?
   end
 
-  def read_from!(vaccination_record)
-    self.batch_name = vaccination_record.batch&.name
-    self.batch_expiry = vaccination_record.batch&.expiry
-    self.vaccine_id = vaccination_record.vaccine&.id
-
-    super(vaccination_record)
-  end
-
-  def write_to!(vaccination_record)
-    super(vaccination_record)
-
-    if batch_expiry && batch_name && vaccine_id &&
-         national_reporting_user_and_record?
-      vaccination_record.batch_id = batch&.id
-    end
-
-    vaccination_record.batch_number = vaccination_record.batch&.name
-    vaccination_record.batch_expiry = vaccination_record.batch&.expiry
-
-    vaccination_record.vaccine_id = batch&.vaccine_id
-  end
-
   private
 
   def readable_attribute_names
-    writable_attribute_names - %w[vaccine_id]
+    writable_attribute_names
   end
 
   def writable_attribute_names
     %w[
-      batch_id
+      batch_number
+      batch_expiry
       delivery_method
       delivery_site
       disease_types
@@ -408,7 +387,8 @@ class DraftVaccinationRecord
       notes
       outcome
       patient_id
-      performed_at
+      performed_at_date
+      performed_at_time
       performed_by_family_name
       performed_by_given_name
       performed_by_user_id
@@ -430,6 +410,8 @@ class DraftVaccinationRecord
       self.full_dose = true unless can_be_half_dose?
     else
       self.batch_id = nil
+      self.batch_number = nil
+      self.batch_expiry = nil
       self.delivery_method = nil
       self.delivery_site = nil
       self.full_dose = nil
@@ -443,28 +425,31 @@ class DraftVaccinationRecord
 
   def academic_year = session&.academic_year
 
-  def earliest_possible_value
-    academic_year.to_academic_year_date_range.first.beginning_of_day
+  def batch
+    return nil if batch_id.nil?
+    Batch.find(batch_id)
   end
 
-  def latest_possible_value
-    [
-      academic_year.to_academic_year_date_range.last.end_of_day,
-      Time.current
-    ].min
+  def earliest_possible_date
+    academic_year.to_academic_year_date_range.first
   end
 
-  def performed_at_within_range
-    return if performed_at.nil? || session.nil?
-    if performed_at < earliest_possible_value
+  def latest_possible_date
+    [academic_year.to_academic_year_date_range.last, Date.current].min
+  end
+
+  def performed_at_date_within_range
+    return if performed_at_date.nil? || session.nil?
+
+    if performed_at_date < earliest_possible_date
       errors.add(
-        :performed_at,
-        "The vaccination cannot take place before #{earliest_possible_value.to_fs(:long)}"
+        :performed_at_date,
+        "The vaccination cannot take place before #{earliest_possible_date.to_fs(:long)}"
       )
-    elsif performed_at > latest_possible_value
+    elsif performed_at_date > latest_possible_date
       errors.add(
-        :performed_at,
-        "The vaccination cannot take place after #{latest_possible_value.to_fs(:long)}"
+        :performed_at_date,
+        "The vaccination cannot take place after #{latest_possible_date.to_fs(:long)}"
       )
     end
   end
@@ -506,5 +491,24 @@ class DraftVaccinationRecord
     unless VaccinationRecord.delivery_sites.keys.include?(delivery_site)
       errors.add(:delivery_site, :inclusion)
     end
+  end
+
+  def validate_patient_attendance
+    return unless new_record?
+    return unless session&.today?
+    return if patient.blank?
+
+    attendance_record =
+      patient.attendance_records.find_by(
+        location: session.location,
+        date: session.dates.find(&:today?)
+      )
+
+    return if attendance_record&.attending?
+
+    errors.add(
+      :base,
+      "Child is marked as not attending this session. Mark them as attending to record a vaccination."
+    )
   end
 end

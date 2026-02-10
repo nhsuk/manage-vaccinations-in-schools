@@ -15,7 +15,7 @@ class PatientSessions::AttendancesController < PatientSessions::BaseController
       @attendance_record.save!
     end => success
 
-    StatusUpdater.call(patient: @patient)
+    PatientStatusUpdater.call(patient: @patient)
 
     if success
       name = @patient.full_name

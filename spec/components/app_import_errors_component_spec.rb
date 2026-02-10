@@ -21,5 +21,5 @@ describe AppImportErrorsComponent do
   it { should have_text("blank") }
   it { should have_text("invalid") }
 
-  it { should have_text("Records could not be imported") }
+  it { should have_text("Upload failed") }
 end

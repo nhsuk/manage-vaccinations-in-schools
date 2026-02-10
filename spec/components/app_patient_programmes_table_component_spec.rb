@@ -40,7 +40,7 @@ describe AppPatientProgrammesTableComponent do
           programme: programmes.first,
           performed_at: Time.zone.local(2024, 9, 1)
         )
-        StatusUpdater.call(patient:)
+        PatientStatusUpdater.call(patient:)
       end
 
       it { should have_content("Flu (winter 2025)Needs consent") }
@@ -50,7 +50,7 @@ describe AppPatientProgrammesTableComponent do
     context "when consent refused" do
       let(:patient) { create(:patient, :consent_refused, session:) }
 
-      before { StatusUpdater.call(patient:) }
+      before { PatientStatusUpdater.call(patient:) }
 
       it { should have_content("Has a refusal") }
       it { should have_content("Parent refused") }
@@ -81,7 +81,7 @@ describe AppPatientProgrammesTableComponent do
           performed_at: today,
           session:
         )
-        StatusUpdater.call(patient:)
+        PatientStatusUpdater.call(patient:)
       end
 
       it do
@@ -103,7 +103,7 @@ describe AppPatientProgrammesTableComponent do
           performed_at: today,
           session:
         )
-        StatusUpdater.call(patient:)
+        PatientStatusUpdater.call(patient:)
       end
 
       it { should have_content("Unable to vaccinate") }
@@ -122,7 +122,7 @@ describe AppPatientProgrammesTableComponent do
           performed_at: today,
           session:
         )
-        StatusUpdater.call(patient:)
+        PatientStatusUpdater.call(patient:)
       end
 
       it { should have_content("Unable to vaccinate") }
@@ -149,7 +149,7 @@ describe AppPatientProgrammesTableComponent do
           programme: programmes.first,
           performed_at: Time.zone.local(2024, 9, 1)
         )
-        StatusUpdater.call(patient:)
+        PatientStatusUpdater.call(patient:)
       end
 
       it { should have_content("Vaccinated") }

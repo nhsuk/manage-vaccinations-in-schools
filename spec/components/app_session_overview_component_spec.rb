@@ -169,7 +169,7 @@ describe AppSessionOverviewComponent do
           programme: hpv_programme
         )
 
-        StatusUpdater.call(patient:)
+        PatientStatusUpdater.call(patient:)
       end
 
       include_examples "displays correct children due vaccination", "HPV", 0
@@ -208,7 +208,7 @@ describe AppSessionOverviewComponent do
           programme: hpv_programme
         )
 
-        StatusUpdater.call(patient:)
+        PatientStatusUpdater.call(patient:)
       end
 
       include_examples "displays correct children due vaccination", "HPV", 1

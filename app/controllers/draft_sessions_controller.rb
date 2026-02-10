@@ -263,7 +263,7 @@ class DraftSessionsController < ApplicationController
     @draft_session.save!
 
     patient_ids = @session.patients.pluck(:id)
-    StatusUpdaterJob.perform_bulk(patient_ids.zip)
+    PatientStatusUpdaterJob.perform_bulk(patient_ids.zip)
   end
 
   def finish_wizard_path

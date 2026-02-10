@@ -37,7 +37,7 @@ describe "Verbal consent" do
     @parent = create(:parent)
     @patient = create(:patient, session: @session, parents: [@parent])
 
-    StatusUpdater.call
+    PatientStatusUpdater.call
   end
 
   def and_i_am_signed_in

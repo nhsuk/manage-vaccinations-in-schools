@@ -95,14 +95,14 @@ describe "Immunisation imports duplicates" do
       create(:patient_location, patient: @third_patient, session: @session)
     @vaccine = @programme.vaccines.find_by(upload_name: "Gardasil9")
     @other_vaccine = @programme.vaccines.find_by(upload_name: "Cervarix")
-    @batch = create(:batch, vaccine: @vaccine, name: "SomethingElse")
+    @batch = create(:batch, vaccine: @vaccine, number: "SomethingElse")
     @other_batch =
-      create(:batch, vaccine: @other_vaccine, name: "CervarixBatch")
+      create(:batch, vaccine: @other_vaccine, number: "CervarixBatch")
     @previous_vaccination_record =
       create(
         :vaccination_record,
         programme: @programme,
-        performed_at: @session.dates.min.in_time_zone,
+        performed_at: @session.dates.min,
         notes: "Foo",
         created_at: Time.zone.yesterday,
         batch: @batch,
@@ -118,7 +118,7 @@ describe "Immunisation imports duplicates" do
       create(
         :vaccination_record,
         programme: @programme,
-        performed_at: @session.dates.min.in_time_zone,
+        performed_at: @session.dates.min,
         notes: "Bar",
         created_at: Time.zone.yesterday,
         batch: @other_batch,
@@ -203,9 +203,7 @@ describe "Immunisation imports duplicates" do
     expect(@existing_patient.pending_changes).to eq({})
     expect(@existing_patient.vaccination_records.count).to eq(1)
     vaccs_record = @existing_patient.vaccination_records.first
-    expect(vaccs_record.performed_at).to eq(
-      Time.new(2024, 5, 14, 0, 0, 0, "+01:00")
-    )
+    expect(vaccs_record.performed_at).to eq(Date.new(2024, 5, 14))
     expect(vaccs_record.delivery_method).to eq("intramuscular")
     expect(vaccs_record.delivery_site).to eq("left_buttock")
   end

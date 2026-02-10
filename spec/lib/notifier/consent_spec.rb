@@ -38,7 +38,7 @@ describe Notifier::Consent do
       before do
         create(:vaccination_record, patient:, programme:, session:)
 
-        StatusUpdater.call(patient:)
+        PatientStatusUpdater.call(patient:)
       end
 
       it "sends a different email tailored to MMR second dose" do

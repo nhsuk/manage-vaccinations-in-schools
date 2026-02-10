@@ -178,7 +178,7 @@ describe "Offline vaccination" do
         year_group: 8
       )
 
-    StatusUpdater.call
+    PatientStatusUpdater.call
   end
 
   def given_an_hpv_programme_is_underway_with_a_single_patient
@@ -210,7 +210,7 @@ describe "Offline vaccination" do
       notify_parents: true
     )
 
-    StatusUpdater.call
+    PatientStatusUpdater.call
   end
 
   def given_a_flu_programme_is_underway_with_a_single_patient
@@ -470,7 +470,7 @@ describe "Offline vaccination" do
     row_for_vaccinated_patient["TIME_OF_VACCINATION"] = "10:00:00"
     row_for_vaccinated_patient["VACCINATED"] = "Y"
     row_for_vaccinated_patient["VACCINE_GIVEN"] = "Gardasil9"
-    row_for_vaccinated_patient["BATCH_NUMBER"] = @batch.name
+    row_for_vaccinated_patient["BATCH_NUMBER"] = @batch.number
     row_for_vaccinated_patient["BATCH_EXPIRY_DATE"] = @batch.expiry.strftime(
       "%d/%m/%Y"
     )
@@ -552,7 +552,7 @@ describe "Offline vaccination" do
 
     click_on "1 February 2024"
     expect(page).to have_content("Gardasil 9")
-    expect(page).to have_content(@batch.name)
+    expect(page).to have_content(@batch.number)
     expect(page).to have_content("DateToday (1 February 2024)")
     expect(page).to have_content("Time10:00am")
     expect(page).to have_content(

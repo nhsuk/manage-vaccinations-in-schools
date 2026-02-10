@@ -34,13 +34,13 @@ class VaccinationRecordsController < ApplicationController
 
     @vaccination_record.discard!
 
-    StatusUpdater.call(patient: @vaccination_record.patient)
+    PatientStatusUpdater.call(patient: @vaccination_record.patient)
 
     if @vaccination_record.confirmation_sent?
       @vaccination_record.notifier.send_deletion(sent_by: current_user)
     end
 
-    StatusUpdater.call(patient: @vaccination_record.patient)
+    PatientStatusUpdater.call(patient: @vaccination_record.patient)
 
     redirect_to @return_to, flash: { success: "Vaccination record archived" }
   end
@@ -50,7 +50,6 @@ class VaccinationRecordsController < ApplicationController
   def set_vaccination_record
     @vaccination_record =
       authorize policy_scope(VaccinationRecord).includes(
-                  :batch,
                   :immunisation_imports,
                   :location,
                   :performed_by_user,

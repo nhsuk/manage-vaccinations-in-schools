@@ -92,7 +92,7 @@ describe SendSchoolConsentRequestsJob do
           create(:patient, year_group: 8, parents:, programmes:)
         end
 
-        before { StatusUpdater.call(patient: patient_not_sent_request) }
+        before { PatientStatusUpdater.call(patient: patient_not_sent_request) }
 
         it "sends only one notification for HPV" do
           expect(ConsentNotification).to receive(:create_and_send!).once.with(
@@ -111,7 +111,7 @@ describe SendSchoolConsentRequestsJob do
           create(:patient, year_group: 9, parents:, programmes:)
         end
 
-        before { StatusUpdater.call(patient: patient_not_sent_request) }
+        before { PatientStatusUpdater.call(patient: patient_not_sent_request) }
 
         it "sends two notifications for HPV, and MenACWY and Td/IPV" do
           expect(ConsentNotification).to receive(:create_and_send!).with(

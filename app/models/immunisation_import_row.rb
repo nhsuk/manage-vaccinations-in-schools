@@ -3,6 +3,8 @@
 class ImmunisationImportRow
   include ActiveModel::Model
 
+  include PerformableAtDateAndTime
+
   validate :validate_administered
 
   validate :validate_batch_expiry,
@@ -135,7 +137,8 @@ class ImmunisationImportRow
       full_dose: true,
       outcome:,
       patient_id: patient.id,
-      performed_at:,
+      performed_at_date:,
+      performed_at_time:,
       performed_by_user:,
       performed_ods_code: performed_ods_code&.to_s,
       programme_type: programme.type,
@@ -163,7 +166,6 @@ class ImmunisationImportRow
     end
 
     attributes_to_stage_if_already_exists = {
-      batch_id: batch&.id,
       batch_number: batch_name&.to_s,
       batch_expiry: batch_expiry&.to_date,
       notes: notes&.to_s,
@@ -336,19 +338,9 @@ class ImmunisationImportRow
     end
   end
 
-  def performed_at
-    date = date_of_vaccination.to_date
-    time = time_of_vaccination&.to_time
+  def performed_at_date = date_of_vaccination.to_date
 
-    Time.zone.local(
-      date.year,
-      date.month,
-      date.day,
-      time&.hour || 0,
-      time&.min || 0,
-      time&.sec || 0
-    )
-  end
+  def performed_at_time = time_of_vaccination&.to_time
 
   def performed_by_user
     @performed_by_user ||=
@@ -442,23 +434,6 @@ class ImmunisationImportRow
     @vaccine ||=
       team.vaccines.find_by(upload_name: vaccine_upload_name) ||
         team.vaccines.find_by(nivs_name: vaccine_upload_name)
-  end
-
-  def batch
-    return unless valid?
-
-    @batch ||=
-      if administered && vaccine && batch_name.present?
-        Batch.create_with(
-          archived_at: Time.current,
-          number: batch_name.to_s
-        ).find_or_create_by!(
-          expiry: batch_expiry&.to_date,
-          name: batch_name.to_s,
-          team_id: session&.team_id,
-          vaccine:
-        )
-      end
   end
 
   def programmes_by_name
@@ -665,7 +640,7 @@ class ImmunisationImportRow
           errors.add(batch_name.header, "must be at most 100 characters long")
         elsif batch_name.to_s.length < 2
           errors.add(batch_name.header, "must be at least 2 characters long")
-        elsif batch_name.to_s !~ BatchNameValidator::FORMAT
+        elsif batch_name.to_s !~ BatchNumberValidator::FORMAT
           errors.add(batch_name.header, "must be only letters and numbers")
         end
       elsif offline_recording? || national_reporting?
@@ -1191,7 +1166,7 @@ class ImmunisationImportRow
         "Enter a time in the correct format."
       )
     elsif date_of_vaccination&.to_date&.today?
-      if time_of_vaccination.to_time.future?
+      if performed_at.future?
         errors.add(time_of_vaccination.header, "Enter a time in the past.")
       end
     end

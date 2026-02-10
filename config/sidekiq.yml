@@ -57,9 +57,9 @@
       cron: "0 9 * * *"
       class: EnqueueSchoolSessionRemindersJob
       description: Send school session reminder emails to parents
-    status_updater:
+    patient_status_updater:
       cron: "0 3 * * *"
-      class: StatusUpdaterJob
+      class: PatientStatusUpdaterJob
       description: Updates the status of all patients
     trim_active_record_sessions:
       cron: "0 2 * * *"

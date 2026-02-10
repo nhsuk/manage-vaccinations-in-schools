@@ -113,23 +113,9 @@ class PatientSessions::ConsentsController < PatientSessions::BaseController
   end
 
   def update_patient_status
-    @patient
-      .triages
-      .where(
-        academic_year: @session.academic_year,
-        programme_type: @consent.programme_type
-      )
-      .invalidate_all
+    @consent.invalidate_all_triages_and_patient_specific_directions!
 
-    @patient
-      .patient_specific_directions
-      .where(
-        academic_year: @session.academic_year,
-        programme_type: @consent.programme_type
-      )
-      .invalidate_all
-
-    StatusUpdater.call(patient: @patient)
+    PatientStatusUpdater.call(patient: @patient)
   end
 
   def ensure_can_withdraw

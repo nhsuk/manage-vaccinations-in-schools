@@ -12,7 +12,7 @@ en:
               missing_month: Enter a month
               missing_year: Enter a year
               taken: This batch already exists
-            name:
+            number:
               blank: Enter a batch number
               invalid: Enter a batch number with only letters and numbers
               too_short: Enter a batch number that is more than %{count} characters long
@@ -114,7 +114,7 @@ en:
           attributes:
             batch_id:
               blank: Choose a batch
-            batch_name:
+            batch_number:
               blank: Enter a batch number
               invalid: Enter a batch number with only letters and numbers
               too_short: Enter a batch number that is more than %{count} characters long
@@ -148,12 +148,18 @@ en:
               too_long: Enter notes that are less than %{count} characters long
             outcome:
               inclusion: Choose an outcome
-            performed_at:
-              blank: Enter a date and time
+            performed_at_date:
+              blank: Enter a date
+              invalid: Enter a valid date
               missing_day: Enter a day
               missing_month: Enter a month
               missing_year: Enter a year
-              invalid: Enter a valid date and time
+            performed_at_time:
+              blank: Enter a date time
+              invalid: Enter a valid time
+              missing_hour: Enter a day
+              missing_minute: Enter a month
+              missing_second: Enter a year
             performed_by_given_name:
               blank: First name can't be blank
             performed_by_family_name:
@@ -394,6 +400,12 @@ en:
               too_long: Enter notes that are less than %{count} characters long
         consent_form:
           attributes:
+            ethnic_group:
+              blank: Choose an ethnic group
+            ethnic_background:
+              blank: Choose an ethnic background
+            ethnic_background_other:
+              blank: Enter details about your child’s background
             address_line_1:
               blank: Enter the first line of your address
               too_long: >-
@@ -530,6 +542,8 @@ en:
               too_long: Enter a relationship that is less than 300 characters long
         patient:
           attributes:
+            ethnic_background_other:
+              blank: Enter details about your child's background
             nhs_number:
               invalid: Enter a valid NHS number
               wrong_length: Enter a valid NHS number with 10 characters
@@ -571,8 +585,8 @@ en:
               invalid: The unlock token is invalid
         vaccination_record:
           attributes:
-            performed_at:
-              less_than_or_equal_to: Enter a time in the past
+            performed_at_date:
+              less_than_or_equal_to: Enter a date in the past
             performed_by_given_name:
               blank: First name can't be blank
             performed_by_family_name:
@@ -691,8 +705,8 @@ en:
           cancel: Cancel
       create:
         success_flash:
-          unconsented_only: Parent–child relationships without a submitted consent response have been removed.
-          all: All parent-child relationships included in this import have been removed.
+          unconsented_only: Parent–child relationships without a submitted consent response are being removed.
+          all: All parent-child relationships included in this import are being removed.
   mailers:
     consent_form_mailer:
       reasons_for_refusal:

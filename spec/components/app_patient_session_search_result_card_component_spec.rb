@@ -190,7 +190,7 @@ describe AppPatientSessionSearchResultCardComponent do
       context "and once vaccinated" do
         before do
           create(:vaccination_record, patient:, programme:, session:)
-          StatusUpdater.call(patient:)
+          PatientStatusUpdater.call(patient:)
           patient.reload
         end
 
