@@ -28,8 +28,13 @@ class API::Reporting::TotalsController < API::Reporting::BaseController
 
   METRIC_HEADERS = {
     cohort: "Cohort",
+    no_consent: "No Consent",
+    consent_no_response: "Consent No Response",
+    consent_refused: "Consent Refused",
+    consent_conflicts: "Consent Conflicts",
+    consent_given: "Consent Given",
+    not_vaccinated: "Not Vaccinated",
     vaccinated: "Vaccinated",
-    not_vaccinated: "Not Vaccinated"
   }.freeze
 
   FLU_SPECIFIC_METRIC_HEADERS = {}.freeze
