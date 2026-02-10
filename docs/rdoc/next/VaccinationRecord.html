@@ -699,7 +699,6 @@ source                                  :integer          not null
 uuid                                    :uuid             not null
 created_at                              :datetime         not null
 updated_at                              :datetime         not null
-batch_id                                :bigint
 local_patient_id                        :string
 location_id                             :bigint
 next_dose_delay_triage_id               :bigint
@@ -713,7 +712,6 @@ vaccine_id                              :bigint</pre>
 <p>Indexes</p>
 
 <pre>idx_on_patient_id_programme_type_outcome_453b557b54             (patient_id,programme_type,outcome) WHERE (discarded_at IS NULL)
-index_vaccination_records_on_batch_id                           (batch_id)
 index_vaccination_records_on_discarded_at                       (discarded_at)
 index_vaccination_records_on_location_id                        (location_id)
 index_vaccination_records_on_next_dose_delay_triage_id          (next_dose_delay_triage_id)
@@ -731,8 +729,7 @@ index_vaccination_records_on_vaccine_id                         (vaccine_id)</pr
 
 <p>Foreign Keys</p>
 
-<pre>fk_rails_...  (batch_id =&gt; batches.id)
-fk_rails_...  (next_dose_delay_triage_id =&gt; triages.id)
+<pre>fk_rails_...  (next_dose_delay_triage_id =&gt; triages.id)
 fk_rails_...  (patient_id =&gt; patients.id)
 fk_rails_...  (performed_by_user_id =&gt; users.id)
 fk_rails_...  (session_id =&gt; sessions.id)
@@ -812,7 +809,7 @@ fk_rails_...  (vaccine_id =&gt; vaccines.id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="delivery_method_injection-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/vaccination_record.rb, line 278</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/vaccination_record.rb, line 274</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">delivery_method_injection?</span>
   <span class="ruby-identifier">delivery_method_intramuscular?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">delivery_method_subcutaneous?</span>
 <span class="ruby-keyword">end</span></pre>
@@ -854,7 +851,7 @@ fk_rails_...  (vaccine_id =&gt; vaccines.id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="delivery_method_snomed_code-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/vaccination_record.rb, line 282</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/vaccination_record.rb, line 278</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">delivery_method_snomed_code</span>
   <span class="ruby-constant">DELIVERY_METHOD_SNOMED_CODES_AND_TERMS</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">delivery_method</span>).<span class="ruby-identifier">first</span>
 <span class="ruby-keyword">end</span></pre>
@@ -896,7 +893,7 @@ fk_rails_...  (vaccine_id =&gt; vaccines.id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="delivery_method_snomed_term-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/vaccination_record.rb, line 286</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/vaccination_record.rb, line 282</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">delivery_method_snomed_term</span>
   <span class="ruby-constant">DELIVERY_METHOD_SNOMED_CODES_AND_TERMS</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">delivery_method</span>).<span class="ruby-identifier">second</span>
 <span class="ruby-keyword">end</span></pre>
@@ -938,7 +935,7 @@ fk_rails_...  (vaccine_id =&gt; vaccines.id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="fhir_mapper-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/vaccination_record.rb, line 302</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/vaccination_record.rb, line 298</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">fhir_mapper</span>
   <span class="ruby-ivar">@fhir_mapper</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">FHIRMapper</span><span class="ruby-operator">::</span><span class="ruby-constant">VaccinationRecord</span>.<span class="ruby-identifier">new</span>(<span class="ruby-keyword">self</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -980,7 +977,7 @@ fk_rails_...  (vaccine_id =&gt; vaccines.id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="generate_important_notice_if_needed-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/vaccination_record.rb, line 337</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/vaccination_record.rb, line 333</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">generate_important_notice_if_needed</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">should_generate_important_notice?</span>
     <span class="ruby-constant">ImportantNoticeGeneratorJob</span>.<span class="ruby-identifier">perform_later</span>([<span class="ruby-identifier">patient_id</span>])
@@ -1024,7 +1021,7 @@ fk_rails_...  (vaccine_id =&gt; vaccines.id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="not_administered-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/vaccination_record.rb, line 268</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/vaccination_record.rb, line 264</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">not_administered?</span> = <span class="ruby-operator">!</span><span class="ruby-identifier">administered?</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">show_in_academic_year?</span>(<span class="ruby-identifier">current_academic_year</span>)
@@ -1135,7 +1132,7 @@ fk_rails_...  (vaccine_id =&gt; vaccines.id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="notifier-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/vaccination_record.rb, line 294</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/vaccination_record.rb, line 290</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">notifier</span> = <span class="ruby-constant">Notifier</span><span class="ruby-operator">::</span><span class="ruby-constant">VaccinationRecord</span>.<span class="ruby-identifier">new</span>(<span class="ruby-keyword">self</span>)
 
 <span class="ruby-identifier">private</span>
@@ -1222,7 +1219,7 @@ fk_rails_...  (vaccine_id =&gt; vaccines.id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="recalculate_next_dose_delay_triage_date-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/vaccination_record.rb, line 306</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/vaccination_record.rb, line 302</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">recalculate_next_dose_delay_triage_date</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">next_dose_delay_triage</span>.<span class="ruby-identifier">blank?</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">administered?</span>
@@ -1283,7 +1280,7 @@ fk_rails_...  (vaccine_id =&gt; vaccines.id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="requires_location_name-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/vaccination_record.rb, line 298</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/vaccination_record.rb, line 294</span>
   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">requires_location_name?</span> = <span class="ruby-identifier">location</span>.<span class="ruby-identifier">nil?</span>
 
   <span class="ruby-identifier">delegate</span> <span class="ruby-value">:maximum_dose_sequence</span>, <span class="ruby-value">to:</span> <span class="ruby-value">:programme</span>
@@ -1367,7 +1364,7 @@ fk_rails_...  (vaccine_id =&gt; vaccines.id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="should_generate_important_notice-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/vaccination_record.rb, line 329</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/vaccination_record.rb, line 325</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">should_generate_important_notice?</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">id_previously_changed?</span> <span class="ruby-comment"># new_record? is not available in after_save</span>
     <span class="ruby-operator">!</span><span class="ruby-identifier">notify_parents</span> <span class="ruby-comment"># important notices are only generated if this is false</span>
@@ -1413,7 +1410,7 @@ fk_rails_...  (vaccine_id =&gt; vaccines.id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="show_in_academic_year-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/vaccination_record.rb, line 270</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/vaccination_record.rb, line 266</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">show_in_academic_year?</span>(<span class="ruby-identifier">current_academic_year</span>)
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">seasonal?</span>
     <span class="ruby-identifier">academic_year</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">current_academic_year</span>
@@ -1459,7 +1456,7 @@ fk_rails_...  (vaccine_id =&gt; vaccines.id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="snomed_procedure_code-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/vaccination_record.rb, line 290</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/vaccination_record.rb, line 286</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">snomed_procedure_code</span> = <span class="ruby-identifier">vaccine</span>&amp;.<span class="ruby-identifier">snomed_procedure_code</span>(<span class="ruby-value">dose_sequence:</span>)
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">snomed_procedure_term</span> = <span class="ruby-identifier">vaccine</span>&amp;.<span class="ruby-identifier">snomed_procedure_term</span>(<span class="ruby-value">dose_sequence:</span>)
@@ -1549,7 +1546,7 @@ fk_rails_...  (vaccine_id =&gt; vaccines.id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="snomed_procedure_term-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/vaccination_record.rb, line 292</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/vaccination_record.rb, line 288</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">snomed_procedure_term</span> = <span class="ruby-identifier">vaccine</span>&amp;.<span class="ruby-identifier">snomed_procedure_term</span>(<span class="ruby-value">dose_sequence:</span>)
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">notifier</span> = <span class="ruby-constant">Notifier</span><span class="ruby-operator">::</span><span class="ruby-constant">VaccinationRecord</span>.<span class="ruby-identifier">new</span>(<span class="ruby-keyword">self</span>)
