@@ -37,7 +37,6 @@
 #  uuid                                    :uuid             not null
 #  created_at                              :datetime         not null
 #  updated_at                              :datetime         not null
-#  batch_id                                :bigint
 #  local_patient_id                        :string
 #  location_id                             :bigint
 #  next_dose_delay_triage_id               :bigint
@@ -51,7 +50,6 @@
 # Indexes
 #
 #  idx_on_patient_id_programme_type_outcome_453b557b54             (patient_id,programme_type,outcome) WHERE (discarded_at IS NULL)
-#  index_vaccination_records_on_batch_id                           (batch_id)
 #  index_vaccination_records_on_discarded_at                       (discarded_at)
 #  index_vaccination_records_on_location_id                        (location_id)
 #  index_vaccination_records_on_next_dose_delay_triage_id          (next_dose_delay_triage_id)
@@ -69,7 +67,6 @@
 #
 # Foreign Keys
 #
-#  fk_rails_...  (batch_id => batches.id)
 #  fk_rails_...  (next_dose_delay_triage_id => triages.id)
 #  fk_rails_...  (patient_id => patients.id)
 #  fk_rails_...  (performed_by_user_id => users.id)
@@ -84,6 +81,8 @@ FactoryBot.define do
         Team.has_all_programmes_of([programme]).first ||
           association(:team, programmes: [programme])
       end
+
+      batch { build(:batch, :not_expired) if vaccine }
     end
 
     programme { Programme.sample }
@@ -101,11 +100,6 @@ FactoryBot.define do
     vaccine { programme.vaccines.active.sample if session }
     disease_types { vaccine&.disease_types || programme.disease_types }
 
-    batch do
-      if vaccine
-        association(:batch, :not_expired, team:, vaccine:, strategy: :create)
-      end
-    end
     batch_number { batch&.number }
     batch_expiry { batch&.expiry }
 
