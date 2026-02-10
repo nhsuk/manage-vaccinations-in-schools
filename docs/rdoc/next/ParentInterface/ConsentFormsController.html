@@ -873,10 +873,14 @@
   <span class="ruby-comment"># onto the matched patient.</span>
   <span class="ruby-constant">ProcessConsentFormJob</span>.<span class="ruby-identifier">perform_later</span>(<span class="ruby-ivar">@consent_form</span>.<span class="ruby-identifier">id</span>)
 
-  <span class="ruby-identifier">redirect_to</span> <span class="ruby-identifier">parent_interface_consent_form_edit_path</span>(
-                <span class="ruby-ivar">@consent_form</span>,
-                <span class="ruby-string">&quot;ethnicity&quot;</span>
-              )
+  <span class="ruby-keyword">if</span> <span class="ruby-constant">Flipper</span>.<span class="ruby-identifier">enabled?</span>(<span class="ruby-value">:ethnicity_capture</span>)
+    <span class="ruby-identifier">redirect_to</span> <span class="ruby-identifier">parent_interface_consent_form_edit_path</span>(
+                  <span class="ruby-ivar">@consent_form</span>,
+                  <span class="ruby-string">&quot;ethnicity&quot;</span>
+                )
+  <span class="ruby-keyword">else</span>
+    <span class="ruby-identifier">redirect_to</span> <span class="ruby-identifier">submitted_parent_interface_consent_form_path</span>(<span class="ruby-ivar">@consent_form</span>)
+  <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -957,7 +961,7 @@
             </details>
           </div>
           <div class="method-source-code" id="submitted-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/controllers/parent_interface/consent_forms_controller.rb, line 76</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/controllers/parent_interface/consent_forms_controller.rb, line 80</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">submitted</span>
   <span class="ruby-identifier">session</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-value">:consent_form_id</span>)
 <span class="ruby-keyword">end</span></pre>

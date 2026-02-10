@@ -986,7 +986,7 @@ fk_rails_...  (team_location_id =&gt; team_locations.id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="can_offer_injection_as_alternative-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_form.rb, line 399</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_form.rb, line 400</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">can_offer_injection_as_alternative?</span>
   <span class="ruby-identifier">consent_form_programmes</span>.<span class="ruby-identifier">select</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:response_given?</span>).<span class="ruby-identifier">any?</span>(
     <span class="ruby-operator">&amp;</span><span class="ruby-value">:vaccine_method_nasal?</span>
@@ -1030,7 +1030,7 @@ fk_rails_...  (team_location_id =&gt; team_locations.id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="can_offer_without_gelatine-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_form.rb, line 405</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_form.rb, line 406</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">can_offer_without_gelatine?</span>
   <span class="ruby-identifier">response_given?</span> <span class="ruby-operator">&amp;&amp;</span>
     <span class="ruby-identifier">consent_form_programmes</span>.<span class="ruby-identifier">any?</span> <span class="ruby-keyword">do</span>
@@ -1076,7 +1076,7 @@ fk_rails_...  (team_location_id =&gt; team_locations.id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="choose_school-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_form.rb, line 755</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_form.rb, line 756</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">choose_school?</span>
   <span class="ruby-identifier">location_is_clinic?</span> <span class="ruby-operator">?</span> <span class="ruby-identifier">education_setting_school?</span> <span class="ruby-operator">:</span> <span class="ruby-operator">!</span><span class="ruby-identifier">school_confirmed</span>
 <span class="ruby-keyword">end</span></pre>
@@ -1118,7 +1118,7 @@ fk_rails_...  (team_location_id =&gt; team_locations.id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="each_health_answer-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_form.rb, line 380</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_form.rb, line 381</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">each_health_answer</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">health_answers</span>.<span class="ruby-identifier">empty?</span>
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">to_enum</span>(<span class="ruby-value">:each_health_answer</span>) <span class="ruby-keyword">unless</span> <span class="ruby-identifier">block_given?</span>
@@ -1214,7 +1214,8 @@ fk_rails_...  (team_location_id =&gt; team_locations.id)</pre>
           <span class="ruby-value">:reason_for_refusal_notes</span>
         <span class="ruby-keyword">end</span>
       )
-    ].<span class="ruby-identifier">compact</span> <span class="ruby-operator">+</span> (<span class="ruby-identifier">recorded?</span> <span class="ruby-operator">?</span> <span class="ruby-constant">ETHNICITY_STEPS</span> <span class="ruby-operator">:</span> [])
+    ].<span class="ruby-identifier">compact</span> <span class="ruby-operator">+</span>
+    (<span class="ruby-constant">Flipper</span>.<span class="ruby-identifier">enabled?</span>(<span class="ruby-value">:ethnicity_capture</span>) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">recorded?</span> <span class="ruby-operator">?</span> <span class="ruby-constant">ETHNICITY_STEPS</span> <span class="ruby-operator">:</span> [])
 <span class="ruby-keyword">end</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">recorded?</span> = <span class="ruby-identifier">recorded_at</span> <span class="ruby-operator">!=</span> <span class="ruby-keyword">nil</span>
@@ -1686,7 +1687,7 @@ fk_rails_...  (team_location_id =&gt; team_locations.id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="find_approriate_session-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_form.rb, line 675</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_form.rb, line 676</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">find_approriate_session</span>
   <span class="ruby-comment"># This tries to find the most appropriate session for this consent form.</span>
   <span class="ruby-comment"># It&#39;s used when generating links to patients in a session, or when</span>
@@ -1775,7 +1776,7 @@ fk_rails_...  (team_location_id =&gt; team_locations.id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="find_or_create_parent_with_relationship_to-21-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_form.rb, line 450</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_form.rb, line 451</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">find_or_create_parent_with_relationship_to!</span>(<span class="ruby-value">patient:</span>)
   <span class="ruby-identifier">parent</span> =
     <span class="ruby-constant">Parent</span>.<span class="ruby-identifier">match_existing</span>(
@@ -1842,7 +1843,7 @@ fk_rails_...  (team_location_id =&gt; team_locations.id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="health_answers_valid-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_form.rb, line 730</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_form.rb, line 731</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">health_answers_valid?</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">health_question_number</span>.<span class="ruby-identifier">present?</span>
     <span class="ruby-keyword">unless</span> <span class="ruby-identifier">health_answers</span>[<span class="ruby-identifier">health_question_number</span>].<span class="ruby-identifier">valid?</span>
@@ -1897,7 +1898,7 @@ fk_rails_...  (team_location_id =&gt; team_locations.id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="home_educated-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_form.rb, line 538</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_form.rb, line 539</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">home_educated</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">education_setting_school?</span>
 
@@ -1941,7 +1942,7 @@ fk_rails_...  (team_location_id =&gt; team_locations.id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="home_educated_changed-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_form.rb, line 544</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_form.rb, line 545</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">home_educated_changed?</span>
   <span class="ruby-identifier">education_setting_changed?</span>
 <span class="ruby-keyword">end</span></pre>
@@ -1983,7 +1984,7 @@ fk_rails_...  (team_location_id =&gt; team_locations.id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="human_enum_name-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_form.rb, line 376</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_form.rb, line 377</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">human_enum_name</span>(<span class="ruby-identifier">attribute</span>)
   <span class="ruby-constant">Consent</span>.<span class="ruby-identifier">human_enum_name</span>(<span class="ruby-identifier">attribute</span>, <span class="ruby-identifier">send</span>(<span class="ruby-identifier">attribute</span>))
 <span class="ruby-keyword">end</span></pre>
@@ -2025,7 +2026,7 @@ fk_rails_...  (team_location_id =&gt; team_locations.id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="location_is_clinic-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_form.rb, line 751</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_form.rb, line 752</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">location_is_clinic?</span>
   <span class="ruby-identifier">location</span>.<span class="ruby-identifier">clinic?</span>
 <span class="ruby-keyword">end</span></pre>
@@ -2067,7 +2068,7 @@ fk_rails_...  (team_location_id =&gt; team_locations.id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="location_is_school-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_form.rb, line 747</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_form.rb, line 748</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">location_is_school?</span>
   <span class="ruby-identifier">location</span>.<span class="ruby-identifier">school?</span>
 <span class="ruby-keyword">end</span></pre>
@@ -2109,7 +2110,7 @@ fk_rails_...  (team_location_id =&gt; team_locations.id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="match_with_patient-21-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_form.rb, line 508</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_form.rb, line 509</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">match_with_patient!</span>(<span class="ruby-identifier">patient</span>, <span class="ruby-value">current_user:</span>)
   <span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span>.<span class="ruby-identifier">transaction</span> <span class="ruby-keyword">do</span>
     <span class="ruby-identifier">notify_log_entries</span>.<span class="ruby-identifier">update_all</span>(<span class="ruby-value">patient_id:</span> <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">id</span>)
@@ -2166,7 +2167,7 @@ fk_rails_...  (team_location_id =&gt; team_locations.id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="matched-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_form.rb, line 370</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_form.rb, line 371</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">matched?</span> = <span class="ruby-identifier">consents</span>.<span class="ruby-identifier">exists?</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">response_given?</span> = <span class="ruby-identifier">consent_form_programmes</span>.<span class="ruby-identifier">any?</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:response_given?</span>)
@@ -2634,7 +2635,7 @@ fk_rails_...  (team_location_id =&gt; team_locations.id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="matched_patient-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_form.rb, line 417</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_form.rb, line 418</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">matched_patient</span>
   <span class="ruby-ivar">@matched_patient</span> <span class="ruby-operator">||=</span> (<span class="ruby-identifier">matched_patients</span>.<span class="ruby-identifier">sole</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">matched?</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -2676,7 +2677,7 @@ fk_rails_...  (team_location_id =&gt; team_locations.id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="matches_contact_details_for-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_form.rb, line 527</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_form.rb, line 528</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">matches_contact_details_for?</span>(<span class="ruby-value">patient:</span>)
   <span class="ruby-comment"># We assume `true` if the patient has no parents, otherwise we would send</span>
   <span class="ruby-comment"># warnings to these parents about their contact details not matching.</span>
@@ -2725,7 +2726,7 @@ fk_rails_...  (team_location_id =&gt; team_locations.id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="notifier-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_form.rb, line 660</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_form.rb, line 661</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">notifier</span> = <span class="ruby-constant">Notifier</span><span class="ruby-operator">::</span><span class="ruby-constant">ConsentForm</span>.<span class="ruby-identifier">new</span>(<span class="ruby-keyword">self</span>)
 
 <span class="ruby-identifier">private</span>
@@ -2905,7 +2906,7 @@ fk_rails_...  (team_location_id =&gt; team_locations.id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="original_session_is_accurate-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_form.rb, line 664</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_form.rb, line 665</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">original_session_is_accurate?</span>
   <span class="ruby-comment"># Some older consent forms don&#39;t have an original session.</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">original_session_id</span>.<span class="ruby-identifier">nil?</span>
@@ -2954,7 +2955,7 @@ fk_rails_...  (team_location_id =&gt; team_locations.id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="parent-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_form.rb, line 489</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_form.rb, line 490</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">parent</span>
   <span class="ruby-constant">Parent</span>.<span class="ruby-identifier">new</span>(
     <span class="ruby-value">full_name:</span> <span class="ruby-identifier">parent_full_name</span>,
@@ -3003,7 +3004,7 @@ fk_rails_...  (team_location_id =&gt; team_locations.id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="parent_relationship-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_form.rb, line 500</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_form.rb, line 501</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">parent_relationship</span>
   <span class="ruby-constant">ParentRelationship</span>.<span class="ruby-identifier">new</span>(
     <span class="ruby-value">parent:</span>,
@@ -3049,7 +3050,7 @@ fk_rails_...  (team_location_id =&gt; team_locations.id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="programme_types-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_form.rb, line 444</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_form.rb, line 445</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">programme_types</span> = <span class="ruby-identifier">consent_form_programmes</span>.<span class="ruby-identifier">map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:programme_type</span>)
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccines</span>
@@ -3445,7 +3446,7 @@ fk_rails_...  (team_location_id =&gt; team_locations.id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="programmes-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_form.rb, line 442</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_form.rb, line 443</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">programmes</span> = <span class="ruby-identifier">consent_form_programmes</span>.<span class="ruby-identifier">map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:programme</span>)
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">programme_types</span> = <span class="ruby-identifier">consent_form_programmes</span>.<span class="ruby-identifier">map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:programme_type</span>)
@@ -3842,7 +3843,7 @@ fk_rails_...  (team_location_id =&gt; team_locations.id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="reason_for_refusal-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_form.rb, line 548</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_form.rb, line 549</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">reason_for_refusal</span>
   <span class="ruby-identifier">consent_form_programmes</span>.<span class="ruby-identifier">find</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:response_refused?</span>)&amp;.<span class="ruby-identifier">reason_for_refusal</span>
 <span class="ruby-keyword">end</span></pre>
@@ -3884,7 +3885,7 @@ fk_rails_...  (team_location_id =&gt; team_locations.id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="reason_for_refusal-3D-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_form.rb, line 552</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_form.rb, line 553</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">reason_for_refusal=</span>(<span class="ruby-identifier">value</span>)
   <span class="ruby-identifier">consent_form_programmes</span>
     .<span class="ruby-identifier">select</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:response_refused?</span>)
@@ -3928,7 +3929,7 @@ fk_rails_...  (team_location_id =&gt; team_locations.id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="reason_for_refusal_notes-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_form.rb, line 558</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_form.rb, line 559</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">reason_for_refusal_notes</span>
   <span class="ruby-identifier">consent_form_programmes</span>.<span class="ruby-identifier">find</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:response_refused?</span>)&amp;.<span class="ruby-identifier">notes</span>
 <span class="ruby-keyword">end</span></pre>
@@ -3970,7 +3971,7 @@ fk_rails_...  (team_location_id =&gt; team_locations.id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="reason_for_refusal_notes-3D-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_form.rb, line 562</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_form.rb, line 563</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">reason_for_refusal_notes=</span>(<span class="ruby-identifier">value</span>)
   <span class="ruby-identifier">consent_form_programmes</span>
     .<span class="ruby-identifier">select</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:response_refused?</span>)
@@ -4014,7 +4015,7 @@ fk_rails_...  (team_location_id =&gt; team_locations.id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="reason_for_refusal_requires_notes-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_form.rb, line 413</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_form.rb, line 414</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">reason_for_refusal_requires_notes?</span>
   <span class="ruby-identifier">consent_form_programmes</span>.<span class="ruby-identifier">any?</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:reason_for_refusal_requires_notes?</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -4056,7 +4057,7 @@ fk_rails_...  (team_location_id =&gt; team_locations.id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="recorded-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_form.rb, line 368</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_form.rb, line 369</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">recorded?</span> = <span class="ruby-identifier">recorded_at</span> <span class="ruby-operator">!=</span> <span class="ruby-keyword">nil</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">matched?</span> = <span class="ruby-identifier">consents</span>.<span class="ruby-identifier">exists?</span>
@@ -4526,7 +4527,7 @@ fk_rails_...  (team_location_id =&gt; team_locations.id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="requires_notes-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_form.rb, line 759</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_form.rb, line 760</span>
   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">requires_notes?</span> = <span class="ruby-identifier">archived?</span>
 
   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">reset_unused_attributes</span>
@@ -4608,7 +4609,7 @@ fk_rails_...  (team_location_id =&gt; team_locations.id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="reset_unused_attributes-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_form.rb, line 761</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_form.rb, line 762</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">reset_unused_attributes</span>
   <span class="ruby-identifier">update_programme_responses</span>
 
@@ -4687,7 +4688,7 @@ fk_rails_...  (team_location_id =&gt; team_locations.id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="response_given-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_form.rb, line 372</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_form.rb, line 373</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">response_given?</span> = <span class="ruby-identifier">consent_form_programmes</span>.<span class="ruby-identifier">any?</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:response_given?</span>)
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">response_refused?</span> = <span class="ruby-identifier">consent_form_programmes</span>.<span class="ruby-identifier">any?</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:response_refused?</span>)
@@ -5153,7 +5154,7 @@ fk_rails_...  (team_location_id =&gt; team_locations.id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="response_refused-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_form.rb, line 374</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_form.rb, line 375</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">response_refused?</span> = <span class="ruby-identifier">consent_form_programmes</span>.<span class="ruby-identifier">any?</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:response_refused?</span>)
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">human_enum_name</span>(<span class="ruby-identifier">attribute</span>)
@@ -5617,7 +5618,7 @@ fk_rails_...  (team_location_id =&gt; team_locations.id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="seed_health_questions-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_form.rb, line 625</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_form.rb, line 626</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">seed_health_questions</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">response_given?</span>
 
@@ -5690,7 +5691,7 @@ fk_rails_...  (team_location_id =&gt; team_locations.id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="session-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_form.rb, line 421</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_form.rb, line 422</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">session</span>
   <span class="ruby-ivar">@session</span> <span class="ruby-operator">||=</span>
     <span class="ruby-keyword">if</span> <span class="ruby-identifier">original_session_is_accurate?</span>
@@ -5737,7 +5738,7 @@ fk_rails_...  (team_location_id =&gt; team_locations.id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="session_dates_are_accurate-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_form.rb, line 430</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_form.rb, line 431</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">session_dates_are_accurate?</span>
   <span class="ruby-comment"># There are some cases where the dates for the session are not considered</span>
   <span class="ruby-comment"># accurate enough to show to users.</span>
@@ -5787,7 +5788,7 @@ fk_rails_...  (team_location_id =&gt; team_locations.id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="summary_with_route-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_form.rb, line 479</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_form.rb, line 480</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">summary_with_route</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">response_given?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">response_refused?</span>
     <span class="ruby-string">&quot;Partial consent given (online)&quot;</span>
@@ -5835,7 +5836,7 @@ fk_rails_...  (team_location_id =&gt; team_locations.id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="update_injection_alternative-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_form.rb, line 604</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_form.rb, line 605</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">update_injection_alternative</span>
   <span class="ruby-identifier">vaccine_methods</span> =
     <span class="ruby-keyword">if</span> <span class="ruby-constant">ActiveModel</span><span class="ruby-operator">::</span><span class="ruby-constant">Type</span><span class="ruby-operator">::</span><span class="ruby-constant">Boolean</span>.<span class="ruby-identifier">new</span>.<span class="ruby-identifier">cast</span>(<span class="ruby-identifier">injection_alternative</span>)
@@ -5888,7 +5889,7 @@ fk_rails_...  (team_location_id =&gt; team_locations.id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="update_programme_responses-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_form.rb, line 568</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_form.rb, line 569</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">update_programme_responses</span>
   <span class="ruby-keyword">case</span> <span class="ruby-identifier">response</span>
   <span class="ruby-keyword">when</span> <span class="ruby-string">&quot;given&quot;</span>
@@ -5962,7 +5963,7 @@ fk_rails_...  (team_location_id =&gt; team_locations.id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="update_without_gelatine-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_form.rb, line 619</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_form.rb, line 620</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">update_without_gelatine</span>
   <span class="ruby-identifier">consent_form_programmes</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">consent_form_programme</span><span class="ruby-operator">|</span>
     <span class="ruby-identifier">consent_form_programme</span>.<span class="ruby-identifier">without_gelatine</span> = <span class="ruby-identifier">without_gelatine</span>
@@ -6006,7 +6007,7 @@ fk_rails_...  (team_location_id =&gt; team_locations.id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="vaccines-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_form.rb, line 446</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_form.rb, line 447</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccines</span>
   <span class="ruby-ivar">@vaccines</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">Vaccine</span>.<span class="ruby-identifier">where</span>(<span class="ruby-value">programme_type:</span> <span class="ruby-identifier">programme_types</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -6048,7 +6049,7 @@ fk_rails_...  (team_location_id =&gt; team_locations.id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="via_self_consent-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_form.rb, line 726</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_form.rb, line 727</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">via_self_consent?</span>
   <span class="ruby-keyword">false</span>
 <span class="ruby-keyword">end</span></pre>
@@ -6127,7 +6128,8 @@ fk_rails_...  (team_location_id =&gt; team_locations.id)</pre>
           <span class="ruby-value">:reason_for_refusal_notes</span>
         <span class="ruby-keyword">end</span>
       )
-    ].<span class="ruby-identifier">compact</span> <span class="ruby-operator">+</span> (<span class="ruby-identifier">recorded?</span> <span class="ruby-operator">?</span> <span class="ruby-constant">ETHNICITY_STEPS</span> <span class="ruby-operator">:</span> [])
+    ].<span class="ruby-identifier">compact</span> <span class="ruby-operator">+</span>
+    (<span class="ruby-constant">Flipper</span>.<span class="ruby-identifier">enabled?</span>(<span class="ruby-value">:ethnicity_capture</span>) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">recorded?</span> <span class="ruby-operator">?</span> <span class="ruby-constant">ETHNICITY_STEPS</span> <span class="ruby-operator">:</span> [])
 <span class="ruby-keyword">end</span></pre>
           </div>
 
