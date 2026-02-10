@@ -7,7 +7,6 @@
 #  id          :bigint           not null, primary key
 #  archived_at :datetime
 #  expiry      :date
-#  name        :string
 #  number      :string           not null
 #  created_at  :datetime         not null
 #  updated_at  :datetime         not null
@@ -32,8 +31,7 @@ FactoryBot.define do
     team
     vaccine
 
-    name { "#{prefix}#{Faker::Number.number(digits: 4)}" }
-    number { name }
+    number { "#{prefix}#{Faker::Number.number(digits: 4)}" }
 
     trait :expired do
       expiry { Faker::Time.backward(days: 50, period: :evening) }
