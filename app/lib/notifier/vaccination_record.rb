@@ -6,6 +6,10 @@ class Notifier::VaccinationRecord
   end
 
   def send_confirmation(sent_by:)
+    if vaccination_record.already_had?
+      return send_already_had_confirmation
+    end
+
     return if parents.empty?
 
     template_name =
@@ -52,5 +56,9 @@ class Notifier::VaccinationRecord
 
   def parents
     @parents ||= NotificationParentSelector.new(vaccination_record:).parents
+  end
+
+  def send_already_had_confirmation
+    AlreadyHadNotificationSender.call(vaccination_record:)
   end
 end
