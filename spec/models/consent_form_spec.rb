@@ -371,7 +371,7 @@ describe ConsentForm do
     end
 
     context "when wizard_step is :ethnicity_question" do
-      let(:wizard_step) { :ethnicity_question }
+      let(:wizard_step) { :ethnicity }
 
       it do
         expect(consent_form).to validate_inclusion_of(:ethnicity_question).on(

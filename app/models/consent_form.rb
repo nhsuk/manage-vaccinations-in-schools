@@ -207,7 +207,7 @@ class ConsentForm < ApplicationRecord
               in: %w[yes no]
             },
             on: :ethnicity_update,
-            if: -> { wizard_step == :ethnicity_question }
+            if: -> { wizard_step == :ethnicity }
 
   validates :ethnic_group,
             presence: true,

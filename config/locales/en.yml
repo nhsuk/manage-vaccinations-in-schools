@@ -400,6 +400,8 @@ en:
               too_long: Enter notes that are less than %{count} characters long
         consent_form:
           attributes:
+            ethnicity_question:
+              inclusion: Select yes or no
             ethnic_group:
               blank: Choose an ethnic group
             ethnic_background:
