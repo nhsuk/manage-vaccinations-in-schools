@@ -16,6 +16,10 @@ class API::Testing::LocationsController < API::Testing::BaseController
       @locations = @locations.has_gias_year_groups(gias_year_groups)
     end
 
+    if params.key?(:site)
+      @locations = @locations.where(site: params[:site].presence)
+    end
+
     if (is_attached_to_team = params[:is_attached_to_team]).present?
       academic_year = AcademicYear.pending
 
