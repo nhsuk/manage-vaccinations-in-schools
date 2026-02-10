@@ -362,7 +362,8 @@ class ConsentForm < ApplicationRecord
             :reason_for_refusal_notes
           end
         )
-      ].compact + (recorded? ? ETHNICITY_STEPS : [])
+      ].compact +
+      (Flipper.enabled?(:ethnicity_capture) && recorded? ? ETHNICITY_STEPS : [])
   end
 
   def recorded? = recorded_at != nil

@@ -87,8 +87,10 @@ describe "Parental consent given with an inexact automatic match" do
     expect(page).to have_content("Child’s nameJoanna Smith")
     click_on "Confirm"
 
-    choose "No, skip the ethnicity questions"
-    click_on "Continue"
+    if Flipper.enabled?(:ethnicity_capture)
+      choose "No, skip the ethnicity questions"
+      click_on "Continue"
+    end
 
     expect(page).to have_content(
       "Joanna Smith is due to get the HPV vaccination at school"
