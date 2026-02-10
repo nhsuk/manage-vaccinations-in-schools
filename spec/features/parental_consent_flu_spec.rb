@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 describe "Parental consent" do
+  before { given_ethnicity_capture_is_enabled }
+
   scenario "Flu" do
     given_a_flu_programme_is_underway
     when_i_go_to_the_consent_form
@@ -80,6 +82,10 @@ describe "Parental consent" do
     when_i_submit_the_consent_form
     and_i_refuse_to_answer_questions_on_ethnicity
     then_the_psd_is_invalidated
+  end
+
+  def given_ethnicity_capture_is_enabled
+    Flipper.enable(:ethnicity_capture)
   end
 
   def given_a_flu_programme_is_underway

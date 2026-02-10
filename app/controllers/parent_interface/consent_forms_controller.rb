@@ -67,10 +67,14 @@ module ParentInterface
       # onto the matched patient.
       ProcessConsentFormJob.perform_later(@consent_form.id)
 
-      redirect_to parent_interface_consent_form_edit_path(
-                    @consent_form,
-                    "ethnicity"
-                  )
+      if Flipper.enabled?(:ethnicity_capture)
+        redirect_to parent_interface_consent_form_edit_path(
+                      @consent_form,
+                      "ethnicity"
+                    )
+      else
+        redirect_to submitted_parent_interface_consent_form_path(@consent_form)
+      end
     end
 
     def submitted

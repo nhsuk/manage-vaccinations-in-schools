@@ -179,6 +179,8 @@ describe "Parental consent" do
   end
 
   def and_i_refuse_to_answer_questions_on_ethnicity
+    return unless Flipper.enabled?(:ethnicity_capture)
+
     choose "No, skip the ethnicity questions"
     click_on "Continue"
   end
