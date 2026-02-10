@@ -100,7 +100,7 @@ describe ImmunisationImportRow do
     context "for a point_of_care upload" do
       let(:import_type) { "point_of_care" }
 
-      context "with an empty row" do
+      context "with an empty spreadsheet" do
         let(:data) { {} }
 
         it "has errors" do
@@ -115,6 +115,58 @@ describe ImmunisationImportRow do
             "<code>PERSON_POSTCODE</code> or <code>Postcode</code> is required",
             "<code>PROGRAMME</code> or <code>Vaccination type</code> is required",
             "<code>REASON_NOT_VACCINATED</code> is required"
+          )
+        end
+      end
+
+      context "with headers, but an empty row" do
+        let(:data) do
+          {
+            "NHS_NUMBER" => "",
+            "PERSON_FORENAME" => "",
+            "PERSON_SURNAME" => "",
+            "PERSON_DOB" => "",
+            "PERSON_POSTCODE" => "",
+            "PERSON_GENDER_CODE" => "",
+            "PROGRAMME" => "",
+            "DATE_OF_VACCINATION" => "",
+            "REASON_NOT_VACCINATED" => "",
+            "VACCINATED" => ""
+          }
+        end
+
+        it "has the correct errors" do
+          expect(immunisation_import_row).to be_invalid
+          expect(immunisation_import_row.errors[:base]).to be_empty
+
+          expect(immunisation_import_row.errors["PERSON_FORENAME"]).to eq(
+            ["Enter a first name."]
+          )
+          expect(immunisation_import_row.errors["PERSON_SURNAME"]).to eq(
+            ["Enter a last name."]
+          )
+          expect(immunisation_import_row.errors["PERSON_DOB"]).to eq(
+            ["Enter a date of birth."]
+          )
+          expect(immunisation_import_row.errors["PERSON_POSTCODE"]).to eq(
+            ["Enter a valid postcode, such as SW1A 1AA."]
+          )
+          expect(immunisation_import_row.errors["PERSON_GENDER_CODE"]).to eq(
+            ["Enter a gender or gender code."]
+          )
+          expect(immunisation_import_row.errors["PROGRAMME"]).to eq(
+            ["Enter a programme."]
+          )
+          expect(immunisation_import_row.errors["DATE_OF_VACCINATION"]).to eq(
+            ["Enter a date."]
+          )
+          expect(immunisation_import_row.errors["REASON_NOT_VACCINATED"]).to eq(
+            ["Enter a valid reason."]
+          )
+          expect(immunisation_import_row.errors["VACCINATED"]).to eq(
+            [
+              "You need to record whether the child was vaccinated or not. Enter ‘Y’ or ‘N’ in the ‘VACCINATED’ column."
+            ]
           )
         end
       end
@@ -204,7 +256,7 @@ describe ImmunisationImportRow do
         it "has errors" do
           expect(immunisation_import_row).to be_invalid
           expect(immunisation_import_row.errors["VACCINE_GIVEN"]).to eq(
-            ["is required"]
+            ["Enter a vaccine name."]
           )
         end
       end
