@@ -24,10 +24,10 @@ GIT
 
 GIT
   remote: https://github.com/x-govuk/govuk-form-builder.git
-  revision: 8fb16627dec7d2786e481029e1645a85e4d7df15
+  revision: 475bc37a45379ec1ee32993d55eaf357fa4c2aa7
   ref: main
   specs:
-    govuk_design_system_formbuilder (5.13.0)
+    govuk_design_system_formbuilder (6.0.0b1)
       actionview (>= 6.1)
       activemodel (>= 6.1)
       activesupport (>= 6.1)
@@ -334,7 +334,7 @@ GEM
     jmespath (1.6.2)
     jsbundling-rails (1.3.1)
       railties (>= 6.0.0)
-    json (2.18.0)
+    json (2.18.1)
     json-jwt (1.17.0)
       activesupport (>= 4.2)
       aes_key_wrap
