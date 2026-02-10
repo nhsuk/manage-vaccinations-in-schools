@@ -756,6 +756,26 @@ class Patient < ApplicationRecord
     end
   end
 
+  def apply_pending_changes_to_new_record!
+    new_record = nil
+    changeset = changesets.includes(:import).order(:created_at).last
+
+    ActiveRecord::Base.transaction do
+      new_record = super
+
+      if changeset
+        changeset.update!(patient_id: new_record.id)
+        changeset
+          .import
+          .parent_relationships
+          .where(patient_id: id)
+          .update_all(patient_id: new_record.id)
+      end
+    end
+
+    new_record
+  end
+
   def clear_pending_sessions!(team: nil)
     scope = patient_locations.pending
 
