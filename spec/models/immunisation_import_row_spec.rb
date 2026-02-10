@@ -278,7 +278,7 @@ describe ImmunisationImportRow do
         it "has errors" do
           expect(immunisation_import_row).to be_invalid
           expect(immunisation_import_row.errors["REASON_NOT_VACCINATED"]).to eq(
-            ["Enter a valid reason"]
+            ["Enter a valid reason."]
           )
         end
       end
@@ -705,7 +705,7 @@ describe ImmunisationImportRow do
           expect(immunisation_import_row).to be_invalid
           expect(
             immunisation_import_row.errors["PERFORMING_PROFESSIONAL_EMAIL"]
-          ).to include("Enter a valid email address")
+          ).to include("Enter a valid email address.")
         end
       end
 

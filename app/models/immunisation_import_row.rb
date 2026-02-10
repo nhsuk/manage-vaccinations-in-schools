@@ -612,7 +612,7 @@ class ImmunisationImportRow
             errors.add(batch_expiry.header, "must be more than 15 years old")
           end
         else
-          errors.add(batch_expiry.header, "Enter a date in the correct format")
+          errors.add(batch_expiry.header, "Enter a date in the correct format.")
         end
       elsif offline_recording? || national_reporting?
         if batch_expiry.nil?
@@ -703,11 +703,11 @@ class ImmunisationImportRow
         end
       )
     elsif date_of_vaccination.blank?
-      errors.add(date_of_vaccination.header, "Enter a date")
+      errors.add(date_of_vaccination.header, "Enter a date.")
     elsif date_of_vaccination.to_date.nil?
       errors.add(
         date_of_vaccination.header,
-        "Enter a date in the correct format"
+        "Enter a date in the correct format."
       )
     else
       if patient_date_of_birth&.to_date
@@ -977,7 +977,7 @@ class ImmunisationImportRow
         end
       elsif performed_by_email.present?
         if performed_by_user.nil?
-          errors.add(performed_by_email.header, "Enter a valid email address")
+          errors.add(performed_by_email.header, "Enter a valid email address.")
         end
       end
     elsif national_reporting_flu? && administered
@@ -987,7 +987,7 @@ class ImmunisationImportRow
           "<code>PERFORMING_PROFESSIONAL_FORENAME</code> is required"
         )
       elsif performed_by_given_name.blank?
-        errors.add(performed_by_given_name.header, "Enter a forename")
+        errors.add(performed_by_given_name.header, "Enter a forename.")
       end
 
       if performed_by_family_name.nil?
@@ -996,7 +996,7 @@ class ImmunisationImportRow
           "<code>PERFORMING_PROFESSIONAL_SURNAME</code> is required"
         )
       elsif performed_by_family_name.blank?
-        errors.add(performed_by_family_name.header, "Enter a surname")
+        errors.add(performed_by_family_name.header, "Enter a surname.")
       end
     end
   end
@@ -1056,12 +1056,12 @@ class ImmunisationImportRow
       end
     elsif reason_not_administered.present?
       if reason_not_administered_value.blank?
-        errors.add(reason_not_administered.header, "Enter a valid reason")
+        errors.add(reason_not_administered.header, "Enter a valid reason.")
       end
     elsif reason_not_administered.nil?
       errors.add(:base, "<code>REASON_NOT_VACCINATED</code> is required")
     else
-      errors.add(reason_not_administered.header, "Enter a valid reason")
+      errors.add(reason_not_administered.header, "Enter a valid reason.")
     end
   end
 
@@ -1146,7 +1146,7 @@ class ImmunisationImportRow
 
   def validate_supplied_by
     if supplied_by_email.present? && supplied_by.nil?
-      errors.add(supplied_by_email.header, "Enter a valid email address")
+      errors.add(supplied_by_email.header, "Enter a valid email address.")
     end
   end
 
