@@ -22,13 +22,15 @@ describe ImportDuplicateForm do
     end
 
     context "resolving a patient record" do
-      context "when keeping both patients for an import issue that includes parents" do
+      context "when a patient import issue includes parent relationships" do
         let(:team) { create(:team, programmes: [programme]) }
         let(:session) { create(:session, team:, programmes: [programme]) }
         let(:class_import) { create(:class_import, session:) }
         let(:existing_patient) { create(:patient) }
+
         let(:import_parent) { create(:parent) }
         let(:existing_parent) { create(:parent) }
+
         let(:import_relationship) do
           create(
             :parent_relationship,
@@ -37,6 +39,7 @@ describe ImportDuplicateForm do
             type: "father"
           )
         end
+
         let!(:existing_relationship) do
           create(
             :parent_relationship,
@@ -45,6 +48,7 @@ describe ImportDuplicateForm do
             type: "mother"
           )
         end
+
         let!(:changeset) do
           create(
             :patient_changeset,
@@ -60,7 +64,7 @@ describe ImportDuplicateForm do
           class_import.parent_relationships << import_relationship
         end
 
-        it "moves imported parent relationships to the new patient record" do
+        it "moves imported parent relationships to the new patient when keeping both" do
           form =
             described_class.new(
               apply_changes: "keep_both",
@@ -75,6 +79,23 @@ describe ImportDuplicateForm do
           expect(new_patient).not_to eq(existing_patient)
           expect(import_relationship.reload.patient).to eq(new_patient)
           expect(existing_relationship.reload.patient).to eq(existing_patient)
+        end
+
+        it "removes imported parent relationships when discarding changes" do
+          form =
+            described_class.new(
+              apply_changes: "discard",
+              object: existing_patient,
+              current_team: team
+            )
+
+          expect(form.save).to be(true)
+
+          expect { import_relationship.reload }.to raise_error(
+            ActiveRecord::RecordNotFound
+          )
+          expect(existing_relationship.reload.patient).to eq(existing_patient)
+          expect(changeset.reload.patient).to eq(existing_patient)
         end
       end
     end
