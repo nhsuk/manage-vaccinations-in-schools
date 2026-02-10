@@ -1,0 +1,129 @@
+name: Run GIAS import
+run-name: Run GIAS import in ${{ inputs.environment }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Environment to run the command in
+        required: true
+        type: choice
+        options:
+          - qa
+          - test
+          - preview
+          - training
+          - production
+          - sandbox-alpha
+          - sandbox-beta
+          - performance
+          - pentest
+      output_file:
+        description: Optional output file path to save to (passed as -o). Defaults to db/data/dfe-schools.zip
+        required: false
+        type: string
+
+permissions: {}
+
+concurrency:
+  group: gias-importv-${{ inputs.environment }}
+
+env:
+  environment: ${{ inputs.environment }}
+  aws_account_id: ${{ inputs.environment == 'production' && '820242920762' || '393416225559' }}
+  cluster_name: mavis-${{ inputs.environment }}
+
+jobs:
+  run-gias-download:
+    name: Run bin/mavis gias download
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+    steps:
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v6
+        with:
+          role-to-assume: arn:aws:iam::${{ env.aws_account_id }}:role/GithubDeployECSService
+          aws-region: eu-west-2
+
+      - name: Get current ops task definition ARN
+        id: get-task-def
+        run: |
+          TASK_DEF=$(aws ecs describe-services \
+            --cluster ${{ env.cluster_name }} \
+            --services mavis-${{ env.environment }}-ops \
+            --query 'services[0].taskDefinition' \
+            --output text)
+          echo "task-def=$TASK_DEF" >> $GITHUB_OUTPUT
+
+      - name: Run one-off task to download GIAS data
+        id: run-task
+        run: |
+          set -euo pipefail
+
+          SUBNET_ID=$(aws ec2 describe-subnets --filters Name=tag:Name,Values=private-subnet-${{ env.environment }}-a --query 'Subnets[0].SubnetId' --output text)
+          SECURITY_GROUP_ID=$(aws ec2 describe-security-groups --filters Name=group-name,Values=ops-service-${{ env.environment }} --query 'SecurityGroups[0].GroupId' --output text)
+
+          # Build command array for override
+          if [ -n "${{ inputs.output_file }}" ]; then
+            OVERRIDE_COMMAND='["bin/mavis","gias","download","-o","'"${{ inputs.output_file }}"'"]'
+          else
+            OVERRIDE_COMMAND='["bin/mavis","gias","download"]'
+          fi
+
+          OVERRIDES_JSON=$(jq -n --argjson cmd "$OVERRIDE_COMMAND" '{containerOverrides: [{name: "application", command: $cmd}] }')
+
+          TASK_ARN=$(aws ecs run-task \
+            --cluster ${{ env.cluster_name }} \
+            --task-definition ${{ steps.get-task-def.outputs.task-def }} \
+            --launch-type FARGATE \
+            --network-configuration "awsvpcConfiguration={subnets=[$SUBNET_ID],securityGroups=[$SECURITY_GROUP_ID]}" \
+            --overrides "$OVERRIDES_JSON" \
+            --query 'tasks[0].taskArn' \
+            --output text)
+
+          echo "Started task: $TASK_ARN"
+
+          TASK_ID=$(sed 's:.*/::' <<< "$TASK_ARN")
+          AWS_CONSOLE_URL="https://eu-west-2.console.aws.amazon.com/ecs/v2/clusters/${{ env.cluster_name }}/tasks/$TASK_ID/logs"
+          echo "View logs in AWS Console: $AWS_CONSOLE_URL"
+
+          MAX_WAIT_TIME=1800
+          POLL_INTERVAL=10
+          ELAPSED=0
+
+          while [ $ELAPSED -lt $MAX_WAIT_TIME ]; do
+            TASK_STATUS=$(aws ecs describe-tasks \
+              --cluster ${{ env.cluster_name }} \
+              --tasks $TASK_ID \
+              --query 'tasks[0].lastStatus' \
+              --output text)
+
+            if [ "$TASK_STATUS" = "STOPPED" ]; then
+              echo "Task has stopped"
+              break
+            fi
+
+            sleep $POLL_INTERVAL
+            ELAPSED=$((ELAPSED + POLL_INTERVAL))
+          done
+
+          if [ $ELAPSED -ge $MAX_WAIT_TIME ]; then
+            echo "ERROR: Task did not complete within $MAX_WAIT_TIME seconds."
+            exit 1
+          fi
+
+          EXIT_CODE=$(aws ecs describe-tasks \
+            --cluster ${{ env.cluster_name }} \
+            --tasks $TASK_ARN \
+            --query 'tasks[0].containers[0].exitCode' \
+            --output text)
+
+          echo "Container exit code: $EXIT_CODE"
+
+          if [ "$EXIT_CODE" = "0" ]; then
+            echo "GIAS download completed successfully"
+          else
+            echo "ECS task failed with exit code: $EXIT_CODE"
+            exit 1
+          fi
