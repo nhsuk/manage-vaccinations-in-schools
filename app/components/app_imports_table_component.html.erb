@@ -9,7 +9,9 @@
     <% table.with_head do |head| %>
       <% head.with_row do |row| %>
         <% row.with_cell(text: "Imported on") %>
-        <% row.with_cell(text: "Type") %>
+        <% unless @team.has_national_reporting_access? %>
+          <% row.with_cell(text: "Type") %>
+        <% end %>
         <% row.with_cell(text: "Status") %>
         <% row.with_cell(text: "Records", numeric: true) unless @uploaded_files %>
       <% end %>
@@ -26,14 +28,16 @@
               <%= import.csv_filename %>
             </span>
           <% end %>
-          <% row.with_cell do %>
-            <span class="nhsuk-table-responsive__heading">Type</span>
-            <%= record_type(import) %>
-            <% if import.is_a?(ClassImport) %>
-              <br />
-              <span class="nhsuk-u-secondary-text-colour nhsuk-u-font-size-16">
-                <%= import.location.name %>
-              </span>
+          <% unless @team.has_national_reporting_access? %>
+            <% row.with_cell do %>
+              <span class="nhsuk-table-responsive__heading">Type</span>
+              <%= record_type(import) %>
+              <% if import.is_a?(ClassImport) %>
+                <br />
+                <span class="nhsuk-u-secondary-text-colour nhsuk-u-font-size-16">
+                  <%= import.location.name %>
+                </span>
+              <% end %>
             <% end %>
           <% end %>
           <% row.with_cell do %>
