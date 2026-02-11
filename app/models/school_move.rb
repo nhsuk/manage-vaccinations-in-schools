@@ -87,10 +87,13 @@ class SchoolMove < ApplicationRecord
       update_locations!
 
       log_entry = create_log_entry!(user:)
-      create_important_notice!(log_entry) if move_across_teams
 
       update_patient_teams!
       update_patient_statuses!
+      if move_across_teams
+        create_important_notice!(log_entry)
+        update_important_notices!
+      end
 
       destroy! if persisted?
     end
@@ -101,12 +104,7 @@ class SchoolMove < ApplicationRecord
   end
 
   def from_another_team?
-    current_teams =
-      patient
-        .patient_teams
-        .includes(:team)
-        .select { it.sources.include?("patient_location") }
-        .map(&:team)
+    current_teams = patient.teams_via_patient_locations
 
     return false if current_teams.empty?
 
@@ -230,5 +228,9 @@ class SchoolMove < ApplicationRecord
 
   def update_patient_statuses!
     PatientStatusUpdater.call(patient:)
+  end
+
+  def update_important_notices!
+    ImportantNoticeGeneratorJob.perform_later([patient.id])
   end
 end
