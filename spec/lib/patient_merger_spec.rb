@@ -76,6 +76,13 @@ describe PatientMerger do
         patient: patient_to_destroy
       )
     end
+    let(:patient_programme_vaccinations_search) do
+      create(
+        :patient_programme_vaccinations_search,
+        patient: patient_to_destroy,
+        programme: programme
+      )
+    end
     let(:pre_screening) { create(:pre_screening, patient: patient_to_destroy) }
     let(:school_move) do
       create(:school_move, :to_school, patient: patient_to_destroy)
@@ -183,6 +190,12 @@ describe PatientMerger do
       expect { call }.to change { patient_location.reload.patient }.to(
         patient_to_keep
       )
+    end
+
+    it "moves patient programme vaccinations searches" do
+      expect { call }.to change {
+        patient_programme_vaccinations_search.reload.patient
+      }.to(patient_to_keep)
     end
 
     it "moves patient specific directions" do
@@ -374,6 +387,78 @@ describe PatientMerger do
       it "keeps the archive reason on the merged patient" do
         expect { call }.to change(ArchiveReason, :count).by(-1)
         expect(patient_to_keep.archived?(team:)).to be(true)
+      end
+    end
+
+    describe "vaccination searches" do
+      context "when patients have overlapping and unique programme searches" do
+        before do
+          create(
+            :patient_programme_vaccinations_search,
+            patient: patient_to_keep,
+            programme: Programme.hpv,
+            last_searched_at: 1.day.ago
+          )
+          create(
+            :patient_programme_vaccinations_search,
+            patient: patient_to_destroy,
+            programme: Programme.hpv,
+            last_searched_at: 5.days.ago
+          )
+
+          create(
+            :patient_programme_vaccinations_search,
+            patient: patient_to_destroy,
+            programme: Programme.flu,
+            last_searched_at: 3.days.ago
+          )
+          create(
+            :patient_programme_vaccinations_search,
+            patient: patient_to_keep,
+            programme: Programme.flu,
+            last_searched_at: 1.day.ago
+          )
+
+          create(
+            :patient_programme_vaccinations_search,
+            patient: patient_to_keep,
+            programme: Programme.menacwy,
+            last_searched_at: 2.days.ago
+          )
+
+          create(
+            :patient_programme_vaccinations_search,
+            patient: patient_to_destroy,
+            programme: Programme.td_ipv,
+            last_searched_at: 2.days.ago
+          )
+        end
+
+        it "merges searches correctly" do
+          expect { call }.to change(
+            PatientProgrammeVaccinationsSearch,
+            :count
+          ).by(-2)
+
+          searches = patient_to_keep.patient_programme_vaccinations_searches
+          expect(searches.count).to eq(4)
+
+          hpv_search = searches.find_by(programme_type: "hpv")
+          expect(hpv_search.last_searched_at.to_date).to eq(1.day.ago.to_date)
+
+          flu_search = searches.find_by(programme_type: "flu")
+          expect(flu_search.last_searched_at.to_date).to eq(1.day.ago.to_date)
+
+          tdipv_search = searches.find_by(programme_type: "td_ipv")
+          expect(tdipv_search.last_searched_at.to_date).to eq(
+            2.days.ago.to_date
+          )
+
+          menacwy_search = searches.find_by(programme_type: "menacwy")
+          expect(menacwy_search.last_searched_at.to_date).to eq(
+            2.days.ago.to_date
+          )
+        end
       end
     end
 

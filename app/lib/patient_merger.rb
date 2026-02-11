@@ -112,6 +112,23 @@ class PatientMerger
 
       PatientLocation.where(patient: patient_to_destroy).destroy_all
 
+      patient_to_destroy
+        .patient_programme_vaccinations_searches
+        .find_each do |search|
+        existing_search =
+          patient_to_keep.patient_programme_vaccinations_searches.find_by(
+            programme_type: search.programme_type
+          )
+
+        if existing_search
+          if existing_search.last_searched_at > search.last_searched_at
+            search.last_searched_at = existing_search.last_searched_at
+          end
+          existing_search.destroy!
+        end
+        search.update!(patient_id: patient_to_keep.id)
+      end
+
       patient_to_destroy.changesets.update_all(patient_id: nil)
 
       patient_to_destroy.class_imports.each do |import|
