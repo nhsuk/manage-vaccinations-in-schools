@@ -732,8 +732,8 @@ describe "Manage children" do
       team: @new_team
     ).confirm!
 
-    expect(@patient_all_notices.teams).to include(@new_team)
-    expect(@patient_all_notices.teams).to include(@team)
+    expect(@patient_all_notices.reload.teams).to include(@new_team)
+    expect(@patient_all_notices.reload.teams).to include(@team)
 
     perform_enqueued_jobs_while_exists(only: ImportantNoticeGeneratorJob)
   end
