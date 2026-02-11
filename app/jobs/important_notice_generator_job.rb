@@ -31,7 +31,7 @@ class ImportantNoticeGeneratorJob < ApplicationJob
 
     existing_notices =
       ImportantNotice
-        .where(patient_id: patients.map(&:id))
+        .where(patient_id: patients.map(&:id), dismissed_at: nil)
         .index_by { notice_key(it) }
 
     patients.each do |patient|
@@ -104,7 +104,7 @@ class ImportantNoticeGeneratorJob < ApplicationJob
 
       existing_notices.each_value do |notice|
         unless notice.patient_id == patient.id && notice.team_id == team_id &&
-                 notice.type == type.to_s && notice.dismissed_at.nil?
+                 notice.type == type.to_s
           next
         end
 

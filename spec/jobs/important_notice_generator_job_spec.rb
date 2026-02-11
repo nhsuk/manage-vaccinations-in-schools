@@ -76,6 +76,37 @@ describe ImportantNoticeGeneratorJob do
             }.from(1).to(0)
           end
         end
+
+        context "when a restricted notice was dismissed and the patient becomes restricted again" do
+          before do
+            # Create initial notices
+            patient.update_column(:restricted_at, Time.current)
+            described_class.perform_now([patient.id])
+
+            # Clear restriction and dismiss notices
+            patient.update_column(:restricted_at, nil)
+            described_class.perform_now([patient.id])
+
+            # Re-apply restriction
+            patient.update_column(:restricted_at, Time.current)
+          end
+
+          it "creates a new active restricted notice (dismissed notices do not block re-creation)" do
+            expect { described_class.perform_now([patient.id]) }.to change {
+              ImportantNotice
+                .active(team: team_a)
+                .where(patient:, type: :restricted)
+                .count
+            }.from(0).to(1)
+
+            expect(
+              ImportantNotice
+                .dismissed(team: team_a)
+                .where(patient:, type: :restricted)
+                .count
+            ).to be >= 1
+          end
+        end
       end
 
       context "invalidated" do
