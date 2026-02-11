@@ -596,12 +596,14 @@ home_educated :boolean
 created_at    :datetime         not null
 patient_id    :bigint           not null
 school_id     :bigint
+team_id       :bigint
 user_id       :bigint</pre>
 
 <p>Indexes</p>
 
 <pre class="ruby"><span class="ruby-identifier">index_school_move_log_entries_on_patient_id</span>  (<span class="ruby-identifier">patient_id</span>)
 <span class="ruby-identifier">index_school_move_log_entries_on_school_id</span>   (<span class="ruby-identifier">school_id</span>)
+<span class="ruby-identifier">index_school_move_log_entries_on_team_id</span>     (<span class="ruby-identifier">team_id</span>)
 <span class="ruby-identifier">index_school_move_log_entries_on_user_id</span>     (<span class="ruby-identifier">user_id</span>)
 </pre>
 
@@ -609,6 +611,7 @@ user_id       :bigint</pre>
 
 <pre>fk_rails_...  (patient_id =&gt; patients.id)
 fk_rails_...  (school_id =&gt; locations.id)
+fk_rails_...  (team_id =&gt; teams.id)
 fk_rails_...  (user_id =&gt; users.id)</pre>
 
   </section>

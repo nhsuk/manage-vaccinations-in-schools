@@ -669,7 +669,7 @@ fk_rails_...  (vaccination_record_id =&gt; vaccination_records.id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="can_dismiss-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/important_notice.rb, line 86</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/important_notice.rb, line 92</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">can_dismiss?</span>
   <span class="ruby-identifier">type</span>.<span class="ruby-identifier">in?</span>(<span class="ruby-node">%w[deceased restricted gillick_no_notify team_changed]</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -768,7 +768,13 @@ fk_rails_...  (vaccination_record_id =&gt; vaccination_records.id)</pre>
       <span class="ruby-string">&quot;These records will not be automatically synced with GP records. &quot;</span> \
       <span class="ruby-string">&quot;Your team must let the child&#39;s GP know they were vaccinated.&quot;</span>
   <span class="ruby-keyword">when</span> <span class="ruby-string">&quot;team_changed&quot;</span>
-    <span class="ruby-node">&quot;Child has moved to #{school_move_log_entry.school.teams.first.name} area&quot;</span>
+    <span class="ruby-identifier">new_team</span> =
+      <span class="ruby-identifier">school_move_log_entry</span>.<span class="ruby-identifier">school</span>&amp;.<span class="ruby-identifier">teams</span>&amp;.<span class="ruby-identifier">first</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">school_move_log_entry</span>.<span class="ruby-identifier">team</span>
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">new_team</span>
+      <span class="ruby-node">&quot;Child has moved to #{new_team.name} area&quot;</span>
+    <span class="ruby-keyword">else</span>
+      <span class="ruby-string">&quot;Child has moved to another team&#39;s area&quot;</span>
+    <span class="ruby-keyword">end</span>
   <span class="ruby-keyword">else</span>
     <span class="ruby-string">&quot;Important notice&quot;</span>
   <span class="ruby-keyword">end</span>

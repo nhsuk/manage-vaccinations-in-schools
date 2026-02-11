@@ -739,15 +739,19 @@ fk_rails_...  (team_id =&gt; teams.id)</pre>
           <div class="method-source-code" id="confirm-21-source">
             <pre class="ruby"><span class="ruby-comment"># File app/models/school_move.rb, line 80</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">confirm!</span>(<span class="ruby-value">user:</span> <span class="ruby-keyword">nil</span>)
-  <span class="ruby-identifier">old_teams</span> = <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">school</span>.<span class="ruby-identifier">teams</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">from_another_team?</span>
-
   <span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span>.<span class="ruby-identifier">transaction</span> <span class="ruby-keyword">do</span>
+    <span class="ruby-comment"># We need to set this before updating patient locations</span>
+    <span class="ruby-identifier">move_across_teams</span> = <span class="ruby-identifier">from_another_team?</span>
+
     <span class="ruby-identifier">update_patient!</span>
     <span class="ruby-identifier">update_archive_reasons!</span>(<span class="ruby-value">user:</span>)
     <span class="ruby-identifier">update_locations!</span>
 
     <span class="ruby-identifier">log_entry</span> = <span class="ruby-identifier">create_log_entry!</span>(<span class="ruby-value">user:</span>)
-    <span class="ruby-identifier">create_important_notice!</span>(<span class="ruby-identifier">old_teams</span>, <span class="ruby-identifier">log_entry</span>) <span class="ruby-keyword">if</span> <span class="ruby-identifier">old_teams</span>
+    <span class="ruby-identifier">create_important_notice!</span>(<span class="ruby-identifier">log_entry</span>) <span class="ruby-keyword">if</span> <span class="ruby-identifier">move_across_teams</span>
+
+    <span class="ruby-identifier">update_patient_teams!</span>
+    <span class="ruby-identifier">update_patient_statuses!</span>
 
     <span class="ruby-identifier">destroy!</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">persisted?</span>
   <span class="ruby-keyword">end</span>
@@ -790,11 +794,25 @@ fk_rails_...  (team_id =&gt; teams.id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="from_another_team-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/school_move.rb, line 99</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/school_move.rb, line 103</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">from_another_team?</span>
-  <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">school</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">school</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">school</span>.<span class="ruby-identifier">teams</span>.<span class="ruby-identifier">any?</span>
+  <span class="ruby-identifier">current_teams</span> =
+    <span class="ruby-identifier">patient</span>
+      .<span class="ruby-identifier">patient_teams</span>
+      .<span class="ruby-identifier">includes</span>(<span class="ruby-value">:team</span>)
+      .<span class="ruby-identifier">select</span> { <span class="ruby-identifier">it</span>.<span class="ruby-identifier">sources</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-string">&quot;patient_location&quot;</span>) }
+      .<span class="ruby-identifier">map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:team</span>)
 
-  (<span class="ruby-identifier">school</span>.<span class="ruby-identifier">teams</span> <span class="ruby-operator">&amp;</span> <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">school</span>.<span class="ruby-identifier">teams</span>).<span class="ruby-identifier">empty?</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">current_teams</span>.<span class="ruby-identifier">empty?</span>
+
+  <span class="ruby-identifier">new_teams</span> =
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">school</span>
+      <span class="ruby-identifier">school_teams</span>
+    <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">team</span>
+      [<span class="ruby-identifier">team</span>]
+    <span class="ruby-keyword">end</span>
+
+  (<span class="ruby-identifier">new_teams</span> <span class="ruby-operator">&amp;</span> <span class="ruby-identifier">current_teams</span>).<span class="ruby-identifier">empty?</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -834,7 +852,7 @@ fk_rails_...  (team_id =&gt; teams.id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="ignore-21-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/school_move.rb, line 95</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/school_move.rb, line 99</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">ignore!</span>
   <span class="ruby-identifier">destroy!</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">persisted?</span>
 <span class="ruby-keyword">end</span></pre>
