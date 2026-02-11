@@ -272,12 +272,12 @@ describe CommitImportJob do
       end
 
       context "with an existing patient in the same school but not in the team" do
-        let(:patient) do
+        let!(:patient) do
           create(
             :patient,
             nhs_number: "9990000018",
             school: location,
-            session: create(:session, programmes:)
+            year_group: 8
           )
         end
 

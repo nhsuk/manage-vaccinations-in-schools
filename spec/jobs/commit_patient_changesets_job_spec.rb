@@ -297,8 +297,7 @@ describe CommitPatientChangesetsJob do
           address_line_2: nil,
           year_group: 9,
           preferred_given_name: "Jenny",
-          school: location,
-          session: create(:session, programmes:)
+          school: location
         )
       end
 
@@ -349,6 +348,54 @@ describe CommitPatientChangesetsJob do
           :team_id,
           :school_id
         )
+      end
+    end
+
+    context "with an existing patient with nil school but in a different team via patient_location" do
+      let(:other_team) { create(:team, programmes:) }
+      let(:other_location) do
+        create(:generic_clinic, team: other_team, programmes:, name: "Clinic")
+      end
+      let(:other_session) do
+        create(
+          :session,
+          team: other_team,
+          programmes:,
+          location: other_location
+        )
+      end
+
+      let!(:patient) do
+        create(
+          :patient,
+          nhs_number: "9990000018",
+          given_name: "Jennifer",
+          family_name: "Clarke",
+          date_of_birth: Date.new(2010, 1, 1),
+          address_postcode: "SW1A 1AA",
+          address_town: "London",
+          registration: "ABC",
+          address_line_1: "10 Downing Street",
+          address_line_2: nil,
+          year_group: 9,
+          preferred_given_name: "Jenny",
+          school: nil,
+          home_educated: false,
+          session: other_session
+        )
+      end
+
+      it "proposes a school move for the child without auto-accepting it" do
+        expect(patient.school_moves).to be_empty
+        PatientChangeset.all.map(&:calculate_review_data!)
+        expect { perform_job }.to change {
+          patient.reload.school_moves.count
+        }.by(1)
+      end
+
+      it "doesn't automatically update the patient's school" do
+        PatientChangeset.all.map(&:calculate_review_data!)
+        expect { perform_job }.not_to(change { patient.reload.school })
       end
     end
 
