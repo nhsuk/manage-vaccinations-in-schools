@@ -172,6 +172,73 @@ describe ImportantNoticeGeneratorJob do
               .count
           }.from(1).to(0)
         end
+
+        it "dismisses team_changed notice when patient has no school but has patient_location in the team" do
+          patient_no_school = create(:patient, school: nil, team: team_a)
+          create(
+            :patient_location,
+            patient: patient_no_school,
+            session: session_a
+          )
+
+          school_move_log_entry_a =
+            create(
+              :school_move_log_entry,
+              :unknown_school,
+              patient: patient_no_school,
+              team: team_b
+            )
+
+          create(
+            :important_notice,
+            :team_changed,
+            patient: patient_no_school,
+            team: team_a,
+            school_move_log_entry: school_move_log_entry_a
+          )
+
+          expect {
+            described_class.perform_now([patient_no_school.id])
+          }.to change {
+            ImportantNotice
+              .active(team: team_a)
+              .team_changed
+              .where(patient: patient_no_school)
+              .count
+          }.from(1).to(0)
+        end
+
+        it "does not dismiss team_changed notice when patient has no school and no patient_location in the team" do
+          patient_no_association = create(:patient, school: nil)
+
+          school_move_log_entry_a =
+            create(
+              :school_move_log_entry,
+              :home_educated,
+              patient: patient_no_association,
+              team: team_b
+            )
+
+          create(
+            :important_notice,
+            :team_changed,
+            patient: patient_no_association,
+            team: team_a,
+            school_move_log_entry: school_move_log_entry_a
+          )
+
+          expect do
+            described_class.perform_now([patient_no_association.id])
+          end.not_to(
+            change do
+              ImportantNotice
+                .active(team: team_a)
+                .team_changed
+                .where(patient: patient_no_association)
+                .count
+            end
+          )
+        end
       end
     end
   end
