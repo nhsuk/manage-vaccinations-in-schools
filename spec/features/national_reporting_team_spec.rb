@@ -11,7 +11,7 @@ describe "National reporting team homepage and navigation" do
     and_i_should_see_the_national_reporting_service_guide_link
   end
 
-  scenario "Navigation shows only import, children and your team" do
+  scenario "Navigation shows only import and children tabs" do
     given_i_am_signed_in_as_an_national_reporting_team
     when_i_visit_the_dashboard
     then_i_should_see_only_import_and_children_navigation_items

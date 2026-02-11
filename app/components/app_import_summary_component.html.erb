@@ -49,10 +49,17 @@
     <% end %>
 
     <% if import.records_count && import.records_count.positive? %>
+      <% if import.is_a?(ImmunisationImport) && import.type == "national_reporting" %>
         <%= summary_list.with_row do |row| %>
-            <%= row.with_key { "Records" } %>
-            <%= row.with_value { import.records_count.to_s } %>
+          <%= row.with_key { "Import summary" } %>
+          <%= row.with_value { render AppImportStatisticsComponent.new(import: import) } %>
         <% end %>
+      <% else %>
+        <%= summary_list.with_row do |row| %>
+          <%= row.with_key { "Records" } %>
+          <%= row.with_value { import.records_count.to_s } %>
+        <% end %>
+      <% end %>
     <% end %>
   <% end %>
 
