@@ -5,19 +5,21 @@ class ImportantNoticeGeneratorJob < ApplicationJob
 
   BATCH_SIZE = 1000
 
+  STATUS_NOTICE_RECORDED_AT_FIELDS = {
+    deceased: :date_of_death_recorded_at,
+    invalidated: :invalidated_at,
+    restricted: :restricted_at
+  }.freeze
+
   def perform(patient_ids = nil)
+    scope = Patient.includes(:teams, vaccination_records: %i[team])
+
     if patient_ids.present?
-      process_batch(
-        Patient.includes(:teams, vaccination_records: %i[team]).where(
-          id: patient_ids
-        )
-      )
+      process_batch(scope.where(id: patient_ids))
     else
-      Patient
-        .includes(:teams, vaccination_records: %i[team])
-        .find_in_batches(batch_size: BATCH_SIZE) do |patients_batch|
-          process_batch(patients_batch)
-        end
+      scope.find_in_batches(batch_size: BATCH_SIZE) do |batch|
+        process_batch(batch)
+      end
     end
   end
 
@@ -27,24 +29,37 @@ class ImportantNoticeGeneratorJob < ApplicationJob
     notices_to_create = []
     notice_ids_to_dismiss = []
 
-    patient_ids = patients.map(&:id)
-
     existing_notices =
-      ImportantNotice.where(patient_id: patient_ids).index_by { notice_key(it) }
-
-    patient_team_ids =
-      patients.each_with_object({}) do |patient, hash|
-        hash[patient.id] = patient.teams.map(&:id)
-      end
+      ImportantNotice
+        .where(patient_id: patients.map(&:id))
+        .index_by { notice_key(it) }
 
     patients.each do |patient|
-      collect_notices_for_patient(
-        patient,
-        notices_to_create,
-        notice_ids_to_dismiss,
-        existing_notices,
-        patient_team_ids[patient.id]
-      )
+      team_ids = patient.teams.map(&:id)
+
+      next if team_ids.empty?
+
+      team_ids.each do |team_id|
+        add_notices_based_on_patient_status(
+          patient,
+          team_id,
+          existing_notices,
+          notices_to_create
+        )
+        dismiss_existing_notices_based_on_patient_status(
+          patient,
+          team_id,
+          existing_notices,
+          notice_ids_to_dismiss
+        )
+        add_gillick_no_notify_notices(
+          patient,
+          team_id,
+          existing_notices,
+          notices_to_create
+        )
+        dismiss_team_changed_notices(patient, notice_ids_to_dismiss)
+      end
     end
 
     if notices_to_create.any?
@@ -58,125 +73,80 @@ class ImportantNoticeGeneratorJob < ApplicationJob
     end
   end
 
-  def collect_notices_for_patient(
+  def add_notices_based_on_patient_status(
     patient,
-    notices_to_create,
-    notice_ids_to_dismiss,
+    team_id,
     existing_notices,
-    team_ids
+    notices_to_create
   )
-    return if team_ids.empty?
+    STATUS_NOTICE_RECORDED_AT_FIELDS.each do |type, recorded_at_method|
+      next unless patient.public_send("#{type}?")
 
-    team_ids.each do |team_id|
-      if patient.deceased? &&
-           !notice_exists?(existing_notices, patient.id, :deceased, team_id)
-        notices_to_create << ImportantNotice.new(
-          patient:,
-          team_id: team_id,
-          type: :deceased,
-          recorded_at: patient.date_of_death_recorded_at
-        )
-      end
+      next if existing_notices.key?(notice_key_for(patient.id, type, team_id))
 
-      if patient.invalidated? &&
-           !notice_exists?(existing_notices, patient.id, :invalidated, team_id)
-        notices_to_create << ImportantNotice.new(
-          patient:,
-          team_id: team_id,
-          type: :invalidated,
-          recorded_at: patient.invalidated_at
-        )
-      end
-
-      if patient.restricted? &&
-           !notice_exists?(existing_notices, patient.id, :restricted, team_id)
-        notices_to_create << ImportantNotice.new(
-          patient:,
-          team_id: team_id,
-          type: :restricted,
-          recorded_at: patient.restricted_at
-        )
-      end
-
-      collect_gillick_no_notify_notices(
-        patient,
-        team_id,
-        notices_to_create,
-        existing_notices
+      notices_to_create << ImportantNotice.new(
+        patient:,
+        team_id:,
+        type:,
+        recorded_at: patient.public_send(recorded_at_method)
       )
+    end
+  end
 
-      team_changed_notices = patient.important_notices.team_changed
-      if team_changed_notices.any?
-        current_teams = patient.teams_via_patient_locations
+  def dismiss_existing_notices_based_on_patient_status(
+    patient,
+    team_id,
+    existing_notices,
+    notice_ids_to_dismiss
+  )
+    STATUS_NOTICE_RECORDED_AT_FIELDS.each_key do |type|
+      next if patient.public_send("#{type}?")
 
-        if current_teams.any?
-          notice_ids_to_dismiss.concat(
-            team_changed_notices.where(team_id: current_teams).ids
-          )
-        end
-      end
-
-      unless patient.invalidated?
-        existing_notices.each_value do |notice|
-          unless notice.patient_id == patient.id && notice.team_id == team_id &&
-                   notice.type == "invalidated" && notice.dismissed_at.nil?
-            next
-          end
-          notice_ids_to_dismiss << notice.id
-        end
-      end
-
-      unless patient.restricted?
-        existing_notices.each_value do |notice|
-          unless notice.patient_id == patient.id && notice.team_id == team_id &&
-                   notice.type == "restricted" && notice.dismissed_at.nil?
-            next
-          end
-          notice_ids_to_dismiss << notice.id
-        end
-      end
-
-      next if patient.deceased?
       existing_notices.each_value do |notice|
         unless notice.patient_id == patient.id && notice.team_id == team_id &&
-                 notice.type == "deceased" && notice.dismissed_at.nil?
+                 notice.type == type.to_s && notice.dismissed_at.nil?
           next
         end
+
         notice_ids_to_dismiss << notice.id
       end
     end
   end
 
-  def collect_gillick_no_notify_notices(
+  def add_gillick_no_notify_notices(
     patient,
     team_id,
-    notices_to_create,
-    existing_notices
+    existing_notices,
+    notices_to_create
   )
-    no_notify_vaccination_records =
-      patient.vaccination_records.select do |record|
-        record.team&.id == team_id && record.notify_parents == false
-      end
+    patient.vaccination_records.each do |record|
+      next unless record.team&.id == team_id && record.notify_parents == false
 
-    return if no_notify_vaccination_records.empty?
-
-    no_notify_vaccination_records.each do |record|
-      if notice_exists?(
-           existing_notices,
-           patient.id,
-           :gillick_no_notify,
-           team_id,
-           record.id
+      if existing_notices.key?(
+           notice_key_for(patient.id, :gillick_no_notify, team_id, record.id)
          )
         next
       end
 
       notices_to_create << ImportantNotice.new(
         patient:,
-        team_id: team_id,
+        team_id:,
         vaccination_record_id: record.id,
         type: :gillick_no_notify,
         recorded_at: record.performed_at
+      )
+    end
+  end
+
+  def dismiss_team_changed_notices(patient, notice_ids_to_dismiss)
+    team_changed_notices = patient.important_notices.team_changed
+    return unless team_changed_notices.any?
+
+    current_teams = patient.teams_via_patient_locations
+
+    if current_teams.any?
+      notice_ids_to_dismiss.concat(
+        team_changed_notices.where(team_id: current_teams).ids
       )
     end
   end
@@ -190,14 +160,7 @@ class ImportantNoticeGeneratorJob < ApplicationJob
     ]
   end
 
-  def notice_exists?(
-    existing_notices,
-    patient_id,
-    type,
-    team_id,
-    vaccination_record_id = nil
-  )
-    key = [patient_id, type.to_s, team_id, vaccination_record_id]
-    existing_notices.key?(key)
+  def notice_key_for(patient_id, type, team_id, vaccination_record_id = nil)
+    [patient_id, type.to_s, team_id, vaccination_record_id]
   end
 end
