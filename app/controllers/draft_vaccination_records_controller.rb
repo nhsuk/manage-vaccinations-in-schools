@@ -70,6 +70,11 @@ class DraftVaccinationRecordsController < ApplicationController
 
   def validate_params
     if current_step == :date_and_time
+      TimeParamsNormalizer.call!(
+        params: params[:draft_vaccination_record],
+        field_name: :performed_at_time
+      )
+
       date_validator =
         DateParamsValidator.new(
           field_name: :performed_at_date,

@@ -398,6 +398,38 @@ describe "Edit vaccination record" do
       then_i_should_see_the_vaccination_record
     end
 
+    scenario "Edits the date and time with or without time" do
+      given_i_am_signed_in
+      and_a_national_reporting_vaccination_record_exists
+
+      when_i_navigate_to_the_edit_vaccination_record_page
+
+      when_i_click_on_change_date
+      then_i_should_see_the_date_time_form
+
+      when_i_fill_in_a_valid_date_with_time
+      then_i_see_the_edit_vaccination_record_page
+      and_i_should_see_the_updated_date_with_time
+
+      when_i_click_on_save_changes
+      then_i_should_see_the_vaccination_record
+      and_the_vaccination_record_should_have_the_time
+
+      when_i_click_on_edit_vaccination_record
+      then_i_see_the_edit_vaccination_record_page
+
+      when_i_click_on_change_date
+      then_i_should_see_the_date_time_form
+
+      when_i_fill_in_a_valid_date_without_time
+      then_i_see_the_edit_vaccination_record_page
+      and_i_should_see_the_updated_date_without_time
+
+      when_i_click_on_save_changes
+      then_i_should_see_the_vaccination_record
+      and_the_vaccination_record_should_have_no_time
+    end
+
     scenario "Parent details are not visible when viewing vaccination records" do
       given_i_am_signed_in
       and_a_national_reporting_vaccination_record_exists
@@ -1098,5 +1130,61 @@ describe "Edit vaccination record" do
       "Success",
       text: "Vaccination outcome recorded for flu"
     )
+  end
+
+  def when_i_fill_in_a_valid_date_with_time
+    @valid_date = Date.current - 1.day
+    @valid_time_hour = "14"
+    @valid_time_minute = "30"
+
+    fill_in "Year", with: @valid_date.year.to_s
+    fill_in "Month", with: @valid_date.month.to_s
+    fill_in "Day", with: @valid_date.day.to_s
+
+    fill_in "Hour", with: @valid_time_hour
+    fill_in "Minute", with: @valid_time_minute
+
+    click_on "Continue"
+  end
+
+  def and_i_should_see_the_updated_date_with_time
+    formatted_date = @valid_date.strftime("%-d %B %Y")
+
+    expect(page).to have_content("Date#{formatted_date}")
+    expect(page).to have_content("Time2:30pm")
+  end
+
+  def and_the_vaccination_record_should_have_the_time
+    @vaccination_record.reload
+    expect(@vaccination_record.performed_at_time).not_to be_nil
+    expect(@vaccination_record.performed_at_time.hour).to eq(14)
+    expect(@vaccination_record.performed_at_time.min).to eq(30)
+    expect(@vaccination_record.performed_at_date).to eq(@valid_date)
+  end
+
+  def when_i_fill_in_a_valid_date_without_time
+    @valid_date = Date.current - 1.day
+
+    fill_in "Year", with: @valid_date.year.to_s
+    fill_in "Month", with: @valid_date.month.to_s
+    fill_in "Day", with: @valid_date.day.to_s
+
+    fill_in "Hour", with: ""
+    fill_in "Minute", with: ""
+
+    click_on "Continue"
+  end
+
+  def and_i_should_see_the_updated_date_without_time
+    formatted_date = @valid_date.strftime("%-d %B %Y")
+
+    expect(page).to have_content("Date#{formatted_date}")
+    expect(page).not_to have_content(/Time\d/)
+  end
+
+  def and_the_vaccination_record_should_have_no_time
+    @vaccination_record.reload
+    expect(@vaccination_record.performed_at_time).to be_nil
+    expect(@vaccination_record.performed_at_date).to eq(@valid_date)
   end
 end
