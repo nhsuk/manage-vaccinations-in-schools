@@ -652,7 +652,7 @@
             </details>
           </div>
           <div class="method-source-code" id="call-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/patient_merger.rb, line 165</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/patient_merger.rb, line 182</span>
   <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">call</span>(<span class="ruby-operator">...</span>) = <span class="ruby-identifier">new</span>(<span class="ruby-operator">...</span>).<span class="ruby-identifier">call</span>
 
   <span class="ruby-identifier">private_class_method</span> <span class="ruby-value">:new</span>
@@ -862,6 +862,23 @@
     <span class="ruby-keyword">end</span>
 
     <span class="ruby-constant">PatientLocation</span>.<span class="ruby-identifier">where</span>(<span class="ruby-value">patient:</span> <span class="ruby-identifier">patient_to_destroy</span>).<span class="ruby-identifier">destroy_all</span>
+
+    <span class="ruby-identifier">patient_to_destroy</span>
+      .<span class="ruby-identifier">patient_programme_vaccinations_searches</span>
+      .<span class="ruby-identifier">find_each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">search</span><span class="ruby-operator">|</span>
+      <span class="ruby-identifier">existing_search</span> =
+        <span class="ruby-identifier">patient_to_keep</span>.<span class="ruby-identifier">patient_programme_vaccinations_searches</span>.<span class="ruby-identifier">find_by</span>(
+          <span class="ruby-value">programme_type:</span> <span class="ruby-identifier">search</span>.<span class="ruby-identifier">programme_type</span>
+        )
+
+      <span class="ruby-keyword">if</span> <span class="ruby-identifier">existing_search</span>
+        <span class="ruby-keyword">if</span> <span class="ruby-identifier">existing_search</span>.<span class="ruby-identifier">last_searched_at</span> <span class="ruby-operator">&gt;</span> <span class="ruby-identifier">search</span>.<span class="ruby-identifier">last_searched_at</span>
+          <span class="ruby-identifier">search</span>.<span class="ruby-identifier">last_searched_at</span> = <span class="ruby-identifier">existing_search</span>.<span class="ruby-identifier">last_searched_at</span>
+        <span class="ruby-keyword">end</span>
+        <span class="ruby-identifier">existing_search</span>.<span class="ruby-identifier">destroy!</span>
+      <span class="ruby-keyword">end</span>
+      <span class="ruby-identifier">search</span>.<span class="ruby-identifier">update!</span>(<span class="ruby-value">patient_id:</span> <span class="ruby-identifier">patient_to_keep</span>.<span class="ruby-identifier">id</span>)
+    <span class="ruby-keyword">end</span>
 
     <span class="ruby-identifier">patient_to_destroy</span>.<span class="ruby-identifier">changesets</span>.<span class="ruby-identifier">update_all</span>(<span class="ruby-value">patient_id:</span> <span class="ruby-keyword">nil</span>)
 
