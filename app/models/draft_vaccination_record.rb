@@ -86,9 +86,6 @@ class DraftVaccinationRecord
 
   on_wizard_step :date_and_time, exact: true do
     validates :performed_at_date, presence: true
-    validates :performed_at_time,
-              presence: true,
-              unless: :national_reporting_user_and_record?
     validate :performed_at_date_within_range
   end
 

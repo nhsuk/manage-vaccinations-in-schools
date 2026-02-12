@@ -212,8 +212,6 @@ describe "MMR/MMRV" do
     fill_in "Day", with: @vaccination_date.day
     fill_in "Month", with: @vaccination_date.month
     fill_in "Year", with: @vaccination_date.year
-    fill_in "Hour", with: "12"
-    fill_in "Minute", with: "00"
     click_on "Continue"
   end
 
