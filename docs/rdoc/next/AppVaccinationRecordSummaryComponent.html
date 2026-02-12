@@ -936,17 +936,15 @@
       <span class="ruby-keyword">end</span>
     <span class="ruby-keyword">end</span>
 
-    <span class="ruby-keyword">if</span> <span class="ruby-ivar">@vaccination_record</span>.<span class="ruby-identifier">performed_by</span>.<span class="ruby-identifier">present?</span>
-      <span class="ruby-identifier">summary_list</span>.<span class="ruby-identifier">with_row</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">row</span><span class="ruby-operator">|</span>
-        <span class="ruby-identifier">row</span>.<span class="ruby-identifier">with_key</span> { <span class="ruby-string">&quot;Vaccinator&quot;</span> }
-        <span class="ruby-identifier">row</span>.<span class="ruby-identifier">with_value</span> { <span class="ruby-identifier">vaccinator_value</span> }
-        <span class="ruby-keyword">if</span> (<span class="ruby-identifier">href</span> = <span class="ruby-ivar">@change_links</span>[<span class="ruby-value">:vaccinator</span>])
-          <span class="ruby-identifier">row</span>.<span class="ruby-identifier">with_action</span>(
-            <span class="ruby-value">text:</span> <span class="ruby-string">&quot;Change&quot;</span>,
-            <span class="ruby-value">visually_hidden_text:</span> <span class="ruby-string">&quot;vaccinator&quot;</span>,
-            <span class="ruby-value">href:</span>
-          )
-        <span class="ruby-keyword">end</span>
+    <span class="ruby-identifier">summary_list</span>.<span class="ruby-identifier">with_row</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">row</span><span class="ruby-operator">|</span>
+      <span class="ruby-identifier">row</span>.<span class="ruby-identifier">with_key</span> { <span class="ruby-string">&quot;Vaccinator&quot;</span> }
+      <span class="ruby-identifier">row</span>.<span class="ruby-identifier">with_value</span> { <span class="ruby-identifier">vaccinator_value</span> }
+      <span class="ruby-keyword">if</span> (<span class="ruby-identifier">href</span> = <span class="ruby-ivar">@change_links</span>[<span class="ruby-value">:vaccinator</span>])
+        <span class="ruby-identifier">row</span>.<span class="ruby-identifier">with_action</span>(
+          <span class="ruby-value">text:</span> <span class="ruby-string">&quot;Change&quot;</span>,
+          <span class="ruby-value">visually_hidden_text:</span> <span class="ruby-string">&quot;vaccinator&quot;</span>,
+          <span class="ruby-value">href:</span>
+        )
       <span class="ruby-keyword">end</span>
     <span class="ruby-keyword">end</span>
 
@@ -992,6 +990,20 @@
       <span class="ruby-identifier">summary_list</span>.<span class="ruby-identifier">with_row</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">row</span><span class="ruby-operator">|</span>
         <span class="ruby-identifier">row</span>.<span class="ruby-identifier">with_key</span> { <span class="ruby-string">&quot;Source&quot;</span> }
         <span class="ruby-identifier">row</span>.<span class="ruby-identifier">with_value</span> { <span class="ruby-identifier">source_value</span> }
+      <span class="ruby-keyword">end</span>
+    <span class="ruby-keyword">end</span>
+
+    <span class="ruby-keyword">if</span> <span class="ruby-ivar">@vaccination_record</span>.<span class="ruby-identifier">reported_by</span>.<span class="ruby-identifier">present?</span>
+      <span class="ruby-identifier">summary_list</span>.<span class="ruby-identifier">with_row</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">row</span><span class="ruby-operator">|</span>
+        <span class="ruby-identifier">row</span>.<span class="ruby-identifier">with_key</span> { <span class="ruby-string">&quot;Reported by&quot;</span> }
+        <span class="ruby-identifier">row</span>.<span class="ruby-identifier">with_value</span> { <span class="ruby-ivar">@vaccination_record</span>.<span class="ruby-identifier">reported_by</span>&amp;.<span class="ruby-identifier">full_name</span> }
+      <span class="ruby-keyword">end</span>
+    <span class="ruby-keyword">end</span>
+
+    <span class="ruby-keyword">if</span> <span class="ruby-ivar">@vaccination_record</span>.<span class="ruby-identifier">reported_at</span>.<span class="ruby-identifier">present?</span>
+      <span class="ruby-identifier">summary_list</span>.<span class="ruby-identifier">with_row</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">row</span><span class="ruby-operator">|</span>
+        <span class="ruby-identifier">row</span>.<span class="ruby-identifier">with_key</span> { <span class="ruby-string">&quot;Reported on&quot;</span> }
+        <span class="ruby-identifier">row</span>.<span class="ruby-identifier">with_value</span> { <span class="ruby-ivar">@vaccination_record</span>.<span class="ruby-identifier">reported_at</span>.<span class="ruby-identifier">to_fs</span>(<span class="ruby-value">:long</span>) }
       <span class="ruby-keyword">end</span>
     <span class="ruby-keyword">end</span>
 
