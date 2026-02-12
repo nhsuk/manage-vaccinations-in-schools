@@ -33,20 +33,49 @@ class BulkRemoveParentRelationshipsJob < ApplicationJob
           parent_relationships
         end
 
+      # TODO: Merge this with the above if statement
       invalidate_consents!(user, consents) if remove_option == "all"
 
-      parents_to_check = parent_relationships_to_remove.map(&:parent)
+      parent_ids_to_check = parent_relationships_to_remove.map(&:parent_id).uniq
       patient_ids = parent_relationships_to_remove.map(&:patient_id)
 
-      parent_relationships_to_remove.each(&:destroy!)
+      if Flipper.enabled?(:newness)
+        # TODO:
+        #   - Try using `dependent: :destroy_all` class_imports and cohort_imports
+        #     associations on ParentRelationship to see if that performs better.
+        #   - Try manually deleting the cohort and class import join records in
+        #     a single query to see if that elliminates the N+1 here
+        #   - If we remove the transaction here are there really any race
+        #     conditions to worry about?
+        #   - If all else fails then just reduce the batch size to reduce the
+        #     length of the transaction.
 
-      parents_to_check.each do |parent|
-        next if parent.destroyed?
-        next if parent.parent_relationships.exists?
-        next if parent.consents.exists?
-
-        parent.destroy!
+        parent_relationship_ids = parent_relationships_to_remove.map(&:id)
+        ClassImportsParentRelationship.where(
+          parent_relationship_id: parent_relationship_ids
+        ).delete_all
+        CohortImportsParentRelationship.where(
+          parent_relationship_id: parent_relationship_ids
+        ).delete_all
+        parent_relationships_to_remove.delete_all
+      else
+        parent_relationships_to_remove.each(&:destroy!)
       end
+
+      Parent
+        .where(id: parent_ids_to_check)
+        .find_each do |parent|
+          next if parent.destroyed?
+          next if parent.parent_relationships.exists?
+          next if parent.consents.exists?
+
+          parent.destroy!
+        end
+
+      # Parent
+      #   .where(id: parent_ids_to_check)
+      #   .joins(:parent_relationships, :consents)
+      #   .destroy_all
 
       PatientStatusUpdaterJob.perform_bulk(patient_ids.zip)
     end
