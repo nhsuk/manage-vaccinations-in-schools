@@ -128,6 +128,29 @@ describe DraftVaccinationRecord do
       it { should validate_length_of(:notes).is_at_most(1000).on(:update) }
     end
 
+    context "when registration is disabled for the session" do
+      let(:session) do
+        create(
+          :session,
+          team:,
+          programmes: [programme],
+          requires_registration: false
+        )
+      end
+
+      let(:patient) { create(:patient, session:) }
+      let(:attributes) { valid_administered_attributes }
+
+      before { draft_vaccination_record.wizard_step = :confirm }
+
+      it "does not require an attendance record to record a vaccination" do
+        expect(draft_vaccination_record.save(context: :update)).to be(true)
+        expect(draft_vaccination_record.errors[:base]).not_to include(
+          "Child is marked as not attending this session. Mark them as attending to record a vaccination."
+        )
+      end
+    end
+
     context "when the patient is marked not attending" do
       let(:attributes) { valid_administered_attributes }
       let(:patient) { create(:patient, session:) }
