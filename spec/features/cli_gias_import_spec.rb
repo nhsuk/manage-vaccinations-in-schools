@@ -45,7 +45,7 @@ describe "mavis gias import" do
   end
 
   def then_schools_are_imported_correctly
-    expect(Location.count).to eq(6)
+    expect(Location.count).to eq(7)
     expect(Location.find_by_urn_and_site("100000").name).to eq(
       "The Aldgate School"
     )
