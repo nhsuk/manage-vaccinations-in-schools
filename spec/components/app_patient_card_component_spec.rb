@@ -59,7 +59,7 @@ describe AppPatientCardComponent do
     end
 
     before do
-      create(:patient_team, team:, patient:)
+      create(:patient_location, patient:, location: school)
       school_move.confirm!
     end
 

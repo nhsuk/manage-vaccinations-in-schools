@@ -37,6 +37,8 @@ class PatientLocation < ApplicationRecord
   scope :current, -> { where(academic_year: AcademicYear.current) }
   scope :pending, -> { where(academic_year: AcademicYear.pending) }
 
+  scope :active, -> { where("date_range @> ?::date", Date.current) }
+
   scope :joins_team_locations, -> { references(:teams_locations).joins(<<-SQL) }
     INNER JOIN team_locations
     ON team_locations.location_id = patient_locations.location_id

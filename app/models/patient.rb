@@ -710,6 +710,18 @@ class Patient < ApplicationRecord
     end
   end
 
+  def teams_via_patient_locations
+    Team
+      .joins(team_locations: { location: :patient_locations })
+      .merge(
+        PatientLocation.active.where(
+          patient_id: id,
+          academic_year: AcademicYear.current
+        )
+      )
+      .distinct
+  end
+
   def dup_for_pending_changes
     dup.tap do |new_patient|
       new_patient.nhs_number = nil

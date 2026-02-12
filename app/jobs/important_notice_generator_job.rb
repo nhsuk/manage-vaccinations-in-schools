@@ -107,9 +107,13 @@ class ImportantNoticeGeneratorJob < ApplicationJob
 
       team_changed_notices = patient.important_notices.team_changed
       if team_changed_notices.any?
-        notice_ids_to_dismiss.concat(
-          team_changed_notices.where(team: patient.school&.teams).ids
-        )
+        current_teams = patient.teams_via_patient_locations
+
+        if current_teams.any?
+          notice_ids_to_dismiss.concat(
+            team_changed_notices.where(team_id: current_teams).ids
+          )
+        end
       end
 
       unless patient.invalidated?

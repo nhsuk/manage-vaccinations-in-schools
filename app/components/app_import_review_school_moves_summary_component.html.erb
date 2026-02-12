@@ -37,10 +37,11 @@
             <%= destination_school_name(changeset) %>
           </span>
           <% if school_move_across_teams?(changeset) %>
+            <% source_team = changeset.patient.teams_via_patient_locations.first %>
             <div class="nhsuk-u-margin-top-1">
               <%= render(
                     AppStatusComponent.new(
-                      text: "This child is moving in from #{changeset.patient.school.teams.first.name}'s area",
+                      text: "This child is moving in from #{source_team.name}'s area",
                       small: true,
                       classes: "nhsuk-u-margin-top-1 nhsuk-u-margin-bottom-0",
                     )

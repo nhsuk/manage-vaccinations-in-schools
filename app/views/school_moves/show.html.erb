@@ -19,8 +19,9 @@
       <% card.with_heading(level: 2) { "#{@school_move.human_enum_name(:source)} record" } %>
       <% if @school_move.from_another_team? %>
         <div class="nhsuk-u-margin-top-1">
+          <% source_team = @school_move.patient.teams_via_patient_locations.first %>
           <%= render AppStatusComponent.new(text: "Confirming this school move will bring #{@school_move.patient.given_name} " \
-                                            "into your area from #{@school_move.patient.school.teams.first.name}") %>
+                                            "into your area from #{source_team.name}") %>
         </div>
       <% end %>
       <%= render AppChildSummaryComponent.new(@patient_with_changes) %>

@@ -128,6 +128,8 @@ module PatientImportConcern
   end
 
   def has_auto_confirmable_school_move?(school_move, import)
+    return false if school_move.from_another_team?
+
     patient = school_move.patient
     team = import.team
 
