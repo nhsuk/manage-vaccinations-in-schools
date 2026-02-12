@@ -147,7 +147,8 @@ class DraftVaccinationRecordsController < ApplicationController
   end
 
   def handle_location
-    if @draft_vaccination_record.national_reporting_user_and_record?
+    if @session&.generic_clinic? ||
+         @draft_vaccination_record.national_reporting_user_and_record?
       location_id = update_params[:location_id]
 
       if location_id == "unknown"

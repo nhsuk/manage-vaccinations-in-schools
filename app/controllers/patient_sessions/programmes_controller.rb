@@ -19,20 +19,24 @@ class PatientSessions::ProgrammesController < PatientSessions::BaseController
 
     draft_vaccination_record.clear_attributes
     draft_vaccination_record.update!(
-      first_active_wizard_step: :confirm,
+      dose_sequence: dose_sequence,
+      first_active_wizard_step:
+        eligible_for_mmr_or_mmrv? ? :mmr_or_mmrv : :date_and_time,
       location_id: nil,
       location_name: "Unknown",
       outcome: :already_had,
       patient: @patient,
-      performed_at: Time.current,
-      performed_by_user_id: current_user.id,
       performed_ods_code: current_team.organisation.ods_code,
       programme: @programme,
+      reported_by_id: current_user.id,
+      reported_at: Time.current,
       session: @session,
       source: "service"
     )
 
-    redirect_to draft_vaccination_record_path("confirm")
+    redirect_to draft_vaccination_record_path(
+                  eligible_for_mmr_or_mmrv? ? "mmr-or-mmrv" : "date-and-time"
+                )
   end
 
   private

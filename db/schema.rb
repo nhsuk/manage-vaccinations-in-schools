@@ -955,6 +955,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_06_094417) do
     t.string "performed_ods_code"
     t.enum "programme_type", null: false, enum_type: "programme_type"
     t.integer "protocol"
+    t.datetime "reported_at"
+    t.bigint "reported_by_id"
     t.bigint "session_id"
     t.integer "source", null: false
     t.bigint "supplied_by_user_id"
@@ -972,6 +974,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_06_094417) do
     t.index ["performed_by_user_id"], name: "index_vaccination_records_on_performed_by_user_id"
     t.index ["performed_ods_code", "patient_id"], name: "index_vaccination_records_on_performed_ods_code_and_patient_id", where: "(session_id IS NULL)"
     t.index ["programme_type"], name: "index_vaccination_records_on_programme_type"
+    t.index ["reported_by_id"], name: "index_vaccination_records_on_reported_by_id"
     t.index ["session_id"], name: "index_vaccination_records_on_session_id"
     t.index ["supplied_by_user_id"], name: "index_vaccination_records_on_supplied_by_user_id"
     t.index ["uuid"], name: "index_vaccination_records_on_uuid", unique: true
@@ -1122,6 +1125,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_06_094417) do
   add_foreign_key "vaccination_records", "sessions"
   add_foreign_key "vaccination_records", "triages", column: "next_dose_delay_triage_id"
   add_foreign_key "vaccination_records", "users", column: "performed_by_user_id"
+  add_foreign_key "vaccination_records", "users", column: "reported_by_id"
   add_foreign_key "vaccination_records", "users", column: "supplied_by_user_id"
   add_foreign_key "vaccination_records", "vaccines"
 
