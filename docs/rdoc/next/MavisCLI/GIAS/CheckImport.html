@@ -674,14 +674,18 @@
                 .<span class="ruby-identifier">merge</span>(<span class="ruby-constant">Session</span>.<span class="ruby-identifier">scheduled</span>)
                 .<span class="ruby-identifier">pluck</span>(<span class="ruby-value">:urn</span>)
             ),
-          <span class="ruby-value">closed:</span> <span class="ruby-constant">Set</span>.<span class="ruby-identifier">new</span>,
-          <span class="ruby-value">closing:</span> <span class="ruby-constant">Set</span>.<span class="ruby-identifier">new</span>,
+          <span class="ruby-value">closed:</span> {
+          },
+          <span class="ruby-value">closing:</span> {
+          },
           <span class="ruby-value">year_group_changes:</span> {
           }
         }
         <span class="ruby-identifier">schools_without_future_sessions</span> = {
-          <span class="ruby-value">closed:</span> <span class="ruby-constant">Set</span>.<span class="ruby-identifier">new</span>,
-          <span class="ruby-value">closing:</span> <span class="ruby-constant">Set</span>.<span class="ruby-identifier">new</span>,
+          <span class="ruby-value">closed:</span> {
+          },
+          <span class="ruby-value">closing:</span> {
+          },
           <span class="ruby-value">year_group_changes:</span> {
           }
         }
@@ -698,13 +702,29 @@
         <span class="ruby-identifier">new_schools</span> = <span class="ruby-constant">Set</span>.<span class="ruby-identifier">new</span>
 
         <span class="ruby-constant">Zip</span><span class="ruby-operator">::</span><span class="ruby-constant">File</span>.<span class="ruby-identifier">open</span>(<span class="ruby-identifier">input_file</span>) <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">zip</span><span class="ruby-operator">|</span>
-          <span class="ruby-identifier">csv_entry</span> = <span class="ruby-identifier">zip</span>.<span class="ruby-identifier">glob</span>(<span class="ruby-string">&quot;edubasealldata*.csv&quot;</span>).<span class="ruby-identifier">first</span>
-          <span class="ruby-identifier">csv_content</span> = <span class="ruby-identifier">csv_entry</span>.<span class="ruby-identifier">get_input_stream</span>.<span class="ruby-identifier">read</span>
+          <span class="ruby-identifier">links_csv</span> = <span class="ruby-identifier">zip</span>.<span class="ruby-identifier">glob</span>(<span class="ruby-string">&quot;links_edubasealldata*.csv&quot;</span>).<span class="ruby-identifier">first</span>
+          <span class="ruby-identifier">links_csv_content</span> = <span class="ruby-identifier">links_csv</span>.<span class="ruby-identifier">get_input_stream</span>.<span class="ruby-identifier">read</span>
 
-          <span class="ruby-identifier">progress_bar</span> = <span class="ruby-constant">MavisCLI</span>.<span class="ruby-identifier">progress_bar</span>(<span class="ruby-identifier">csv_content</span>.<span class="ruby-identifier">lines</span>.<span class="ruby-identifier">count</span> <span class="ruby-operator">+</span> <span class="ruby-value">1</span>)
+          <span class="ruby-ivar">@school_successors</span> = {}
+          <span class="ruby-constant">CSV</span>.<span class="ruby-identifier">parse</span>(
+            <span class="ruby-identifier">links_csv_content</span>,
+            <span class="ruby-value">headers:</span> <span class="ruby-keyword">true</span>,
+            <span class="ruby-value">encoding:</span> <span class="ruby-string">&quot;ISO-8859-1:UTF-8&quot;</span>
+          ) <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">row</span><span class="ruby-operator">|</span>
+            <span class="ruby-keyword">next</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">row</span>[<span class="ruby-string">&quot;LinkType&quot;</span>]&amp;.<span class="ruby-identifier">include?</span>(<span class="ruby-string">&quot;Successor&quot;</span>)
+
+            <span class="ruby-ivar">@school_successors</span>[<span class="ruby-identifier">row</span>[<span class="ruby-string">&quot;URN&quot;</span>]] <span class="ruby-operator">||=</span> []
+            <span class="ruby-ivar">@school_successors</span>[<span class="ruby-identifier">row</span>[<span class="ruby-string">&quot;URN&quot;</span>]] <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">row</span>[<span class="ruby-string">&quot;LinkURN&quot;</span>]
+          <span class="ruby-keyword">end</span>
+
+          <span class="ruby-identifier">school_data_csv</span> = <span class="ruby-identifier">zip</span>.<span class="ruby-identifier">glob</span>(<span class="ruby-string">&quot;edubasealldata*.csv&quot;</span>).<span class="ruby-identifier">first</span>
+          <span class="ruby-identifier">school_csv_content</span> = <span class="ruby-identifier">school_data_csv</span>.<span class="ruby-identifier">get_input_stream</span>.<span class="ruby-identifier">read</span>
+
+          <span class="ruby-identifier">progress_bar</span> =
+            <span class="ruby-constant">MavisCLI</span>.<span class="ruby-identifier">progress_bar</span>(<span class="ruby-identifier">school_csv_content</span>.<span class="ruby-identifier">lines</span>.<span class="ruby-identifier">count</span> <span class="ruby-operator">+</span> <span class="ruby-value">1</span>)
 
           <span class="ruby-constant">CSV</span>.<span class="ruby-identifier">parse</span>(
-            <span class="ruby-identifier">csv_content</span>,
+            <span class="ruby-identifier">school_csv_content</span>,
             <span class="ruby-value">headers:</span> <span class="ruby-keyword">true</span>,
             <span class="ruby-value">encoding:</span> <span class="ruby-string">&quot;ISO-8859-1:UTF-8&quot;</span>
           ) <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">row</span><span class="ruby-operator">|</span>
@@ -765,17 +785,29 @@ That are proposed to be closed in import: #{schools_with_future_sessions[:closin
             That have year group changes: #{schools_with_future_sessions[:year_group_changes].count} (#{schools_with_changed_year_groups_pct * 100}%)</span>
 <span class="ruby-identifier">        OUTPUT</span>
 
-        <span class="ruby-identifier">puts</span> <span class="ruby-identifier">&lt;&lt;~OUTPUT</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">schools_with_future_sessions</span>[<span class="ruby-value">:closed</span>].<span class="ruby-identifier">any?</span>
-<span class="ruby-value">
-URNs of closed schools with future sessions:
-  #{schools_with_future_sessions[:closed].to_a.sort.join(&quot;\n  &quot;)}</span>
-<span class="ruby-identifier">          OUTPUT</span>
+        <span class="ruby-keyword">if</span> <span class="ruby-identifier">schools_with_future_sessions</span>[<span class="ruby-value">:closed</span>].<span class="ruby-identifier">any?</span>
+          <span class="ruby-identifier">puts</span> <span class="ruby-string">&quot;\nURNs of closed schools with future sessions:&quot;</span>
+          <span class="ruby-identifier">schools_with_future_sessions</span>[<span class="ruby-value">:closed</span>].<span class="ruby-identifier">sort</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">urn</span>, <span class="ruby-identifier">successors</span><span class="ruby-operator">|</span>
+            <span class="ruby-keyword">if</span> <span class="ruby-identifier">successors</span>.<span class="ruby-identifier">any?</span>
+              <span class="ruby-identifier">successor_info</span> = <span class="ruby-identifier">format_successors_with_teams</span>(<span class="ruby-identifier">successors</span>)
+              <span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;  #{urn} -&gt; successor(s): #{successor_info}&quot;</span>
+            <span class="ruby-keyword">else</span>
+              <span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;  #{urn}&quot;</span>
+            <span class="ruby-keyword">end</span>
+          <span class="ruby-keyword">end</span>
+        <span class="ruby-keyword">end</span>
 
-        <span class="ruby-identifier">puts</span> <span class="ruby-identifier">&lt;&lt;~OUTPUT</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">schools_with_future_sessions</span>[<span class="ruby-value">:closing</span>].<span class="ruby-identifier">any?</span>
-<span class="ruby-value">
-URNs of schools that will be closing, with future sessions:
-  #{schools_with_future_sessions[:closing].to_a.sort.join(&quot;\n  &quot;)}</span>
-<span class="ruby-identifier">          OUTPUT</span>
+        <span class="ruby-keyword">if</span> <span class="ruby-identifier">schools_with_future_sessions</span>[<span class="ruby-value">:closing</span>].<span class="ruby-identifier">any?</span>
+          <span class="ruby-identifier">puts</span> <span class="ruby-string">&quot;\nURNs of schools that will be closing, with future sessions:&quot;</span>
+          <span class="ruby-identifier">schools_with_future_sessions</span>[<span class="ruby-value">:closing</span>].<span class="ruby-identifier">sort</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">urn</span>, <span class="ruby-identifier">successors</span><span class="ruby-operator">|</span>
+            <span class="ruby-keyword">if</span> <span class="ruby-identifier">successors</span>.<span class="ruby-identifier">any?</span>
+              <span class="ruby-identifier">successor_info</span> = <span class="ruby-identifier">format_successors_with_teams</span>(<span class="ruby-identifier">successors</span>)
+              <span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;  #{urn} -&gt; successor(s): #{successor_info}&quot;</span>
+            <span class="ruby-keyword">else</span>
+              <span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;  #{urn}&quot;</span>
+            <span class="ruby-keyword">end</span>
+          <span class="ruby-keyword">end</span>
+        <span class="ruby-keyword">end</span>
 
         <span class="ruby-keyword">if</span> <span class="ruby-identifier">schools_with_future_sessions</span>[<span class="ruby-value">:year_group_changes</span>].<span class="ruby-identifier">any?</span>
           <span class="ruby-identifier">puts</span> <span class="ruby-string">&quot;\nURNs of schools with year group changes, with future sessions:&quot;</span>

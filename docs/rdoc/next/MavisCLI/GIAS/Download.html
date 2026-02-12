@@ -659,7 +659,7 @@
             </details>
           </div>
           <div class="method-source-code" id="call-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/mavis_cli/gias/download.rb, line 22</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/mavis_cli/gias/download.rb, line 23</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">call</span>(<span class="ruby-value">output_file:</span>, <span class="ruby-operator">**</span>)
   <span class="ruby-identifier">require</span> <span class="ruby-string">&quot;mechanize&quot;</span>
 
@@ -674,6 +674,9 @@
   <span class="ruby-identifier">puts</span> <span class="ruby-string">&quot;Checking the establishment fields CSV checkbox&quot;</span>
   <span class="ruby-identifier">form</span> = <span class="ruby-identifier">page</span>.<span class="ruby-identifier">form_with</span>(<span class="ruby-value">action:</span> <span class="ruby-string">&quot;/Downloads/Collate&quot;</span>)
   <span class="ruby-identifier">form</span>.<span class="ruby-identifier">checkbox_with</span>(<span class="ruby-value">id:</span> <span class="ruby-string">&quot;establishment-fields-csv-checkbox&quot;</span>).<span class="ruby-identifier">check</span>
+
+  <span class="ruby-identifier">puts</span> <span class="ruby-string">&quot;Checking the establishment links CSV checkbox&quot;</span>
+  <span class="ruby-identifier">form</span>.<span class="ruby-identifier">checkbox_with</span>(<span class="ruby-value">id:</span> <span class="ruby-string">&quot;establishment-links-csv-checkbox&quot;</span>).<span class="ruby-identifier">check</span>
 
   <span class="ruby-identifier">puts</span> <span class="ruby-string">&quot;Submitting the form&quot;</span>
   <span class="ruby-identifier">download_page</span> = <span class="ruby-identifier">form</span>.<span class="ruby-identifier">submit</span>
