@@ -30,10 +30,13 @@ class AppImportReviewSchoolMovesSummaryComponent < ViewComponent::Base
   end
 
   def school_move_across_teams?(changeset)
-    patient = changeset.patient
     dest_school = destination_school(changeset)
 
-    dest_school && patient.school && patient.school.teams.any? &&
-      (dest_school.teams & patient.school.teams).empty?
+    current_teams = changeset.patient.teams_via_patient_locations
+    return false if current_teams.empty?
+
+    new_teams = dest_school&.teams || [changeset.import.team]
+
+    (new_teams & current_teams).empty?
   end
 end

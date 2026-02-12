@@ -92,15 +92,13 @@ class AppPatientCardComponent < ViewComponent::Base
   end
 
   def team_changed_notices
-    return unless patient.school
-
     valid_notices =
       patient
         .important_notices
         .team_changed
         .includes(:school_move_log_entry)
         .where(team: current_team)
-        .where.not(team: patient.school.teams)
+        .where.not(team: patient.teams_via_patient_locations)
 
     valid_notices.map(&:message)
   end
