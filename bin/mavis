@@ -3,6 +3,7 @@
 require "bundler/setup"
 require "dry/cli"
 
+require_relative "../config/environment"
 require_relative "../app/lib/mavis_cli"
 
 Dry::CLI.new(MavisCLI).call

@@ -21,47 +21,8 @@ module MavisCLI
              desc: "file path to write GIAS database to"
 
       def call(output_file:, **)
-        require "mechanize"
-
         puts "Starting schools data download process..."
-        agent = Mechanize.new
-        agent.user_agent_alias = "Mac Safari"
-
-        puts "Visiting the downloads page"
-        page =
-          agent.get("https://get-information-schools.service.gov.uk/Downloads")
-
-        puts "Checking the establishment fields CSV checkbox"
-        form = page.form_with(action: "/Downloads/Collate")
-        form.checkbox_with(id: "establishment-fields-csv-checkbox").check
-
-        puts "Checking the establishment links CSV checkbox"
-        form.checkbox_with(id: "establishment-links-csv-checkbox").check
-
-        puts "Submitting the form"
-        download_page = form.submit
-
-        # There is a meta refresh on the download_page. Mechanize didn't seem to
-        # follow it so we're just refreshing that page manually until the button
-        # shows up below.
-        wait_time = 0
-        until (
-                download_form =
-                  download_page.form_with(action: "/Downloads/Download/Extract")
-              ) || wait_time > 60
-          puts "Waiting for the 'Results.zip' link to appear..."
-          sleep(2)
-          wait_time += 2
-          download_page_uri = download_page.uri
-          download_page = agent.get(download_page_uri)
-        end
-
-        if download_form
-          download_button = download_form.button_with(value: "Results.zip")
-          puts "'Results.zip' link found, downloading the file..."
-          download_file = agent.click(download_button)
-          puts "Writing #{output_file}"
-          download_file.save!(output_file)
+        if ::GIAS.download(output_file:)
           puts "File downloaded successfully to #{output_file}"
         else
           puts "Download button never appeared, aborting"

@@ -13,99 +13,15 @@ module MavisCLI
       def call(input_file:, **)
         MavisCLI.load_rails
 
-        require "zip"
+        row_count = ::GIAS.row_count(input_file)
+        progress_bar = MavisCLI.progress_bar(row_count)
 
-        schools_with_future_sessions = {
-          existing:
-            Set.new(
-              Location
-                .school
-                .joins(:sessions)
-                .merge(Session.scheduled)
-                .pluck(:urn)
-            ),
-          closed: {
-          },
-          closing: {
-          },
-          year_group_changes: {
-          }
-        }
-        schools_without_future_sessions = {
-          closed: {
-          },
-          closing: {
-          },
-          year_group_changes: {
-          }
-        }
+        results = ::GIAS.check_import(input_file:, progress_bar:)
 
-        existing_schools = Set.new(Location.school.pluck(:urn))
-        team_schools =
-          Set.new(
-            TeamLocation
-              .joins(:location)
-              .merge(Location.school)
-              .pluck(:"locations.urn")
-          )
-
-        new_schools = Set.new
-
-        Zip::File.open(input_file) do |zip|
-          links_csv = zip.glob("links_edubasealldata*.csv").first
-          links_csv_content = links_csv.get_input_stream.read
-
-          @school_successors = {}
-          CSV.parse(
-            links_csv_content,
-            headers: true,
-            encoding: "ISO-8859-1:UTF-8"
-          ) do |row|
-            next unless row["LinkType"]&.include?("Successor")
-
-            @school_successors[row["URN"]] ||= []
-            @school_successors[row["URN"]] << row["LinkURN"]
-          end
-
-          school_data_csv = zip.glob("edubasealldata*.csv").first
-          school_csv_content = school_data_csv.get_input_stream.read
-
-          progress_bar =
-            MavisCLI.progress_bar(school_csv_content.lines.count + 1)
-
-          CSV.parse(
-            school_csv_content,
-            headers: true,
-            encoding: "ISO-8859-1:UTF-8"
-          ) do |row|
-            gias_establishment_number = row["EstablishmentNumber"]
-            next if gias_establishment_number.blank? # closed school that never opened
-
-            urn = row["URN"]
-            new_status = row["EstablishmentStatus (name)"]
-
-            if urn.in?(schools_with_future_sessions[:existing])
-              check_for_school_closure(row, schools_with_future_sessions)
-              check_for_year_group_changes(
-                row,
-                schools_with_future_sessions,
-                existing_schools
-              )
-            elsif urn.in?(team_schools)
-              check_for_school_closure(row, schools_without_future_sessions)
-              check_for_year_group_changes(
-                row,
-                schools_without_future_sessions,
-                existing_schools
-              )
-            elsif !urn.in?(existing_schools) &&
-                  new_status.in?(["Open", "Open, but proposed to close"])
-              new_schools << urn
-            end
-          ensure
-            progress_bar.increment
-          end
-        end
+        new_schools = results[:new_schools]
+        schools_with_future_sessions = results[:schools_with_future_sessions]
+        schools_without_future_sessions =
+          results[:schools_without_future_sessions]
 
         closed_schools_count =
           schools_without_future_sessions[:closed].count +
@@ -174,8 +90,8 @@ That are proposed to be closed in import: #{schools_with_future_sessions[:closin
       private
 
       def format_successors_with_teams(successor_urns)
-        successor_urns
-          .map do |successor_urn|
+        annotated_successor_urns =
+          successor_urns.map do |successor_urn|
             locations = Location.school.where(urn: successor_urn)
 
             if locations.count == 1
@@ -201,7 +117,8 @@ That are proposed to be closed in import: #{schools_with_future_sessions[:closin
               "#{successor_urn} (not found)"
             end
           end
-          .join(", ")
+
+        annotated_successor_urns.join(", ")
       end
 
       def calculate_percentage(schools_set, metric)
@@ -209,36 +126,6 @@ That are proposed to be closed in import: #{schools_with_future_sessions[:closin
           schools_set[metric].count.to_f / schools_set[:existing].count
         else
           0.0
-        end
-      end
-
-      def check_for_school_closure(row, school_set)
-        urn = row["URN"]
-        new_status = row["EstablishmentStatus (name)"]
-        successors = @school_successors[urn] || []
-
-        if new_status == "Closed"
-          school_set[:closed][urn] = successors
-        elsif new_status == "Open, but proposed to close"
-          school_set[:closing][urn] = successors
-        end
-      end
-
-      def check_for_year_group_changes(row, school_set, existing_schools)
-        urn = row["URN"]
-        return unless urn.in? existing_schools
-
-        low_year_group = row["StatutoryLowAge"].to_i - 4
-        high_year_group = row["StatutoryHighAge"].to_i - 5
-        new_year_groups = (low_year_group..high_year_group).to_a
-
-        current_year_groups = Location.school.find_by(urn:).gias_year_groups
-
-        if new_year_groups != current_year_groups
-          school_set[:year_group_changes][urn] = {
-            current: current_year_groups,
-            new: new_year_groups
-          }
         end
       end
     end
