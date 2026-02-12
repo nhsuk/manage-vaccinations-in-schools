@@ -71,6 +71,14 @@ GOVUK_NOTIFY_SMS_TEMPLATES = {
 # Here we track email and SMS templates that we used to send but no longer
 # do. We need these to be able to display the names of the templates.
 GOVUK_NOTIFY_UNUSED_TEMPLATES = {
+  "07516fbf-6d51-4c17-a046-305f5baa6744" => :vaccination_administered_flu,
+  "3179b434-4f44-4d47-a8ba-651b58c235fd" => :consent_confirmation_given,
+  "eb34f3ab-0c58-4e56-b6b1-2c179270dfc3" => :consent_confirmation_refused,
+  "ee3d36b1-4682-4eb0-a74a-7e0f6c9d0598" => :consent_school_reminder,
+  "c7bd8150-d09e-4607-817d-db75c9a6a966" => :consent_school_request,
+  "88d21cfc-39f6-44a2-98c3-9588e7214ae4" => :invitation_to_clinic,
+  "fc99ac81-9eeb-4df8-9aa0-04f0eb48e37f" => :invitation_to_clinic_ryg,
+  "e1b6a2f6-728a-4de3-88ec-40194b354eac" => :invitation_to_clinic_rt5,
   "16ae7602-c2b1-4731-bb74-fd4f1357feca" => :vaccination_administered_menacwy,
   "25473aa7-2d7c-4d1d-b0c6-2ac492f737c3" => :consent_confirmation_given,
   "4c616b22-eee8-423f-84d6-bd5710f744fd" => :vaccination_administered_td_ipv,
