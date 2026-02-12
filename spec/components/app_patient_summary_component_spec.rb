@@ -37,8 +37,17 @@ describe AppPatientSummaryComponent do
   it { should have_content("Date of birth") }
   it { should have_content("1 January 2000") }
 
-  it { should have_content("Address") }
-  it { should have_content("SW1A 1AA") }
+  context "patient is restricted" do
+    before { patient.update(restricted_at: Time.current) }
+
+    it { should_not have_content("Address") }
+    it { should_not have_content("SW1A 1AA") }
+  end
+
+  context "patient is not restricted" do
+    it { should have_content("Address") }
+    it { should have_content("SW1A 1AA") }
+  end
 
   it { should have_link("View full child record", href:) }
 end
