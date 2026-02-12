@@ -947,6 +947,7 @@
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_patient_attendance</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">new_record?</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">session</span>&amp;.<span class="ruby-identifier">today?</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">session</span>&amp;.<span class="ruby-identifier">requires_registration?</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">blank?</span>
 
   <span class="ruby-identifier">attendance_record</span> =
@@ -1300,6 +1301,7 @@
   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_patient_attendance</span>
     <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">new_record?</span>
     <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">session</span>&amp;.<span class="ruby-identifier">today?</span>
+    <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">session</span>&amp;.<span class="ruby-identifier">requires_registration?</span>
     <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">blank?</span>
 
     <span class="ruby-identifier">attendance_record</span> =
@@ -2358,6 +2360,7 @@
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_patient_attendance</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">new_record?</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">session</span>&amp;.<span class="ruby-identifier">today?</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">session</span>&amp;.<span class="ruby-identifier">requires_registration?</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">blank?</span>
 
   <span class="ruby-identifier">attendance_record</span> =
@@ -2737,6 +2740,7 @@
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_patient_attendance</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">new_record?</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">session</span>&amp;.<span class="ruby-identifier">today?</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">session</span>&amp;.<span class="ruby-identifier">requires_registration?</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">blank?</span>
 
   <span class="ruby-identifier">attendance_record</span> =
@@ -2934,6 +2938,7 @@
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_patient_attendance</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">new_record?</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">session</span>&amp;.<span class="ruby-identifier">today?</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">session</span>&amp;.<span class="ruby-identifier">requires_registration?</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">blank?</span>
 
   <span class="ruby-identifier">attendance_record</span> =
@@ -3124,6 +3129,7 @@
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_patient_attendance</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">new_record?</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">session</span>&amp;.<span class="ruby-identifier">today?</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">session</span>&amp;.<span class="ruby-identifier">requires_registration?</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">blank?</span>
 
   <span class="ruby-identifier">attendance_record</span> =
@@ -3320,6 +3326,7 @@
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_patient_attendance</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">new_record?</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">session</span>&amp;.<span class="ruby-identifier">today?</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">session</span>&amp;.<span class="ruby-identifier">requires_registration?</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">blank?</span>
 
   <span class="ruby-identifier">attendance_record</span> =
@@ -3519,6 +3526,7 @@
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_patient_attendance</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">new_record?</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">session</span>&amp;.<span class="ruby-identifier">today?</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">session</span>&amp;.<span class="ruby-identifier">requires_registration?</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">blank?</span>
 
   <span class="ruby-identifier">attendance_record</span> =
@@ -4000,6 +4008,7 @@
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_patient_attendance</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">new_record?</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">session</span>&amp;.<span class="ruby-identifier">today?</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">session</span>&amp;.<span class="ruby-identifier">requires_registration?</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">blank?</span>
 
   <span class="ruby-identifier">attendance_record</span> =
