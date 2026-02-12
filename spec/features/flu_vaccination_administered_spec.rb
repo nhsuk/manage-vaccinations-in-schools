@@ -345,6 +345,6 @@ describe "Flu vaccination" do
   end
 
   def and_the_parent_doesnt_receive_a_vaccination_already_had_email
-    expect(email_deliveries).to be_empty
+    expect_no_email_to(@patient.consents.last.parent.email, :vaccination_already_had)
   end
 end

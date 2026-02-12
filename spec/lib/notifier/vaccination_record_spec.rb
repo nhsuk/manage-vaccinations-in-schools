@@ -63,6 +63,33 @@ describe Notifier::VaccinationRecord do
       end
     end
 
+    context "when the vaccination was already given elsewhere" do
+      let(:consent) { create(:consent, :given, patient:, programme:) }
+      let(:source) { :historical_upload }
+
+      let(:vaccination_record) do
+        create(
+          :vaccination_record,
+          :already_had,
+          programme:,
+          patient:,
+          source:,
+        )
+      end
+
+      it "sends an email" do
+        expect { send_confirmation }.to have_delivered_email(
+          :vaccination_already_had
+        ).with(parent:, vaccination_record:, consent:)
+      end
+
+      it "sends a text message" do
+        expect { send_confirmation }.to have_delivered_sms(
+          :vaccination_already_had
+        ).with(parent:, vaccination_record:, consent:)
+      end
+    end
+
     context "when the consent was done through gillick assessment" do
       let(:vaccination_record) do
         create(
