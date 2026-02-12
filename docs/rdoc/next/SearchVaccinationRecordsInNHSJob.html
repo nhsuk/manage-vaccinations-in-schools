@@ -718,14 +718,15 @@
     <span class="ruby-keyword">end</span>
 
     <span class="ruby-comment"># Remaining incoming_vaccination_records are new</span>
-    <span class="ruby-identifier">incoming_vaccination_records</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">vaccination_record</span><span class="ruby-operator">|</span>
-      <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">save!</span>
-      <span class="ruby-constant">AlreadyHadNotificationSender</span>.<span class="ruby-identifier">call</span>(<span class="ruby-value">vaccination_record:</span>)
-    <span class="ruby-keyword">end</span>
+    <span class="ruby-identifier">incoming_vaccination_records</span>.<span class="ruby-identifier">each</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:save!</span>)
 
     <span class="ruby-identifier">update_vaccination_search_timestamps</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">nhs_number</span>.<span class="ruby-identifier">present?</span>
 
     <span class="ruby-constant">PatientStatusUpdater</span>.<span class="ruby-identifier">call</span>(<span class="ruby-value">patient:</span>)
+
+    <span class="ruby-identifier">incoming_vaccination_records</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">vaccination_record</span><span class="ruby-operator">|</span>
+      <span class="ruby-constant">AlreadyHadNotificationSender</span>.<span class="ruby-identifier">call</span>(<span class="ruby-value">vaccination_record:</span>)
+    <span class="ruby-keyword">end</span>
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
           </div>

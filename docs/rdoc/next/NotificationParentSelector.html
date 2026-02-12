@@ -657,21 +657,14 @@
             <pre class="ruby"><span class="ruby-comment"># File app/lib/notification_parent_selector.rb, line 4</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-value">vaccination_record:</span>, <span class="ruby-value">consents:</span> <span class="ruby-keyword">nil</span>)
   <span class="ruby-ivar">@vaccination_record</span> = <span class="ruby-identifier">vaccination_record</span>
-
   <span class="ruby-ivar">@consents</span> =
-    <span class="ruby-keyword">if</span> <span class="ruby-identifier">consents</span>.<span class="ruby-identifier">present?</span>
-      <span class="ruby-identifier">consents</span>
+    <span class="ruby-keyword">if</span> <span class="ruby-ivar">@vaccination_record</span>.<span class="ruby-identifier">patient</span>.<span class="ruby-identifier">send_notifications?</span>(
+         <span class="ruby-value">team:</span> <span class="ruby-ivar">@vaccination_record</span>.<span class="ruby-identifier">team</span>,
+         <span class="ruby-value">send_to_archived:</span> <span class="ruby-keyword">true</span>
+       ) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-ivar">@vaccination_record</span>.<span class="ruby-identifier">notify_parents</span>
+      <span class="ruby-identifier">consents</span> <span class="ruby-operator">||</span> <span class="ruby-ivar">@vaccination_record</span>.<span class="ruby-identifier">patient</span>.<span class="ruby-identifier">consents</span>
     <span class="ruby-keyword">else</span>
-      <span class="ruby-identifier">patient</span> = <span class="ruby-ivar">@vaccination_record</span>.<span class="ruby-identifier">patient</span>
-
-      <span class="ruby-keyword">if</span> <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">send_notifications?</span>(
-           <span class="ruby-value">team:</span> <span class="ruby-ivar">@vaccination_record</span>.<span class="ruby-identifier">team</span>,
-           <span class="ruby-value">send_to_archived:</span> <span class="ruby-keyword">true</span>
-         ) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-ivar">@vaccination_record</span>.<span class="ruby-identifier">notify_parents</span>
-        <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">consents</span>
-      <span class="ruby-keyword">else</span>
-        []
-      <span class="ruby-keyword">end</span>
+      []
     <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
@@ -726,10 +719,14 @@
             </details>
           </div>
           <div class="method-source-code" id="latest_consents-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/notification_parent_selector.rb, line 48</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/notification_parent_selector.rb, line 41</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">latest_consents</span>
   <span class="ruby-ivar">@latest_consents</span> <span class="ruby-operator">||=</span>
-    <span class="ruby-constant">ConsentGrouper</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">consents</span>, <span class="ruby-value">programme_type:</span>, <span class="ruby-value">academic_year:</span>)
+    <span class="ruby-constant">ConsentGrouper</span>.<span class="ruby-identifier">call</span>(
+      <span class="ruby-identifier">consents</span>,
+      <span class="ruby-value">programme_type:</span>,
+      <span class="ruby-value">academic_year:</span> <span class="ruby-constant">AcademicYear</span>.<span class="ruby-identifier">current</span>
+    )
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -769,7 +766,7 @@
             </details>
           </div>
           <div class="method-source-code" id="parents-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/notification_parent_selector.rb, line 40</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/notification_parent_selector.rb, line 33</span>
   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">parents</span> = <span class="ruby-identifier">parents_with_consent</span>.<span class="ruby-identifier">map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:first</span>)
 
   <span class="ruby-identifier">private</span>
@@ -780,7 +777,11 @@
 
   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">latest_consents</span>
     <span class="ruby-ivar">@latest_consents</span> <span class="ruby-operator">||=</span>
-      <span class="ruby-constant">ConsentGrouper</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">consents</span>, <span class="ruby-value">programme_type:</span>, <span class="ruby-value">academic_year:</span>)
+      <span class="ruby-constant">ConsentGrouper</span>.<span class="ruby-identifier">call</span>(
+        <span class="ruby-identifier">consents</span>,
+        <span class="ruby-value">programme_type:</span>,
+        <span class="ruby-value">academic_year:</span> <span class="ruby-constant">AcademicYear</span>.<span class="ruby-identifier">current</span>
+      )
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
@@ -821,7 +822,7 @@
             </details>
           </div>
           <div class="method-source-code" id="parents_with_consent-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/notification_parent_selector.rb, line 24</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/notification_parent_selector.rb, line 17</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">parents_with_consent</span>
   <span class="ruby-keyword">if</span> (<span class="ruby-identifier">self_consent</span> = <span class="ruby-identifier">latest_consents</span>.<span class="ruby-identifier">find</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:via_self_consent?</span>))
     <span class="ruby-identifier">patient</span>

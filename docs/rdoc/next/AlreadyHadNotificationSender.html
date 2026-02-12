@@ -578,9 +578,11 @@
 
         <li ><a href="#method-i-call">call</a></li>
 
-        <li ><a href="#method-i-other_vaccination_records">other_vaccination_records</a></li>
+        <li ><a href="#method-i-is_still_eligible_for_vaccination-3F">is_still_eligible_for_vaccination?</a></li>
 
-        <li ><a href="#method-i-would_still_be_vaccinated-3F">would_still_be_vaccinated?</a></li>
+        <li ><a href="#method-i-previous_vaccination_records">previous_vaccination_records</a></li>
+
+        <li ><a href="#method-i-was_already_vaccinated-3F">was_already_vaccinated?</a></li>
 
       </ul>
     </details>
@@ -658,7 +660,7 @@
             </details>
           </div>
           <div class="method-source-code" id="call-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/already_had_notification_sender.rb, line 53</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/already_had_notification_sender.rb, line 54</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">call</span>(<span class="ruby-operator">...</span>) = <span class="ruby-identifier">new</span>(<span class="ruby-operator">...</span>).<span class="ruby-identifier">call</span>
 
 <span class="ruby-identifier">private_class_method</span> <span class="ruby-value">:new</span>
@@ -667,15 +669,25 @@
 
 <span class="ruby-identifier">attr_reader</span> <span class="ruby-value">:vaccination_record</span>
 
-<span class="ruby-identifier">delegate</span> <span class="ruby-value">:patient</span>, <span class="ruby-value">:programme_type</span>, <span class="ruby-value">to:</span> <span class="ruby-value">:vaccination_record</span>
+<span class="ruby-identifier">delegate</span> <span class="ruby-value">:patient</span>, <span class="ruby-value">:programme_type</span>, <span class="ruby-value">:programme</span>, <span class="ruby-value">to:</span> <span class="ruby-value">:vaccination_record</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">academic_year</span> = <span class="ruby-constant">AcademicYear</span>.<span class="ruby-identifier">current</span>
 
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">other_vaccination_records</span>
-  <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">vaccination_records</span>.<span class="ruby-identifier">where</span>.<span class="ruby-identifier">not</span>(<span class="ruby-value">id:</span> <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">id</span>)
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">previous_vaccination_records</span>
+  <span class="ruby-comment"># We need to ensure there is a deterministic order of vaccination records on</span>
+  <span class="ruby-comment"># a child so that the :already_vaccinated_notification is sent once and only</span>
+  <span class="ruby-comment"># once per child. Using created_at alone is not sufficient as batching</span>
+  <span class="ruby-comment"># allows for multiple vaccination records to be created with the same</span>
+  <span class="ruby-comment"># created_at timestamp. We chose the ID as a tie-breaker since IDs are</span>
+  <span class="ruby-comment"># unique and sequential.</span>
+  <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">vaccination_records</span>.<span class="ruby-identifier">where</span>(
+    <span class="ruby-string">&quot;(created_at &lt; :created_at) OR (created_at = :created_at AND id &lt; :id)&quot;</span>,
+    <span class="ruby-value">created_at:</span> <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">created_at</span>,
+    <span class="ruby-value">id:</span> <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">id</span>
+  )
 <span class="ruby-keyword">end</span>
 
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">would_still_be_vaccinated?</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">was_already_vaccinated?</span>
   <span class="ruby-comment"># We&#39;re not using the existing `Patient::ProgrammeStatus` instance here</span>
   <span class="ruby-comment"># because we want to know if the patient would still be vaccinated if we</span>
   <span class="ruby-comment"># took away the vaccination record in question, to know whether to send</span>
@@ -688,12 +700,16 @@
     <span class="ruby-value">programme_type:</span>,
     <span class="ruby-value">academic_year:</span>,
     <span class="ruby-value">patient:</span>,
-    <span class="ruby-value">vaccination_records:</span> <span class="ruby-identifier">other_vaccination_records</span>,
+    <span class="ruby-value">vaccination_records:</span> <span class="ruby-identifier">previous_vaccination_records</span>,
     <span class="ruby-value">patient_locations:</span> [],
     <span class="ruby-value">consents:</span> [],
     <span class="ruby-value">triages:</span> [],
     <span class="ruby-value">attendance_record:</span> <span class="ruby-keyword">nil</span>
   ).<span class="ruby-identifier">status</span> <span class="ruby-operator">==</span> <span class="ruby-value">:vaccinated</span>
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">is_still_eligible_for_vaccination?</span>
+  <span class="ruby-operator">!</span><span class="ruby-identifier">patient</span>.<span class="ruby-identifier">programme_status</span>(<span class="ruby-identifier">programme</span>, <span class="ruby-value">academic_year:</span>).<span class="ruby-identifier">vaccinated?</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -789,14 +805,24 @@
             </details>
           </div>
           <div class="method-source-code" id="academic_year-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/already_had_notification_sender.rb, line 63</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/already_had_notification_sender.rb, line 64</span>
   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">academic_year</span> = <span class="ruby-constant">AcademicYear</span>.<span class="ruby-identifier">current</span>
 
-  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">other_vaccination_records</span>
-    <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">vaccination_records</span>.<span class="ruby-identifier">where</span>.<span class="ruby-identifier">not</span>(<span class="ruby-value">id:</span> <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">id</span>)
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">previous_vaccination_records</span>
+    <span class="ruby-comment"># We need to ensure there is a deterministic order of vaccination records on</span>
+    <span class="ruby-comment"># a child so that the :already_vaccinated_notification is sent once and only</span>
+    <span class="ruby-comment"># once per child. Using created_at alone is not sufficient as batching</span>
+    <span class="ruby-comment"># allows for multiple vaccination records to be created with the same</span>
+    <span class="ruby-comment"># created_at timestamp. We chose the ID as a tie-breaker since IDs are</span>
+    <span class="ruby-comment"># unique and sequential.</span>
+    <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">vaccination_records</span>.<span class="ruby-identifier">where</span>(
+      <span class="ruby-string">&quot;(created_at &lt; :created_at) OR (created_at = :created_at AND id &lt; :id)&quot;</span>,
+      <span class="ruby-value">created_at:</span> <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">created_at</span>,
+      <span class="ruby-value">id:</span> <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">id</span>
+    )
   <span class="ruby-keyword">end</span>
 
-  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">would_still_be_vaccinated?</span>
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">was_already_vaccinated?</span>
     <span class="ruby-comment"># We&#39;re not using the existing `Patient::ProgrammeStatus` instance here</span>
     <span class="ruby-comment"># because we want to know if the patient would still be vaccinated if we</span>
     <span class="ruby-comment"># took away the vaccination record in question, to know whether to send</span>
@@ -809,12 +835,16 @@
       <span class="ruby-value">programme_type:</span>,
       <span class="ruby-value">academic_year:</span>,
       <span class="ruby-value">patient:</span>,
-      <span class="ruby-value">vaccination_records:</span> <span class="ruby-identifier">other_vaccination_records</span>,
+      <span class="ruby-value">vaccination_records:</span> <span class="ruby-identifier">previous_vaccination_records</span>,
       <span class="ruby-value">patient_locations:</span> [],
       <span class="ruby-value">consents:</span> [],
       <span class="ruby-value">triages:</span> [],
       <span class="ruby-value">attendance_record:</span> <span class="ruby-keyword">nil</span>
     ).<span class="ruby-identifier">status</span> <span class="ruby-operator">==</span> <span class="ruby-value">:vaccinated</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">is_still_eligible_for_vaccination?</span>
+    <span class="ruby-operator">!</span><span class="ruby-identifier">patient</span>.<span class="ruby-identifier">programme_status</span>(<span class="ruby-identifier">programme</span>, <span class="ruby-value">academic_year:</span>).<span class="ruby-identifier">vaccinated?</span>
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
@@ -858,7 +888,8 @@
             <pre class="ruby"><span class="ruby-comment"># File app/lib/already_had_notification_sender.rb, line 8</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">call</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">sourced_from_service?</span>
-  <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">would_still_be_vaccinated?</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">was_already_vaccinated?</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">is_still_eligible_for_vaccination?</span>
 
   <span class="ruby-identifier">consents</span> = <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">consents</span>.<span class="ruby-identifier">includes</span>(<span class="ruby-value">:parent</span>)
 
@@ -919,12 +950,12 @@
       </div>
 
 
-      <div id="method-i-other_vaccination_records" class="method-detail anchor-link ">
+      <div id="method-i-is_still_eligible_for_vaccination-3F" class="method-detail anchor-link ">
         <div class="method-header">
 
             <div class="method-heading">
-              <a href="#method-i-other_vaccination_records" title="Link to this method">
-                <span class="method-name">other_vaccination_records</span>
+              <a href="#method-i-is_still_eligible_for_vaccination-3F" title="Link to this method">
+                <span class="method-name">is_still_eligible_for_vaccination?</span>
                 <span class="method-args">()</span>
               </a>
             </div>
@@ -937,10 +968,10 @@
               <summary>Source</summary>
             </details>
           </div>
-          <div class="method-source-code" id="other_vaccination_records-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/already_had_notification_sender.rb, line 65</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">other_vaccination_records</span>
-  <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">vaccination_records</span>.<span class="ruby-identifier">where</span>.<span class="ruby-identifier">not</span>(<span class="ruby-value">id:</span> <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">id</span>)
+          <div class="method-source-code" id="is_still_eligible_for_vaccination-3F-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/already_had_notification_sender.rb, line 101</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">is_still_eligible_for_vaccination?</span>
+  <span class="ruby-operator">!</span><span class="ruby-identifier">patient</span>.<span class="ruby-identifier">programme_status</span>(<span class="ruby-identifier">programme</span>, <span class="ruby-value">academic_year:</span>).<span class="ruby-identifier">vaccinated?</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -961,12 +992,12 @@
       </div>
 
 
-      <div id="method-i-would_still_be_vaccinated-3F" class="method-detail anchor-link ">
+      <div id="method-i-previous_vaccination_records" class="method-detail anchor-link ">
         <div class="method-header">
 
             <div class="method-heading">
-              <a href="#method-i-would_still_be_vaccinated-3F" title="Link to this method">
-                <span class="method-name">would_still_be_vaccinated?</span>
+              <a href="#method-i-previous_vaccination_records" title="Link to this method">
+                <span class="method-name">previous_vaccination_records</span>
                 <span class="method-args">()</span>
               </a>
             </div>
@@ -979,9 +1010,61 @@
               <summary>Source</summary>
             </details>
           </div>
-          <div class="method-source-code" id="would_still_be_vaccinated-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/already_had_notification_sender.rb, line 69</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">would_still_be_vaccinated?</span>
+          <div class="method-source-code" id="previous_vaccination_records-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/already_had_notification_sender.rb, line 66</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">previous_vaccination_records</span>
+  <span class="ruby-comment"># We need to ensure there is a deterministic order of vaccination records on</span>
+  <span class="ruby-comment"># a child so that the :already_vaccinated_notification is sent once and only</span>
+  <span class="ruby-comment"># once per child. Using created_at alone is not sufficient as batching</span>
+  <span class="ruby-comment"># allows for multiple vaccination records to be created with the same</span>
+  <span class="ruby-comment"># created_at timestamp. We chose the ID as a tie-breaker since IDs are</span>
+  <span class="ruby-comment"># unique and sequential.</span>
+  <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">vaccination_records</span>.<span class="ruby-identifier">where</span>(
+    <span class="ruby-string">&quot;(created_at &lt; :created_at) OR (created_at = :created_at AND id &lt; :id)&quot;</span>,
+    <span class="ruby-value">created_at:</span> <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">created_at</span>,
+    <span class="ruby-value">id:</span> <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">id</span>
+  )
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-i-was_already_vaccinated-3F" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-was_already_vaccinated-3F" title="Link to this method">
+                <span class="method-name">was_already_vaccinated?</span>
+                <span class="method-args">()</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="was_already_vaccinated-3F-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/already_had_notification_sender.rb, line 80</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">was_already_vaccinated?</span>
   <span class="ruby-comment"># We&#39;re not using the existing `Patient::ProgrammeStatus` instance here</span>
   <span class="ruby-comment"># because we want to know if the patient would still be vaccinated if we</span>
   <span class="ruby-comment"># took away the vaccination record in question, to know whether to send</span>
@@ -994,7 +1077,7 @@
     <span class="ruby-value">programme_type:</span>,
     <span class="ruby-value">academic_year:</span>,
     <span class="ruby-value">patient:</span>,
-    <span class="ruby-value">vaccination_records:</span> <span class="ruby-identifier">other_vaccination_records</span>,
+    <span class="ruby-value">vaccination_records:</span> <span class="ruby-identifier">previous_vaccination_records</span>,
     <span class="ruby-value">patient_locations:</span> [],
     <span class="ruby-value">consents:</span> [],
     <span class="ruby-value">triages:</span> [],
