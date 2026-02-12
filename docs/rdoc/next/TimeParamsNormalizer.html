@@ -5,17 +5,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>class PatientSpecificDirection - Mavis Documentation</title>
+<title>class TimeParamsNormalizer - Mavis Documentation</title>
 
 
   <meta
     name="keywords"
-    content="ruby,class,PatientSpecificDirection"
+    content="ruby,class,TimeParamsNormalizer"
   >
 
     <meta
       name="description"
-      content="class PatientSpecificDirection: bigint not null Indexes index_patient_specific_directions_on_academic_year (academic_year) index_patient_specific_directions_on_cr"
+      content="Documentation for the TimeParamsNormalizer class"
     >
 
 
@@ -24,11 +24,14 @@
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content="website">
-<meta property="og:title" content="class PatientSpecificDirection - Mavis Documentation">
+<meta property="og:title" content="class TimeParamsNormalizer - Mavis Documentation">
 
 
 
-    <meta property="og:description" content="bigint not null Indexes index_patient_specific_directions_on_academic_year (academic_year) index_patient_specific_directions_on_cr">
+    <meta
+      property="og:description"
+      content="Documentation for TimeParamsNormalizer class - API reference and code examples"
+    >
 
 
 
@@ -36,11 +39,14 @@
 
 <!-- Twitter -->
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="class PatientSpecificDirection - Mavis Documentation">
+<meta name="twitter:title" content="class TimeParamsNormalizer - Mavis Documentation">
 
 
 
-    <meta name="twitter:description" content="bigint not null Indexes index_patient_specific_directions_on_academic_year (academic_year) index_patient_specific_directions_on_cr">
+    <meta
+      name="twitter:description"
+      content="Documentation for TimeParamsNormalizer class - API reference and code examples"
+    >
 
 
 
@@ -522,35 +528,7 @@
         <svg><use href="#icon-chevron"></use></svg>
       </span>
     </summary>
-    <ul><li><a href="ApplicationRecord.html">ApplicationRecord</a><ul><li>ActiveRecord::Base</li></ul></li></ul>
-  </details>
-</div>
-
-
-  
-<div id="includes-section" class="nav-section">
-  <details class="nav-section-collapsible" open>
-    <summary class="nav-section-header">
-      <span class="nav-section-icon">
-        <svg><use href="#icon-includes"></use></svg>
-      </span>
-      <span class="nav-section-title">Included Modules</span>
-      <span class="nav-section-chevron">
-        <svg><use href="#icon-chevron"></use></svg>
-      </span>
-    </summary>
-
-    <ul class="nav-list">
-
-
-      <li><a class="include" href="BelongsToProgramme.html">BelongsToProgramme</a></li>
-
-
-
-      <li><a class="include" href="Invalidatable.html">Invalidatable</a></li>
-
-
-    </ul>
+    <ul><li>Object</li></ul>
   </details>
 </div>
 
@@ -559,6 +537,54 @@
 
   
 
+  
+  <div class="nav-section">
+    <details class="nav-section-collapsible" open>
+      <summary class="nav-section-header">
+        <span class="nav-section-icon">
+          <svg><use href="#icon-class-methods"></use></svg>
+        </span>
+        <span class="nav-section-title">Class Methods</span>
+        <span class="nav-section-chevron">
+          <svg><use href="#icon-chevron"></use></svg>
+        </span>
+      </summary>
+      <ul class="nav-list" role="directory">
+
+        <li ><a href="#method-c-call-21">call!</a></li>
+
+        <li ><a href="#method-c-new">new</a></li>
+
+      </ul>
+    </details>
+  </div>
+
+
+
+  <div class="nav-section">
+    <details class="nav-section-collapsible" open>
+      <summary class="nav-section-header">
+        <span class="nav-section-icon">
+          <svg><use href="#icon-instance-methods"></use></svg>
+        </span>
+        <span class="nav-section-title">Instance Methods</span>
+        <span class="nav-section-chevron">
+          <svg><use href="#icon-chevron"></use></svg>
+        </span>
+      </summary>
+      <ul class="nav-list" role="directory">
+
+        <li ><a href="#method-i-call-21">call!</a></li>
+
+        <li ><a href="#method-i-hour_blank-3F">hour_blank?</a></li>
+
+        <li ><a href="#method-i-minute_blank-3F">minute_blank?</a></li>
+
+        <li ><a href="#method-i-seconds_present-3F">seconds_present?</a></li>
+
+      </ul>
+    </details>
+  </div>
 
 
   <div id="classindex-section" class="nav-section">
@@ -579,52 +605,17 @@
 
 </nav>
 
-<main role="main" aria-labelledby="class-patientspecificdirection">
+<main role="main" aria-labelledby="class-timeparamsnormalizer">
   
   
 
-  <span id="class-PatientSpecificDirection" class="legacy-anchor"></span>
-  <h1 id="class-patientspecificdirection" class="anchor-link class">
-    class PatientSpecificDirection
+  <span id="class-TimeParamsNormalizer" class="legacy-anchor"></span>
+  <h1 id="class-timeparamsnormalizer" class="anchor-link class">
+    class TimeParamsNormalizer
   </h1>
 
   <section class="description">
     
-<span id="class-PatientSpecificDirection-label-Schema+Information" class="legacy-anchor"></span>
-<h2 id="class-patientspecificdirection-schema-information"><a href="#class-patientspecificdirection-schema-information">Schema Information</a></h2>
-
-<p>Table name: patient_specific_directions</p>
-
-<pre>id                 :bigint           not null, primary key
-academic_year      :integer          not null
-delivery_site      :integer          not null
-invalidated_at     :datetime
-programme_type     :enum             not null
-vaccine_method     :integer          not null
-created_at         :datetime         not null
-updated_at         :datetime         not null
-created_by_user_id :bigint           not null
-patient_id         :bigint           not null
-team_id            :bigint           not null
-vaccine_id         :bigint           not null</pre>
-
-<p>Indexes</p>
-
-<pre class="ruby"><span class="ruby-identifier">index_patient_specific_directions_on_academic_year</span>       (<span class="ruby-identifier">academic_year</span>)
-<span class="ruby-identifier">index_patient_specific_directions_on_created_by_user_id</span>  (<span class="ruby-identifier">created_by_user_id</span>)
-<span class="ruby-identifier">index_patient_specific_directions_on_patient_id</span>          (<span class="ruby-identifier">patient_id</span>)
-<span class="ruby-identifier">index_patient_specific_directions_on_programme_type</span>      (<span class="ruby-identifier">programme_type</span>)
-<span class="ruby-identifier">index_patient_specific_directions_on_team_id</span>             (<span class="ruby-identifier">team_id</span>)
-<span class="ruby-identifier">index_patient_specific_directions_on_vaccine_id</span>          (<span class="ruby-identifier">vaccine_id</span>)
-</pre>
-
-<p>Foreign Keys</p>
-
-<pre>fk_rails_...  (created_by_user_id =&gt; users.id)
-fk_rails_...  (patient_id =&gt; patients.id)
-fk_rails_...  (team_id =&gt; teams.id)
-fk_rails_...  (vaccine_id =&gt; vaccines.id)</pre>
-
   </section>
 
 
@@ -635,6 +626,38 @@ fk_rails_...  (vaccine_id =&gt; vaccines.id)</pre>
 
 
 
+    <section class="constants-list">
+      <header>
+        <h3 id="constants"><a href="#constants">Constants</a></h3>
+      </header>
+      <dl>
+
+        <dt id="HOUR_SUFFIX">HOUR_SUFFIX</dt>
+
+        <dd>
+
+          
+        </dd>
+
+
+        <dt id="MINUTE_SUFFIX">MINUTE_SUFFIX</dt>
+
+        <dd>
+
+          
+        </dd>
+
+
+        <dt id="SECOND_SUFFIX">SECOND_SUFFIX</dt>
+
+        <dd>
+
+          
+        </dd>
+
+
+      </dl>
+    </section>
 
 
 
@@ -643,10 +666,298 @@ fk_rails_...  (vaccine_id =&gt; vaccines.id)</pre>
 
 
 
+     <section id="public-class-untitled-method-details" class="method-section anchor-link">
+       <header>
+         <h3 id="public-class-methods"><a href="#public-class-methods">Public Class Methods</a></h3>
+       </header>
+
+
+      <div id="method-c-call-21" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-c-call-21" title="Link to this method">
+                <span class="method-name">call!</span>
+                <span class="method-args">(...)</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="call-21-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/time_params_normalizer.rb, line 20</span>
+  <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">call!</span>(<span class="ruby-operator">...</span>) = <span class="ruby-identifier">new</span>(<span class="ruby-operator">...</span>).<span class="ruby-identifier">call!</span>
+
+  <span class="ruby-identifier">private_class_method</span> <span class="ruby-value">:new</span>
+
+  <span class="ruby-identifier">private</span>
+
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">hour_blank?</span>
+    <span class="ruby-ivar">@params</span>[<span class="ruby-node">&quot;#{@field_name}#{HOUR_SUFFIX}&quot;</span>].<span class="ruby-identifier">blank?</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">minute_blank?</span>
+    <span class="ruby-ivar">@params</span>[<span class="ruby-node">&quot;#{@field_name}#{MINUTE_SUFFIX}&quot;</span>].<span class="ruby-identifier">blank?</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">seconds_present?</span>
+    <span class="ruby-ivar">@params</span>.<span class="ruby-identifier">key?</span>(<span class="ruby-node">&quot;#{@field_name}#{SECOND_SUFFIX}&quot;</span>)
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          
+
+
+        </div>
 
 
 
 
+
+      </div>
+
+
+      <div id="method-c-new" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-c-new" title="Link to this method">
+                <span class="method-name">new</span>
+                <span class="method-args">(params:, field_name:)</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="new-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/time_params_normalizer.rb, line 4</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-value">params:</span>, <span class="ruby-value">field_name:</span>)
+  <span class="ruby-ivar">@params</span> = <span class="ruby-identifier">params</span>
+  <span class="ruby-ivar">@field_name</span> = <span class="ruby-identifier">field_name</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+    </section>
+
+
+
+
+
+
+
+     <section id="public-instance-untitled-method-details" class="method-section anchor-link">
+       <header>
+         <h3 id="public-instance-methods"><a href="#public-instance-methods">Public Instance Methods</a></h3>
+       </header>
+
+
+      <div id="method-i-call-21" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-call-21" title="Link to this method">
+                <span class="method-name">call!</span>
+                <span class="method-args">()</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="call-21-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/time_params_normalizer.rb, line 13</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">call!</span>
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">hour_blank?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">minute_blank?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">seconds_present?</span>
+    <span class="ruby-ivar">@params</span>[<span class="ruby-node">&quot;#{@field_name}#{SECOND_SUFFIX}&quot;</span>] = <span class="ruby-string">&quot;&quot;</span>
+  <span class="ruby-keyword">end</span>
+  <span class="ruby-ivar">@params</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-i-hour_blank-3F" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-hour_blank-3F" title="Link to this method">
+                <span class="method-name">hour_blank?</span>
+                <span class="method-args">()</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="hour_blank-3F-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/time_params_normalizer.rb, line 26</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">hour_blank?</span>
+  <span class="ruby-ivar">@params</span>[<span class="ruby-node">&quot;#{@field_name}#{HOUR_SUFFIX}&quot;</span>].<span class="ruby-identifier">blank?</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-i-minute_blank-3F" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-minute_blank-3F" title="Link to this method">
+                <span class="method-name">minute_blank?</span>
+                <span class="method-args">()</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="minute_blank-3F-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/time_params_normalizer.rb, line 30</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">minute_blank?</span>
+  <span class="ruby-ivar">@params</span>[<span class="ruby-node">&quot;#{@field_name}#{MINUTE_SUFFIX}&quot;</span>].<span class="ruby-identifier">blank?</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-i-seconds_present-3F" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-seconds_present-3F" title="Link to this method">
+                <span class="method-name">seconds_present?</span>
+                <span class="method-args">()</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="seconds_present-3F-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/time_params_normalizer.rb, line 34</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">seconds_present?</span>
+  <span class="ruby-ivar">@params</span>.<span class="ruby-identifier">key?</span>(<span class="ruby-node">&quot;#{@field_name}#{SECOND_SUFFIX}&quot;</span>)
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+    </section>
 
 
 
