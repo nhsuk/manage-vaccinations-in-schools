@@ -193,7 +193,7 @@ class DraftVaccinationRecord
     outcome == "already_had"
   end
 
-  def new_already_vaccinated_flow?
+  def reported_as_already_vaccinated?
     already_had? && reported_by_id.present?
   end
 

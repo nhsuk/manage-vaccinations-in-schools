@@ -269,7 +269,7 @@ class VaccinationRecord < ApplicationRecord
 
   def not_administered? = !administered?
 
-  def new_already_vaccinated_flow?
+  def reported_as_already_vaccinated?
     already_had? && reported_by_id.present?
   end
 

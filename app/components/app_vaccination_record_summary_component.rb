@@ -341,7 +341,7 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
   def outcome_value
     outcome = VaccinationRecord.human_enum_name(:outcome, @vaccination_record.outcome)
 
-    if @vaccination_record.already_had? && @vaccination_record.new_already_vaccinated_flow?
+    if @vaccination_record.already_had? && @vaccination_record.reported_as_already_vaccinated?
       outcome = VaccinationRecord.human_enum_name(:outcome, "administered")
     end
 
