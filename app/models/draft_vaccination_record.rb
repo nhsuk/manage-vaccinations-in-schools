@@ -77,7 +77,10 @@ class DraftVaccinationRecord
   end
 
   on_wizard_step :date_and_time, exact: true do
-    validates :performed_at_date, :performed_at_time, presence: true
+    validates :performed_at_date, presence: true
+    validates :performed_at_time,
+              presence: true,
+              unless: :national_reporting_user_and_record?
     validate :performed_at_date_within_range
   end
 
@@ -159,9 +162,11 @@ class DraftVaccinationRecord
     validates :delivery_method,
               :delivery_site,
               :performed_at_date,
-              :performed_at_time,
               :protocol,
               presence: true
+    validates :performed_at_time,
+              presence: true,
+              unless: :national_reporting_user_and_record?
     validates :batch_number,
               :batch_expiry,
               presence: true,
