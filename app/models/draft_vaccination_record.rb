@@ -455,7 +455,11 @@ class DraftVaccinationRecord
   end
 
   def earliest_possible_date
-    academic_year.to_academic_year_date_range.first
+    if programme&.flu? || national_reporting_user_and_record?
+      academic_year.to_academic_year_date_range.first
+    else
+      patient.date_of_birth
+    end
   end
 
   def latest_possible_date
