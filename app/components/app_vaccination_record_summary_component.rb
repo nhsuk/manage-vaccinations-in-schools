@@ -306,11 +306,12 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
       end
 
       correct_feature_flags_enabled =
-        Programme.all.any? { Flipper.enabled?(:imms_api_sync_job, it) } &&
-          Flipper.enabled?(:imms_api_integration)
+        Programme.all_as_variants.any? do
+          Flipper.enabled?(:imms_api_sync_job, it)
+        end && Flipper.enabled?(:imms_api_integration)
       if @vaccination_record.respond_to?(:sync_status) &&
            correct_feature_flags_enabled &&
-           @vaccination_record&.correct_source_for_nhs_immunisations_api?
+           @vaccination_record.correct_source_for_nhs_immunisations_api?
         summary_list.with_row do |row|
           row.with_key { "Synced with NHS England?" }
           row.with_value do
@@ -339,9 +340,11 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
   end
 
   def outcome_value
-    outcome = VaccinationRecord.human_enum_name(:outcome, @vaccination_record.outcome)
+    outcome =
+      VaccinationRecord.human_enum_name(:outcome, @vaccination_record.outcome)
 
-    if @vaccination_record.already_had? && @vaccination_record.reported_as_already_vaccinated?
+    if @vaccination_record.already_had? &&
+         @vaccination_record.reported_as_already_vaccinated?
       outcome = VaccinationRecord.human_enum_name(:outcome, "administered")
     end
 
