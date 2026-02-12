@@ -501,6 +501,7 @@ class DraftVaccinationRecord
   def validate_patient_attendance
     return unless new_record?
     return unless session&.today?
+    return unless session&.requires_registration?
     return if patient.blank?
 
     attendance_record =
