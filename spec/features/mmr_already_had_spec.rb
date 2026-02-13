@@ -3,90 +3,113 @@
 describe "MMR/MMRV" do
   around { |example| travel_to(Date.new(2025, 7, 1)) { example.run } }
 
-  scenario "record a patient born after January 2020 as already had their 1st MMR dose outside the school session" do
-    given_an_mmr_programme_with_a_session
-    and_a_patient_is_in_the_session_born_after_january_2020
-    and_the_patient_doesnt_need_triage
-    and_the_patient_has_not_had_a_first_dose
+  context "when `already_vaccinated` feature flag is NOT enabled" do
+    scenario "record a patient born after January 2020 as already had their 1st MMR dose" do
+      given_an_mmr_programme_with_a_session
+      and_a_patient_is_in_the_session_born_after_january_2020
+      and_the_patient_doesnt_need_triage
+      and_the_patient_has_not_had_a_first_dose
 
-    when_i_go_the_session
-    then_i_see_one_patient_needing_consent
-    and_i_click_on_the_patient
-    then_i_see_the_patient_needs_consent
+      when_i_go_the_session
+      then_i_see_one_patient_needing_consent
+      and_i_click_on_the_patient
+      then_i_see_the_patient_needs_consent
 
-    when_i_click_record_as_already_had_first_dose
-    when_i_click_back
-    then_i_see_the_patient_session_page
+      when_i_click_record_as_already_vaccinated
+      when_i_click_back
+      then_i_see_the_patient_session_page
 
-    when_i_click_record_as_already_had_first_dose
-    then_i_see_the_did_you_have_mmr_or_mmrv_page
-
-    when_i_choose_mmr_and_continue
-    then_i_see_the_mmr_date_page
-
-    when_i_fill_in_the_date_and_continue
-    then_i_see_the_confirmation_page
-    and_the_confirmation_summary_is_not_displayed_as_a_warning
-
-    when_i_confirm_the_details
-    then_i_see_the_patient_is_already_vaccinated
-    and_i_see_that_the_vaccinator_is_unknown
-    and_i_see_that_the_location_is_unknown
-    and_i_see_that_the_reporter_is_set
-    expect(page).to have_content("LocationUnknown")
-    and_had_been_vaccinated_with_mmr
-    and_the_dose_number_is_first
-    and_the_performed_at_date_only_is_set
-    and_the_consent_requests_are_sent
-    then_the_parent_doesnt_receive_a_consent_request
+      when_i_click_record_as_already_vaccinated
+      then_i_see_the_confirmation_page
+    end
   end
 
-  scenario "record a patient born before January 2020 as already had their 1st MMR dose outside the school session" do
-    given_an_mmr_programme_with_a_session
-    and_a_patient_is_in_the_session_born_before_january_2020
-    and_the_patient_doesnt_need_triage
-    and_the_patient_has_not_had_a_first_dose
+  context "when `already_vaccinated` feature flag is enabled" do
+    before { Flipper.enable(:already_vaccinated) }
 
-    when_i_go_the_session
-    then_i_see_one_patient_needing_consent
-    and_i_click_on_the_patient
-    then_i_see_the_patient_needs_consent
+    scenario "record a patient born after January 2020 as already had their 1st MMR dose outside the school session" do
+      given_an_mmr_programme_with_a_session
+      and_a_patient_is_in_the_session_born_after_january_2020
+      and_the_patient_doesnt_need_triage
+      and_the_patient_has_not_had_a_first_dose
 
-    when_i_click_record_as_already_had_first_dose
-    then_i_see_the_mmr_date_instead_of_the_mmr_or_mmrv_page
-  end
+      when_i_go_the_session
+      then_i_see_one_patient_needing_consent
+      and_i_click_on_the_patient
+      then_i_see_the_patient_needs_consent
 
-  scenario "record a patient born after January 2020 as already had their 2nd MMRV dose outside the school session" do
-    given_an_mmr_programme_with_a_session
-    and_a_patient_is_in_the_session_born_after_january_2020
-    and_the_patient_doesnt_need_triage
-    and_the_patient_already_has_first_dose
+      when_i_click_record_as_already_had_first_dose
+      when_i_click_back
+      then_i_see_the_patient_session_page
 
-    when_i_go_the_session
-    then_i_see_one_patient_needing_consent
-    and_i_click_on_the_patient
-    then_i_see_the_patient_needs_consent
+      when_i_click_record_as_already_had_first_dose
+      then_i_see_the_did_you_have_mmr_or_mmrv_page
 
-    when_i_click_record_as_already_had_second_dose
-    then_i_see_the_did_you_have_mmr_or_mmrv_page
+      when_i_choose_mmr_and_continue
+      then_i_see_the_mmr_date_page
 
-    when_i_choose_mmrv_and_continue
-    then_i_see_the_mmrv_date_page
+      when_i_fill_in_the_date_and_time_and_continue
+      then_i_see_the_confirmation_page
+      and_the_confirmation_summary_is_not_displayed_as_a_warning
 
-    when_i_fill_in_the_date_and_time_and_continue
-    then_i_see_the_confirmation_page
-    and_the_confirmation_summary_is_not_displayed_as_a_warning
+      when_i_confirm_the_details
+      then_i_see_the_patient_is_already_vaccinated
+      and_i_see_that_the_vaccinator_is_unknown
+      and_i_see_that_the_location_is_unknown
+      and_i_see_that_the_reporter_is_set
+      expect(page).to have_content("LocationUnknown")
+      and_had_been_vaccinated_with_mmr
+      and_the_dose_number_is_first
+      and_the_consent_requests_are_sent
+      then_the_parent_doesnt_receive_a_consent_request
+    end
 
-    when_i_confirm_the_details
-    then_i_see_the_patient_is_already_vaccinated
-    and_i_see_that_the_vaccinator_is_unknown
-    and_i_see_that_the_location_is_unknown
-    and_i_see_that_the_reporter_is_set
-    and_had_been_vaccinated_with_mmrv
-    and_the_dose_number_is_second
-    and_the_performed_at_date_and_time_are_set
-    and_the_consent_requests_are_sent
-    then_the_parent_doesnt_receive_a_consent_request
+    scenario "record a patient born before January 2020 as already had their 1st MMR dose outside the school session" do
+      given_an_mmr_programme_with_a_session
+      and_a_patient_is_in_the_session_born_before_january_2020
+      and_the_patient_doesnt_need_triage
+      and_the_patient_has_not_had_a_first_dose
+
+      when_i_go_the_session
+      then_i_see_one_patient_needing_consent
+      and_i_click_on_the_patient
+      then_i_see_the_patient_needs_consent
+
+      when_i_click_record_as_already_had_first_dose
+      then_i_see_the_mmr_date_instead_of_the_mmr_or_mmrv_page
+    end
+
+    scenario "record a patient born after January 2020 as already had their 2nd MMRV dose outside the school session" do
+      given_an_mmr_programme_with_a_session
+      and_a_patient_is_in_the_session_born_after_january_2020
+      and_the_patient_doesnt_need_triage
+      and_the_patient_already_has_first_dose
+
+      when_i_go_the_session
+      then_i_see_one_patient_needing_consent
+      and_i_click_on_the_patient
+      then_i_see_the_patient_needs_consent
+
+      when_i_click_record_as_already_had_second_dose
+      then_i_see_the_did_you_have_mmr_or_mmrv_page
+
+      when_i_choose_mmrv_and_continue
+      then_i_see_the_mmrv_date_page
+
+      when_i_fill_in_the_date_and_continue
+      then_i_see_the_confirmation_page
+      and_the_confirmation_summary_is_not_displayed_as_a_warning
+
+      when_i_confirm_the_details
+      then_i_see_the_patient_is_already_vaccinated
+      and_i_see_that_the_vaccinator_is_unknown
+      and_i_see_that_the_location_is_unknown
+      and_i_see_that_the_reporter_is_set
+      and_had_been_vaccinated_with_mmrv
+      and_the_dose_number_is_second
+      and_the_consent_requests_are_sent
+      then_the_parent_doesnt_receive_a_consent_request
+    end
   end
 
   def given_an_mmr_programme_with_a_session(clinic: false)
@@ -167,6 +190,10 @@ describe "MMR/MMRV" do
 
   def then_i_see_the_patient_needs_consent
     expect(page).to have_content("No response")
+  end
+
+  def when_i_click_record_as_already_vaccinated
+    click_on "Record as already vaccinated"
   end
 
   def when_i_click_record_as_already_had_first_dose

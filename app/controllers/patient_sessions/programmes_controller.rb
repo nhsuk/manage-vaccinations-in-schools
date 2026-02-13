@@ -18,24 +18,35 @@ class PatientSessions::ProgrammesController < PatientSessions::BaseController
       DraftVaccinationRecord.new(request_session: session, current_user:)
 
     draft_vaccination_record.clear_attributes
+
+    first_active_wizard_step =
+      if Flipper.enabled?(:already_vaccinated)
+        eligible_for_mmr_or_mmrv? ? :mmr_or_mmrv : :date_and_time
+      else
+        :confirm
+      end
+
     draft_vaccination_record.update!(
-      dose_sequence: dose_sequence,
-      first_active_wizard_step:
-        eligible_for_mmr_or_mmrv? ? :mmr_or_mmrv : :date_and_time,
+      dose_sequence: (dose_sequence if Flipper.enabled?(:already_vaccinated)),
+      first_active_wizard_step:,
       location_id: nil,
       location_name: "Unknown",
       outcome: :already_had,
       patient: @patient,
+      performed_at: (Time.current unless Flipper.enabled?(:already_vaccinated)),
+      performed_by_user_id:
+        (current_user.id unless Flipper.enabled?(:already_vaccinated)),
       performed_ods_code: current_team.organisation.ods_code,
       programme: @programme,
-      reported_by_id: current_user.id,
-      reported_at: Time.current,
+      reported_by_id:
+        (current_user.id if Flipper.enabled?(:already_vaccinated)),
+      reported_at: (Time.current if Flipper.enabled?(:already_vaccinated)),
       session: @session,
       source: "service"
     )
 
     redirect_to draft_vaccination_record_path(
-                  eligible_for_mmr_or_mmrv? ? "mmr-or-mmrv" : "date-and-time"
+                  first_active_wizard_step.to_s.dasherize
                 )
   end
 

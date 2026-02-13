@@ -34,7 +34,7 @@ class API::Reporting::TotalsController < API::Reporting::BaseController
     consent_conflicts: "Consent Conflicts",
     consent_given: "Consent Given",
     not_vaccinated: "Not Vaccinated",
-    vaccinated: "Vaccinated",
+    vaccinated: "Vaccinated"
   }.freeze
 
   FLU_SPECIFIC_METRIC_HEADERS = {}.freeze
