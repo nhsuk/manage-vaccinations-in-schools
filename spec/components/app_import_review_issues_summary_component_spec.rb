@@ -3,6 +3,8 @@
 describe AppImportReviewIssuesSummaryComponent do
   subject(:rendered) { render_inline(component) }
 
+  let(:url_helpers) { Rails.application.routes.url_helpers }
+
   let(:component) { described_class.new(import:, records:, review_screen:) }
 
   let(:team) { create(:team) }
@@ -165,9 +167,10 @@ describe AppImportReviewIssuesSummaryComponent do
       expect(rendered).to have_link(
         "Review",
         href:
-          Rails.application.routes.url_helpers.imports_issue_path(
+          url_helpers.imports_issue_path(
             patient,
-            type: "patient"
+            type: "patient",
+            return_to: url_helpers.cohort_import_path(import)
           )
       )
     end
@@ -204,9 +207,10 @@ describe AppImportReviewIssuesSummaryComponent do
       expect(rendered).to have_link(
         "Review",
         href:
-          Rails.application.routes.url_helpers.imports_issue_path(
+          url_helpers.imports_issue_path(
             vaccination_record,
-            type: "vaccination-record"
+            type: "vaccination-record",
+            return_to: url_helpers.cohort_import_path(import)
           )
       )
     end

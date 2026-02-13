@@ -42,7 +42,11 @@
 
 <%= form_with(
       model: @form,
-      url: imports_issue_path(@record, type: params[:type]),
+      url: imports_issue_path(
+        @record,
+        type: params[:type],
+        return_to: params[:return_to],
+      ),
       method: :patch,
       class: "nhsuk-u-full-width",
     ) do |f| %>
