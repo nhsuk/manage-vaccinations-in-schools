@@ -132,7 +132,9 @@ class AppImportReviewIssuesSummaryComponent < ViewComponent::Base
     full_name =
       record.is_a?(Patient) ? record.full_name : record.patient&.full_name
 
-    helpers.link_to(imports_issue_path(record, type:)) do
+    helpers.link_to(
+      imports_issue_path(record, type:, return_to: url_for(import))
+    ) do
       helpers.safe_join(
         ["Review ", tag.span(full_name, class: "nhsuk-u-visually-hidden")]
       )
