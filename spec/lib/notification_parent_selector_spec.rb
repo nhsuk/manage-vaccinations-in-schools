@@ -73,6 +73,14 @@ describe NotificationParentSelector do
       it { should_not include(first_parent) }
     end
 
+    context "when patient should not send notifications" do
+      before do
+        allow(patient).to receive(:send_notifications?).and_return(false)
+      end
+
+      it { should be_empty }
+    end
+
     context "when vaccination record should not notify parents" do
       let(:vaccination_record) do
         create(:vaccination_record, patient:, programme:, notify_parents: false)
@@ -81,12 +89,12 @@ describe NotificationParentSelector do
       it { should be_empty }
     end
 
-    context "when patient should not send notifications" do
-      before do
-        allow(patient).to receive(:send_notifications?).and_return(false)
+    context "when vaccination record does not set notify parents" do
+      let(:vaccination_record) do
+        create(:vaccination_record, patient:, programme:, notify_parents: nil)
       end
 
-      it { should be_empty }
+      it { should contain_exactly(first_parent, second_parent) }
     end
 
     context "when grouped consents are empty" do
