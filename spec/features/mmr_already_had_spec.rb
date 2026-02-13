@@ -36,6 +36,7 @@ describe "MMR/MMRV" do
     expect(page).to have_content("LocationUnknown")
     and_had_been_vaccinated_with_mmr
     and_the_dose_number_is_first
+    and_the_performed_at_date_only_is_set
     and_the_consent_requests_are_sent
     then_the_parent_doesnt_receive_a_consent_request
   end
@@ -72,7 +73,7 @@ describe "MMR/MMRV" do
     when_i_choose_mmrv_and_continue
     then_i_see_the_mmrv_date_page
 
-    when_i_fill_in_the_date_and_continue
+    when_i_fill_in_the_date_and_time_and_continue
     then_i_see_the_confirmation_page
     and_the_confirmation_summary_is_not_displayed_as_a_warning
 
@@ -83,6 +84,7 @@ describe "MMR/MMRV" do
     and_i_see_that_the_reporter_is_set
     and_had_been_vaccinated_with_mmrv
     and_the_dose_number_is_second
+    and_the_performed_at_date_and_time_are_set
     and_the_consent_requests_are_sent
     then_the_parent_doesnt_receive_a_consent_request
   end
@@ -207,13 +209,21 @@ describe "MMR/MMRV" do
     expect(page).to have_content("When was the MMR(V) vaccination given?")
   end
 
-  def when_i_fill_in_the_date_and_continue
+  def when_i_fill_in_the_date_and_time_and_continue
     @vaccination_date = 6.months.ago.to_date
     fill_in "Day", with: @vaccination_date.day
     fill_in "Month", with: @vaccination_date.month
     fill_in "Year", with: @vaccination_date.year
     fill_in "Hour", with: "12"
-    fill_in "Minute", with: "00"
+    fill_in "Minute", with: "30"
+    click_on "Continue"
+  end
+
+  def when_i_fill_in_the_date_and_continue
+    @vaccination_date = 6.months.ago.to_date
+    fill_in "Day", with: @vaccination_date.day
+    fill_in "Month", with: @vaccination_date.month
+    fill_in "Year", with: @vaccination_date.year
     click_on "Continue"
   end
 
@@ -281,6 +291,15 @@ describe "MMR/MMRV" do
     expect(page).to have_content("Dose number2nd")
     vaccination_record = @patient.vaccination_records.last
     expect(vaccination_record.dose_sequence).to be(2)
+  end
+
+  def and_the_performed_at_date_and_time_are_set
+    expect(page).to have_content("Date#{@vaccination_date.strftime('%-d %B %Y')}")
+    expect(page).to have_content("Time12:30")
+  end
+
+  def and_the_performed_at_date_only_is_set
+    expect(page).to have_content("Date#{@vaccination_date.strftime('%-d %B %Y')}")
   end
 
   def and_the_consent_requests_are_sent
