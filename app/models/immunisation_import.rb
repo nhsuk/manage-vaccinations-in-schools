@@ -57,7 +57,11 @@ class ImmunisationImport < ApplicationRecord
   end
 
   def records_count
-    vaccination_records.count
+    if national_reporting?
+      vaccination_records.count + (ignored_record_count || 0)
+    else
+      vaccination_records.count
+    end
   end
 
   private
