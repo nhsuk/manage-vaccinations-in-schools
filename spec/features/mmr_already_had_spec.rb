@@ -321,12 +321,16 @@ describe "MMR/MMRV" do
   end
 
   def and_the_performed_at_date_and_time_are_set
-    expect(page).to have_content("Date#{@vaccination_date.strftime('%-d %B %Y')}")
+    expect(page).to have_content(
+      "Date#{@vaccination_date.strftime("%-d %B %Y")}"
+    )
     expect(page).to have_content("Time12:30")
   end
 
   def and_the_performed_at_date_only_is_set
-    expect(page).to have_content("Date#{@vaccination_date.strftime('%-d %B %Y')}")
+    expect(page).to have_content(
+      "Date#{@vaccination_date.strftime("%-d %B %Y")}"
+    )
   end
 
   def and_the_consent_requests_are_sent
