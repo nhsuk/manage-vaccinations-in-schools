@@ -699,7 +699,11 @@ fk_rails_...  (uploaded_by_user_id =&gt; users.id)</pre>
           <div class="method-source-code" id="records_count-source">
             <pre class="ruby"><span class="ruby-comment"># File app/models/immunisation_import.rb, line 59</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">records_count</span>
-  <span class="ruby-identifier">vaccination_records</span>.<span class="ruby-identifier">count</span>
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">national_reporting?</span>
+    <span class="ruby-identifier">vaccination_records</span>.<span class="ruby-identifier">count</span> <span class="ruby-operator">+</span> (<span class="ruby-identifier">ignored_record_count</span> <span class="ruby-operator">||</span> <span class="ruby-value">0</span>)
+  <span class="ruby-keyword">else</span>
+    <span class="ruby-identifier">vaccination_records</span>.<span class="ruby-identifier">count</span>
+  <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
 
