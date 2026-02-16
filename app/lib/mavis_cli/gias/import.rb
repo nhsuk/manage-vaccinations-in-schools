@@ -13,11 +13,14 @@ module MavisCLI
       def call(input_file:, **)
         MavisCLI.load_rails
 
+        logger = Logger.new($stdout)
+        logger.formatter =
+          proc { |_severity, _datetime, _progname, msg| "#{msg}\n" }
+
         row_count = ::GIAS.row_count(input_file)
-        puts "Starting import of #{row_count - 1} schools."
         progress_bar = MavisCLI.progress_bar(row_count)
 
-        ::GIAS.import(input_file:, progress_bar:)
+        ::GIAS.import(input_file:, progress_bar:, logger:)
       end
     end
   end

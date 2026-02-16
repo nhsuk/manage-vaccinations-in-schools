@@ -21,12 +21,11 @@ module MavisCLI
              desc: "file path to write GIAS database to"
 
       def call(output_file:, **)
-        puts "Starting schools data download process..."
-        if ::GIAS.download(output_file:)
-          puts "File downloaded successfully to #{output_file}"
-        else
-          puts "Download button never appeared, aborting"
-        end
+        logger = Logger.new($stdout)
+        logger.formatter =
+          proc { |_severity, _datetime, _progname, msg| "#{msg}\n" }
+
+        ::GIAS.download(output_file:, logger:)
       end
     end
   end
