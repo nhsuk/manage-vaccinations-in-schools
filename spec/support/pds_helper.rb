@@ -86,6 +86,21 @@ module PDSHelper
     )
   end
 
+  def stub_pds_get_nhs_number_to_return_a_restricted_patient(nhs_number = nil)
+    nhs_number ||= @patient.nhs_number
+
+    stub_request(
+      :get,
+      "https://sandbox.api.service.nhs.uk/personal-demographics/FHIR/R4/Patient/#{nhs_number}"
+    ).to_return(
+      body: file_fixture("pds/restricted-patient-response.json"),
+      status: 200,
+      headers: {
+        "Content-Type" => "application/fhir+json"
+      }
+    )
+  end
+
   def stub_pds_get_nhs_number_to_return_an_invalid_nhs_number_response(
     nhs_number = nil
   )

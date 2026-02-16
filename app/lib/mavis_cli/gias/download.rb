@@ -3,9 +3,10 @@
 # To get the latest version of the zip:
 # 1. Go to https://get-information-schools.service.gov.uk/Downloads
 # 2. Check "Establishment fields CSV"
-# 3. Submit
-# 4. Download the zip file
-# 5. Place it in db/data/dfe-schools.zip
+# 3. Check "Establishment links CSV"
+# 4. Submit
+# 5. Download the zip file
+# 6. Move the downloaded file to db/data/dfe-schools.zip
 #
 # Alternatively, you can run this task.
 
@@ -33,6 +34,9 @@ module MavisCLI
         puts "Checking the establishment fields CSV checkbox"
         form = page.form_with(action: "/Downloads/Collate")
         form.checkbox_with(id: "establishment-fields-csv-checkbox").check
+
+        puts "Checking the establishment links CSV checkbox"
+        form.checkbox_with(id: "establishment-links-csv-checkbox").check
 
         puts "Submitting the form"
         download_page = form.submit

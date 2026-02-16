@@ -3,69 +3,88 @@
 describe "Td/IPV" do
   around { |example| travel_to(Date.new(2025, 7, 1)) { example.run } }
 
-  scenario "record a patient as already vaccinated outside the school session" do
-    given_a_td_ipv_programme_with_a_session(clinic: false)
-    and_a_patient_is_in_the_session
-    and_the_patient_doesnt_need_triage
+  context "when already_vaccinated feature flag is enabled" do
+    before { Flipper.enable(:already_vaccinated) }
 
-    when_i_go_the_session
-    then_i_see_one_patient_needing_consent
-    and_i_click_on_the_patient
-    then_i_see_the_patient_needs_consent
+    scenario "record a patient as already vaccinated outside the school session" do
+      given_a_td_ipv_programme_with_a_session(clinic: false)
+      and_a_patient_is_in_the_session
+      and_the_patient_doesnt_need_triage
 
-    when_i_click_record_as_already_vaccinated
-    when_i_click_back
-    then_i_see_the_patient_session_page
+      when_i_go_the_session
+      then_i_see_one_patient_needing_consent
+      and_i_click_on_the_patient
+      then_i_see_the_patient_needs_consent
 
-    when_i_click_record_as_already_vaccinated
-    and_i_confirm_the_details
-    then_i_see_the_patient_is_already_vaccinated
-    and_the_consent_requests_are_sent
-    then_the_parent_doesnt_receive_a_consent_request
-  end
+      when_i_click_record_as_already_vaccinated
+      when_i_click_back
+      then_i_see_the_patient_session_page
 
-  scenario "record a patient as already vaccinated outside the clinic session" do
-    given_a_td_ipv_programme_with_a_session(clinic: true)
-    and_a_patient_is_in_the_session
-    and_the_patient_doesnt_need_triage
+      when_i_click_record_as_already_vaccinated
+      then_i_see_the_date_page
 
-    when_i_go_the_session
-    then_i_see_one_patient_needing_consent
-    and_i_click_on_the_patient
-    then_i_see_the_patient_needs_consent
+      when_i_fill_in_the_date_and_continue
+      and_i_confirm_the_details
+      then_i_see_the_patient_is_already_vaccinated
+      and_i_see_that_the_location_is_unknown
+      and_the_consent_requests_are_sent
+      then_the_parent_doesnt_receive_a_consent_request
+    end
 
-    when_i_click_record_as_already_vaccinated
-    and_i_confirm_the_details
-    then_i_see_the_patient_is_already_vaccinated
-    and_the_consent_requests_are_sent
-    then_the_parent_doesnt_receive_a_consent_request
-  end
+    scenario "record a patient as already vaccinated outside the clinic session" do
+      given_a_td_ipv_programme_with_a_session(clinic: true)
+      and_a_patient_is_in_the_session
+      and_the_patient_doesnt_need_triage
 
-  scenario "record a patient needing triage as already vaccinated outside the school session" do
-    given_a_td_ipv_programme_with_a_session(clinic: false)
-    and_a_patient_is_in_the_session
-    and_the_patient_needs_triage
+      when_i_go_the_session
+      then_i_see_one_patient_needing_consent
+      and_i_click_on_the_patient
+      then_i_see_the_patient_needs_consent
 
-    when_i_go_the_session
-    then_i_see_one_patient_needing_triage
-    and_i_click_on_the_patient
-    then_i_see_the_patient_needs_triage
+      when_i_click_record_as_already_vaccinated
+      then_i_see_the_date_page
 
-    when_i_click_record_as_already_vaccinated
-    and_i_confirm_the_details
-    then_i_see_the_patient_is_already_vaccinated
-  end
+      when_i_fill_in_the_date_and_continue
+      then_i_see_the_location_page
 
-  scenario "can't record as already vaccinated as a medical secretary" do
-    given_a_td_ipv_programme_with_a_session(clinic: false)
-    and_a_patient_is_in_the_session
-    and_the_patient_doesnt_need_triage
+      when_i_fill_in_the_location_and_continue
+      and_i_confirm_the_details
+      then_i_see_the_patient_is_already_vaccinated
+      and_i_see_that_the_location_is_waterloo_hospital
+      and_the_consent_requests_are_sent
+      then_the_parent_doesnt_receive_a_consent_request
+    end
 
-    when_i_go_the_session_as_an_admin
-    then_i_see_one_patient_needing_consent
-    and_i_click_on_the_patient
-    then_i_see_the_patient_needs_consent
-    and_i_cannot_record_the_patient_as_already_vaccinated
+    scenario "record a patient needing triage as already vaccinated outside the school session" do
+      given_a_td_ipv_programme_with_a_session(clinic: false)
+      and_a_patient_is_in_the_session
+      and_the_patient_needs_triage
+
+      when_i_go_the_session
+      then_i_see_one_patient_needing_triage
+      and_i_click_on_the_patient
+      then_i_see_the_patient_needs_triage
+
+      when_i_click_record_as_already_vaccinated
+      then_i_see_the_date_page
+
+      when_i_fill_in_the_date_and_continue
+      and_i_confirm_the_details
+      then_i_see_the_patient_is_already_vaccinated
+      and_i_see_that_the_location_is_unknown
+    end
+
+    scenario "can't record as already vaccinated as a medical secretary" do
+      given_a_td_ipv_programme_with_a_session(clinic: false)
+      and_a_patient_is_in_the_session
+      and_the_patient_doesnt_need_triage
+
+      when_i_go_the_session_as_an_admin
+      then_i_see_one_patient_needing_consent
+      and_i_click_on_the_patient
+      then_i_see_the_patient_needs_consent
+      and_i_cannot_record_the_patient_as_already_vaccinated
+    end
   end
 
   def given_a_td_ipv_programme_with_a_session(clinic:)
@@ -169,6 +188,29 @@ describe "Td/IPV" do
     click_on "Back"
   end
 
+  def then_i_see_the_date_page
+    expect(page).to have_content("When was the Td/IPV vaccination given?")
+  end
+
+  def when_i_fill_in_the_date_and_continue
+    @vaccination_date = 6.months.ago.to_date
+    fill_in "Day", with: @vaccination_date.day
+    fill_in "Month", with: @vaccination_date.month
+    fill_in "Year", with: @vaccination_date.year
+    fill_in "Hour", with: "12"
+    fill_in "Minute", with: "00"
+    click_on "Continue"
+  end
+
+  def then_i_see_the_location_page
+    expect(page).to have_content("Where was the Td/IPV vaccination offered?")
+  end
+
+  def when_i_fill_in_the_location_and_continue
+    choose "Waterloo Hospital"
+    click_on "Continue"
+  end
+
   def and_i_confirm_the_details
     click_on "Confirm"
   end
@@ -179,7 +221,14 @@ describe "Td/IPV" do
 
   def then_i_see_the_patient_is_already_vaccinated
     expect(page).to have_content("Vaccination outcome recorded for Td/IPV")
+  end
+
+  def and_i_see_that_the_location_is_unknown
     expect(page).to have_content("LocationUnknown")
+  end
+
+  def and_i_see_that_the_location_is_waterloo_hospital
+    expect(page).to have_content("LocationWaterloo Hospital")
   end
 
   def and_i_cannot_record_the_patient_as_already_vaccinated

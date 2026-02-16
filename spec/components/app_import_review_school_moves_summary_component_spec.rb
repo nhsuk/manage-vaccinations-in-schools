@@ -113,6 +113,8 @@ describe AppImportReviewSchoolMovesSummaryComponent do
       ]
     end
 
+    before { create(:patient_location, patient:, location: current_school) }
+
     it "displays inter-team move status message" do
       expect(rendered).to have_css(
         ".app-status",
@@ -326,6 +328,12 @@ describe AppImportReviewSchoolMovesSummaryComponent do
 
     before do
       current_school.attach_to_team!(team2, academic_year:)
+      create(
+        :patient_location,
+        patient:,
+        location: current_school,
+        academic_year:
+      )
       changesets.first.data["review"]["school_move"] = {
         "school_id" => destination_school.id,
         "home_educated" => false

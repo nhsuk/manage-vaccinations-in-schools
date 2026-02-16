@@ -188,68 +188,6 @@ describe "Manage children" do
     then_i_see_the_new_parent_is_created
   end
 
-  scenario "Viewing important notices" do
-    when_i_go_to_the_imports_page
-    then_i_cannot_see_notices
-
-    when_i_go_to_the_notices_page
-    then_i_see_permission_denied
-  end
-
-  scenario "Viewing deceased patient notices as a superuser" do
-    when_i_go_to_the_imports_page_as_a_superuser
-    and_i_click_on_notices
-    then_i_see_no_notices
-
-    when_a_deceased_patient_exists
-    and_i_click_on_notices
-    then_i_see_the_notice_of_date_of_death
-
-    when_i_click_on_dismiss
-    and_i_choose_to_dismiss
-    then_i_see_no_notices
-  end
-
-  scenario "Viewing invalidated patient notices as a superuser" do
-    when_i_go_to_the_imports_page_as_a_superuser
-    and_i_click_on_notices
-    then_i_see_no_notices
-
-    when_an_invalidated_patient_exists
-    and_i_click_on_notices
-    then_i_see_the_notice_of_invalid
-  end
-
-  scenario "Viewing restricted patient notices as a superuser" do
-    when_i_go_to_the_imports_page_as_a_superuser
-    and_i_click_on_notices
-    then_i_see_no_notices
-
-    when_a_restricted_patient_exists
-    and_i_click_on_notices
-    then_i_see_the_notice_of_sensitive
-
-    when_i_click_on_dismiss
-    and_i_choose_not_to_dismiss
-    then_i_see_the_notice_of_sensitive
-
-    when_i_click_on_dismiss
-    and_i_choose_to_dismiss
-    then_i_see_no_notices
-    and_i_see_a_success_banner
-  end
-
-  scenario "Important notices for patient added to new team" do
-    given_another_team_exists
-    and_a_patient_with_all_notices_exists
-
-    when_the_patient_is_added_to_the_new_team
-    when_i_go_to_the_imports_page_as_a_superuser_in_the_new_team
-    and_i_click_on_notices
-    then_i_see_all_patient_notices
-    and_i_do_not_see_gillick_no_notify_notices
-  end
-
   scenario "Edit child ethnicity information" do
     given_patients_exist
     and_i_am_on_the_child_edit_page
@@ -263,16 +201,6 @@ describe "Manage children" do
     @hpv = Programme.hpv
     @flu = Programme.flu
     @team =
-      create(
-        :team,
-        :with_generic_clinic,
-        :with_one_nurse,
-        programmes: [@hpv, @flu]
-      )
-  end
-
-  def given_another_team_exists
-    @new_team =
       create(
         :team,
         :with_generic_clinic,
@@ -388,38 +316,6 @@ describe "Manage children" do
 
   def and_todays_date_is_in_the_far_future
     travel 13.years
-  end
-
-  def when_a_deceased_patient_exists
-    session = create(:session, team: @team, programmes: [@hpv])
-
-    @deceased_patient = create(:patient, :deceased, session:)
-  end
-
-  def when_an_invalidated_patient_exists
-    session = create(:session, team: @team, programmes: [@hpv])
-
-    @invalidated_patient = create(:patient, :invalidated, session:)
-  end
-
-  def when_a_restricted_patient_exists
-    session = create(:session, team: @team, programmes: [@hpv])
-
-    @restricted_patient = create(:patient, :restricted, session:)
-  end
-
-  def and_a_patient_with_all_notices_exists
-    session = create(:session, team: @team, programmes: [@hpv])
-    @patient_all_notices =
-      create(:patient, :deceased, :invalidated, :restricted, session:)
-    create(
-      :vaccination_record,
-      notify_parents: false,
-      patient: @patient_all_notices,
-      programme: @hpv,
-      session:
-    )
-    expect(@patient_all_notices.important_notices.count).to eq(4)
   end
 
   def when_i_click_on_children
@@ -670,114 +566,8 @@ describe "Manage children" do
     visit "/dashboard"
   end
 
-  def when_i_go_to_the_imports_page
-    sign_in @team.users.first
-
-    visit "/imports"
-  end
-
-  def when_i_go_to_the_imports_page_as_a_superuser
-    sign_in @team.users.first, superuser: true
-
-    visit "/imports"
-  end
-
-  def when_i_go_to_the_imports_page_as_a_superuser_in_the_new_team
-    sign_in @new_team.users.first, superuser: true
-
-    visit "/imports"
-  end
-
   def when_i_wait_for_the_sync_to_complete
     Sidekiq::Job.drain_all
-  end
-
-  def then_i_cannot_see_notices
-    expect(page).not_to have_content("Notices")
-  end
-
-  def when_i_go_to_the_notices_page
-    visit "/imports/notices"
-  end
-
-  def then_i_see_permission_denied
-    expect(page).to have_content(
-      "You are not authorized to perform this action."
-    )
-  end
-
-  def when_i_click_on_notices
-    click_on "Important notices"
-  end
-
-  alias_method :and_i_click_on_notices, :when_i_click_on_notices
-
-  def when_i_click_on_dismiss
-    click_on "Dismiss"
-  end
-
-  def and_i_choose_to_dismiss
-    click_on "Yes, dismiss this notice"
-  end
-
-  def and_i_choose_not_to_dismiss
-    click_on "No, return to notices"
-  end
-
-  def when_the_patient_is_added_to_the_new_team
-    SchoolMove.new(
-      academic_year: AcademicYear.current,
-      home_educated: false,
-      patient: @patient_all_notices,
-      team: @new_team
-    ).confirm!
-
-    expect(@patient_all_notices.teams).to include(@new_team)
-    expect(@patient_all_notices.teams).to include(@team)
-
-    perform_enqueued_jobs_while_exists(only: ImportantNoticeGeneratorJob)
-  end
-
-  def then_i_see_no_notices
-    expect(page).to have_content("There are currently no important notices.")
-  end
-
-  def and_i_see_a_success_banner
-    expect(page).to have_content("Notice dismissed")
-  end
-
-  def then_i_see_the_notice_of_date_of_death
-    expect(page).to have_content("Important notices (1)")
-    expect(page).to have_content(@deceased_patient.full_name)
-    expect(page).to have_content("Record updated with child’s date of death")
-  end
-
-  def then_i_see_the_notice_of_invalid
-    expect(page).to have_content("Important notices (1)")
-    expect(page).to have_content(@invalidated_patient.full_name)
-    expect(page).to have_content("Record flagged as invalid")
-  end
-
-  def then_i_see_the_notice_of_sensitive
-    expect(page).to have_content("Important notices (1)")
-    expect(page).to have_content(@restricted_patient.full_name)
-    expect(page).to have_content("Record flagged as sensitive")
-  end
-
-  def then_i_see_all_patient_notices
-    expect(page).to have_content("Important notices (3)")
-    expect(page).to have_content(@patient_all_notices.full_name).exactly(
-      3
-    ).times
-    expect(page).to have_content("Record updated with child’s date of death")
-    expect(page).to have_content("Record flagged as invalid")
-    expect(page).to have_content("Record flagged as sensitive")
-  end
-
-  def and_i_do_not_see_gillick_no_notify_notices
-    expect(page).not_to have_content(
-      "does not want their parents to be notified"
-    )
   end
 
   def then_the_vaccination_record_is_created_with_the_nhs

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_05_080017) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_06_094417) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -94,19 +94,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_05_080017) do
     t.datetime "archived_at"
     t.datetime "created_at", null: false
     t.date "expiry"
-    t.string "name"
     t.string "number", null: false
     t.bigint "team_id"
     t.datetime "updated_at", null: false
     t.bigint "vaccine_id", null: false
     t.index ["team_id", "number", "expiry", "vaccine_id"], name: "index_batches_on_team_id_and_number_and_expiry_and_vaccine_id", unique: true
     t.index ["vaccine_id"], name: "index_batches_on_vaccine_id"
-  end
-
-  create_table "batches_immunisation_imports", id: false, force: :cascade do |t|
-    t.bigint "batch_id", null: false
-    t.bigint "immunisation_import_id", null: false
-    t.index ["immunisation_import_id", "batch_id"], name: "idx_on_immunisation_import_id_batch_id_d039b76103", unique: true
   end
 
   create_table "class_imports", force: :cascade do |t|
@@ -764,9 +757,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_05_080017) do
     t.boolean "home_educated"
     t.bigint "patient_id", null: false
     t.bigint "school_id"
+    t.bigint "team_id"
     t.bigint "user_id"
     t.index ["patient_id"], name: "index_school_move_log_entries_on_patient_id"
     t.index ["school_id"], name: "index_school_move_log_entries_on_school_id"
+    t.index ["team_id"], name: "index_school_move_log_entries_on_team_id"
     t.index ["user_id"], name: "index_school_move_log_entries_on_user_id"
   end
 
@@ -926,7 +921,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_05_080017) do
 
   create_table "vaccination_records", force: :cascade do |t|
     t.date "batch_expiry"
-    t.bigint "batch_id"
     t.string "batch_number"
     t.datetime "confirmation_sent_at"
     t.datetime "created_at", null: false
@@ -962,13 +956,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_05_080017) do
     t.string "performed_ods_code"
     t.enum "programme_type", null: false, enum_type: "programme_type"
     t.integer "protocol"
+    t.datetime "reported_at"
+    t.bigint "reported_by_id"
     t.bigint "session_id"
     t.integer "source", null: false
     t.bigint "supplied_by_user_id"
     t.datetime "updated_at", null: false
     t.uuid "uuid", default: -> { "gen_random_uuid()" }, null: false
     t.bigint "vaccine_id"
-    t.index ["batch_id"], name: "index_vaccination_records_on_batch_id"
     t.index ["discarded_at"], name: "index_vaccination_records_on_discarded_at"
     t.index ["id"], name: "index_vaccination_records_on_pending_changes_not_empty", where: "(pending_changes <> '{}'::jsonb)"
     t.index ["location_id"], name: "index_vaccination_records_on_location_id"
@@ -980,6 +975,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_05_080017) do
     t.index ["performed_by_user_id"], name: "index_vaccination_records_on_performed_by_user_id"
     t.index ["performed_ods_code", "patient_id"], name: "index_vaccination_records_on_performed_ods_code_and_patient_id", where: "(session_id IS NULL)"
     t.index ["programme_type"], name: "index_vaccination_records_on_programme_type"
+    t.index ["reported_by_id"], name: "index_vaccination_records_on_reported_by_id"
     t.index ["session_id"], name: "index_vaccination_records_on_session_id"
     t.index ["supplied_by_user_id"], name: "index_vaccination_records_on_supplied_by_user_id"
     t.index ["uuid"], name: "index_vaccination_records_on_uuid", unique: true
@@ -1019,8 +1015,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_05_080017) do
   add_foreign_key "attendance_records", "patients"
   add_foreign_key "batches", "teams"
   add_foreign_key "batches", "vaccines"
-  add_foreign_key "batches_immunisation_imports", "batches", on_delete: :cascade
-  add_foreign_key "batches_immunisation_imports", "immunisation_imports", on_delete: :cascade
   add_foreign_key "class_imports", "locations"
   add_foreign_key "class_imports", "teams"
   add_foreign_key "class_imports", "users", column: "uploaded_by_user_id"
@@ -1110,6 +1104,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_05_080017) do
   add_foreign_key "reporting_api_one_time_tokens", "users"
   add_foreign_key "school_move_log_entries", "locations", column: "school_id"
   add_foreign_key "school_move_log_entries", "patients"
+  add_foreign_key "school_move_log_entries", "teams"
   add_foreign_key "school_move_log_entries", "users"
   add_foreign_key "school_moves", "locations", column: "school_id"
   add_foreign_key "school_moves", "patients"
@@ -1127,11 +1122,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_05_080017) do
   add_foreign_key "triages", "patients"
   add_foreign_key "triages", "teams"
   add_foreign_key "triages", "users", column: "performed_by_user_id"
-  add_foreign_key "vaccination_records", "batches"
   add_foreign_key "vaccination_records", "patients"
   add_foreign_key "vaccination_records", "sessions"
   add_foreign_key "vaccination_records", "triages", column: "next_dose_delay_triage_id"
   add_foreign_key "vaccination_records", "users", column: "performed_by_user_id"
+  add_foreign_key "vaccination_records", "users", column: "reported_by_id"
   add_foreign_key "vaccination_records", "users", column: "supplied_by_user_id"
   add_foreign_key "vaccination_records", "vaccines"
 
@@ -1352,6 +1347,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_05_080017) do
       pps.academic_year,
       pps.programme_type,
       pps.status,
+      pps.consent_status,
       tl.team_id,
       pl.location_id AS session_location_id,
           CASE pat.gender_code

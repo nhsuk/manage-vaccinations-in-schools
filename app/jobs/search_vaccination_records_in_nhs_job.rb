@@ -45,14 +45,15 @@ class SearchVaccinationRecordsInNHSJob < ImmunisationsAPIJob
       end
 
       # Remaining incoming_vaccination_records are new
-      incoming_vaccination_records.each do |vaccination_record|
-        vaccination_record.save!
-        AlreadyHadNotificationSender.call(vaccination_record:)
-      end
+      incoming_vaccination_records.each(&:save!)
 
       update_vaccination_search_timestamps if patient.nhs_number.present?
 
       PatientStatusUpdater.call(patient:)
+
+      incoming_vaccination_records.each do |vaccination_record|
+        AlreadyHadNotificationSender.call(vaccination_record:)
+      end
     end
   end
 
@@ -110,9 +111,7 @@ class SearchVaccinationRecordsInNHSJob < ImmunisationsAPIJob
           .includes(:team)
 
     grouped_vaccination_records =
-      vaccination_records.group_by do
-        [it.performed_at.to_date, it.programme_type]
-      end
+      vaccination_records.group_by { [it.performed_at_date, it.programme_type] }
 
     deduplicated_vaccination_records = []
 

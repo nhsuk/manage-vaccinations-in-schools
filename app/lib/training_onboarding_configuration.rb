@@ -9,7 +9,7 @@ class TrainingOnboardingConfiguration
 
   def call
     if type == "national_reporting"
-      { organisation:, team: }
+      { organisation:, team:, users: }
     else
       {
         organisation:,

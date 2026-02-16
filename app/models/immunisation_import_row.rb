@@ -138,7 +138,6 @@ class ImmunisationImportRow
       outcome:,
       patient_id: patient.id,
       performed_at_date:,
-      performed_at_time:,
       performed_by_user:,
       performed_ods_code: performed_ods_code&.to_s,
       programme_type: programme.type,
@@ -168,10 +167,11 @@ class ImmunisationImportRow
     attributes_to_stage_if_already_exists = {
       batch_number: batch_name&.to_s,
       batch_expiry: batch_expiry&.to_date,
-      notes: notes&.to_s,
-      vaccine_id: vaccine&.id,
       discarded_at: nil,
-      source:
+      notes: notes&.to_s,
+      performed_at_time:,
+      source:,
+      vaccine_id: vaccine&.id
     }
 
     vaccination_record =

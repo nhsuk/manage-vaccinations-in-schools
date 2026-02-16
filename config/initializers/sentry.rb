@@ -65,6 +65,12 @@ Sentry.init do |config|
       # Sidekiq, which we want. It can also be handy to have them in Splunk and
       # Cloudwatch to help with debugging.
       next if hint[:exception].is_a?(Faraday::TooManyRequestsError)
+      if hint[:exception].is_a?(Faraday::ServerError) &&
+           hint[:exception].message.include?(
+             "https://api.service.nhs.uk/immunisation-fhir-api"
+           ) && hint[:exception].message.include?("502")
+        next
+      end
 
       unless Rails.env.production?
         team_only_api_key_error =

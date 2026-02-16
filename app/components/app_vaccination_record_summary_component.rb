@@ -234,7 +234,8 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
         end
       end
 
-      if @vaccination_record.performed_by.present?
+      if @vaccination_record.performed_by.present? ||
+           Flipper.enabled?(:already_vaccinated)
         summary_list.with_row do |row|
           row.with_key { "Vaccinator" }
           row.with_value { vaccinator_value }
@@ -293,12 +294,29 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
         end
       end
 
+      if Flipper.enabled?(:already_vaccinated) &&
+           @vaccination_record.reported_by.present?
+        summary_list.with_row do |row|
+          row.with_key { "Reported by" }
+          row.with_value { @vaccination_record.reported_by&.full_name }
+        end
+      end
+
+      if Flipper.enabled?(:already_vaccinated) &&
+           @vaccination_record.reported_at.present?
+        summary_list.with_row do |row|
+          row.with_key { "Reported on" }
+          row.with_value { @vaccination_record.reported_at.to_fs(:long) }
+        end
+      end
+
       correct_feature_flags_enabled =
-        Programme.all.any? { Flipper.enabled?(:imms_api_sync_job, it) } &&
-          Flipper.enabled?(:imms_api_integration)
+        Programme.all_as_variants.any? do
+          Flipper.enabled?(:imms_api_sync_job, it)
+        end && Flipper.enabled?(:imms_api_integration)
       if @vaccination_record.respond_to?(:sync_status) &&
            correct_feature_flags_enabled &&
-           @vaccination_record&.correct_source_for_nhs_immunisations_api?
+           @vaccination_record.correct_source_for_nhs_immunisations_api?
         summary_list.with_row do |row|
           row.with_key { "Synced with NHS England?" }
           row.with_value do
@@ -327,10 +345,16 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
   end
 
   def outcome_value
-    highlight_if(
-      VaccinationRecord.human_enum_name(:outcome, @vaccination_record.outcome),
-      @vaccination_record.outcome_changed?
-    )
+    outcome =
+      VaccinationRecord.human_enum_name(:outcome, @vaccination_record.outcome)
+
+    if Flipper.enabled?(:already_vaccinated) &&
+         @vaccination_record.already_had? &&
+         @vaccination_record.reported_as_already_vaccinated?
+      outcome = VaccinationRecord.human_enum_name(:outcome, "administered")
+    end
+
+    highlight_if(outcome, @vaccination_record.outcome_changed?)
   end
 
   def programme_value
@@ -418,8 +442,10 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
     value =
       if @vaccination_record.performed_by == @current_user
         "You (#{@current_user.full_name})"
-      else
+      elsif @vaccination_record.performed_by
         @vaccination_record.performed_by&.full_name
+      else
+        "Unknown"
       end
 
     highlight_if(

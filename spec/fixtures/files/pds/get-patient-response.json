@@ -27,8 +27,8 @@
     "security": [
       {
         "system": "http://terminology.hl7.org/CodeSystem/v3-Confidentiality",
-        "code": "R",
-        "display": "restricted"
+        "code": "U",
+        "display": "unrestricted"
       }
     ]
   },

@@ -252,6 +252,40 @@ describe API::Reporting::TotalsController do
       expect(unknown_data["vaccinated"]).to eq(0)
       expect(unknown_data["not_vaccinated"]).to eq(1)
     end
+
+    it "includes consent columns in grouped JSON response" do
+      team = Team.last
+      programme = Programme.hpv
+      team.programmes << programme
+      session = create(:session, team:, programmes: [programme])
+
+      school = create(:school, name: "Test School", urn: "123456")
+
+      patient1 = create(:patient, session:, school:, year_group: 8)
+      create(:consent, :given, patient: patient1, programme:, team:)
+      PatientStatusUpdater.call(patient: patient1)
+
+      patient2 = create(:patient, session:, school:, year_group: 8)
+      create(:consent, :refused, patient: patient2, programme:, team:)
+      PatientStatusUpdater.call(patient: patient2)
+
+      create(:patient, session:, school:, year_group: 8)
+
+      refresh_reporting_views!
+
+      get :index, params: { group: "school", programme: "hpv" }
+
+      expect(response).to have_http_status(:ok)
+
+      school_data = parsed_response.find { it["school_urn"] == "123456" }
+      expect(school_data).to include(
+        "consent_given" => 1,
+        "no_consent" => 2,
+        "consent_no_response" => 1,
+        "consent_refused" => 1,
+        "consent_conflicts" => 0
+      )
+    end
   end
 
   describe "#index.csv" do
@@ -382,6 +416,46 @@ describe API::Reporting::TotalsController do
         "Test Authority 201",
         "Unknown Local Authority"
       )
+    end
+
+    it "includes consent columns in CSV" do
+      team = Team.last
+      programme = Programme.hpv
+      team.programmes << programme
+      session = create(:session, team:, programmes: [programme])
+
+      patient1 = create(:patient, session:, year_group: 8)
+      create(:consent, :given, patient: patient1, programme:, team:)
+      PatientStatusUpdater.call(patient: patient1)
+
+      patient2 = create(:patient, session:, year_group: 9)
+      create(:consent, :refused, patient: patient2, programme:, team:)
+      PatientStatusUpdater.call(patient: patient2)
+
+      refresh_reporting_views!
+
+      request.headers["Accept"] = "text/csv"
+      get :index, params: { group: "year_group" }, format: :csv
+
+      expect(response).to have_http_status(:ok)
+
+      csv = CSV.parse(response.body, headers: true)
+      expect(csv.headers).to include(
+        "Consent Given",
+        "No Consent",
+        "Consent No Response",
+        "Consent Refused",
+        "Consent Conflicts"
+      )
+
+      year_8_row = csv.find { it["Year Group"] == "8" }
+      year_9_row = csv.find { it["Year Group"] == "9" }
+
+      expect(year_8_row["Consent Given"]).to eq("1")
+      expect(year_8_row["Consent Refused"]).to eq("0")
+
+      expect(year_9_row["Consent Given"]).to eq("0")
+      expect(year_9_row["Consent Refused"]).to eq("1")
     end
   end
 

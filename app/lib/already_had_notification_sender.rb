@@ -7,9 +7,10 @@ class AlreadyHadNotificationSender
 
   def call
     return if vaccination_record.sourced_from_service?
-    return if would_still_be_vaccinated?
+    return if was_already_vaccinated?
+    return if is_still_eligible_for_vaccination?
 
-    consents = patient.consents.includes(:parent)
+    consents = patient.consents.includes(:parent, :team)
 
     consents =
       consents.where(
@@ -58,15 +59,25 @@ class AlreadyHadNotificationSender
 
   attr_reader :vaccination_record
 
-  delegate :patient, :programme_type, to: :vaccination_record
+  delegate :patient, :programme_type, :programme, to: :vaccination_record
 
   def academic_year = AcademicYear.current
 
-  def other_vaccination_records
-    patient.vaccination_records.where.not(id: vaccination_record.id)
+  def previous_vaccination_records
+    # We need to ensure there is a deterministic order of vaccination records on
+    # a child so that the :already_vaccinated_notification is sent once and only
+    # once per child. Using created_at alone is not sufficient as batching
+    # allows for multiple vaccination records to be created with the same
+    # created_at timestamp. We chose the ID as a tie-breaker since IDs are
+    # unique and sequential.
+    patient.vaccination_records.where(
+      "(created_at < :created_at) OR (created_at = :created_at AND id < :id)",
+      created_at: vaccination_record.created_at,
+      id: vaccination_record.id
+    )
   end
 
-  def would_still_be_vaccinated?
+  def was_already_vaccinated?
     # We're not using the existing `Patient::ProgrammeStatus` instance here
     # because we want to know if the patient would still be vaccinated if we
     # took away the vaccination record in question, to know whether to send
@@ -79,11 +90,15 @@ class AlreadyHadNotificationSender
       programme_type:,
       academic_year:,
       patient:,
-      vaccination_records: other_vaccination_records,
+      vaccination_records: previous_vaccination_records,
       patient_locations: [],
       consents: [],
       triages: [],
       attendance_record: nil
     ).status == :vaccinated
+  end
+
+  def is_still_eligible_for_vaccination?
+    !patient.programme_status(programme, academic_year:).vaccinated?
   end
 end

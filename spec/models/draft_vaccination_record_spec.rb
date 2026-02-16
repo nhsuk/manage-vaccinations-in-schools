@@ -12,7 +12,15 @@ describe DraftVaccinationRecord do
 
   let(:programme) { Programme.hpv }
   let(:session) { create(:session, team:, programmes: [programme]) }
-  let(:patient) { create(:patient, :in_attendance, session:) }
+  let(:patient) do
+    create(
+      :patient,
+      :in_attendance,
+      session:,
+      date_of_birth: Date.new(2020, 8, 31)
+    )
+  end
+
   let(:vaccine) { programme.vaccines.first }
   let(:batch) { create(:batch, team:, vaccine:, expiry: Date.new(2026, 11, 1)) }
 
@@ -64,22 +72,112 @@ describe DraftVaccinationRecord do
       end
     end
 
-    context "when performed_at is before the start of the academic year" do
+    context "when the programme is flu" do
       let(:attributes) do
         valid_administered_attributes.merge(
-          performed_at: Time.zone.local(2023, 8, 31, 12)
+          performed_at: Time.zone.local(2023, 8, 31, 12),
+          programme_type: Programme.flu.type
         )
       end
 
-      around { |example| travel_to(Date.new(2025, 8, 31)) { example.run } }
+      context "when performed_at is before the start of the academic year" do
+        around { |example| travel_to(Date.new(2025, 8, 31)) { example.run } }
 
-      before { draft_vaccination_record.wizard_step = :date_and_time }
+        before { draft_vaccination_record.wizard_step = :date_and_time }
 
-      it "has an error" do
-        expect(draft_vaccination_record.save(context: :update)).to be(false)
-        expect(draft_vaccination_record.errors[:performed_at_date]).to include(
-          "The vaccination cannot take place before 1 September 2024"
+        it "has an error" do
+          expect(draft_vaccination_record.save(context: :update)).to be(false)
+          expect(
+            draft_vaccination_record.errors[:performed_at_date]
+          ).to include(
+            "The vaccination cannot take place before 1 September 2024"
+          )
+        end
+      end
+    end
+
+    context "when the record is national reporting" do
+      let(:team) do
+        create(
+          :team,
+          :national_reporting,
+          :with_one_nurse,
+          programmes: [programme]
         )
+      end
+      let(:attributes) do
+        valid_administered_attributes.merge(
+          performed_at: Time.zone.local(2023, 8, 31, 12),
+          programme_type: Programme.mmr.type,
+          source: "national_reporting"
+        )
+      end
+
+      context "when performed_at is before the start of the academic year" do
+        around { |example| travel_to(Date.new(2025, 8, 31)) { example.run } }
+
+        before { draft_vaccination_record.wizard_step = :date_and_time }
+
+        it "has an error" do
+          expect(draft_vaccination_record.save(context: :update)).to be(false)
+          expect(
+            draft_vaccination_record.errors[:performed_at_date]
+          ).to include(
+            "The vaccination cannot take place before 1 September 2024"
+          )
+        end
+      end
+    end
+
+    context "when the programme is not flu" do
+      let(:attributes) do
+        valid_administered_attributes.merge(
+          performed_at: Time.zone.local(2023, 8, 31, 12),
+          programme_type: Programme.mmr.type
+        )
+      end
+
+      context "when performed_at is before the start of the academic year for an already vaccinated patient" do
+        around { |example| travel_to(Date.new(2025, 8, 31)) { example.run } }
+
+        before { draft_vaccination_record.wizard_step = :date_and_time }
+
+        it "is valid" do
+          expect(draft_vaccination_record.save(context: :update)).to be(true)
+          expect(
+            draft_vaccination_record.errors[:performed_at_date]
+          ).to be_empty
+        end
+      end
+
+      context "when performed_at is before patient date of birth" do
+        let(:patient) do
+          create(
+            :patient,
+            :in_attendance,
+            session:,
+            date_of_birth: Date.new(2020, 8, 31)
+          )
+        end
+        let(:attributes) do
+          valid_administered_attributes.merge(
+            performed_at: Time.zone.local(2020, 8, 30, 12),
+            outcome: "already_had"
+          )
+        end
+
+        around { |example| travel_to(Date.new(2025, 8, 31)) { example.run } }
+
+        before { draft_vaccination_record.wizard_step = :date_and_time }
+
+        it "has an error" do
+          expect(draft_vaccination_record.save(context: :update)).to be(false)
+          expect(
+            draft_vaccination_record.errors[:performed_at_date]
+          ).to include(
+            "The vaccination cannot take place before 31 August 2020"
+          )
+        end
       end
     end
 
@@ -126,6 +224,29 @@ describe DraftVaccinationRecord do
       before { draft_vaccination_record.wizard_step = :confirm }
 
       it { should validate_length_of(:notes).is_at_most(1000).on(:update) }
+    end
+
+    context "when registration is disabled for the session" do
+      let(:session) do
+        create(
+          :session,
+          team:,
+          programmes: [programme],
+          requires_registration: false
+        )
+      end
+
+      let(:patient) { create(:patient, session:) }
+      let(:attributes) { valid_administered_attributes }
+
+      before { draft_vaccination_record.wizard_step = :confirm }
+
+      it "does not require an attendance record to record a vaccination" do
+        expect(draft_vaccination_record.save(context: :update)).to be(true)
+        expect(draft_vaccination_record.errors[:base]).not_to include(
+          "Child is marked as not attending this session. Mark them as attending to record a vaccination."
+        )
+      end
     end
 
     context "when the patient is marked not attending" do

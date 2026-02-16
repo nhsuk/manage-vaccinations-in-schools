@@ -22,6 +22,8 @@ class TimeParamsValidator
     time = time_params_as_struct
 
     return true if [time.hour, time.minute, time.second].all?(&:blank?)
+    # If `omit_second` is set on the field, then the seconds field defaults to "0"
+    return true if time.hour.blank? && time.minute.blank? && time.second == "0"
 
     if time.second.blank?
       object.errors.add(field_name, :missing_second)

@@ -28,8 +28,13 @@ class API::Reporting::TotalsController < API::Reporting::BaseController
 
   METRIC_HEADERS = {
     cohort: "Cohort",
-    vaccinated: "Vaccinated",
-    not_vaccinated: "Not Vaccinated"
+    no_consent: "No Consent",
+    consent_no_response: "Consent No Response",
+    consent_refused: "Consent Refused",
+    consent_conflicts: "Consent Conflicts",
+    consent_given: "Consent Given",
+    not_vaccinated: "Not Vaccinated",
+    vaccinated: "Vaccinated"
   }.freeze
 
   FLU_SPECIFIC_METRIC_HEADERS = {}.freeze
@@ -139,7 +144,12 @@ class API::Reporting::TotalsController < API::Reporting::BaseController
       .merge(
         cohort: record.cohort,
         vaccinated: record.vaccinated,
-        not_vaccinated: record.not_vaccinated
+        not_vaccinated: record.not_vaccinated,
+        consent_given: record.consent_given,
+        no_consent: record.no_consent,
+        consent_no_response: record.consent_no_response,
+        consent_refused: record.consent_refused,
+        consent_conflicts: record.consent_conflicts
       )
   end
 
@@ -151,15 +161,17 @@ class API::Reporting::TotalsController < API::Reporting::BaseController
       cohort:,
       vaccinated:,
       not_vaccinated: cohort - vaccinated,
+      consent_given: @totals_scope.consent_given_count,
+      no_consent: @totals_scope.no_consent_count,
+      consent_no_response: @totals_scope.consent_no_response_count,
+      consent_refused: @totals_scope.consent_refused_count,
+      consent_conflicts: @totals_scope.consent_conflicts_count,
       vaccinated_by_sais: @scope.vaccinated_by_sais_count,
       vaccinated_elsewhere_declared: @scope.vaccinated_elsewhere_declared_count,
       vaccinated_elsewhere_recorded: @scope.vaccinated_elsewhere_recorded_count,
       vaccinated_previously: @scope.vaccinated_previously_count,
       vaccinations_given: @base_scope.vaccinations_given_count,
       monthly_vaccinations_given: @base_scope.monthly_vaccinations_given,
-      consent_given: @scope.consent_given_count,
-      consent_no_response: @scope.consent_no_response_count,
-      consent_conflicts: @scope.consent_conflicts_count,
       parent_refused_consent: @scope.parent_refused_consent_count,
       child_refused_vaccination: @scope.child_refused_vaccination_count,
       refusal_reasons: consent_refusal_reasons,

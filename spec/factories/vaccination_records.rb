@@ -33,17 +33,18 @@
 #  performed_ods_code                      :string
 #  programme_type                          :enum             not null
 #  protocol                                :integer
+#  reported_at                             :datetime
 #  source                                  :integer          not null
 #  uuid                                    :uuid             not null
 #  created_at                              :datetime         not null
 #  updated_at                              :datetime         not null
-#  batch_id                                :bigint
 #  local_patient_id                        :string
 #  location_id                             :bigint
 #  next_dose_delay_triage_id               :bigint
 #  nhs_immunisations_api_id                :string
 #  patient_id                              :bigint           not null
 #  performed_by_user_id                    :bigint
+#  reported_by_id                          :bigint
 #  session_id                              :bigint
 #  supplied_by_user_id                     :bigint
 #  vaccine_id                              :bigint
@@ -51,7 +52,6 @@
 # Indexes
 #
 #  idx_on_patient_id_programme_type_outcome_453b557b54             (patient_id,programme_type,outcome) WHERE (discarded_at IS NULL)
-#  index_vaccination_records_on_batch_id                           (batch_id)
 #  index_vaccination_records_on_discarded_at                       (discarded_at)
 #  index_vaccination_records_on_location_id                        (location_id)
 #  index_vaccination_records_on_next_dose_delay_triage_id          (next_dose_delay_triage_id)
@@ -62,6 +62,7 @@
 #  index_vaccination_records_on_performed_by_user_id               (performed_by_user_id)
 #  index_vaccination_records_on_performed_ods_code_and_patient_id  (performed_ods_code,patient_id) WHERE (session_id IS NULL)
 #  index_vaccination_records_on_programme_type                     (programme_type)
+#  index_vaccination_records_on_reported_by_id                     (reported_by_id)
 #  index_vaccination_records_on_session_id                         (session_id)
 #  index_vaccination_records_on_supplied_by_user_id                (supplied_by_user_id)
 #  index_vaccination_records_on_uuid                               (uuid) UNIQUE
@@ -69,10 +70,10 @@
 #
 # Foreign Keys
 #
-#  fk_rails_...  (batch_id => batches.id)
 #  fk_rails_...  (next_dose_delay_triage_id => triages.id)
 #  fk_rails_...  (patient_id => patients.id)
 #  fk_rails_...  (performed_by_user_id => users.id)
+#  fk_rails_...  (reported_by_id => users.id)
 #  fk_rails_...  (session_id => sessions.id)
 #  fk_rails_...  (supplied_by_user_id => users.id)
 #  fk_rails_...  (vaccine_id => vaccines.id)
@@ -84,6 +85,8 @@ FactoryBot.define do
         Team.has_all_programmes_of([programme]).first ||
           association(:team, programmes: [programme])
       end
+
+      batch { build(:batch, :not_expired) if vaccine }
     end
 
     programme { Programme.sample }
@@ -101,11 +104,6 @@ FactoryBot.define do
     vaccine { programme.vaccines.active.sample if session }
     disease_types { vaccine&.disease_types || programme.disease_types }
 
-    batch do
-      if vaccine
-        association(:batch, :not_expired, team:, vaccine:, strategy: :create)
-      end
-    end
     batch_number { batch&.number }
     batch_expiry { batch&.expiry }
 

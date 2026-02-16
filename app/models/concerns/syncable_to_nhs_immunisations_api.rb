@@ -18,7 +18,9 @@ module SyncableToNHSImmunisationsAPI
     scope :sync_all_to_nhs_immunisations_api,
           -> do
             programmes =
-              Programme.all.select { Flipper.enabled?(:imms_api_sync_job, it) }
+              Programme.all_as_variants.select do
+                Flipper.enabled?(:imms_api_sync_job, it)
+              end
 
             ids =
               with_correct_source_for_nhs_immunisations_api.for_programmes(

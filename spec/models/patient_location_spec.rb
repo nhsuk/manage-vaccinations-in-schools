@@ -78,6 +78,33 @@ describe PatientLocation do
         it { should_not include(patient_location) }
       end
     end
+
+    describe "#active" do
+      subject(:scope) { described_class.active }
+
+      let!(:active_location) do
+        create(
+          :patient_location,
+          date_range: Date.new(2020, 1, 1)...Float::INFINITY
+        )
+      end
+      let!(:another_active_location) do
+        create(
+          :patient_location,
+          date_range: -Float::INFINITY...Float::INFINITY
+        )
+      end
+      let!(:inactive_location) do
+        create(
+          :patient_location,
+          date_range: Date.new(2020, 2, 1)...Date.new(2020, 3, 1)
+        )
+      end
+
+      it { should include(active_location) }
+      it { should include(another_active_location) }
+      it { should_not include(inactive_location) }
+    end
   end
 
   describe "#begin_date" do

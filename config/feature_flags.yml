@@ -1,3 +1,7 @@
+already_vaccinated: |
+  New questions for the already vaccinated flow triggered
+  from the 'Record as already vaccinated' link on the session > children page.
+
 basic_auth: Require users to sign in with basic authentication before they
   can use the service.
 

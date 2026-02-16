@@ -57,7 +57,11 @@ class ImmunisationImport < ApplicationRecord
   end
 
   def records_count
-    vaccination_records.count
+    if national_reporting?
+      vaccination_records.count + (ignored_record_count || 0)
+    else
+      vaccination_records.count
+    end
   end
 
   private
@@ -129,10 +133,6 @@ class ImmunisationImport < ApplicationRecord
       on_duplicate_key_update: :all
     )
 
-    vaccination_records.each do |vaccination_record|
-      AlreadyHadNotificationSender.call(vaccination_record:)
-    end
-
     PatientLocation.import(patient_locations, on_duplicate_key_ignore: :all)
 
     ArchiveReason.import(archive_reasons, on_duplicate_key_ignore: :all)
@@ -175,6 +175,12 @@ class ImmunisationImport < ApplicationRecord
 
     PatientTeamUpdater.call(patient_scope: patients)
     PatientStatusUpdater.call(patient_scope: patients)
+
+    vaccination_records
+      .includes(:patient, :team, :subteam)
+      .find_each do |vaccination_record|
+        AlreadyHadNotificationSender.call(vaccination_record:)
+      end
   end
 
   def post_commit!

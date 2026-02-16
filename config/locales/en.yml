@@ -157,9 +157,9 @@ en:
             performed_at_time:
               blank: Enter a date time
               invalid: Enter a valid time
-              missing_hour: Enter a day
-              missing_minute: Enter a month
-              missing_second: Enter a year
+              missing_hour: Enter an hour
+              missing_minute: Enter a minute
+              missing_second: Enter a second
             performed_by_given_name:
               blank: First name can't be blank
             performed_by_family_name:
@@ -400,6 +400,8 @@ en:
               too_long: Enter notes that are less than %{count} characters long
         consent_form:
           attributes:
+            ethnicity_question:
+              inclusion: Select yes or no
             ethnic_group:
               blank: Choose an ethnic group
             ethnic_background:

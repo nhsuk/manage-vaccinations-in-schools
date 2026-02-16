@@ -36,6 +36,8 @@ class DraftVaccinationRecord
   attribute :performed_ods_code, :string
   attribute :programme_type, :string
   attribute :protocol, :string
+  attribute :reported_at, :datetime
+  attribute :reported_by_id, :integer
   attribute :session_id, :integer
   attribute :source, :string
   attribute :supplied_by_user_id, :integer
@@ -59,6 +61,12 @@ class DraftVaccinationRecord
     [
       :identity,
       (:notes unless national_reporting_user_and_record?),
+      (
+        if programme&.mmr? && (administered? || already_had?) &&
+             patient.eligible_for_mmrv? && Flipper.enabled?(:already_vaccinated)
+          :mmr_or_mmrv
+        end
+      ),
       :date_and_time,
       (:outcome if can_change_outcome?),
       (:supplier if requires_supplied_by?),
@@ -77,7 +85,7 @@ class DraftVaccinationRecord
   end
 
   on_wizard_step :date_and_time, exact: true do
-    validates :performed_at_date, :performed_at_time, presence: true
+    validates :performed_at_date, presence: true
     validate :performed_at_date_within_range
   end
 
@@ -159,9 +167,11 @@ class DraftVaccinationRecord
     validates :delivery_method,
               :delivery_site,
               :performed_at_date,
-              :performed_at_time,
               :protocol,
               presence: true
+    validates :performed_at_time,
+              presence: true,
+              unless: :national_reporting_user_and_record?
     validates :batch_number,
               :batch_expiry,
               presence: true,
@@ -178,6 +188,11 @@ class DraftVaccinationRecord
   def already_had?
     return nil if outcome.nil?
     outcome == "already_had"
+  end
+
+  def reported_as_already_vaccinated?
+    Flipper.enabled?(:already_vaccinated) && already_had? &&
+      reported_by_id.present?
   end
 
   # So that a form error matches to a field in this model
@@ -208,6 +223,11 @@ class DraftVaccinationRecord
 
   def performed_by_user=(value)
     self.performed_by_user_id = value.id
+  end
+
+  def reported_by
+    return nil if reported_by_id.nil?
+    User.find(reported_by_id)
   end
 
   def session
@@ -395,6 +415,8 @@ class DraftVaccinationRecord
       performed_ods_code
       programme_type
       protocol
+      reported_at
+      reported_by_id
       session_id
       source
       supplied_by_user_id
@@ -431,7 +453,11 @@ class DraftVaccinationRecord
   end
 
   def earliest_possible_date
-    academic_year.to_academic_year_date_range.first
+    if programme&.flu? || national_reporting_user_and_record?
+      academic_year.to_academic_year_date_range.first
+    else
+      patient.date_of_birth
+    end
   end
 
   def latest_possible_date
@@ -496,6 +522,7 @@ class DraftVaccinationRecord
   def validate_patient_attendance
     return unless new_record?
     return unless session&.today?
+    return unless session&.requires_registration?
     return if patient.blank?
 
     attendance_record =

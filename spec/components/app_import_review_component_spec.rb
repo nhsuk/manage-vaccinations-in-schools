@@ -124,6 +124,14 @@ describe AppImportReviewComponent do
       ]
     end
 
+    before do
+      create(
+        :patient_location,
+        patient: inter_team_patient,
+        location: other_location
+      )
+    end
+
     include_examples "section with details",
                      title:
                        "Children moving from another SAIS team's area - resolve after import",
@@ -153,6 +161,14 @@ describe AppImportReviewComponent do
           school: location
         )
       ]
+    end
+
+    before do
+      create(
+        :patient_location,
+        patient: inter_team_patient,
+        location: other_location
+      )
     end
 
     it "renders separate expander for close matches" do

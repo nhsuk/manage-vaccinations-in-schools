@@ -78,15 +78,22 @@ class SchoolMove < ApplicationRecord
   end
 
   def confirm!(user: nil)
-    old_teams = patient.school.teams if from_another_team?
-
     ActiveRecord::Base.transaction do
+      # We need to set this before updating patient locations
+      move_across_teams = from_another_team?
+
       update_patient!
       update_archive_reasons!(user:)
       update_locations!
 
       log_entry = create_log_entry!(user:)
-      create_important_notice!(old_teams, log_entry) if old_teams
+
+      update_patient_teams!
+      update_patient_statuses!
+      if move_across_teams
+        create_important_notice!(log_entry)
+        update_important_notices!
+      end
 
       destroy! if persisted?
     end
@@ -97,9 +104,18 @@ class SchoolMove < ApplicationRecord
   end
 
   def from_another_team?
-    return false unless patient.school && school && patient.school.teams.any?
+    current_teams = patient.teams_via_patient_locations
 
-    (school.teams & patient.school.teams).empty?
+    return false if current_teams.empty?
+
+    new_teams =
+      if school
+        school_teams
+      elsif team
+        [team]
+      end
+
+    (new_teams & current_teams).empty?
   end
 
   private
@@ -181,18 +197,40 @@ class SchoolMove < ApplicationRecord
   end
 
   def create_log_entry!(user:)
-    SchoolMoveLogEntry.create!(home_educated:, patient:, school:, user:)
+    SchoolMoveLogEntry.create!(
+      home_educated:,
+      patient:,
+      school:,
+      user:,
+      team_id:
+    )
   end
 
-  def create_important_notice!(old_teams, school_move_log_entry)
-    old_teams.each do |old_team|
+  def create_important_notice!(school_move_log_entry)
+    new_team_ids = (school_teams.map(&:id) + [team_id]).compact
+
+    patient.teams.each do |team|
+      next if team.id.in?(new_team_ids)
+
       ImportantNotice.team_changed.find_or_create_by!(
         patient:,
-        team: old_team,
+        team:,
         type: :team_changed,
         recorded_at: school_move_log_entry.created_at,
         school_move_log_entry:
       )
     end
+  end
+
+  def update_patient_teams!
+    PatientTeamUpdater.call(patient:)
+  end
+
+  def update_patient_statuses!
+    PatientStatusUpdater.call(patient:)
+  end
+
+  def update_important_notices!
+    ImportantNoticeGeneratorJob.perform_later([patient.id])
   end
 end

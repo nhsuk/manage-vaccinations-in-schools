@@ -28,7 +28,7 @@ module VaccinationRecordsHelper
   end
 
   def already_vaccinated_link_label(session:, patient:, programme:)
-    if programme.mmr?
+    if programme.mmr? && Flipper.enabled?(:already_vaccinated)
       if had_first_dose?(session:, patient:, programme:)
         "Record 2nd dose as already given"
       else
