@@ -177,7 +177,7 @@ class ImmunisationImport < ApplicationRecord
     PatientStatusUpdater.call(patient_scope: patients)
 
     vaccination_records
-      .includes(:patient, :team)
+      .includes(:patient, :team, :subteam)
       .find_each do |vaccination_record|
         AlreadyHadNotificationSender.call(vaccination_record:)
       end

@@ -7,7 +7,7 @@ class NotificationParentSelector
       if @vaccination_record.patient.send_notifications?(
            team: @vaccination_record.team,
            send_to_archived: true
-         ) && @vaccination_record.notify_parents
+         ) && @vaccination_record.notify_parents != false
         consents || @vaccination_record.patient.consents
       else
         []

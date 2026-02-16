@@ -10,7 +10,7 @@ class AlreadyHadNotificationSender
     return if was_already_vaccinated?
     return if is_still_eligible_for_vaccination?
 
-    consents = patient.consents.includes(:parent)
+    consents = patient.consents.includes(:parent, :team)
 
     consents =
       consents.where(
