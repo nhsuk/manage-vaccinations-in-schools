@@ -661,7 +661,7 @@
     <span class="ruby-keyword">if</span> <span class="ruby-ivar">@vaccination_record</span>.<span class="ruby-identifier">patient</span>.<span class="ruby-identifier">send_notifications?</span>(
          <span class="ruby-value">team:</span> <span class="ruby-ivar">@vaccination_record</span>.<span class="ruby-identifier">team</span>,
          <span class="ruby-value">send_to_archived:</span> <span class="ruby-keyword">true</span>
-       ) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-ivar">@vaccination_record</span>.<span class="ruby-identifier">notify_parents</span>
+       ) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-ivar">@vaccination_record</span>.<span class="ruby-identifier">notify_parents</span> <span class="ruby-operator">!=</span> <span class="ruby-keyword">false</span>
       <span class="ruby-identifier">consents</span> <span class="ruby-operator">||</span> <span class="ruby-ivar">@vaccination_record</span>.<span class="ruby-identifier">patient</span>.<span class="ruby-identifier">consents</span>
     <span class="ruby-keyword">else</span>
       []
