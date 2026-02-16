@@ -630,7 +630,7 @@
           <div class="method-source-code" id="already_vaccinated_link_label-source">
             <pre class="ruby"><span class="ruby-comment"># File app/helpers/vaccination_records_helper.rb, line 30</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">already_vaccinated_link_label</span>(<span class="ruby-value">session:</span>, <span class="ruby-value">patient:</span>, <span class="ruby-value">programme:</span>)
-  <span class="ruby-keyword">if</span> <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">mmr?</span>
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">mmr?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-constant">Flipper</span>.<span class="ruby-identifier">enabled?</span>(<span class="ruby-value">:already_vaccinated</span>)
     <span class="ruby-keyword">if</span> <span class="ruby-identifier">had_first_dose?</span>(<span class="ruby-value">session:</span>, <span class="ruby-value">patient:</span>, <span class="ruby-value">programme:</span>)
       <span class="ruby-string">&quot;Record 2nd dose as already given&quot;</span>
     <span class="ruby-keyword">else</span>
