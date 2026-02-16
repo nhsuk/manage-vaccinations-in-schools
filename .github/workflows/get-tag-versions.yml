@@ -1,0 +1,67 @@
+name: Set Slack Topics
+on:
+  push:
+    branches:
+      - main
+      - release
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  get-tags:
+    runs-on: ubuntu-latest
+    outputs:
+      release_tag: ${{ steps.get_tags.outputs.release_tag }}
+      main_tag: ${{ steps.get_tags.outputs.main_tag }}
+    steps:
+      - name: Checkout code and fetch tags
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Get latest tags for branches
+        id: get_tags
+        run: |
+          branches=("release" "main")
+          for branch in "${branches[@]}"; do
+            full_branch="origin/$branch"
+            if ! git rev-parse --verify "$full_branch" >/dev/null 2>&1; then
+                echo "Branch $branch does not exist."
+                continue
+            fi
+            latest_tag=$(git tag --merged "$full_branch" | grep -p '^v\d+\.\d+\.\d+' | sort -V | tail -1)
+            if [ -n "$latest_tag" ]; then
+                echo "Latest tag on branch $branch: $latest_tag"
+                echo "${branch}_tag=$latest_tag" >> $GITHUB_OUTPUT
+            else
+                echo "No semantic version tags found on branch $branch."
+            fi
+          done
+  update-topics:
+    needs: get-tags
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set next tag
+        run: |
+          CURRENT_VERSION=${{ needs.get-tags.outputs.main_tag }}
+          major=${CURRENT_VERSION#v};
+          major=${major%%.*};
+          minor=${CURRENT_VERSION#v${major}.};
+          minor=${minor%%.*};
+          new_minor=$((minor+1));
+          patch=${CURRENT_VERSION#v${major}.${minor}.};
+          NEXT_VERSION=$(echo "v${major}.${new_minor}.${patch}")
+          echo "next_tag=$NEXT_VERSION" >> $GITHUB_ENV
+      - name: Create channel topic
+        run: |
+          TOPIC="release: ${{ needs.get-tags.outputs.release_tag }} - main: ${{ needs.get-tags.outputs.main_tag }} - next: $next_tag"
+          echo "MAVIS_TECH_TOPIC=$TOPIC" >> $GITHUB_ENV
+      - name: Update mavis tech channel topic
+        uses: slackapi/slack-github-action@91efab103c0de0a537f72a35f6b8cda0ee76bf0a
+        with:
+          method: conversations.setTopic
+          token: ${{ secrets.MAVIS_DEPLOYMENT_BOT_OAUTH_TOKEN }}
+          errors: true
+          payload: |
+            channel: ${{ secrets.MAVIS_TECH_CHANNEL_ID }}
+            topic: "${{ env.MAVIS_TECH_TOPIC }}"
