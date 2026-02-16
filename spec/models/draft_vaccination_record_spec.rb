@@ -12,7 +12,14 @@ describe DraftVaccinationRecord do
 
   let(:programme) { Programme.hpv }
   let(:session) { create(:session, team:, programmes: [programme]) }
-  let(:patient) { create(:patient, :in_attendance, session:, date_of_birth: Date.new(2020, 8, 31)) }
+  let(:patient) do
+    create(
+      :patient,
+      :in_attendance,
+      session:,
+      date_of_birth: Date.new(2020, 8, 31)
+    )
+  end
 
   let(:vaccine) { programme.vaccines.first }
   let(:batch) { create(:batch, team:, vaccine:, expiry: Date.new(2026, 11, 1)) }
@@ -80,7 +87,9 @@ describe DraftVaccinationRecord do
 
         it "has an error" do
           expect(draft_vaccination_record.save(context: :update)).to be(false)
-          expect(draft_vaccination_record.errors[:performed_at_date]).to include(
+          expect(
+            draft_vaccination_record.errors[:performed_at_date]
+          ).to include(
             "The vaccination cannot take place before 1 September 2024"
           )
         end
@@ -88,7 +97,14 @@ describe DraftVaccinationRecord do
     end
 
     context "when the record is national reporting" do
-      let(:team) { create(:team, :national_reporting, :with_one_nurse, programmes: [programme]) }
+      let(:team) do
+        create(
+          :team,
+          :national_reporting,
+          :with_one_nurse,
+          programmes: [programme]
+        )
+      end
       let(:attributes) do
         valid_administered_attributes.merge(
           performed_at: Time.zone.local(2023, 8, 31, 12),
@@ -104,7 +120,9 @@ describe DraftVaccinationRecord do
 
         it "has an error" do
           expect(draft_vaccination_record.save(context: :update)).to be(false)
-          expect(draft_vaccination_record.errors[:performed_at_date]).to include(
+          expect(
+            draft_vaccination_record.errors[:performed_at_date]
+          ).to include(
             "The vaccination cannot take place before 1 September 2024"
           )
         end
@@ -126,12 +144,21 @@ describe DraftVaccinationRecord do
 
         it "is valid" do
           expect(draft_vaccination_record.save(context: :update)).to be(true)
-          expect(draft_vaccination_record.errors[:performed_at_date]).to be_empty
+          expect(
+            draft_vaccination_record.errors[:performed_at_date]
+          ).to be_empty
         end
       end
 
       context "when performed_at is before patient date of birth" do
-        let(:patient) { create(:patient, :in_attendance, session:, date_of_birth: Date.new(2020, 8, 31)) }
+        let(:patient) do
+          create(
+            :patient,
+            :in_attendance,
+            session:,
+            date_of_birth: Date.new(2020, 8, 31)
+          )
+        end
         let(:attributes) do
           valid_administered_attributes.merge(
             performed_at: Time.zone.local(2020, 8, 30, 12),
@@ -145,7 +172,9 @@ describe DraftVaccinationRecord do
 
         it "has an error" do
           expect(draft_vaccination_record.save(context: :update)).to be(false)
-          expect(draft_vaccination_record.errors[:performed_at_date]).to include(
+          expect(
+            draft_vaccination_record.errors[:performed_at_date]
+          ).to include(
             "The vaccination cannot take place before 31 August 2020"
           )
         end
