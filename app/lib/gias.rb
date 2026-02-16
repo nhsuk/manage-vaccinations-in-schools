@@ -2,13 +2,15 @@
 
 module GIAS
   class << self
-    def download(output_file:)
+    def download(output_file:, logger: Rails.logger)
       # 1. Go to https://get-information-schools.service.gov.uk/Downloads
       # 2. Check "Establishment fields CSV"
       # 3. Check "Establishment links CSV"
       # 4. Submit
       # 5. Download the zip file
       # 6. Move the downloaded file to db/data/dfe-schools.zip
+
+      logger.info "Starting schools data download process..."
 
       require "mechanize"
 
@@ -36,13 +38,16 @@ module GIAS
         download_button = download_form.button_with(value: "Results.zip")
         download_file = agent.click(download_button)
         download_file.save!(output_file)
+        logger.info "File downloaded successfully to #{output_file}"
         true
       else
+        logger.info "Download button never appeared, aborting"
         false
       end
     end
 
-    def import(input_file:, progress_bar: nil)
+    def import(input_file:, progress_bar: nil, logger: Rails.logger)
+      logger.info "Starting import of #{row_count(input_file) - 1} schools."
       open_csv(input_file) do |rows|
         batch_size = 1000
         schools = []
@@ -191,6 +196,71 @@ module GIAS
       }
     end
 
+    def log_import_check_results(results, logger: Rails.logger)
+      new_schools = results[:new_schools]
+      schools_with_future_sessions = results[:schools_with_future_sessions]
+      schools_without_future_sessions =
+        results[:schools_without_future_sessions]
+
+      closed_schools_count =
+        schools_without_future_sessions[:closed].count +
+          schools_with_future_sessions[:closed].count
+      closing_schools_count =
+        schools_without_future_sessions[:closing].count +
+          schools_with_future_sessions[:closing].count
+
+      closed_schools_with_future_sessions_pct =
+        calculate_percentage(schools_with_future_sessions, :closed)
+      closing_schools_with_future_sessions_pct =
+        calculate_percentage(schools_with_future_sessions, :closing)
+      schools_with_changed_year_groups_pct =
+        calculate_percentage(schools_with_future_sessions, :year_group_changes)
+
+      logger.info <<~OUTPUT
+                  New schools (total): #{new_schools.count}
+               Closed schools (total): #{closed_schools_count}
+Proposed to be closed schools (total): #{closing_schools_count}
+
+   Existing schools with future sessions: #{schools_with_future_sessions[:existing].count}
+               That are closed in import: #{schools_with_future_sessions[:closed].count} (#{closed_schools_with_future_sessions_pct * 100}%)
+That are proposed to be closed in import: #{schools_with_future_sessions[:closing].count} (#{closing_schools_with_future_sessions_pct * 100}%)
+            That have year group changes: #{schools_with_future_sessions[:year_group_changes].count} (#{schools_with_changed_year_groups_pct * 100}%)
+      OUTPUT
+
+      if schools_with_future_sessions[:closed].any?
+        logger.info "\nURNs of closed schools with future sessions:"
+        schools_with_future_sessions[:closed].sort.each do |urn, successors|
+          if successors.any?
+            successor_info = format_successors_with_teams(successors)
+            logger.info "  #{urn} -> successor(s): #{successor_info}"
+          else
+            logger.info "  #{urn}"
+          end
+        end
+      end
+
+      if schools_with_future_sessions[:closing].any?
+        logger.info "\nURNs of schools that will be closing, with future sessions:"
+        schools_with_future_sessions[:closing].sort.each do |urn, successors|
+          if successors.any?
+            successor_info = format_successors_with_teams(successors)
+            logger.info "  #{urn} -> successor(s): #{successor_info}"
+          else
+            logger.info "  #{urn}"
+          end
+        end
+      end
+
+      if schools_with_future_sessions[:year_group_changes].any?
+        logger.info "\nURNs of schools with year group changes, with future sessions:"
+        schools_with_future_sessions[:year_group_changes].each do |urn, change|
+          logger.info "  #{urn}:"
+          logger.info "    Current:  #{change[:current]}"
+          logger.info "    New:      #{change[:new]}"
+        end
+      end
+    end
+
     def process_url(url)
       return nil if url.blank?
 
@@ -315,6 +385,46 @@ module GIAS
           new: new_year_groups
         }
       end
+    end
+
+    def calculate_percentage(schools_set, metric)
+      if schools_set[:existing].count.positive?
+        schools_set[metric].count.to_f / schools_set[:existing].count
+      else
+        0.0
+      end
+    end
+
+    def format_successors_with_teams(successor_urns)
+      annotated_successor_urns =
+        successor_urns.map do |successor_urn|
+          locations = Location.school.where(urn: successor_urn)
+
+          if locations.count == 1
+            teams = locations.sole.teams.uniq
+            if teams.any?
+              team_names = teams.map(&:name).join(", ")
+              "#{successor_urn} (Team: #{team_names})"
+            else
+              "#{successor_urn} (no team)"
+            end
+          elsif locations.count > 1
+            site_urns =
+              locations.where.not(site: nil).map(&:urn_and_site).join(", ")
+            team_names =
+              locations
+                .where.not(site: nil)
+                .flat_map(&:teams)
+                .uniq
+                .map(&:name)
+                .join(", ")
+            "#{site_urns} (Teams: #{team_names})"
+          else
+            "#{successor_urn} (not found)"
+          end
+        end
+
+      annotated_successor_urns.join(", ")
     end
   end
 end
