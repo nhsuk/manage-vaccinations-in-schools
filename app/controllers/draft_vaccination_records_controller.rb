@@ -63,6 +63,7 @@ class DraftVaccinationRecordsController < ApplicationController
 
     reload_steps
 
+    require 'pry'; binding.pry
     render_wizard @draft_vaccination_record
   end
 

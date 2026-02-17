@@ -70,9 +70,9 @@ class DraftVaccinationRecord
       :date_and_time,
       (:outcome if can_change_outcome?),
       (:supplier if requires_supplied_by?),
-      (:delivery if administered?),
-      (:dose if administered? && can_be_half_dose?),
-      (:batch if administered?),
+      (:delivery if administered? && !reported_as_already_vaccinated?),
+      (:dose if administered? && can_be_half_dose? && !reported_as_already_vaccinated?),
+      (:batch if administered? && !reported_as_already_vaccinated?),
       (
         if !already_had? && (session&.generic_clinic? || national_reporting_user_and_record?)
           :location
@@ -162,7 +162,7 @@ class DraftVaccinationRecord
 
   with_options on: :update,
                if: -> do
-                 required_for_step?(:confirm, exact: true) && administered?
+                 required_for_step?(:confirm, exact: true) && administered? && !reported_as_already_vaccinated?
                end do
     validates :delivery_method,
               :delivery_site,
@@ -191,8 +191,7 @@ class DraftVaccinationRecord
   end
 
   def reported_as_already_vaccinated?
-    Flipper.enabled?(:already_vaccinated) && already_had? &&
-      reported_by_id.present?
+    Flipper.enabled?(:already_vaccinated) && administered? && sourced_from_manual_report?
   end
 
   # So that a form error matches to a field in this model
@@ -381,6 +380,8 @@ class DraftVaccinationRecord
 
   def sourced_from_national_reporting? = source == "national_reporting"
 
+  def sourced_from_manual_report? = source == "manual_report"
+
   def national_reporting_user_and_record?
     @current_user.selected_team.has_national_reporting_access? &&
       sourced_from_national_reporting?
@@ -487,7 +488,7 @@ class DraftVaccinationRecord
   def can_be_half_dose? = vaccine_method == "nasal"
 
   def can_change_outcome?
-    (outcome != "already_had" || editing? || session.nil? || session.today?) &&
+    ((outcome != "already_had" && reported_at.nil?) || editing? || session.nil? || session.today?) &&
       !national_reporting_user_and_record?
   end
 

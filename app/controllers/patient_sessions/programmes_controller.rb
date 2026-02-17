@@ -31,7 +31,7 @@ class PatientSessions::ProgrammesController < PatientSessions::BaseController
       first_active_wizard_step:,
       location_id: nil,
       location_name: "Unknown",
-      outcome: :already_had,
+      outcome: (Flipper.enabled?(:already_vaccinated) ? :administered : :already_had),
       patient: @patient,
       performed_at: (Time.current unless Flipper.enabled?(:already_vaccinated)),
       performed_by_user_id:
@@ -42,7 +42,7 @@ class PatientSessions::ProgrammesController < PatientSessions::BaseController
         (current_user.id if Flipper.enabled?(:already_vaccinated)),
       reported_at: (Time.current if Flipper.enabled?(:already_vaccinated)),
       session: @session,
-      source: "service"
+      source: (Flipper.enabled?(:already_vaccinated) ? :manual_report : :service)
     )
 
     redirect_to draft_vaccination_record_path(
