@@ -833,16 +833,20 @@ class ImmunisationImportRow
   def validate_local_patient_id
     return unless national_reporting?
 
-    if local_patient_id.blank?
+    if local_patient_id.nil?
       errors.add(:base, "<code>LOCAL_PATIENT_ID</code> is required")
+    elsif local_patient_id.blank?
+      errors.add(local_patient_id&.header, "Enter a local patient ID.")
     end
   end
 
   def validate_local_patient_id_uri
     return unless national_reporting?
 
-    if local_patient_id_uri.blank?
+    if local_patient_id_uri.nil?
       errors.add(:base, "<code>LOCAL_PATIENT_ID_URI</code> is required")
+    elsif local_patient_id_uri.blank?
+      errors.add(local_patient_id_uri&.header, "Enter a local patient ID URI.")
     end
   end
 

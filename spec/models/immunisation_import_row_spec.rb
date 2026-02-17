@@ -81,7 +81,7 @@ describe ImmunisationImportRow do
       "PERFORMING_PROFESSIONAL_FORENAME" => vaccinator.given_name,
       "PERFORMING_PROFESSIONAL_SURNAME" => vaccinator.family_name,
       "VACCINE_GIVEN" => "AstraZeneca Fluenz LAIV",
-      "ANATOMICAL_SITE" => "nasal",
+      "ANATOMICAL_SITE" => "nasal"
     )
   end
   let(:valid_national_reporting_hpv_data) do
@@ -123,6 +123,9 @@ describe ImmunisationImportRow do
       context "with headers, but an empty row" do
         let(:data) do
           {
+            "ORGANISATION_CODE" => "",
+            "SCHOOL_NAME" => "",
+            "SCHOOL_URN" => "",
             "NHS_NUMBER" => "",
             "PERSON_FORENAME" => "",
             "PERSON_SURNAME" => "",
@@ -132,42 +135,34 @@ describe ImmunisationImportRow do
             "PROGRAMME" => "",
             "DATE_OF_VACCINATION" => "",
             "REASON_NOT_VACCINATED" => "",
-            "VACCINATED" => ""
+            "VACCINATED" => "",
+            "BATCH_EXPIRY_DATE" => "",
+            "BATCH_NUMBER" => "",
+            "ANATOMICAL_SITE" => "",
+            "PERFORMING_PROFESSIONAL_FORENAME" => "",
+            "PERFORMING_PROFESSIONAL_SURNAME" => "",
+            "VACCINE_GIVEN" => ""
           }
         end
 
         it "has the correct errors" do
           expect(immunisation_import_row).to be_invalid
-          expect(immunisation_import_row.errors[:base]).to be_empty
 
-          expect(immunisation_import_row.errors["PERSON_FORENAME"]).to eq(
-            ["Enter a first name."]
-          )
-          expect(immunisation_import_row.errors["PERSON_SURNAME"]).to eq(
-            ["Enter a last name."]
-          )
-          expect(immunisation_import_row.errors["PERSON_DOB"]).to eq(
-            ["Enter a date of birth."]
-          )
-          expect(immunisation_import_row.errors["PERSON_POSTCODE"]).to eq(
-            ["Enter a valid postcode, such as SW1A 1AA."]
-          )
-          expect(immunisation_import_row.errors["PERSON_GENDER_CODE"]).to eq(
-            ["Enter a gender or gender code."]
-          )
-          expect(immunisation_import_row.errors["PROGRAMME"]).to eq(
-            ["Enter a programme."]
-          )
-          expect(immunisation_import_row.errors["DATE_OF_VACCINATION"]).to eq(
-            ["Enter a date."]
-          )
-          expect(immunisation_import_row.errors["REASON_NOT_VACCINATED"]).to eq(
-            ["Enter a valid reason."]
-          )
-          expect(immunisation_import_row.errors["VACCINATED"]).to eq(
-            [
-              "You need to record whether the child was vaccinated or not. Enter ‘Y’ or ‘N’ in the ‘VACCINATED’ column."
-            ]
+          expect(immunisation_import_row.errors.to_hash).to eq(
+            {
+              VACCINATED: [
+                "You need to record whether the child was vaccinated or not. " \
+                  "Enter ‘Y’ or ‘N’ in the ‘VACCINATED’ column."
+              ],
+              DATE_OF_VACCINATION: ["Enter a date."],
+              PERSON_DOB: ["Enter a date of birth."],
+              PERSON_FORENAME: ["Enter a first name."],
+              PERSON_GENDER_CODE: ["Enter a gender or gender code."],
+              PERSON_SURNAME: ["Enter a last name."],
+              PERSON_POSTCODE: ["Enter a valid postcode, such as SW1A 1AA."],
+              PROGRAMME: ["Enter a programme."],
+              REASON_NOT_VACCINATED: ["Enter a valid reason."]
+            }
           )
         end
       end
@@ -1206,6 +1201,55 @@ describe ImmunisationImportRow do
           let(:data) { basic_flu_data }
 
           include_examples "it is equivalent to `VACCINATED` being `Y`"
+        end
+
+        context "with headers, but an empty row" do
+          let(:data) do
+            {
+              "ORGANISATION_CODE" => "",
+              "SCHOOL_NAME" => "",
+              "SCHOOL_URN" => "",
+              "NHS_NUMBER" => "",
+              "PERSON_FORENAME" => "",
+              "PERSON_SURNAME" => "",
+              "PERSON_DOB" => "",
+              "PERSON_POSTCODE" => "",
+              "PERSON_GENDER_CODE" => "",
+              "DATE_OF_VACCINATION" => "",
+              "VACCINATED" => "",
+              "PERFORMING_PROFESSIONAL_FORENAME" => "",
+              "PERFORMING_PROFESSIONAL_SURNAME" => "",
+              "VACCINE_GIVEN" => "",
+              "ANATOMICAL_SITE" => "",
+              "BATCH_EXPIRY_DATE" => "",
+              "BATCH_NUMBER" => "",
+              "LOCAL_PATIENT_ID" => "",
+              "LOCAL_PATIENT_ID_URI" => ""
+            }
+          end
+
+          it "has the correct errors" do
+            expect(immunisation_import_row).to be_invalid
+
+            expect(immunisation_import_row.errors.to_hash).to eq(
+              {
+                BATCH_EXPIRY_DATE: ["Enter a batch expiry date."],
+                BATCH_NUMBER: ["Enter a batch number."],
+                DATE_OF_VACCINATION: ["Enter a date."],
+                ANATOMICAL_SITE: ["Enter an anatomical site."],
+                LOCAL_PATIENT_ID: ["Enter a local patient ID."],
+                LOCAL_PATIENT_ID_URI: ["Enter a local patient ID URI."],
+                PERSON_DOB: ["Enter a date of birth."],
+                PERSON_FORENAME: ["Enter a first name."],
+                PERSON_GENDER_CODE: ["Enter a gender or gender code."],
+                PERSON_SURNAME: ["Enter a last name."],
+                PERSON_POSTCODE: ["Enter a valid postcode, such as SW1A 1AA."],
+                ORGANISATION_CODE: ["Enter an organisation code."],
+                SCHOOL_URN: ["Enter a school URN."],
+                VACCINE_GIVEN: ["Enter a vaccine name."]
+              }
+            )
+          end
         end
 
         context "when `VACCINATED` is `Y`" do
@@ -2664,12 +2708,12 @@ describe ImmunisationImportRow do
       end
 
       context "of type flu" do
-        shared_examples "accepts a VACCINE_GIVEN code" do |vaccine_given, snomed_product_code, anatomical_site: "right deltoid"|
+        shared_examples "accepts a VACCINE_GIVEN code" do |vaccine_given, snomed_product_code, anatomical_site|
           context "with code: #{vaccine_given}" do
             let(:data) do
               valid_national_reporting_flu_data.merge(
                 "VACCINE_GIVEN" => vaccine_given,
-                "ANATOMICAL_SITE" => anatomical_site
+                "ANATOMICAL_SITE" => anatomical_site || "right deltoid"
               )
             end
 
@@ -2763,7 +2807,7 @@ describe ImmunisationImportRow do
         include_examples "accepts a VACCINE_GIVEN code",
                          "AstraZeneca Fluenz LAIV",
                          "43208811000001106",
-                         anatomical_site: "nasal"
+                         "nasal"
         include_examples "accepts a VACCINE_GIVEN code",
                          "Viatris Quadrivalent Influvac sub - unit Tetra - QIVe",
                          "45354911000001100"
