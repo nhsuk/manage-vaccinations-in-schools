@@ -238,6 +238,10 @@ class Location < ApplicationRecord
     )
   end
 
+  def teams_for_academic_year(academic_year)
+    team_locations.where(academic_year:).includes(:team).map(&:team)
+  end
+
   def attach_to_team!(team, academic_year:, subteam: nil)
     team_locations
       .find_or_initialize_by(team:, academic_year:)
