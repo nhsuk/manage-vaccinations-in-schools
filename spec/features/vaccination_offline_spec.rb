@@ -53,6 +53,7 @@ describe "Offline vaccination" do
 
     when_i_review_the_duplicate_record
     then_i_should_see_the_changes
+    and_i_shouldnt_see_the_synced_with_nhs_row
 
     when_i_choose_to_keep_the_duplicate_record
     then_i_should_see_a_success_message
@@ -412,6 +413,10 @@ describe "Offline vaccination" do
       ".app-highlight",
       text: "Right arm (upper position)"
     )
+  end
+
+  def and_i_shouldnt_see_the_synced_with_nhs_row
+    expect(page).not_to have_content("Synced with NHS England?")
   end
 
   def when_i_choose_to_keep_the_duplicate_record
