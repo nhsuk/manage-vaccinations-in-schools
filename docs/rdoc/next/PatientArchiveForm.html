@@ -577,6 +577,8 @@
 
         <li ><a href="#method-i-duplicate-3F">duplicate?</a></li>
 
+        <li ><a href="#method-i-nhs_number_is_different">nhs_number_is_different</a></li>
+
         <li ><a href="#method-i-other-3F">other?</a></li>
 
         <li class="calls-super" ><a href="#method-i-save">save</a></li>
@@ -705,14 +707,72 @@
             </details>
           </div>
           <div class="method-source-code" id="duplicate-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/forms/patient_archive_form.rb, line 35</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/forms/patient_archive_form.rb, line 37</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">duplicate?</span> = <span class="ruby-identifier">type</span> <span class="ruby-operator">==</span> <span class="ruby-string">&quot;duplicate&quot;</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">other?</span> = <span class="ruby-identifier">type</span> <span class="ruby-operator">==</span> <span class="ruby-string">&quot;other&quot;</span>
 
 <span class="ruby-identifier">private</span>
 
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">team</span> = <span class="ruby-identifier">current_user</span></pre>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">team</span> = <span class="ruby-identifier">current_user</span>.<span class="ruby-identifier">selected_team</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">nhs_number_is_different</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">nhs_number</span>.<span class="ruby-identifier">blank?</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">nhs_number</span> <span class="ruby-operator">!=</span> <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">nhs_number</span>
+
+  <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(
+    <span class="ruby-value">:nhs_number</span>,
+    <span class="ruby-string">&quot;No other child record has this NHS number. Enter the NHS number of the duplicate record.&quot;</span>
+  )
+</pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-i-nhs_number_is_different" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-nhs_number_is_different" title="Link to this method">
+                <span class="method-name">nhs_number_is_different</span>
+                <span class="method-args">()</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="nhs_number_is_different-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/forms/patient_archive_form.rb, line 45</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">nhs_number_is_different</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">nhs_number</span>.<span class="ruby-identifier">blank?</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">nhs_number</span> <span class="ruby-operator">!=</span> <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">nhs_number</span>
+
+  <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(
+    <span class="ruby-value">:nhs_number</span>,
+    <span class="ruby-string">&quot;No other child record has this NHS number. Enter the NHS number of the duplicate record.&quot;</span>
+  )
+<span class="ruby-keyword">end</span></pre>
           </div>
 
 
@@ -751,12 +811,22 @@
             </details>
           </div>
           <div class="method-source-code" id="other-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/forms/patient_archive_form.rb, line 37</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/forms/patient_archive_form.rb, line 39</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">other?</span> = <span class="ruby-identifier">type</span> <span class="ruby-operator">==</span> <span class="ruby-string">&quot;other&quot;</span>
 
 <span class="ruby-identifier">private</span>
 
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">team</span> = <span class="ruby-identifier">current_user</span>.<span class="ruby-identifier">selected_team</span></pre>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">team</span> = <span class="ruby-identifier">current_user</span>.<span class="ruby-identifier">selected_team</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">nhs_number_is_different</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">nhs_number</span>.<span class="ruby-identifier">blank?</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">nhs_number</span> <span class="ruby-operator">!=</span> <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">nhs_number</span>
+
+  <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(
+    <span class="ruby-value">:nhs_number</span>,
+    <span class="ruby-string">&quot;No other child record has this NHS number. Enter the NHS number of the duplicate record.&quot;</span>
+  )
+<span class="ruby-keyword">end</span></pre>
           </div>
 
 
@@ -795,7 +865,7 @@
             </details>
           </div>
           <div class="method-source-code" id="save-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/forms/patient_archive_form.rb, line 25</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/forms/patient_archive_form.rb, line 27</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">save</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">valid?</span>
 
@@ -848,8 +918,18 @@
             </details>
           </div>
           <div class="method-source-code" id="team-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/forms/patient_archive_form.rb, line 41</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/forms/patient_archive_form.rb, line 43</span>
   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">team</span> = <span class="ruby-identifier">current_user</span>.<span class="ruby-identifier">selected_team</span>
+
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">nhs_number_is_different</span>
+    <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">nhs_number</span>.<span class="ruby-identifier">blank?</span>
+    <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">nhs_number</span> <span class="ruby-operator">!=</span> <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">nhs_number</span>
+
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(
+      <span class="ruby-value">:nhs_number</span>,
+      <span class="ruby-string">&quot;No other child record has this NHS number. Enter the NHS number of the duplicate record.&quot;</span>
+    )
+  <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
 

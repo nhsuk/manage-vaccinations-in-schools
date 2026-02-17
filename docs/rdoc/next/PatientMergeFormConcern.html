@@ -588,6 +588,8 @@
 
         <li ><a href="#method-i-existing_patient">existing_patient</a></li>
 
+        <li ><a href="#method-i-find_existing">find_existing</a></li>
+
         <li class="calls-super" ><a href="#method-i-nhs_number-3D">nhs_number=</a></li>
 
         <li ><a href="#method-i-save">save</a></li>
@@ -676,17 +678,56 @@
           <div class="method-source-code" id="existing_patient-source">
             <pre class="ruby"><span class="ruby-comment"># File app/forms/concerns/patient_merge_form_concern.rb, line 17</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">existing_patient</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">nhs_number</span>.<span class="ruby-identifier">blank?</span>
+
   <span class="ruby-ivar">@existing_patient</span> <span class="ruby-operator">||=</span>
-    <span class="ruby-keyword">if</span> <span class="ruby-identifier">nhs_number</span>.<span class="ruby-identifier">present?</span>
-      <span class="ruby-identifier">patient_policy_scope</span>.<span class="ruby-identifier">includes</span>(<span class="ruby-value">:vaccination_records</span>).<span class="ruby-identifier">find_by</span>(
-        <span class="ruby-value">nhs_number:</span>
-      ) <span class="ruby-operator">||</span>
-        <span class="ruby-constant">Patient</span>
-          .<span class="ruby-identifier">where</span>
-          .<span class="ruby-identifier">missing</span>(<span class="ruby-value">:patient_locations</span>)
-          .<span class="ruby-identifier">includes</span>(<span class="ruby-value">:vaccination_records</span>)
-          .<span class="ruby-identifier">find_by</span>(<span class="ruby-value">nhs_number:</span>)
-    <span class="ruby-keyword">end</span>
+    <span class="ruby-identifier">find_existing</span>(<span class="ruby-identifier">patient_policy_scope</span>) <span class="ruby-operator">||</span>
+      <span class="ruby-identifier">find_existing</span>(<span class="ruby-constant">Patient</span>.<span class="ruby-identifier">where</span>.<span class="ruby-identifier">missing</span>(<span class="ruby-value">:patient_locations</span>))
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-i-find_existing" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-find_existing" title="Link to this method">
+                <span class="method-name">find_existing</span>
+                <span class="method-args">(scope)</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="find_existing-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/forms/concerns/patient_merge_form_concern.rb, line 25</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">find_existing</span>(<span class="ruby-identifier">scope</span>)
+  <span class="ruby-identifier">scope</span>
+    .<span class="ruby-identifier">where</span>.<span class="ruby-identifier">not</span>(<span class="ruby-value">id:</span> <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">id</span>)
+    .<span class="ruby-identifier">includes</span>(<span class="ruby-value">:vaccination_records</span>)
+    .<span class="ruby-identifier">find_by</span>(<span class="ruby-value">nhs_number:</span> <span class="ruby-identifier">nhs_number</span>)
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -773,7 +814,7 @@
             </details>
           </div>
           <div class="method-source-code" id="save-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/forms/concerns/patient_merge_form_concern.rb, line 31</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/forms/concerns/patient_merge_form_concern.rb, line 32</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">save</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">invalid?</span>
 
