@@ -761,7 +761,7 @@ index_vaccines_on_upload_name             (upload_name) UNIQUE</pre>
             </details>
           </div>
           <div class="method-source-code" id="delivery_method_to_vaccine_method-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/vaccine.rb, line 100</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/vaccine.rb, line 102</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">delivery_method_to_vaccine_method</span>(<span class="ruby-identifier">delivery_method</span>)
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">delivery_method</span>.<span class="ruby-identifier">nil?</span>
 
@@ -835,6 +835,8 @@ index_vaccines_on_upload_name             (upload_name) UNIQUE</pre>
       right_arm_lower_position
       left_thigh
       right_thigh
+      left_buttock
+      right_buttock
     ]</span>,
     <span class="ruby-string">&quot;nasal&quot;</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-node">%w[nose]</span>
   }.<span class="ruby-identifier">freeze</span>
@@ -996,7 +998,7 @@ index_vaccines_on_upload_name             (upload_name) UNIQUE</pre>
             </details>
           </div>
           <div class="method-source-code" id="available_delivery_methods-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/vaccine.rb, line 96</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/vaccine.rb, line 98</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">available_delivery_methods</span>
   <span class="ruby-constant">AVAILABLE_DELIVERY_METHODS</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">method</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -1038,7 +1040,7 @@ index_vaccines_on_upload_name             (upload_name) UNIQUE</pre>
             </details>
           </div>
           <div class="method-source-code" id="available_delivery_sites-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/vaccine.rb, line 87</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/vaccine.rb, line 89</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">available_delivery_sites</span>
   <span class="ruby-constant">AVAILABLE_DELIVERY_SITES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">method</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -1080,7 +1082,7 @@ index_vaccines_on_upload_name             (upload_name) UNIQUE</pre>
             </details>
           </div>
           <div class="method-source-code" id="fhir_mapper-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/vaccine.rb, line 202</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/vaccine.rb, line 204</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">fhir_mapper</span>
   <span class="ruby-ivar">@fhir_mapper</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">FHIRMapper</span><span class="ruby-operator">::</span><span class="ruby-constant">Vaccine</span>.<span class="ruby-identifier">new</span>(<span class="ruby-keyword">self</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -1122,7 +1124,7 @@ index_vaccines_on_upload_name             (upload_name) UNIQUE</pre>
             </details>
           </div>
           <div class="method-source-code" id="snomed_procedure-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/vaccine.rb, line 183</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/vaccine.rb, line 185</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">snomed_procedure</span>(<span class="ruby-value">dose_sequence:</span> <span class="ruby-keyword">nil</span>)
   <span class="ruby-identifier">procedures</span> =
     <span class="ruby-constant">SNOMED_PROCEDURE</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">programme</span>.<span class="ruby-identifier">variant_type</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">type</span>).<span class="ruby-identifier">fetch</span>(
@@ -1169,7 +1171,7 @@ index_vaccines_on_upload_name             (upload_name) UNIQUE</pre>
             </details>
           </div>
           <div class="method-source-code" id="snomed_procedure_code-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/vaccine.rb, line 192</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/vaccine.rb, line 194</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">snomed_procedure_code</span>(<span class="ruby-value">dose_sequence:</span>)
   <span class="ruby-identifier">snomed_procedure</span>(<span class="ruby-value">dose_sequence:</span>).<span class="ruby-identifier">fetch</span>(<span class="ruby-value">:code</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -1211,7 +1213,7 @@ index_vaccines_on_upload_name             (upload_name) UNIQUE</pre>
             </details>
           </div>
           <div class="method-source-code" id="snomed_procedure_term-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/vaccine.rb, line 196</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/vaccine.rb, line 198</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">snomed_procedure_term</span>(<span class="ruby-value">dose_sequence:</span> <span class="ruby-keyword">nil</span>)
   <span class="ruby-identifier">snomed_procedure</span>(<span class="ruby-value">dose_sequence:</span>).<span class="ruby-identifier">fetch</span>(<span class="ruby-value">:term</span>)
 <span class="ruby-keyword">end</span></pre>
