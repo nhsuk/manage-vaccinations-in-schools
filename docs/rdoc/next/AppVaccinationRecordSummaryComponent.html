@@ -637,7 +637,7 @@
             <div class="method-heading">
               <a href="#method-c-new" title="Link to this method">
                 <span class="method-name">new</span>
-                <span class="method-args">( vaccination_record, current_user:, change_links: {}, show_notes: true )</span>
+                <span class="method-args">( vaccination_record, current_user:, change_links: {}, show_notes: true, comparing: false )</span>
               </a>
             </div>
 
@@ -655,12 +655,14 @@
   <span class="ruby-identifier">vaccination_record</span>,
   <span class="ruby-value">current_user:</span>,
   <span class="ruby-value">change_links:</span> {},
-  <span class="ruby-value">show_notes:</span> <span class="ruby-keyword">true</span>
+  <span class="ruby-value">show_notes:</span> <span class="ruby-keyword">true</span>,
+  <span class="ruby-value">comparing:</span> <span class="ruby-keyword">false</span>
 )
   <span class="ruby-ivar">@vaccination_record</span> = <span class="ruby-identifier">vaccination_record</span>
   <span class="ruby-ivar">@current_user</span> = <span class="ruby-identifier">current_user</span>
   <span class="ruby-ivar">@change_links</span> = <span class="ruby-identifier">change_links</span>
   <span class="ruby-ivar">@show_notes</span> = <span class="ruby-identifier">show_notes</span>
+  <span class="ruby-ivar">@comparing</span> = <span class="ruby-identifier">comparing</span>
 
   <span class="ruby-ivar">@identity_check</span> = <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">identity_check</span>
   <span class="ruby-ivar">@patient</span> = <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">patient</span>
@@ -719,7 +721,7 @@
             </details>
           </div>
           <div class="method-source-code" id="call-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/components/app_vaccination_record_summary_component.rb, line 21</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/components/app_vaccination_record_summary_component.rb, line 23</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">call</span>
   <span class="ruby-identifier">govuk_summary_list</span>(<span class="ruby-value">actions:</span> <span class="ruby-ivar">@change_links</span>.<span class="ruby-identifier">present?</span>) <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">summary_list</span><span class="ruby-operator">|</span>
     <span class="ruby-identifier">summary_list</span>.<span class="ruby-identifier">with_row</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">row</span><span class="ruby-operator">|</span>
@@ -1018,7 +1020,8 @@
       <span class="ruby-keyword">end</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-constant">Flipper</span>.<span class="ruby-identifier">enabled?</span>(<span class="ruby-value">:imms_api_integration</span>)
     <span class="ruby-keyword">if</span> <span class="ruby-ivar">@vaccination_record</span>.<span class="ruby-identifier">respond_to?</span>(<span class="ruby-value">:sync_status</span>) <span class="ruby-operator">&amp;&amp;</span>
          <span class="ruby-identifier">correct_feature_flags_enabled</span> <span class="ruby-operator">&amp;&amp;</span>
-         <span class="ruby-ivar">@vaccination_record</span>.<span class="ruby-identifier">correct_source_for_nhs_immunisations_api?</span>
+         <span class="ruby-ivar">@vaccination_record</span>.<span class="ruby-identifier">correct_source_for_nhs_immunisations_api?</span> <span class="ruby-operator">&amp;&amp;</span>
+         <span class="ruby-operator">!</span><span class="ruby-ivar">@comparing</span>
       <span class="ruby-identifier">summary_list</span>.<span class="ruby-identifier">with_row</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">row</span><span class="ruby-operator">|</span>
         <span class="ruby-identifier">row</span>.<span class="ruby-identifier">with_key</span> { <span class="ruby-string">&quot;Synced with NHS England?&quot;</span> }
         <span class="ruby-identifier">row</span>.<span class="ruby-identifier">with_value</span> <span class="ruby-keyword">do</span>
