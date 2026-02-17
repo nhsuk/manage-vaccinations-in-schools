@@ -5,17 +5,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>class MavisCLI::PDS::Get - Mavis Documentation</title>
+<title>class MavisCLI::Teams::SetNationalReportingCutOffDate - Mavis Documentation</title>
 
 
   <meta
     name="keywords"
-    content="ruby,class,MavisCLI::PDS::Get"
+    content="ruby,class,MavisCLI::Teams::SetNationalReportingCutOffDate"
   >
 
     <meta
       name="description"
-      content="Documentation for the MavisCLI::PDS::Get class"
+      content="Documentation for the MavisCLI::Teams::SetNationalReportingCutOffDate class"
     >
 
 
@@ -24,13 +24,13 @@
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content="website">
-<meta property="og:title" content="class MavisCLI::PDS::Get - Mavis Documentation">
+<meta property="og:title" content="class MavisCLI::Teams::SetNationalReportingCutOffDate - Mavis Documentation">
 
 
 
     <meta
       property="og:description"
-      content="Documentation for MavisCLI::PDS::Get class - API reference and code examples"
+      content="Documentation for MavisCLI::Teams::SetNationalReportingCutOffDate class - API reference and code examples"
     >
 
 
@@ -39,13 +39,13 @@
 
 <!-- Twitter -->
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="class MavisCLI::PDS::Get - Mavis Documentation">
+<meta name="twitter:title" content="class MavisCLI::Teams::SetNationalReportingCutOffDate - Mavis Documentation">
 
 
 
     <meta
       name="twitter:description"
-      content="Documentation for MavisCLI::PDS::Get class - API reference and code examples"
+      content="Documentation for MavisCLI::Teams::SetNationalReportingCutOffDate class - API reference and code examples"
     >
 
 
@@ -578,7 +578,7 @@
 
 </nav>
 
-<main role="main" aria-labelledby="class-maviscli-pds-get">
+<main role="main" aria-labelledby="class-maviscli-teams-setnationalreportingcutoffdate">
   
   
     <ol role="navigation" aria-label="Breadcrumb navigation" class="breadcrumb">
@@ -591,22 +591,22 @@
       
       <li>
         
-        <a href="../../MavisCLI/PDS.html">PDS</a><span>::</span>
+        <a href="../../MavisCLI/Teams.html">Teams</a><span>::</span>
         
       </li>
       
       <li>
         
-        <span>Get</span>
+        <span>SetNationalReportingCutOffDate</span>
         
       </li>
       
     </ol>
   
 
-  <span id="class-MavisCLI::PDS::Get" class="legacy-anchor"></span>
-  <h1 id="class-maviscli-pds-get" class="anchor-link class">
-    class MavisCLI::PDS::Get
+  <span id="class-MavisCLI::Teams::SetNationalReportingCutOffDate" class="legacy-anchor"></span>
+  <h1 id="class-maviscli-teams-setnationalreportingcutoffdate" class="anchor-link class">
+    class MavisCLI::Teams::SetNationalReportingCutOffDate
   </h1>
 
   <section class="description">
@@ -646,7 +646,7 @@
             <div class="method-heading">
               <a href="#method-i-call" title="Link to this method">
                 <span class="method-name">call</span>
-                <span class="method-args">(nhs_number:)</span>
+                <span class="method-args">(workgroup: nil, date: nil, clear: false, **)</span>
               </a>
             </div>
 
@@ -659,21 +659,44 @@
             </details>
           </div>
           <div class="method-source-code" id="call-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/mavis_cli/pds/get.rb, line 10</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">call</span>(<span class="ruby-value">nhs_number:</span>)
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/mavis_cli/teams/set_national_reporting_cut_off_date.rb, line 12</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">call</span>(<span class="ruby-value">workgroup:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">date:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">clear:</span> <span class="ruby-keyword">false</span>, <span class="ruby-operator">**</span>)
   <span class="ruby-constant">MavisCLI</span>.<span class="ruby-identifier">load_rails</span>
 
-  <span class="ruby-identifier">response</span> = <span class="ruby-constant">NHS</span><span class="ruby-operator">::</span><span class="ruby-constant">PDS</span>.<span class="ruby-identifier">get_patient</span>(<span class="ruby-identifier">nhs_number</span>)
+  <span class="ruby-identifier">raise</span> <span class="ruby-constant">ArgumentError</span>, <span class="ruby-string">&quot;workgroup is required&quot;</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">workgroup</span>.<span class="ruby-identifier">blank?</span>
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">clear</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">date</span>.<span class="ruby-identifier">present?</span>
+    <span class="ruby-identifier">raise</span> <span class="ruby-constant">ArgumentError</span>, <span class="ruby-string">&quot;Provide either --date or --clear, not both&quot;</span>
+  <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">if</span> <span class="ruby-operator">!</span><span class="ruby-identifier">clear</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">date</span>.<span class="ruby-identifier">blank?</span>
+    <span class="ruby-identifier">raise</span> <span class="ruby-constant">ArgumentError</span>, <span class="ruby-string">&quot;Either --date or --clear is required&quot;</span>
+  <span class="ruby-keyword">end</span>
 
-  <span class="ruby-keyword">if</span> <span class="ruby-identifier">response</span>.<span class="ruby-identifier">nil?</span>
-    <span class="ruby-identifier">puts</span> <span class="ruby-string">&quot;Response from NHS::PDS is `nil`&quot;</span>
+  <span class="ruby-identifier">cut_off_date</span> = <span class="ruby-keyword">nil</span>
+  <span class="ruby-keyword">unless</span> <span class="ruby-identifier">clear</span>
+    <span class="ruby-keyword">begin</span>
+      <span class="ruby-identifier">cut_off_date</span> = <span class="ruby-constant">Date</span>.<span class="ruby-identifier">parse</span>(<span class="ruby-identifier">date</span>)
+    <span class="ruby-keyword">rescue</span> <span class="ruby-constant">ArgumentError</span>
+      <span class="ruby-identifier">raise</span> <span class="ruby-constant">ArgumentError</span>,
+            <span class="ruby-node">&quot;Invalid date format: #{date} (expected YYYY-MM-DD)&quot;</span>
+    <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-identifier">team</span> = <span class="ruby-constant">Team</span>.<span class="ruby-identifier">find_by</span>(<span class="ruby-value">workgroup:</span>)
+  <span class="ruby-identifier">raise</span> <span class="ruby-constant">ArgumentError</span>, <span class="ruby-node">&quot;Team not found: #{workgroup}&quot;</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">team</span>.<span class="ruby-identifier">nil?</span>
+  <span class="ruby-keyword">unless</span> <span class="ruby-identifier">team</span>.<span class="ruby-identifier">has_national_reporting_access?</span>
+    <span class="ruby-identifier">raise</span> <span class="ruby-constant">ArgumentError</span>,
+          <span class="ruby-node">&quot;Team #{workgroup} is not a national reporting team&quot;</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-identifier">team</span>.<span class="ruby-identifier">update!</span>(<span class="ruby-value">national_reporting_cut_off_date:</span> <span class="ruby-identifier">cut_off_date</span>)
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">clear</span>
+    <span class="ruby-identifier">puts</span>(
+      <span class="ruby-node">&quot;Cleared national_reporting_cut_off_date for #{team.name} (#{team.workgroup})&quot;</span>
+    )
   <span class="ruby-keyword">else</span>
-    <span class="ruby-identifier">puts</span> <span class="ruby-identifier">response</span>.<span class="ruby-identifier">status</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">response</span>.<span class="ruby-identifier">status</span> <span class="ruby-operator">==</span> <span class="ruby-value">200</span>
-    <span class="ruby-identifier">puts</span> <span class="ruby-identifier">response</span>.<span class="ruby-identifier">env</span>.<span class="ruby-identifier">url</span>
-    <span class="ruby-identifier">puts</span> <span class="ruby-string">&quot;&quot;</span>
-    <span class="ruby-identifier">puts</span>(<span class="ruby-identifier">response</span>.<span class="ruby-identifier">headers</span>.<span class="ruby-identifier">map</span> { <span class="ruby-node">&quot;#{_1}: #{_2}&quot;</span> })
-    <span class="ruby-identifier">puts</span> <span class="ruby-string">&quot;&quot;</span>
-    <span class="ruby-identifier">puts</span> <span class="ruby-constant">JSON</span>.<span class="ruby-identifier">pretty_generate</span>(<span class="ruby-identifier">response</span>.<span class="ruby-identifier">body</span>)
+    <span class="ruby-identifier">puts</span>(
+      <span class="ruby-node">&quot;Set national_reporting_cut_off_date for #{team.name} (#{team.workgroup}) to #{cut_off_date}&quot;</span>
+    )
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
