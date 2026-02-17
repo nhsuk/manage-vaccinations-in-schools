@@ -25,11 +25,9 @@ describe UserSessionLogger do
 
   describe "#call" do
     before do
-      begin
-        middleware.call(env)
-      rescue StandardError => e
-        raise unless e.message == "Intentional Error for Testing"
-      end
+      middleware.call(env)
+    rescue StandardError => e
+      raise unless e.message == "Intentional Error for Testing"
     end
 
     context "when session exists with an id" do

@@ -6,8 +6,7 @@ describe ReportingAPI::RefreshJob do
 
     before { Flipper.enable(:reporting_api) }
 
-    it "refreshes the reporting API materialized views" do
-      expect(ReportingAPI::PatientProgrammeStatus).to receive(:refresh!)
+    it "refreshes the reporting API materialized view" do
       expect(ReportingAPI::Total).to receive(:refresh!)
       perform
     end
