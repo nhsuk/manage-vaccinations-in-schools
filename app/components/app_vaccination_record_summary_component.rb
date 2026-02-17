@@ -351,12 +351,6 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
     outcome =
       VaccinationRecord.human_enum_name(:outcome, @vaccination_record.outcome)
 
-    if Flipper.enabled?(:already_vaccinated) &&
-         @vaccination_record.already_had? &&
-         @vaccination_record.reported_as_already_vaccinated?
-      outcome = VaccinationRecord.human_enum_name(:outcome, "administered")
-    end
-
     highlight_if(outcome, @vaccination_record.outcome_changed?)
   end
 

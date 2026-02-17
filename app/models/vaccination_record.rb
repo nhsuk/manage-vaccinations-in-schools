@@ -195,7 +195,8 @@ class VaccinationRecord < ApplicationRecord
          historical_upload: 1,
          nhs_immunisations_api: 2,
          consent_refusal: 3,
-         national_reporting: 4
+         national_reporting: 4,
+         manual_report: 5
        },
        prefix: "sourced_from",
        validate: true
@@ -272,7 +273,7 @@ class VaccinationRecord < ApplicationRecord
   def not_administered? = !administered?
 
   def reported_as_already_vaccinated?
-    already_had? && reported_by_id.present?
+    administered? && sourced_from_manual_report?
   end
 
   def show_in_academic_year?(current_academic_year)
