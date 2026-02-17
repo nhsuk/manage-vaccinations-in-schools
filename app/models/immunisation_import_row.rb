@@ -745,6 +745,15 @@ class ImmunisationImportRow
           "Enter a date that matches when the vaccination session took place."
         )
       end
+
+      if national_reporting? && team.national_reporting_cut_off_date &&
+           date_of_vaccination.to_date < team.national_reporting_cut_off_date
+        errors.add(
+          date_of_vaccination.header,
+          "must be on or after your team's start date with Mavis national reporting: " \
+            "#{team.national_reporting_cut_off_date.to_fs(:long)}"
+        )
+      end
     end
   end
 

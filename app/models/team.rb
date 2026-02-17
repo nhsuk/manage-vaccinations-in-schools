@@ -4,26 +4,27 @@
 #
 # Table name: teams
 #
-#  id                            :bigint           not null, primary key
-#  careplus_staff_code           :string
-#  careplus_staff_type           :string
-#  careplus_venue_code           :string
-#  days_before_consent_reminders :integer          default(7), not null
-#  days_before_consent_requests  :integer          default(21), not null
-#  days_before_invitations       :integer          default(21), not null
-#  email                         :string
-#  name                          :text             not null
-#  phone                         :string
-#  phone_instructions            :string
-#  privacy_notice_url            :string
-#  privacy_policy_url            :string
-#  programme_types               :enum             not null, is an Array
-#  type                          :integer          not null
-#  workgroup                     :string           not null
-#  created_at                    :datetime         not null
-#  updated_at                    :datetime         not null
-#  organisation_id               :bigint           not null
-#  reply_to_id                   :uuid
+#  id                              :bigint           not null, primary key
+#  careplus_staff_code             :string
+#  careplus_staff_type             :string
+#  careplus_venue_code             :string
+#  days_before_consent_reminders   :integer          default(7), not null
+#  days_before_consent_requests    :integer          default(21), not null
+#  days_before_invitations         :integer          default(21), not null
+#  email                           :string
+#  name                            :text             not null
+#  national_reporting_cut_off_date :date
+#  phone                           :string
+#  phone_instructions              :string
+#  privacy_notice_url              :string
+#  privacy_policy_url              :string
+#  programme_types                 :enum             not null, is an Array
+#  type                            :integer          not null
+#  workgroup                       :string           not null
+#  created_at                      :datetime         not null
+#  updated_at                      :datetime         not null
+#  organisation_id                 :bigint           not null
+#  reply_to_id                     :uuid
 #
 # Indexes
 #
@@ -95,6 +96,7 @@ class Team < ApplicationRecord
     validates :phone, presence: true, phone: true
     validates :privacy_notice_url, presence: true
     validates :privacy_policy_url, presence: true
+    validates :national_reporting_cut_off_date, absence: true
   end
   validates :workgroup, presence: true, uniqueness: true
 

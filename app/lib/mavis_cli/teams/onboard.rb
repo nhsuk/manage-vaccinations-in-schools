@@ -48,7 +48,7 @@ module MavisCLI
 
             TrainingOnboardingConfiguration.call(ods_code:, workgroup:, type:)
           else
-            YAML.safe_load(File.read(path))
+            YAML.safe_load(File.read(path), permitted_classes: [Date])
           end
 
         onboarding = Onboarding.new(config)

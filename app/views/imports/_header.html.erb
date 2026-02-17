@@ -8,6 +8,13 @@
   <% end %>
 </p>
 
+<% if current_team.has_national_reporting_access? %>
+  <p class="nhsuk-u-reading-width">
+    You can only import vaccination records for dates on or after your team’s start date with Mavis national reporting.
+    Records dated before this will be rejected to prevent duplicate reporting.
+  </p>
+<% end %>
+
 <p class="nhsuk-u-reading-width">
   After import, files move to the <strong>Completed imports</strong> tab.
 

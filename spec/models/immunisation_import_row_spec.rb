@@ -1040,6 +1040,45 @@ describe ImmunisationImportRow do
         end
       end
 
+      shared_context "when performed_at is before the team's cut off date" do
+        context "when the team has a cut off date" do
+          let(:team) do
+            create(
+              :team,
+              :national_reporting,
+              ods_code: "ABC",
+              programmes:,
+              national_reporting_cut_off_date: Date.new(2026, 2, 1)
+            )
+          end
+
+          it "returns an error" do
+            expect(immunisation_import_row).to be_invalid
+            expect(
+              immunisation_import_row.errors[:DATE_OF_VACCINATION]
+            ).to include(
+              "must be on or after your team's start date with Mavis national reporting: 1 February 2026"
+            )
+          end
+        end
+
+        context "when the team has no cut off date" do
+          let(:team) do
+            create(
+              :team,
+              :national_reporting,
+              ods_code: "ABC",
+              programmes:,
+              national_reporting_cut_off_date: nil
+            )
+          end
+
+          it "doesn't return an error" do
+            expect(immunisation_import_row).to be_valid
+          end
+        end
+      end
+
       context "of unknown type (no VACCINE_GIVEN)" do
         context "with an empty row" do
           let(:data) { {} }
@@ -1126,6 +1165,12 @@ describe ImmunisationImportRow do
         include_examples "when `VACCINATED` is `N`"
 
         include_examples "when Mavis columns are present, which the national reporting upload should ignore"
+
+        context "when performed_at is after the team's cut off date" do
+          let(:data) { valid_national_reporting_flu_data }
+
+          include_examples "when performed_at is before the team's cut off date"
+        end
       end
 
       context "of type hpv" do
@@ -1169,6 +1214,12 @@ describe ImmunisationImportRow do
               ["Enter a anatomical site that is appropriate for the vaccine."]
             )
           end
+        end
+
+        context "when performed_at is after the team's cut off date" do
+          let(:data) { valid_national_reporting_hpv_data }
+
+          include_examples "when performed_at is before the team's cut off date"
         end
       end
     end
