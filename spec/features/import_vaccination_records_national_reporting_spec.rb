@@ -185,10 +185,10 @@ describe("National reporting immunisation imports") do
   end
 
   def and_i_should_see_some_stats_about_the_import
-    expect(page).to have_content("Out of 3 records found in the file:")
+    expect(page).to have_content("3 records found in the file:")
     expect(page).to have_content("2 new records imported")
     expect(page).to have_content("0 duplicates not imported")
-    expect(page).to have_content("1 'not vaccinated' record not imported")
+    expect(page).to have_content("1 ‘not vaccinated’ record not imported")
   end
 
   def and_the_patients_should_now_be_associated_with_the_team
