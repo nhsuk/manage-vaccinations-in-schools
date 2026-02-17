@@ -801,7 +801,9 @@
               <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">strftime</span>(<span class="ruby-string">&quot;%d/%m/%Y&quot;</span>),
               <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">restricted?</span> <span class="ruby-operator">?</span> <span class="ruby-string">&quot;&quot;</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">address_line_1</span>,
               <span class="ruby-identifier">consents</span>[<span class="ruby-identifier">patient</span>.<span class="ruby-identifier">id</span>]&amp;.<span class="ruby-identifier">name</span> <span class="ruby-operator">||</span> <span class="ruby-string">&quot;&quot;</span>,
-              <span class="ruby-value">99</span>, <span class="ruby-comment"># Ethnicity, 99 is &quot;Not known&quot;</span>
+              <span class="ruby-comment"># We use an empty value for ethnicity, rather than the official unknown value of 99,</span>
+              <span class="ruby-comment"># to prevent overwriting existing values in CarePlus</span>
+              <span class="ruby-string">&quot;&quot;</span>,
               <span class="ruby-identifier">date</span>.<span class="ruby-identifier">strftime</span>(<span class="ruby-string">&quot;%d/%m/%Y&quot;</span>),
               <span class="ruby-identifier">records</span>.<span class="ruby-identifier">first</span>.<span class="ruby-identifier">performed_at</span>.<span class="ruby-identifier">strftime</span>(<span class="ruby-string">&quot;%H:%M&quot;</span>),
               <span class="ruby-identifier">session</span>.<span class="ruby-identifier">location</span>.<span class="ruby-identifier">school?</span> <span class="ruby-operator">?</span> <span class="ruby-string">&quot;SC&quot;</span> <span class="ruby-operator">:</span> <span class="ruby-string">&quot;CL&quot;</span>, <span class="ruby-comment"># Venue Type</span>
@@ -999,7 +1001,7 @@
             </details>
           </div>
           <div class="method-source-code" id="blank_vaccine_fields-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/careplus_exporter.rb, line 157</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/careplus_exporter.rb, line 159</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">blank_vaccine_fields</span>
   [<span class="ruby-string">&quot;&quot;</span>, <span class="ruby-string">&quot;&quot;</span>, <span class="ruby-string">&quot;&quot;</span>, <span class="ruby-string">&quot;&quot;</span>, <span class="ruby-string">&quot;&quot;</span>, <span class="ruby-string">&quot;&quot;</span>]
 <span class="ruby-keyword">end</span></pre>
@@ -1090,7 +1092,7 @@
             </details>
           </div>
           <div class="method-source-code" id="coded_site-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/careplus_exporter.rb, line 202</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/careplus_exporter.rb, line 204</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">coded_site</span>(<span class="ruby-identifier">site</span>)
   {
     <span class="ruby-value">left_arm_upper_position:</span> <span class="ruby-string">&quot;ULA&quot;</span>,
@@ -1274,7 +1276,9 @@
             <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">strftime</span>(<span class="ruby-string">&quot;%d/%m/%Y&quot;</span>),
             <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">restricted?</span> <span class="ruby-operator">?</span> <span class="ruby-string">&quot;&quot;</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">address_line_1</span>,
             <span class="ruby-identifier">consents</span>[<span class="ruby-identifier">patient</span>.<span class="ruby-identifier">id</span>]&amp;.<span class="ruby-identifier">name</span> <span class="ruby-operator">||</span> <span class="ruby-string">&quot;&quot;</span>,
-            <span class="ruby-value">99</span>, <span class="ruby-comment"># Ethnicity, 99 is &quot;Not known&quot;</span>
+            <span class="ruby-comment"># We use an empty value for ethnicity, rather than the official unknown value of 99,</span>
+            <span class="ruby-comment"># to prevent overwriting existing values in CarePlus</span>
+            <span class="ruby-string">&quot;&quot;</span>,
             <span class="ruby-identifier">date</span>.<span class="ruby-identifier">strftime</span>(<span class="ruby-string">&quot;%d/%m/%Y&quot;</span>),
             <span class="ruby-identifier">records</span>.<span class="ruby-identifier">first</span>.<span class="ruby-identifier">performed_at</span>.<span class="ruby-identifier">strftime</span>(<span class="ruby-string">&quot;%H:%M&quot;</span>),
             <span class="ruby-identifier">session</span>.<span class="ruby-identifier">location</span>.<span class="ruby-identifier">school?</span> <span class="ruby-operator">?</span> <span class="ruby-string">&quot;SC&quot;</span> <span class="ruby-operator">:</span> <span class="ruby-string">&quot;CL&quot;</span>, <span class="ruby-comment"># Venue Type</span>
@@ -1409,7 +1413,7 @@
             </details>
           </div>
           <div class="method-source-code" id="vaccine_code-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/careplus_exporter.rb, line 217</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/careplus_exporter.rb, line 219</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccine_code</span>(<span class="ruby-identifier">vaccination_record</span>)
   <span class="ruby-identifier">programme</span> = <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">programme</span>
 
@@ -1517,7 +1521,7 @@
             </details>
           </div>
           <div class="method-source-code" id="vaccine_fields-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/careplus_exporter.rb, line 161</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/careplus_exporter.rb, line 163</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccine_fields</span>(<span class="ruby-identifier">vaccination_records</span>, <span class="ruby-identifier">index</span>)
   <span class="ruby-identifier">record</span> = <span class="ruby-identifier">vaccination_records</span>[<span class="ruby-identifier">index</span>]
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">blank_vaccine_fields</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">record</span>
