@@ -601,6 +601,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_09_161431) do
     t.index ["patient_id", "location_id", "academic_year"], name: "idx_on_patient_id_location_id_academic_year_08a1dc4afe", unique: true
   end
 
+  create_table "patient_merge_log_entries", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.date "merged_patient_dob", null: false
+    t.bigint "merged_patient_id", null: false
+    t.string "merged_patient_name", null: false
+    t.string "merged_patient_nhs_number", null: false
+    t.bigint "patient_id", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id"
+    t.index ["patient_id"], name: "index_patient_merge_log_entries_on_patient_id"
+    t.index ["user_id"], name: "index_patient_merge_log_entries_on_user_id"
+  end
+
   create_table "patient_programme_statuses", force: :cascade do |t|
     t.integer "academic_year", null: false
     t.integer "consent_status", default: 0, null: false
@@ -1086,6 +1099,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_09_161431) do
   add_foreign_key "patient_changesets", "patients"
   add_foreign_key "patient_locations", "locations"
   add_foreign_key "patient_locations", "patients"
+  add_foreign_key "patient_merge_log_entries", "patients"
+  add_foreign_key "patient_merge_log_entries", "users"
   add_foreign_key "patient_programme_statuses", "patients", on_delete: :cascade
   add_foreign_key "patient_programme_vaccinations_searches", "patients"
   add_foreign_key "patient_registration_statuses", "patients", on_delete: :cascade
