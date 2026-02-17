@@ -5,17 +5,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>module SchoolMovesHelper - Mavis Documentation</title>
+<title>class PatientMergeLogEntry - Mavis Documentation</title>
 
 
   <meta
     name="keywords"
-    content="ruby,module,SchoolMovesHelper"
+    content="ruby,class,PatientMergeLogEntry"
   >
 
     <meta
       name="description"
-      content="Documentation for the SchoolMovesHelper module"
+      content="class PatientMergeLogEntry: bigint Indexes index_patient_merge_log_entries_on_patient_id (patient_id) index_patient_merge_log_entries_on_user_id (user_id) Foreign Keys "
     >
 
 
@@ -24,14 +24,11 @@
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content="website">
-<meta property="og:title" content="module SchoolMovesHelper - Mavis Documentation">
+<meta property="og:title" content="class PatientMergeLogEntry - Mavis Documentation">
 
 
 
-    <meta
-      property="og:description"
-      content="Documentation for SchoolMovesHelper module - API reference and code examples"
-    >
+    <meta property="og:description" content="bigint Indexes index_patient_merge_log_entries_on_patient_id (patient_id) index_patient_merge_log_entries_on_user_id (user_id) Foreign Keys ">
 
 
 
@@ -39,14 +36,11 @@
 
 <!-- Twitter -->
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="module SchoolMovesHelper - Mavis Documentation">
+<meta name="twitter:title" content="class PatientMergeLogEntry - Mavis Documentation">
 
 
 
-    <meta
-      name="twitter:description"
-      content="Documentation for SchoolMovesHelper module - API reference and code examples"
-    >
+    <meta name="twitter:description" content="bigint Indexes index_patient_merge_log_entries_on_patient_id (patient_id) index_patient_merge_log_entries_on_user_id (user_id) Foreign Keys ">
 
 
 
@@ -97,7 +91,7 @@
 
 
 
-<body role="document" class="module has-toc">
+<body role="document" class="class has-toc">
 <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
   <!-- Chevron (right arrow) - used for expand/collapse -->
   <symbol
@@ -517,6 +511,21 @@
   
 
   
+<div id="parent-class-section" class="nav-section">
+  <details class="nav-section-collapsible" open>
+    <summary class="nav-section-header">
+      <span class="nav-section-icon">
+        <svg><use href="#icon-ancestors"></use></svg>
+      </span>
+      <span class="nav-section-title">Ancestors</span>
+      <span class="nav-section-chevron">
+        <svg><use href="#icon-chevron"></use></svg>
+      </span>
+    </summary>
+    <ul><li><a href="ApplicationRecord.html">ApplicationRecord</a><ul><li>ActiveRecord::Base</li></ul></li></ul>
+  </details>
+</div>
+
 
   
 
@@ -524,25 +533,6 @@
 
   
 
-
-  <div class="nav-section">
-    <details class="nav-section-collapsible" open>
-      <summary class="nav-section-header">
-        <span class="nav-section-icon">
-          <svg><use href="#icon-instance-methods"></use></svg>
-        </span>
-        <span class="nav-section-title">Instance Methods</span>
-        <span class="nav-section-chevron">
-          <svg><use href="#icon-chevron"></use></svg>
-        </span>
-      </summary>
-      <ul class="nav-list" role="directory">
-
-        <li ><a href="#method-i-school_move_source">school_move_source</a></li>
-
-      </ul>
-    </details>
-  </div>
 
 
   <div id="classindex-section" class="nav-section">
@@ -563,17 +553,43 @@
 
 </nav>
 
-<main role="main" aria-labelledby="module-schoolmoveshelper">
+<main role="main" aria-labelledby="class-patientmergelogentry">
   
   
 
-  <span id="module-SchoolMovesHelper" class="legacy-anchor"></span>
-  <h1 id="module-schoolmoveshelper" class="anchor-link module">
-    module SchoolMovesHelper
+  <span id="class-PatientMergeLogEntry" class="legacy-anchor"></span>
+  <h1 id="class-patientmergelogentry" class="anchor-link class">
+    class PatientMergeLogEntry
   </h1>
 
   <section class="description">
     
+<span id="class-PatientMergeLogEntry-label-Schema+Information" class="legacy-anchor"></span>
+<h2 id="class-patientmergelogentry-schema-information"><a href="#class-patientmergelogentry-schema-information">Schema Information</a></h2>
+
+<p>Table name: patient_merge_log_entries</p>
+
+<pre>id                        :bigint           not null, primary key
+merged_patient_dob        :date             not null
+merged_patient_name       :string           not null
+merged_patient_nhs_number :string           not null
+created_at                :datetime         not null
+updated_at                :datetime         not null
+merged_patient_id         :bigint           not null
+patient_id                :bigint           not null
+user_id                   :bigint</pre>
+
+<p>Indexes</p>
+
+<pre class="ruby"><span class="ruby-identifier">index_patient_merge_log_entries_on_patient_id</span>  (<span class="ruby-identifier">patient_id</span>)
+<span class="ruby-identifier">index_patient_merge_log_entries_on_user_id</span>     (<span class="ruby-identifier">user_id</span>)
+</pre>
+
+<p>Foreign Keys</p>
+
+<pre>fk_rails_...  (patient_id =&gt; patients.id)
+fk_rails_...  (user_id =&gt; users.id)</pre>
+
   </section>
 
 
@@ -596,65 +612,6 @@
 
 
 
-
-     <section id="public-instance-untitled-method-details" class="method-section anchor-link">
-       <header>
-         <h3 id="public-instance-methods"><a href="#public-instance-methods">Public Instance Methods</a></h3>
-       </header>
-
-
-      <div id="method-i-school_move_source" class="method-detail anchor-link ">
-        <div class="method-header">
-
-            <div class="method-heading">
-              <a href="#method-i-school_move_source" title="Link to this method">
-                <span class="method-name">school_move_source</span>
-                <span class="method-args">(school_move)</span>
-              </a>
-            </div>
-
-        </div>
-
-
-          <div class="method-controls">
-            <details class="method-source-toggle">
-              <summary>Source</summary>
-            </details>
-          </div>
-          <div class="method-source-code" id="school_move_source-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/helpers/school_moves_helper.rb, line 4</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">school_move_source</span>(<span class="ruby-identifier">school_move</span>)
-  <span class="ruby-identifier">teams</span> = (<span class="ruby-identifier">school_move</span>.<span class="ruby-identifier">school_teams</span> <span class="ruby-operator">+</span> [<span class="ruby-identifier">school_move</span>.<span class="ruby-identifier">team</span>].<span class="ruby-identifier">compact</span>)
-
-  <span class="ruby-identifier">source</span> =
-    <span class="ruby-keyword">if</span> <span class="ruby-identifier">teams</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">current_team</span>)
-      <span class="ruby-identifier">school_move</span>.<span class="ruby-identifier">human_enum_name</span>(<span class="ruby-value">:source</span>)
-    <span class="ruby-keyword">else</span>
-      <span class="ruby-string">&quot;Another SAIS team&quot;</span>
-    <span class="ruby-keyword">end</span>
-
-  <span class="ruby-node">&quot;#{source} updated&quot;</span>
-<span class="ruby-keyword">end</span></pre>
-          </div>
-
-
-
-        <div class="method-description">
-
-
-          
-
-
-        </div>
-
-
-
-
-
-      </div>
-
-
-    </section>
 
 
 
