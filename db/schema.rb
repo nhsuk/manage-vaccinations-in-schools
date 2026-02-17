@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_09_161431) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_17_111256) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -994,8 +994,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_09_161431) do
     t.index ["supplied_by_user_id"], name: "index_vaccination_records_on_supplied_by_user_id"
     t.index ["uuid"], name: "index_vaccination_records_on_uuid", unique: true
     t.index ["vaccine_id"], name: "index_vaccination_records_on_vaccine_id"
-    t.check_constraint "session_id IS NULL AND source <> 0 OR session_id IS NOT NULL AND source = 0", name: "source_check"
   end
+
+  add_check_constraint "vaccination_records", "session_id IS NULL AND source <> 0 AND source <> 5 OR session_id IS NOT NULL AND (source = 0 OR source = 5)", name: "source_check", validate: false
 
   create_table "vaccines", force: :cascade do |t|
     t.text "brand", null: false
