@@ -80,6 +80,8 @@ class Vaccine < ApplicationRecord
       right_arm_lower_position
       left_thigh
       right_thigh
+      left_buttock
+      right_buttock
     ],
     "nasal" => %w[nose]
   }.freeze

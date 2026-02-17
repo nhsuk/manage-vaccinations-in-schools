@@ -753,7 +753,7 @@ class ImmunisationImportRow
       if delivery_site.present?
         if delivery_site_value.blank?
           errors.add(delivery_site.header, "Enter a valid anatomical site.")
-        elsif offline_recording? && vaccine
+        elsif (offline_recording? || national_reporting?) && vaccine
           unless vaccine.available_delivery_sites.include?(delivery_site_value)
             errors.add(
               delivery_site.header,

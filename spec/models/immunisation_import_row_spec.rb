@@ -68,7 +68,6 @@ describe ImmunisationImportRow do
 
   let(:valid_national_reporting_common_data) do
     valid_patient_data.deep_dup.merge(
-      "ANATOMICAL_SITE" => "Left Deltoid",
       "BATCH_EXPIRY_DATE" => "20260106",
       "DATE_OF_VACCINATION" => "20260105",
       "BATCH_NUMBER" => "123",
@@ -81,12 +80,14 @@ describe ImmunisationImportRow do
       "VACCINATED" => "Y",
       "PERFORMING_PROFESSIONAL_FORENAME" => vaccinator.given_name,
       "PERFORMING_PROFESSIONAL_SURNAME" => vaccinator.family_name,
-      "VACCINE_GIVEN" => "AstraZeneca Fluenz LAIV"
+      "VACCINE_GIVEN" => "AstraZeneca Fluenz LAIV",
+      "ANATOMICAL_SITE" => "nasal",
     )
   end
   let(:valid_national_reporting_hpv_data) do
     valid_national_reporting_common_data.deep_dup.merge(
       "VACCINE_GIVEN" => "Gardasil9",
+      "ANATOMICAL_SITE" => "Left Deltoid",
       "DOSE_SEQUENCE" => "1",
       "CARE_SETTING" => "1" # School
     )
@@ -1158,6 +1159,17 @@ describe ImmunisationImportRow do
         include_examples "when `VACCINATED` is `N`"
 
         include_examples "when Mavis columns are present, which the national reporting upload should ignore"
+
+        context "with an anatomical site which is not appropriate for the vaccine" do
+          let(:data) { valid_hpv_data.merge("ANATOMICAL_SITE" => "nasal") }
+
+          it "has errors" do
+            expect(immunisation_import_row).to be_invalid
+            expect(immunisation_import_row.errors["ANATOMICAL_SITE"]).to eq(
+              ["Enter a anatomical site that is appropriate for the vaccine."]
+            )
+          end
+        end
       end
     end
   end
@@ -2549,11 +2561,12 @@ describe ImmunisationImportRow do
       end
 
       context "of type flu" do
-        shared_examples "accepts a VACCINE_GIVEN code" do |vaccine_given, snomed_product_code|
+        shared_examples "accepts a VACCINE_GIVEN code" do |vaccine_given, snomed_product_code, anatomical_site: "right deltoid"|
           context "with code: #{vaccine_given}" do
             let(:data) do
               valid_national_reporting_flu_data.merge(
-                "VACCINE_GIVEN" => vaccine_given
+                "VACCINE_GIVEN" => vaccine_given,
+                "ANATOMICAL_SITE" => anatomical_site
               )
             end
 
@@ -2646,7 +2659,8 @@ describe ImmunisationImportRow do
 
         include_examples "accepts a VACCINE_GIVEN code",
                          "AstraZeneca Fluenz LAIV",
-                         "43208811000001106"
+                         "43208811000001106",
+                         anatomical_site: "nasal"
         include_examples "accepts a VACCINE_GIVEN code",
                          "Viatris Quadrivalent Influvac sub - unit Tetra - QIVe",
                          "45354911000001100"
@@ -2676,6 +2690,8 @@ describe ImmunisationImportRow do
               performed_by_given_name: vaccinator.given_name,
               performed_by_family_name: vaccinator.family_name,
               vaccine:,
+              delivery_site: "nose",
+              delivery_method: "nasal_spray",
               batch_number: "456", # different
               batch_expiry: Date.new(2026, 1, 6) # identical
             )
@@ -2702,6 +2718,8 @@ describe ImmunisationImportRow do
               performed_by_given_name: vaccinator.given_name,
               performed_by_family_name: vaccinator.family_name,
               vaccine:,
+              delivery_site: "nose",
+              delivery_method: "nasal_spray",
               batch_number: "123", # identical
               batch_expiry: Date.new(2026, 1, 6) # identical
             )
