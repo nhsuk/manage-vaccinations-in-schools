@@ -107,6 +107,7 @@ describe Reports::CareplusExporter do
       staff_code_index = headers.index("Staff Code")
       venue_type_index = headers.index("Venue Type")
       venue_code_index = headers.index("Venue Code")
+      ethnicity_index = headers.index("Ethnicity")
 
       row = data_rows.first
 
@@ -122,6 +123,7 @@ describe Reports::CareplusExporter do
       expect(row[staff_code_index]).to eq("ABCD")
       expect(row[venue_type_index]).to eq("SC")
       expect(row[venue_code_index]).to eq("123456")
+      expect(row[ethnicity_index]).to be_blank
     end
 
     context "with multiple vaccination records for the same session on different dates" do
