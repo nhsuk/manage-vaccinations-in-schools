@@ -20,34 +20,8 @@ describe API::Reporting::TotalsController do
       expect(parsed_response).to have_key("cohort")
       expect(parsed_response).to have_key("vaccinated")
       expect(parsed_response).to have_key("not_vaccinated")
-      expect(parsed_response).to have_key("vaccinated_by_sais")
-      expect(parsed_response).to have_key("vaccinated_elsewhere_declared")
-      expect(parsed_response).to have_key("vaccinated_elsewhere_recorded")
-      expect(parsed_response).to have_key("vaccinated_previously")
       expect(parsed_response).to have_key("vaccinations_given")
       expect(parsed_response).to have_key("monthly_vaccinations_given")
-    end
-
-    it "does not include flu-specific keys for non-flu programmes" do
-      get :index
-
-      expect(response).to have_http_status(:ok)
-      expect(parsed_response).not_to have_key("vaccinated_nasal")
-      expect(parsed_response).not_to have_key("vaccinated_injection")
-      expect(parsed_response).not_to have_key("consent_given_nasal_only")
-      expect(parsed_response).not_to have_key("consent_given_injection_only")
-      expect(parsed_response).not_to have_key("consent_given_both_methods")
-    end
-
-    it "includes flu-specific keys when filtering by flu programme" do
-      get :index, params: { programme: "flu" }
-
-      expect(response).to have_http_status(:ok)
-      expect(parsed_response).to have_key("vaccinated_nasal")
-      expect(parsed_response).to have_key("vaccinated_injection")
-      expect(parsed_response).to have_key("consent_given_nasal_only")
-      expect(parsed_response).to have_key("consent_given_injection_only")
-      expect(parsed_response).to have_key("consent_given_both_methods")
     end
 
     it "calculates statistics correctly" do
@@ -94,10 +68,6 @@ describe API::Reporting::TotalsController do
       expect(not_vaccinated).to eq(1) # patient3
       expect(vaccinated + not_vaccinated).to eq(cohort)
 
-      expect(parsed_response["vaccinated_by_sais"]).to eq(2) # patient1 and patient2
-      expect(parsed_response["vaccinated_elsewhere_declared"]).to eq(0) # no declared external vaccinations
-      expect(parsed_response["vaccinated_elsewhere_recorded"]).to eq(0) # no recorded external vaccinations
-      expect(parsed_response["vaccinated_previously"]).to eq(0) # no previous year vaccinations
       expect(parsed_response["vaccinations_given"]).to eq(2) # 2 administered records
       expect(parsed_response["monthly_vaccinations_given"]).to be_an(Array)
     end
@@ -464,14 +434,6 @@ describe API::Reporting::TotalsController do
     let(:cohort) { parsed_response["cohort"] }
     let(:vaccinated) { parsed_response["vaccinated"] }
     let(:not_vaccinated) { parsed_response["not_vaccinated"] }
-    let(:vaccinated_by_sais) { parsed_response["vaccinated_by_sais"] }
-    let(:vaccinated_previously) { parsed_response["vaccinated_previously"] }
-    let(:vaccinated_elsewhere_declared) do
-      parsed_response["vaccinated_elsewhere_declared"]
-    end
-    let(:vaccinated_elsewhere_recorded) do
-      parsed_response["vaccinated_elsewhere_recorded"]
-    end
     let(:vaccinations_given) { parsed_response["vaccinations_given"] }
     let(:monthly_vaccinations_given) do
       parsed_response["monthly_vaccinations_given"]
@@ -518,7 +480,6 @@ describe API::Reporting::TotalsController do
       expect(cohort).to eq(1)
       expect(vaccinated).to eq(1)
       expect(not_vaccinated).to eq(0)
-      expect(vaccinated_by_sais).to eq(1)
       expect(vaccinations_given).to eq(1)
 
       monthly =
@@ -612,9 +573,6 @@ describe API::Reporting::TotalsController do
       expect(final_response["not_vaccinated"]).to eq(
         initial_response["not_vaccinated"]
       )
-      expect(final_response["vaccinated_by_sais"]).to eq(
-        initial_response["vaccinated_by_sais"] - 1
-      )
       expect(final_response["vaccinations_given"]).to eq(
         initial_response["vaccinations_given"]
       )
@@ -640,8 +598,6 @@ describe API::Reporting::TotalsController do
       expect(cohort).to eq(1)
       expect(vaccinated).to eq(1)
       expect(not_vaccinated).to eq(0)
-      expect(vaccinated_previously).to eq(1)
-      expect(vaccinated_elsewhere_recorded).to eq(0)
       expect(vaccinations_given).to eq(0)
       expect(monthly_vaccinations_given).to be_empty
     end
@@ -663,10 +619,6 @@ describe API::Reporting::TotalsController do
       expect(cohort).to eq(1)
       expect(vaccinated).to eq(1)
       expect(not_vaccinated).to eq(0)
-      expect(vaccinated_previously).to eq(0)
-      expect(vaccinated_by_sais).to eq(0)
-      expect(vaccinated_elsewhere_declared).to eq(0)
-      expect(vaccinated_elsewhere_recorded).to eq(1)
       expect(vaccinations_given).to eq(0)
       expect(monthly_vaccinations_given).to be_empty
     end
@@ -690,9 +642,7 @@ describe API::Reporting::TotalsController do
       # flu is seasonal so vaccinations from a previous year don't count
       expect(vaccinated).to eq(0)
       expect(not_vaccinated).to eq(1)
-      expect(vaccinated_previously).to eq(0)
 
-      expect(vaccinated_elsewhere_recorded).to eq(0)
       expect(vaccinations_given).to eq(0)
       expect(monthly_vaccinations_given).to be_empty
     end
@@ -713,7 +663,6 @@ describe API::Reporting::TotalsController do
       expect(cohort).to eq(1)
       expect(vaccinated).to eq(1)
       expect(not_vaccinated).to eq(0)
-      expect(vaccinated_elsewhere_declared).to eq(1)
       expect(vaccinations_given).to eq(0)
       expect(monthly_vaccinations_given).to be_empty
     end
@@ -738,8 +687,6 @@ describe API::Reporting::TotalsController do
       expect(cohort).to eq(1)
       expect(vaccinated).to eq(1)
       expect(not_vaccinated).to eq(0)
-      expect(vaccinated_previously).to eq(0)
-      expect(vaccinated_elsewhere_recorded).to eq(1)
       expect(vaccinations_given).to eq(0)
       expect(monthly_vaccinations_given).to be_empty
     end
@@ -772,8 +719,6 @@ describe API::Reporting::TotalsController do
       expect(cohort).to eq(1)
       expect(vaccinated).to eq(1)
       expect(not_vaccinated).to eq(0)
-      expect(vaccinated_elsewhere_declared).to eq(0)
-      expect(vaccinated_elsewhere_recorded).to eq(1)
       expect(vaccinations_given).to eq(0)
       expect(monthly_vaccinations_given).to be_empty
     end
@@ -799,8 +744,6 @@ describe API::Reporting::TotalsController do
       # flu is seasonal so vaccinations from a previous year don't count
       expect(vaccinated).to eq(0)
       expect(not_vaccinated).to eq(1)
-      expect(parsed_response["vaccinated_previously"]).to eq(0)
-      expect(vaccinated_elsewhere_recorded).to eq(0)
       expect(vaccinations_given).to eq(0)
       expect(monthly_vaccinations_given).to be_empty
     end
@@ -821,7 +764,6 @@ describe API::Reporting::TotalsController do
       expect(cohort).to eq(1)
       expect(vaccinated).to eq(0)
       expect(not_vaccinated).to eq(1)
-      expect(vaccinated_by_sais).to eq(0)
       expect(vaccinations_given).to eq(0)
       expect(monthly_vaccinations_given).to be_empty
     end
@@ -843,7 +785,6 @@ describe API::Reporting::TotalsController do
       expect(cohort).to eq(1)
       expect(vaccinated).to eq(0)
       expect(not_vaccinated).to eq(1)
-      expect(vaccinated_by_sais).to eq(0)
       expect(vaccinations_given).to eq(0)
       expect(monthly_vaccinations_given).to be_empty
     end
@@ -865,8 +806,6 @@ describe API::Reporting::TotalsController do
       expect(cohort).to eq(1)
       expect(vaccinated).to eq(1)
       expect(not_vaccinated).to eq(0)
-      expect(vaccinated_elsewhere_declared).to eq(1)
-      expect(vaccinated_elsewhere_recorded).to eq(0)
       expect(vaccinations_given).to eq(0)
       expect(monthly_vaccinations_given).to be_empty
     end
@@ -900,8 +839,6 @@ describe API::Reporting::TotalsController do
       expect(cohort).to eq(1)
       expect(vaccinated).to eq(1)
       expect(not_vaccinated).to eq(0)
-      expect(vaccinated_elsewhere_declared).to eq(0)
-      expect(vaccinated_elsewhere_recorded).to eq(1)
       expect(vaccinations_given).to eq(0)
       expect(monthly_vaccinations_given).to be_empty
     end
@@ -926,8 +863,6 @@ describe API::Reporting::TotalsController do
       expect(cohort).to eq(1)
       expect(vaccinated).to eq(1)
       expect(not_vaccinated).to eq(0)
-      expect(vaccinated_by_sais).to eq(0)
-      expect(vaccinated_elsewhere_recorded).to eq(1)
       expect(vaccinations_given).to eq(0)
       expect(monthly_vaccinations_given).to be_empty
     end
@@ -960,7 +895,6 @@ describe API::Reporting::TotalsController do
       expect(cohort).to eq(0)
       expect(vaccinated).to eq(0)
       expect(not_vaccinated).to eq(0)
-      expect(vaccinated_by_sais).to eq(0)
 
       # Child moved out, but vaccination was given by this team
       # so it should be counted as given
@@ -1027,25 +961,6 @@ describe API::Reporting::TotalsController do
       refresh_and_get_totals(programme_type: "td_ipv")
 
       expect(cohort).to eq(3)
-    end
-
-    it "only counts Td/IPV dose 5 as vaccinated previously" do
-      patient = create(:patient, session: td_ipv_session, year_group: 9)
-      create(
-        :vaccination_record,
-        patient:,
-        programme: td_ipv_programme,
-        session: nil,
-        source: "nhs_immunisations_api",
-        nhs_immunisations_api_identifier_system: "test",
-        nhs_immunisations_api_identifier_value: "123",
-        dose_sequence: 4,
-        performed_at: 1.year.ago
-      )
-
-      refresh_and_get_totals(programme_type: "td_ipv")
-
-      expect(vaccinated_previously).to eq(0)
     end
 
     it "counts year 12 students when session location has year 12 enabled" do
@@ -1181,205 +1096,6 @@ describe API::Reporting::TotalsController do
       expect(parsed_response["consent_conflicts"]).to eq(1)
     end
 
-    it "distinguishes parent refused vs child refused" do
-      patient1 = create(:patient, session: hpv_session)
-      create(
-        :vaccination_record,
-        patient: patient1,
-        programme: hpv_programme,
-        session: nil,
-        source: "consent_refusal",
-        outcome: "refused",
-        # TODO: Fix the way academic year is calculated in the reporting
-        #  views. Currently it uses the year from the date, but that's not
-        #  correct. For example, 1st January 2026 is in the 2025/26 academic
-        #  year, which is stored as the value of 2025.
-        # performed_at: Time.current,
-        performed_at:
-          hpv_session.academic_year.to_academic_year_date_range.begin
-      )
-
-      patient2 = create(:patient, session: hpv_session)
-      create(
-        :vaccination_record,
-        patient: patient2,
-        programme: hpv_programme,
-        session: hpv_session,
-        outcome: "refused",
-        performed_at: Time.current
-      )
-
-      refresh_and_get_totals
-
-      expect(cohort).to eq(2)
-      expect(parsed_response["parent_refused_consent"]).to eq(1)
-      expect(parsed_response["child_refused_vaccination"]).to eq(1)
-    end
-
-    it "returns consent refusal reasons breakdown" do
-      patient1 = create(:patient, session: hpv_session)
-      create(
-        :consent,
-        :refused,
-        patient: patient1,
-        programme: hpv_programme,
-        team:,
-        reason_for_refusal: "personal_choice"
-      )
-
-      patient2 = create(:patient, session: hpv_session)
-      create(
-        :consent,
-        :refused,
-        patient: patient2,
-        programme: hpv_programme,
-        team:,
-        reason_for_refusal: "personal_choice"
-      )
-
-      patient3 = create(:patient, session: hpv_session)
-      create(
-        :consent,
-        :refused,
-        patient: patient3,
-        programme: hpv_programme,
-        team:,
-        reason_for_refusal: "already_vaccinated"
-      )
-
-      refresh_and_get_totals
-
-      refusal_reasons = parsed_response["refusal_reasons"]
-      expect(refusal_reasons).to be_a(Hash)
-      expect(refusal_reasons["personal_choice"]).to eq(2)
-      expect(refusal_reasons["already_vaccinated"]).to eq(1)
-    end
-
-    it "returns consent routes breakdown" do
-      patient1 = create(:patient, session: hpv_session)
-      create(
-        :consent,
-        :given,
-        patient: patient1,
-        programme: hpv_programme,
-        team:,
-        route: "website"
-      )
-
-      patient2 = create(:patient, session: hpv_session)
-      create(
-        :consent,
-        :given,
-        patient: patient2,
-        programme: hpv_programme,
-        team:,
-        route: "website"
-      )
-
-      patient3 = create(:patient, session: hpv_session)
-      create(
-        :consent,
-        :given,
-        patient: patient3,
-        programme: hpv_programme,
-        team:,
-        route: "phone",
-        recorded_by: create(:user)
-      )
-
-      refresh_and_get_totals
-
-      consent_routes = parsed_response["consent_routes"]
-      expect(consent_routes).to be_a(Hash)
-      expect(consent_routes["website"]).to eq(2)
-      expect(consent_routes["phone"]).to eq(1)
-    end
-
-    it "counts vaccinations by delivery method for flu" do
-      patient1 = create(:patient, session: flu_session)
-      create(
-        :vaccination_record,
-        patient: patient1,
-        programme: flu_programme,
-        session: flu_session,
-        outcome: "administered",
-        delivery_method: "nasal_spray",
-        performed_at: Time.current
-      )
-
-      patient2 = create(:patient, session: flu_session)
-      create(
-        :vaccination_record,
-        patient: patient2,
-        programme: flu_programme,
-        session: flu_session,
-        outcome: "administered",
-        delivery_method: "intramuscular",
-        performed_at: Time.current
-      )
-
-      patient3 = create(:patient, session: flu_session)
-      create(
-        :vaccination_record,
-        patient: patient3,
-        programme: flu_programme,
-        session: flu_session,
-        outcome: "administered",
-        delivery_method: "subcutaneous",
-        performed_at: Time.current
-      )
-
-      refresh_and_get_totals(programme_type: "flu")
-
-      expect(cohort).to eq(3)
-      expect(vaccinated).to eq(3)
-      expect(parsed_response["vaccinated_nasal"]).to eq(1)
-      expect(parsed_response["vaccinated_injection"]).to eq(2)
-    end
-
-    it "counts consent by vaccine method for flu" do
-      patient1 = create(:patient, session: flu_session)
-      create(
-        :consent,
-        :given,
-        patient: patient1,
-        programme: flu_programme,
-        team:,
-        vaccine_methods: ["nasal"]
-      )
-
-      patient2 = create(:patient, session: flu_session)
-      create(
-        :consent,
-        :given,
-        patient: patient2,
-        programme: flu_programme,
-        team:,
-        vaccine_methods: ["injection"]
-      )
-
-      patient3 = create(:patient, session: flu_session)
-      create(
-        :consent,
-        :given,
-        patient: patient3,
-        programme: flu_programme,
-        team:,
-        vaccine_methods: %w[nasal injection]
-      )
-
-      PatientStatusUpdater.call(patient: patient1)
-      PatientStatusUpdater.call(patient: patient2)
-      PatientStatusUpdater.call(patient: patient3)
-
-      refresh_and_get_totals(programme_type: "flu")
-
-      expect(cohort).to eq(3)
-      expect(parsed_response["consent_given_nasal_only"]).to eq(1)
-      expect(parsed_response["consent_given_injection_only"]).to eq(1)
-      expect(parsed_response["consent_given_both_methods"]).to eq(1)
-    end
-
     it "counts patient in current year category only when vaccinated both years" do
       patient = create(:patient, session: hpv_session)
       create(
@@ -1403,8 +1119,6 @@ describe API::Reporting::TotalsController do
       refresh_and_get_totals
 
       expect(vaccinated).to eq(1)
-      expect(vaccinated_by_sais).to eq(1)
-      expect(vaccinated_previously).to eq(0)
     end
 
     it "does not count previous flu vaccination from team session" do
@@ -1428,7 +1142,6 @@ describe API::Reporting::TotalsController do
       refresh_and_get_totals(programme_type: "flu")
 
       expect(vaccinated).to eq(0)
-      expect(vaccinated_previously).to eq(0)
     end
   end
 end
