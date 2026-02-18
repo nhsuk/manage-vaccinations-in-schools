@@ -10,8 +10,9 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_09_161431) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_17_142242) do
   # These are extensions that must be enabled in order to support this database
+  enable_extension "citext"
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
 
@@ -698,9 +699,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_09_161431) do
     t.integer "ethnic_background"
     t.string "ethnic_background_other"
     t.integer "ethnic_group"
-    t.string "family_name", null: false
+    t.citext "family_name", null: false
     t.integer "gender_code", default: 0, null: false
-    t.string "given_name", null: false
+    t.citext "given_name", null: false
     t.bigint "gp_practice_id"
     t.boolean "home_educated"
     t.datetime "invalidated_at"
