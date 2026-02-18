@@ -44,12 +44,21 @@ module PendingChangesConcern
     save!
   end
 
-  def apply_pending_changes_to_new_record!
+  def apply_pending_changes_to_new_record!(changeset:)
+    new_record = nil
+
     ActiveRecord::Base.transaction do
       new_record = dup_for_pending_changes.tap(&:apply_pending_changes!)
+
+      changeset.update!(patient: new_record)
+
+      PDSSearchResult.where(import: changeset.import, patient: self).update_all(
+        patient_id: new_record.id
+      )
       discard_pending_changes!
-      new_record
     end
+
+    new_record
   end
 
   private
