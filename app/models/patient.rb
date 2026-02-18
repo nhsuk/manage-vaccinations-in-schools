@@ -757,6 +757,7 @@ class Patient < ApplicationRecord
     end
   end
 
+  # This method overrides the implementation in `PendingChangesConcern`
   def apply_pending_changes_to_new_record!(changeset:)
     new_record = nil
 
