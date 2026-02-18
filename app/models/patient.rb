@@ -757,9 +757,9 @@ class Patient < ApplicationRecord
     end
   end
 
-  def apply_pending_changes_to_new_record!
+  # This method overrides the implementation in `PendingChangesConcern`
+  def apply_pending_changes_to_new_record!(changeset:)
     new_record = nil
-    changeset = changesets.includes(:import).order(:created_at).last
 
     ActiveRecord::Base.transaction do
       new_record = super
