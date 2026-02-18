@@ -477,7 +477,7 @@ class Patient < ApplicationRecord
              end
 
   after_update :sync_vaccinations_to_nhs_immunisations_api
-  after_update :generate_important_notice_if_needed
+  after_commit :generate_important_notice_if_needed, on: :update
   after_commit :search_vaccinations_from_nhs_immunisations_api, on: :update
   before_destroy :destroy_childless_parents
 
