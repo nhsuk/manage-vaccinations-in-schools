@@ -205,9 +205,9 @@ class PatientImportRow
 
   def validate_date_of_birth
     if date_of_birth.nil?
-      errors.add(:base, "<code>CHILD_DATE_OF_BIRTH</code> is missing")
+      errors.add(:base, "<code>CHILD_DATE_OF_BIRTH</code> is required")
     elsif date_of_birth.blank?
-      errors.add(date_of_birth.header, "is required but missing")
+      errors.add(date_of_birth.header, "Enter a date of birth.")
     elsif date_of_birth.to_date.nil?
       errors.add(date_of_birth.header, "should be formatted as YYYY-MM-DD")
     elsif date_of_birth.to_date < Date.new(2000, 1, 1)
@@ -226,9 +226,9 @@ class PatientImportRow
 
   def validate_first_name
     if first_name.nil?
-      errors.add(:base, "<code>CHILD_FIRST_NAME</code> is missing")
+      errors.add(:base, "<code>CHILD_FIRST_NAME</code> is required")
     elsif first_name.blank?
-      errors.add(first_name.header, "is required but missing")
+      errors.add(first_name.header, "Enter a first name.")
     elsif first_name.to_s.length > MAX_FIELD_LENGTH
       errors.add(
         first_name.header,
@@ -270,9 +270,9 @@ class PatientImportRow
 
   def validate_last_name
     if last_name.nil?
-      errors.add(:base, "<code>CHILD_LAST_NAME</code> is missing")
+      errors.add(:base, "<code>CHILD_LAST_NAME</code> is required")
     elsif last_name.blank?
-      errors.add(last_name.header, "is required but missing")
+      errors.add(last_name.header, "Enter a last name.")
     elsif last_name.to_s.length > MAX_FIELD_LENGTH
       errors.add(
         last_name.header,
