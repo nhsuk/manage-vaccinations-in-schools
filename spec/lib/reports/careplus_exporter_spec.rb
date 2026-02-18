@@ -55,7 +55,8 @@ describe Reports::CareplusExporter do
         "Staff Code",
         "Attended",
         "Reason Not Attended",
-        "Suspension End Date"
+        "Suspension End Date",
+        "Gender"
       )
 
       (1..5).each do |i|
@@ -387,5 +388,46 @@ describe Reports::CareplusExporter do
     let(:expected_vaccine_code) { "3IN1" }
 
     include_examples "generates a report"
+  end
+
+  context "gender mapping" do
+    let(:programme) { Programme.hpv }
+    let(:programmes) { [programme] }
+    let(:team) { create(:team, programmes:) }
+    let(:location) { create(:school) }
+    let(:session) { create(:session, team:, programmes:, location:) }
+    let(:parsed_csv) { CSV.parse(csv) }
+    let(:headers) { parsed_csv.first }
+    let(:data_rows) { parsed_csv[1..] }
+
+    {
+      female: "F",
+      male: "M",
+      not_known: "U",
+      not_specified: "I"
+    }.each do |gender, expected_code|
+      context "when the patient gender is #{gender}" do
+        it "maps gender to #{expected_code}" do
+          patient =
+            create(
+              :patient,
+              :consent_given_triage_not_needed,
+              programmes:,
+              session:,
+              gender_code: gender
+            )
+          create(
+            :vaccination_record,
+            programme:,
+            patient:,
+            session:,
+            performed_at: 2.weeks.ago
+          )
+
+          gender_index = headers.index("Gender")
+          expect(data_rows.first[gender_index]).to eq(expected_code)
+        end
+      end
+    end
   end
 end

@@ -26,6 +26,13 @@ class Reports::CareplusExporter
 
   private
 
+  GENDER_CODE_MAPPINGS = {
+    female: "F",
+    male: "M",
+    not_known: "U",
+    not_specified: "I"
+  }.with_indifferent_access.freeze
+
   attr_reader :team, :programme, :academic_year, :start_date, :end_date
 
   def headers
@@ -50,7 +57,8 @@ class Reports::CareplusExporter
       *vaccine_columns(2),
       *vaccine_columns(3),
       *vaccine_columns(4),
-      *vaccine_columns(5)
+      *vaccine_columns(5),
+      "Gender"
     ]
   end
 
@@ -150,14 +158,15 @@ class Reports::CareplusExporter
               *vaccine_fields(records, 1),
               *vaccine_fields(records, 2),
               *vaccine_fields(records, 3),
-              *vaccine_fields(records, 4)
+              *vaccine_fields(records, 4),
+              GENDER_CODE_MAPPINGS[patient.gender_code]
             ]
           end
       end
   end
 
   def blank_vaccine_fields
-    ["", "", "", "", "", ""]
+    ["", "", "", "", "", "", ""]
   end
 
   def vaccine_fields(vaccination_records, index)
