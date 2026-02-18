@@ -959,7 +959,10 @@
           <div class="method-source-code" id="keep_both_changes-21-source">
             <pre class="ruby"><span class="ruby-comment"># File app/forms/import_duplicate_form.rb, line 68</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">keep_both_changes!</span>
-  <span class="ruby-identifier">object</span>.<span class="ruby-identifier">apply_pending_changes_to_new_record!</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">can_keep_both?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">can_apply?</span>
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">can_keep_both?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">can_apply?</span>
+    <span class="ruby-identifier">changeset</span> = <span class="ruby-identifier">object</span>.<span class="ruby-identifier">changesets</span>.<span class="ruby-identifier">includes</span>(<span class="ruby-value">:import</span>).<span class="ruby-identifier">order</span>(<span class="ruby-value">:created_at</span>).<span class="ruby-identifier">last</span>
+    <span class="ruby-identifier">object</span>.<span class="ruby-identifier">apply_pending_changes_to_new_record!</span>(<span class="ruby-value">changeset:</span>)
+  <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -999,7 +1002,7 @@
             </details>
           </div>
           <div class="method-source-code" id="remove_imported_parent_relationships_if_needed-21-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/forms/import_duplicate_form.rb, line 76</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/forms/import_duplicate_form.rb, line 79</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">remove_imported_parent_relationships_if_needed!</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">object</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Patient</span>)
 
@@ -1051,7 +1054,7 @@
             </details>
           </div>
           <div class="method-source-code" id="reset_count-21-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/forms/import_duplicate_form.rb, line 72</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/forms/import_duplicate_form.rb, line 75</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">reset_count!</span>
   <span class="ruby-constant">TeamCachedCounts</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">current_team</span>).<span class="ruby-identifier">reset_import_issues!</span>
 <span class="ruby-keyword">end</span></pre>
