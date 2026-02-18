@@ -57,6 +57,7 @@ describe "MMR/MMRV" do
       and_i_see_that_the_vaccinator_is_unknown
       and_i_see_that_the_location_is_unknown
       and_i_see_that_the_reporter_is_set
+      and_i_see_that_there_are_no_vaccine_batch_details
       expect(page).to have_content("LocationUnknown")
       and_had_been_vaccinated_with_mmr
       and_the_dose_number_is_first
@@ -132,6 +133,7 @@ describe "MMR/MMRV" do
       and_i_see_that_the_vaccinator_is_unknown
       and_i_see_that_the_location_is_unknown
       and_i_see_that_the_reporter_is_set
+      and_i_see_that_there_are_no_vaccine_batch_details
       and_had_been_vaccinated_with_mmrv
       and_the_dose_number_is_second
       and_the_consent_requests_are_sent
@@ -315,6 +317,12 @@ describe "MMR/MMRV" do
 
   def and_i_see_that_the_reporter_is_set
     expect(page).to have_content("Reported by#{@nurse.full_name}")
+  end
+
+  def and_i_see_that_there_are_no_vaccine_batch_details
+    expect(page).not_to have_content("Batch number")
+    expect(page).not_to have_content("Batch expiry date")
+    expect(page).not_to have_content("Site")
   end
 
   def and_had_been_vaccinated_with_mmr
