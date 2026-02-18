@@ -97,6 +97,12 @@ describe AppVaccinationRecordSummaryComponent do
 
       it { should_not have_css(".nhsuk-summary-list__row", text: "Vaccine") }
     end
+
+    context "when manually reported that vaccination was already had" do
+      let(:source) { "manual_report" }
+
+      it { should_not have_css(".nhsuk-summary-list__row", text: "Vaccine") }
+    end
   end
 
   describe "method row" do
@@ -106,6 +112,12 @@ describe AppVaccinationRecordSummaryComponent do
         text: "MethodIntramuscular"
       )
     end
+
+    context "when manually reported that vaccination was already had" do
+      let(:source) { "manual_report" }
+
+      it { should_not have_css(".nhsuk-summary-list__row", text: "MethodIntramuscular") }
+    end
   end
 
   describe "site row" do
@@ -114,6 +126,12 @@ describe AppVaccinationRecordSummaryComponent do
         ".nhsuk-summary-list__row",
         text: "SiteLeft arm (upper position)"
       )
+    end
+
+    context "when manually reported that vaccination was already had" do
+      let(:source) { "manual_report" }
+
+      it { should_not have_css(".nhsuk-summary-list__row", text: "MethodIntramuscular") }
     end
   end
 
@@ -193,6 +211,12 @@ describe AppVaccinationRecordSummaryComponent do
         before { vaccination_record.dose_sequence = 2 }
 
         it { should have_content("Dose number2nd") }
+
+        context "when manually reported that vaccination was already had" do
+          let(:source) { "manual_report" }
+
+          it { should have_content("Dose number2nd") }
+        end
       end
     end
   end
