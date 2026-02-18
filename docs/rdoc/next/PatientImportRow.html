@@ -1014,9 +1014,9 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_date_of_birth</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">nil?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_DATE_OF_BIRTH&lt;/code&gt; is missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_DATE_OF_BIRTH&lt;/code&gt; is required&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">blank?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;is required but missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;Enter a date of birth.&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">to_date</span>.<span class="ruby-identifier">nil?</span>
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;should be formatted as YYYY-MM-DD&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">to_date</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Date</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value">2000</span>, <span class="ruby-value">1</span>, <span class="ruby-value">1</span>)
@@ -1035,9 +1035,9 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_first_name</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">nil?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_FIRST_NAME&lt;/code&gt; is missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_FIRST_NAME&lt;/code&gt; is required&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">blank?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;is required but missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;Enter a first name.&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&gt;</span> <span class="ruby-constant">MAX_FIELD_LENGTH</span>
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(
       <span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">header</span>,
@@ -1079,9 +1079,9 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_last_name</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">nil?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_LAST_NAME&lt;/code&gt; is missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_LAST_NAME&lt;/code&gt; is required&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">blank?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;is required but missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;Enter a last name.&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&gt;</span> <span class="ruby-constant">MAX_FIELD_LENGTH</span>
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(
       <span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">header</span>,
@@ -1423,9 +1423,9 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_date_of_birth</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">nil?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_DATE_OF_BIRTH&lt;/code&gt; is missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_DATE_OF_BIRTH&lt;/code&gt; is required&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">blank?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;is required but missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;Enter a date of birth.&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">to_date</span>.<span class="ruby-identifier">nil?</span>
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;should be formatted as YYYY-MM-DD&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">to_date</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Date</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value">2000</span>, <span class="ruby-value">1</span>, <span class="ruby-value">1</span>)
@@ -1444,9 +1444,9 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_first_name</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">nil?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_FIRST_NAME&lt;/code&gt; is missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_FIRST_NAME&lt;/code&gt; is required&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">blank?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;is required but missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;Enter a first name.&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&gt;</span> <span class="ruby-constant">MAX_FIELD_LENGTH</span>
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(
       <span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">header</span>,
@@ -1488,9 +1488,9 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_last_name</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">nil?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_LAST_NAME&lt;/code&gt; is missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_LAST_NAME&lt;/code&gt; is required&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">blank?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;is required but missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;Enter a last name.&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&gt;</span> <span class="ruby-constant">MAX_FIELD_LENGTH</span>
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(
       <span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">header</span>,
@@ -1829,9 +1829,9 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_date_of_birth</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">nil?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_DATE_OF_BIRTH&lt;/code&gt; is missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_DATE_OF_BIRTH&lt;/code&gt; is required&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">blank?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;is required but missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;Enter a date of birth.&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">to_date</span>.<span class="ruby-identifier">nil?</span>
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;should be formatted as YYYY-MM-DD&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">to_date</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Date</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value">2000</span>, <span class="ruby-value">1</span>, <span class="ruby-value">1</span>)
@@ -1850,9 +1850,9 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_first_name</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">nil?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_FIRST_NAME&lt;/code&gt; is missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_FIRST_NAME&lt;/code&gt; is required&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">blank?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;is required but missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;Enter a first name.&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&gt;</span> <span class="ruby-constant">MAX_FIELD_LENGTH</span>
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(
       <span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">header</span>,
@@ -1894,9 +1894,9 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_last_name</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">nil?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_LAST_NAME&lt;/code&gt; is missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_LAST_NAME&lt;/code&gt; is required&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">blank?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;is required but missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;Enter a last name.&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&gt;</span> <span class="ruby-constant">MAX_FIELD_LENGTH</span>
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(
       <span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">header</span>,
@@ -2237,9 +2237,9 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_date_of_birth</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">nil?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_DATE_OF_BIRTH&lt;/code&gt; is missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_DATE_OF_BIRTH&lt;/code&gt; is required&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">blank?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;is required but missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;Enter a date of birth.&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">to_date</span>.<span class="ruby-identifier">nil?</span>
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;should be formatted as YYYY-MM-DD&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">to_date</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Date</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value">2000</span>, <span class="ruby-value">1</span>, <span class="ruby-value">1</span>)
@@ -2258,9 +2258,9 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_first_name</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">nil?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_FIRST_NAME&lt;/code&gt; is missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_FIRST_NAME&lt;/code&gt; is required&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">blank?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;is required but missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;Enter a first name.&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&gt;</span> <span class="ruby-constant">MAX_FIELD_LENGTH</span>
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(
       <span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">header</span>,
@@ -2302,9 +2302,9 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_last_name</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">nil?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_LAST_NAME&lt;/code&gt; is missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_LAST_NAME&lt;/code&gt; is required&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">blank?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;is required but missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;Enter a last name.&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&gt;</span> <span class="ruby-constant">MAX_FIELD_LENGTH</span>
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(
       <span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">header</span>,
@@ -2703,9 +2703,9 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_date_of_birth</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">nil?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_DATE_OF_BIRTH&lt;/code&gt; is missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_DATE_OF_BIRTH&lt;/code&gt; is required&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">blank?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;is required but missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;Enter a date of birth.&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">to_date</span>.<span class="ruby-identifier">nil?</span>
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;should be formatted as YYYY-MM-DD&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">to_date</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Date</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value">2000</span>, <span class="ruby-value">1</span>, <span class="ruby-value">1</span>)
@@ -2724,9 +2724,9 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_first_name</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">nil?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_FIRST_NAME&lt;/code&gt; is missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_FIRST_NAME&lt;/code&gt; is required&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">blank?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;is required but missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;Enter a first name.&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&gt;</span> <span class="ruby-constant">MAX_FIELD_LENGTH</span>
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(
       <span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">header</span>,
@@ -2768,9 +2768,9 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_last_name</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">nil?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_LAST_NAME&lt;/code&gt; is missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_LAST_NAME&lt;/code&gt; is required&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">blank?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;is required but missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;Enter a last name.&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&gt;</span> <span class="ruby-constant">MAX_FIELD_LENGTH</span>
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(
       <span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">header</span>,
@@ -3182,9 +3182,9 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_date_of_birth</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">nil?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_DATE_OF_BIRTH&lt;/code&gt; is missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_DATE_OF_BIRTH&lt;/code&gt; is required&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">blank?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;is required but missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;Enter a date of birth.&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">to_date</span>.<span class="ruby-identifier">nil?</span>
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;should be formatted as YYYY-MM-DD&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">to_date</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Date</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value">2000</span>, <span class="ruby-value">1</span>, <span class="ruby-value">1</span>)
@@ -3203,9 +3203,9 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_first_name</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">nil?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_FIRST_NAME&lt;/code&gt; is missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_FIRST_NAME&lt;/code&gt; is required&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">blank?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;is required but missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;Enter a first name.&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&gt;</span> <span class="ruby-constant">MAX_FIELD_LENGTH</span>
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(
       <span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">header</span>,
@@ -3247,9 +3247,9 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_last_name</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">nil?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_LAST_NAME&lt;/code&gt; is missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_LAST_NAME&lt;/code&gt; is required&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">blank?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;is required but missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;Enter a last name.&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&gt;</span> <span class="ruby-constant">MAX_FIELD_LENGTH</span>
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(
       <span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">header</span>,
@@ -3591,9 +3591,9 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_date_of_birth</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">nil?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_DATE_OF_BIRTH&lt;/code&gt; is missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_DATE_OF_BIRTH&lt;/code&gt; is required&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">blank?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;is required but missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;Enter a date of birth.&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">to_date</span>.<span class="ruby-identifier">nil?</span>
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;should be formatted as YYYY-MM-DD&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">to_date</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Date</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value">2000</span>, <span class="ruby-value">1</span>, <span class="ruby-value">1</span>)
@@ -3612,9 +3612,9 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_first_name</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">nil?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_FIRST_NAME&lt;/code&gt; is missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_FIRST_NAME&lt;/code&gt; is required&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">blank?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;is required but missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;Enter a first name.&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&gt;</span> <span class="ruby-constant">MAX_FIELD_LENGTH</span>
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(
       <span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">header</span>,
@@ -3656,9 +3656,9 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_last_name</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">nil?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_LAST_NAME&lt;/code&gt; is missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_LAST_NAME&lt;/code&gt; is required&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">blank?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;is required but missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;Enter a last name.&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&gt;</span> <span class="ruby-constant">MAX_FIELD_LENGTH</span>
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(
       <span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">header</span>,
@@ -4124,9 +4124,9 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_date_of_birth</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">nil?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_DATE_OF_BIRTH&lt;/code&gt; is missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_DATE_OF_BIRTH&lt;/code&gt; is required&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">blank?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;is required but missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;Enter a date of birth.&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">to_date</span>.<span class="ruby-identifier">nil?</span>
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;should be formatted as YYYY-MM-DD&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">to_date</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Date</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value">2000</span>, <span class="ruby-value">1</span>, <span class="ruby-value">1</span>)
@@ -4145,9 +4145,9 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_first_name</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">nil?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_FIRST_NAME&lt;/code&gt; is missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_FIRST_NAME&lt;/code&gt; is required&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">blank?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;is required but missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;Enter a first name.&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&gt;</span> <span class="ruby-constant">MAX_FIELD_LENGTH</span>
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(
       <span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">header</span>,
@@ -4189,9 +4189,9 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_last_name</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">nil?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_LAST_NAME&lt;/code&gt; is missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_LAST_NAME&lt;/code&gt; is required&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">blank?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;is required but missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;Enter a last name.&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&gt;</span> <span class="ruby-constant">MAX_FIELD_LENGTH</span>
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(
       <span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">header</span>,
@@ -4550,9 +4550,9 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_date_of_birth</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">nil?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_DATE_OF_BIRTH&lt;/code&gt; is missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_DATE_OF_BIRTH&lt;/code&gt; is required&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">blank?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;is required but missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;Enter a date of birth.&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">to_date</span>.<span class="ruby-identifier">nil?</span>
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;should be formatted as YYYY-MM-DD&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">to_date</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Date</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value">2000</span>, <span class="ruby-value">1</span>, <span class="ruby-value">1</span>)
@@ -4571,9 +4571,9 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_first_name</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">nil?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_FIRST_NAME&lt;/code&gt; is missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_FIRST_NAME&lt;/code&gt; is required&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">blank?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;is required but missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;Enter a first name.&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&gt;</span> <span class="ruby-constant">MAX_FIELD_LENGTH</span>
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(
       <span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">header</span>,
@@ -4615,9 +4615,9 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_last_name</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">nil?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_LAST_NAME&lt;/code&gt; is missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_LAST_NAME&lt;/code&gt; is required&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">blank?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;is required but missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;Enter a last name.&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&gt;</span> <span class="ruby-constant">MAX_FIELD_LENGTH</span>
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(
       <span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">header</span>,
@@ -4986,9 +4986,9 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_date_of_birth</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">nil?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_DATE_OF_BIRTH&lt;/code&gt; is missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_DATE_OF_BIRTH&lt;/code&gt; is required&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">blank?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;is required but missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;Enter a date of birth.&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">to_date</span>.<span class="ruby-identifier">nil?</span>
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;should be formatted as YYYY-MM-DD&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">to_date</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Date</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value">2000</span>, <span class="ruby-value">1</span>, <span class="ruby-value">1</span>)
@@ -5007,9 +5007,9 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_first_name</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">nil?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_FIRST_NAME&lt;/code&gt; is missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_FIRST_NAME&lt;/code&gt; is required&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">blank?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;is required but missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;Enter a first name.&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&gt;</span> <span class="ruby-constant">MAX_FIELD_LENGTH</span>
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(
       <span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">header</span>,
@@ -5051,9 +5051,9 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_last_name</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">nil?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_LAST_NAME&lt;/code&gt; is missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_LAST_NAME&lt;/code&gt; is required&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">blank?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;is required but missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;Enter a last name.&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&gt;</span> <span class="ruby-constant">MAX_FIELD_LENGTH</span>
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(
       <span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">header</span>,
@@ -5521,9 +5521,9 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_date_of_birth</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">nil?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_DATE_OF_BIRTH&lt;/code&gt; is missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_DATE_OF_BIRTH&lt;/code&gt; is required&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">blank?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;is required but missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;Enter a date of birth.&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">to_date</span>.<span class="ruby-identifier">nil?</span>
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;should be formatted as YYYY-MM-DD&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">to_date</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Date</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value">2000</span>, <span class="ruby-value">1</span>, <span class="ruby-value">1</span>)
@@ -5542,9 +5542,9 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_first_name</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">nil?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_FIRST_NAME&lt;/code&gt; is missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_FIRST_NAME&lt;/code&gt; is required&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">blank?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;is required but missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;Enter a first name.&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&gt;</span> <span class="ruby-constant">MAX_FIELD_LENGTH</span>
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(
       <span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">header</span>,
@@ -5586,9 +5586,9 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_last_name</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">nil?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_LAST_NAME&lt;/code&gt; is missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_LAST_NAME&lt;/code&gt; is required&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">blank?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;is required but missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;Enter a last name.&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&gt;</span> <span class="ruby-constant">MAX_FIELD_LENGTH</span>
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(
       <span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">header</span>,
@@ -5961,9 +5961,9 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_date_of_birth</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">nil?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_DATE_OF_BIRTH&lt;/code&gt; is missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_DATE_OF_BIRTH&lt;/code&gt; is required&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">blank?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;is required but missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;Enter a date of birth.&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">to_date</span>.<span class="ruby-identifier">nil?</span>
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;should be formatted as YYYY-MM-DD&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">to_date</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Date</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value">2000</span>, <span class="ruby-value">1</span>, <span class="ruby-value">1</span>)
@@ -5982,9 +5982,9 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_first_name</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">nil?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_FIRST_NAME&lt;/code&gt; is missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_FIRST_NAME&lt;/code&gt; is required&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">blank?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;is required but missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;Enter a first name.&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&gt;</span> <span class="ruby-constant">MAX_FIELD_LENGTH</span>
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(
       <span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">header</span>,
@@ -6026,9 +6026,9 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_last_name</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">nil?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_LAST_NAME&lt;/code&gt; is missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_LAST_NAME&lt;/code&gt; is required&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">blank?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;is required but missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;Enter a last name.&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&gt;</span> <span class="ruby-constant">MAX_FIELD_LENGTH</span>
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(
       <span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">header</span>,
@@ -6405,9 +6405,9 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_date_of_birth</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">nil?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_DATE_OF_BIRTH&lt;/code&gt; is missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_DATE_OF_BIRTH&lt;/code&gt; is required&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">blank?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;is required but missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;Enter a date of birth.&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">to_date</span>.<span class="ruby-identifier">nil?</span>
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;should be formatted as YYYY-MM-DD&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">to_date</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Date</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value">2000</span>, <span class="ruby-value">1</span>, <span class="ruby-value">1</span>)
@@ -6426,9 +6426,9 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_first_name</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">nil?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_FIRST_NAME&lt;/code&gt; is missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_FIRST_NAME&lt;/code&gt; is required&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">blank?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;is required but missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;Enter a first name.&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&gt;</span> <span class="ruby-constant">MAX_FIELD_LENGTH</span>
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(
       <span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">header</span>,
@@ -6470,9 +6470,9 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_last_name</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">nil?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_LAST_NAME&lt;/code&gt; is missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_LAST_NAME&lt;/code&gt; is required&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">blank?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;is required but missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;Enter a last name.&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&gt;</span> <span class="ruby-constant">MAX_FIELD_LENGTH</span>
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(
       <span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">header</span>,
@@ -6797,9 +6797,9 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_date_of_birth</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">nil?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_DATE_OF_BIRTH&lt;/code&gt; is missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_DATE_OF_BIRTH&lt;/code&gt; is required&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">blank?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;is required but missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;Enter a date of birth.&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">to_date</span>.<span class="ruby-identifier">nil?</span>
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;should be formatted as YYYY-MM-DD&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">to_date</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Date</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value">2000</span>, <span class="ruby-value">1</span>, <span class="ruby-value">1</span>)
@@ -6818,9 +6818,9 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_first_name</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">nil?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_FIRST_NAME&lt;/code&gt; is missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_FIRST_NAME&lt;/code&gt; is required&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">blank?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;is required but missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;Enter a first name.&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&gt;</span> <span class="ruby-constant">MAX_FIELD_LENGTH</span>
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(
       <span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">header</span>,
@@ -6862,9 +6862,9 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_last_name</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">nil?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_LAST_NAME&lt;/code&gt; is missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_LAST_NAME&lt;/code&gt; is required&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">blank?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;is required but missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;Enter a last name.&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&gt;</span> <span class="ruby-constant">MAX_FIELD_LENGTH</span>
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(
       <span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">header</span>,
@@ -7326,9 +7326,9 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_date_of_birth</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">nil?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_DATE_OF_BIRTH&lt;/code&gt; is missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_DATE_OF_BIRTH&lt;/code&gt; is required&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">blank?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;is required but missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;Enter a date of birth.&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">to_date</span>.<span class="ruby-identifier">nil?</span>
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;should be formatted as YYYY-MM-DD&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">to_date</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Date</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value">2000</span>, <span class="ruby-value">1</span>, <span class="ruby-value">1</span>)
@@ -7347,9 +7347,9 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_first_name</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">nil?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_FIRST_NAME&lt;/code&gt; is missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_FIRST_NAME&lt;/code&gt; is required&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">blank?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;is required but missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;Enter a first name.&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&gt;</span> <span class="ruby-constant">MAX_FIELD_LENGTH</span>
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(
       <span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">header</span>,
@@ -7391,9 +7391,9 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_last_name</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">nil?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_LAST_NAME&lt;/code&gt; is missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_LAST_NAME&lt;/code&gt; is required&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">blank?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;is required but missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;Enter a last name.&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&gt;</span> <span class="ruby-constant">MAX_FIELD_LENGTH</span>
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(
       <span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">header</span>,
@@ -7759,9 +7759,9 @@
 
   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_date_of_birth</span>
     <span class="ruby-keyword">if</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">nil?</span>
-      <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_DATE_OF_BIRTH&lt;/code&gt; is missing&quot;</span>)
+      <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_DATE_OF_BIRTH&lt;/code&gt; is required&quot;</span>)
     <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">blank?</span>
-      <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;is required but missing&quot;</span>)
+      <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;Enter a date of birth.&quot;</span>)
     <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">to_date</span>.<span class="ruby-identifier">nil?</span>
       <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;should be formatted as YYYY-MM-DD&quot;</span>)
     <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">to_date</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Date</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value">2000</span>, <span class="ruby-value">1</span>, <span class="ruby-value">1</span>)
@@ -7780,9 +7780,9 @@
 
   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_first_name</span>
     <span class="ruby-keyword">if</span> <span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">nil?</span>
-      <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_FIRST_NAME&lt;/code&gt; is missing&quot;</span>)
+      <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_FIRST_NAME&lt;/code&gt; is required&quot;</span>)
     <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">blank?</span>
-      <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;is required but missing&quot;</span>)
+      <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;Enter a first name.&quot;</span>)
     <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&gt;</span> <span class="ruby-constant">MAX_FIELD_LENGTH</span>
       <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(
         <span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">header</span>,
@@ -7824,9 +7824,9 @@
 
   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_last_name</span>
     <span class="ruby-keyword">if</span> <span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">nil?</span>
-      <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_LAST_NAME&lt;/code&gt; is missing&quot;</span>)
+      <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_LAST_NAME&lt;/code&gt; is required&quot;</span>)
     <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">blank?</span>
-      <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;is required but missing&quot;</span>)
+      <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;Enter a last name.&quot;</span>)
     <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&gt;</span> <span class="ruby-constant">MAX_FIELD_LENGTH</span>
       <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(
         <span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">header</span>,
@@ -8198,9 +8198,9 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_date_of_birth</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">nil?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_DATE_OF_BIRTH&lt;/code&gt; is missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_DATE_OF_BIRTH&lt;/code&gt; is required&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">blank?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;is required but missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;Enter a date of birth.&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">to_date</span>.<span class="ruby-identifier">nil?</span>
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;should be formatted as YYYY-MM-DD&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">to_date</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Date</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value">2000</span>, <span class="ruby-value">1</span>, <span class="ruby-value">1</span>)
@@ -8219,9 +8219,9 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_first_name</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">nil?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_FIRST_NAME&lt;/code&gt; is missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_FIRST_NAME&lt;/code&gt; is required&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">blank?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;is required but missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;Enter a first name.&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&gt;</span> <span class="ruby-constant">MAX_FIELD_LENGTH</span>
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(
       <span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">header</span>,
@@ -8263,9 +8263,9 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_last_name</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">nil?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_LAST_NAME&lt;/code&gt; is missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_LAST_NAME&lt;/code&gt; is required&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">blank?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;is required but missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;Enter a last name.&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&gt;</span> <span class="ruby-constant">MAX_FIELD_LENGTH</span>
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(
       <span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">header</span>,
@@ -8677,9 +8677,9 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_date_of_birth</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">nil?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_DATE_OF_BIRTH&lt;/code&gt; is missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_DATE_OF_BIRTH&lt;/code&gt; is required&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">blank?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;is required but missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;Enter a date of birth.&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">to_date</span>.<span class="ruby-identifier">nil?</span>
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;should be formatted as YYYY-MM-DD&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">to_date</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Date</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value">2000</span>, <span class="ruby-value">1</span>, <span class="ruby-value">1</span>)
@@ -8698,9 +8698,9 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_first_name</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">nil?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_FIRST_NAME&lt;/code&gt; is missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_FIRST_NAME&lt;/code&gt; is required&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">blank?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;is required but missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;Enter a first name.&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&gt;</span> <span class="ruby-constant">MAX_FIELD_LENGTH</span>
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(
       <span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">header</span>,
@@ -8742,9 +8742,9 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_last_name</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">nil?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_LAST_NAME&lt;/code&gt; is missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_LAST_NAME&lt;/code&gt; is required&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">blank?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;is required but missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;Enter a last name.&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&gt;</span> <span class="ruby-constant">MAX_FIELD_LENGTH</span>
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(
       <span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">header</span>,
@@ -9096,9 +9096,9 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_date_of_birth</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">nil?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_DATE_OF_BIRTH&lt;/code&gt; is missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_DATE_OF_BIRTH&lt;/code&gt; is required&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">blank?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;is required but missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;Enter a date of birth.&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">to_date</span>.<span class="ruby-identifier">nil?</span>
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;should be formatted as YYYY-MM-DD&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">to_date</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Date</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value">2000</span>, <span class="ruby-value">1</span>, <span class="ruby-value">1</span>)
@@ -9117,9 +9117,9 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_first_name</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">nil?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_FIRST_NAME&lt;/code&gt; is missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_FIRST_NAME&lt;/code&gt; is required&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">blank?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;is required but missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;Enter a first name.&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&gt;</span> <span class="ruby-constant">MAX_FIELD_LENGTH</span>
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(
       <span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">header</span>,
@@ -9161,9 +9161,9 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_last_name</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">nil?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_LAST_NAME&lt;/code&gt; is missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_LAST_NAME&lt;/code&gt; is required&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">blank?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;is required but missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;Enter a last name.&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&gt;</span> <span class="ruby-constant">MAX_FIELD_LENGTH</span>
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(
       <span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">header</span>,
@@ -9509,9 +9509,9 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_date_of_birth</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">nil?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_DATE_OF_BIRTH&lt;/code&gt; is missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_DATE_OF_BIRTH&lt;/code&gt; is required&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">blank?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;is required but missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;Enter a date of birth.&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">to_date</span>.<span class="ruby-identifier">nil?</span>
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;should be formatted as YYYY-MM-DD&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">to_date</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Date</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value">2000</span>, <span class="ruby-value">1</span>, <span class="ruby-value">1</span>)
@@ -9530,9 +9530,9 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_first_name</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">nil?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_FIRST_NAME&lt;/code&gt; is missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_FIRST_NAME&lt;/code&gt; is required&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">blank?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;is required but missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;Enter a first name.&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&gt;</span> <span class="ruby-constant">MAX_FIELD_LENGTH</span>
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(
       <span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">header</span>,
@@ -9574,9 +9574,9 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_last_name</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">nil?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_LAST_NAME&lt;/code&gt; is missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_LAST_NAME&lt;/code&gt; is required&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">blank?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;is required but missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;Enter a last name.&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&gt;</span> <span class="ruby-constant">MAX_FIELD_LENGTH</span>
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(
       <span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">header</span>,
@@ -9807,9 +9807,9 @@
             <pre class="ruby"><span class="ruby-comment"># File app/models/patient_import_row.rb, line 206</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_date_of_birth</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">nil?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_DATE_OF_BIRTH&lt;/code&gt; is missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_DATE_OF_BIRTH&lt;/code&gt; is required&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">blank?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;is required but missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;Enter a date of birth.&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">to_date</span>.<span class="ruby-identifier">nil?</span>
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;should be formatted as YYYY-MM-DD&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">to_date</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Date</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value">2000</span>, <span class="ruby-value">1</span>, <span class="ruby-value">1</span>)
@@ -9904,9 +9904,9 @@
             <pre class="ruby"><span class="ruby-comment"># File app/models/patient_import_row.rb, line 227</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_first_name</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">nil?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_FIRST_NAME&lt;/code&gt; is missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_FIRST_NAME&lt;/code&gt; is required&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">blank?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;is required but missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;Enter a first name.&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&gt;</span> <span class="ruby-constant">MAX_FIELD_LENGTH</span>
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(
       <span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">header</span>,
@@ -10006,9 +10006,9 @@
             <pre class="ruby"><span class="ruby-comment"># File app/models/patient_import_row.rb, line 271</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_last_name</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">nil?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_LAST_NAME&lt;/code&gt; is missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_LAST_NAME&lt;/code&gt; is required&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">blank?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;is required but missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;Enter a last name.&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&gt;</span> <span class="ruby-constant">MAX_FIELD_LENGTH</span>
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(
       <span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">header</span>,
@@ -10835,9 +10835,9 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_date_of_birth</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">nil?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_DATE_OF_BIRTH&lt;/code&gt; is missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_DATE_OF_BIRTH&lt;/code&gt; is required&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">blank?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;is required but missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;Enter a date of birth.&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">to_date</span>.<span class="ruby-identifier">nil?</span>
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;should be formatted as YYYY-MM-DD&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">date_of_birth</span>.<span class="ruby-identifier">to_date</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Date</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value">2000</span>, <span class="ruby-value">1</span>, <span class="ruby-value">1</span>)
@@ -10856,9 +10856,9 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_first_name</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">nil?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_FIRST_NAME&lt;/code&gt; is missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_FIRST_NAME&lt;/code&gt; is required&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">blank?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;is required but missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;Enter a first name.&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&gt;</span> <span class="ruby-constant">MAX_FIELD_LENGTH</span>
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(
       <span class="ruby-identifier">first_name</span>.<span class="ruby-identifier">header</span>,
@@ -10900,9 +10900,9 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_last_name</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">nil?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_LAST_NAME&lt;/code&gt; is missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_LAST_NAME&lt;/code&gt; is required&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">blank?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;is required but missing&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;Enter a last name.&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&gt;</span> <span class="ruby-constant">MAX_FIELD_LENGTH</span>
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(
       <span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">header</span>,
