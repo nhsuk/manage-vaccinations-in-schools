@@ -613,6 +613,14 @@
         </dd>
 
 
+        <dt id="STATUS_NOTICE_RECORDED_AT_FIELDS">STATUS_NOTICE_RECORDED_AT_FIELDS</dt>
+
+        <dd>
+
+          
+        </dd>
+
+
       </dl>
     </section>
 
@@ -654,20 +662,16 @@
             </details>
           </div>
           <div class="method-source-code" id="perform-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/jobs/important_notice_generator_job.rb, line 8</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/jobs/important_notice_generator_job.rb, line 14</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">perform</span>(<span class="ruby-identifier">patient_ids</span> = <span class="ruby-keyword">nil</span>)
+  <span class="ruby-identifier">scope</span> = <span class="ruby-constant">Patient</span>.<span class="ruby-identifier">includes</span>(<span class="ruby-value">:teams</span>, <span class="ruby-value">vaccination_records:</span> <span class="ruby-node">%i[team]</span>)
+
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">patient_ids</span>.<span class="ruby-identifier">present?</span>
-    <span class="ruby-identifier">process_batch</span>(
-      <span class="ruby-constant">Patient</span>.<span class="ruby-identifier">includes</span>(<span class="ruby-value">:teams</span>, <span class="ruby-value">vaccination_records:</span> <span class="ruby-node">%i[team]</span>).<span class="ruby-identifier">where</span>(
-        <span class="ruby-value">id:</span> <span class="ruby-identifier">patient_ids</span>
-      )
-    )
+    <span class="ruby-identifier">process_batch</span>(<span class="ruby-identifier">scope</span>.<span class="ruby-identifier">where</span>(<span class="ruby-value">id:</span> <span class="ruby-identifier">patient_ids</span>))
   <span class="ruby-keyword">else</span>
-    <span class="ruby-constant">Patient</span>
-      .<span class="ruby-identifier">includes</span>(<span class="ruby-value">:teams</span>, <span class="ruby-value">vaccination_records:</span> <span class="ruby-node">%i[team]</span>)
-      .<span class="ruby-identifier">find_in_batches</span>(<span class="ruby-value">batch_size:</span> <span class="ruby-constant">BATCH_SIZE</span>) <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">patients_batch</span><span class="ruby-operator">|</span>
-        <span class="ruby-identifier">process_batch</span>(<span class="ruby-identifier">patients_batch</span>)
-      <span class="ruby-keyword">end</span>
+    <span class="ruby-identifier">scope</span>.<span class="ruby-identifier">find_in_batches</span>(<span class="ruby-value">batch_size:</span> <span class="ruby-constant">BATCH_SIZE</span>) <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">batch</span><span class="ruby-operator">|</span>
+      <span class="ruby-identifier">process_batch</span>(<span class="ruby-identifier">batch</span>)
+    <span class="ruby-keyword">end</span>
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
