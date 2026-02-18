@@ -4,18 +4,101 @@ describe ImportDuplicateForm do
   let(:programme) { Programme.sample }
 
   describe "#save" do
-    subject do
-      described_class.new(
-        apply_changes: "apply",
-        object: vaccination_record,
-        current_team: team
-      ).save
+    context "resolving a vaccination record" do
+      subject do
+        described_class.new(
+          apply_changes: "apply",
+          object: vaccination_record,
+          current_team: team
+        ).save
+      end
+
+      let(:team) { create(:team, programmes: [programme]) }
+      let(:vaccination_record) do
+        create(:vaccination_record, programme:, team:)
+      end
+
+      it_behaves_like "a method that updates team cached counts"
     end
 
-    let(:team) { create(:team, programmes: [programme]) }
-    let(:vaccination_record) { create(:vaccination_record, programme:, team:) }
+    context "resolving a patient record" do
+      context "when a patient import issue includes parent relationships" do
+        let(:team) { create(:team, programmes: [programme]) }
+        let(:session) { create(:session, team:, programmes: [programme]) }
+        let(:class_import) { create(:class_import, session:) }
+        let(:existing_patient) { create(:patient) }
 
-    it_behaves_like "a method that updates team cached counts"
+        let(:import_parent) { create(:parent) }
+        let(:existing_parent) { create(:parent) }
+
+        let(:import_relationship) do
+          create(
+            :parent_relationship,
+            patient: existing_patient,
+            parent: import_parent,
+            type: "father"
+          )
+        end
+
+        let!(:existing_relationship) do
+          create(
+            :parent_relationship,
+            patient: existing_patient,
+            parent: existing_parent,
+            type: "mother"
+          )
+        end
+
+        let!(:changeset) do
+          create(
+            :patient_changeset,
+            :class_import,
+            :import_issue,
+            import: class_import,
+            patient: existing_patient
+          )
+        end
+
+        before do
+          existing_patient.update!(pending_changes: { "given_name" => "Twin" })
+          class_import.parent_relationships << import_relationship
+        end
+
+        it "moves imported parent relationships to the new patient when keeping both" do
+          form =
+            described_class.new(
+              apply_changes: "keep_both",
+              object: existing_patient,
+              current_team: team
+            )
+
+          expect(form.save).to be(true)
+
+          new_patient = changeset.reload.patient
+
+          expect(new_patient).not_to eq(existing_patient)
+          expect(import_relationship.reload.patient).to eq(new_patient)
+          expect(existing_relationship.reload.patient).to eq(existing_patient)
+        end
+
+        it "removes imported parent relationships when discarding changes" do
+          form =
+            described_class.new(
+              apply_changes: "discard",
+              object: existing_patient,
+              current_team: team
+            )
+
+          expect(form.save).to be(true)
+
+          expect { import_relationship.reload }.to raise_error(
+            ActiveRecord::RecordNotFound
+          )
+          expect(existing_relationship.reload.patient).to eq(existing_patient)
+          expect(changeset.reload.patient).to eq(existing_patient)
+        end
+      end
+    end
   end
 
   describe "#can_apply?" do
