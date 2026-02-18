@@ -1001,7 +1001,7 @@ reason, but we should be trying again to vaccinate these children.</pre>
             <div class="method-heading">
               <a href="#method-i-apply_pending_changes_to_new_record-21" title="Link to this method">
                 <span class="method-name">apply_pending_changes_to_new_record!</span>
-                <span class="method-args">()</span>
+                <span class="method-args">(changeset:)</span>
               </a>
             </div>
 
@@ -1014,10 +1014,9 @@ reason, but we should be trying again to vaccinate these children.</pre>
             </details>
           </div>
           <div class="method-source-code" id="apply_pending_changes_to_new_record-21-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/patient.rb, line 760</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">apply_pending_changes_to_new_record!</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/patient.rb, line 761</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">apply_pending_changes_to_new_record!</span>(<span class="ruby-value">changeset:</span>)
   <span class="ruby-identifier">new_record</span> = <span class="ruby-keyword">nil</span>
-  <span class="ruby-identifier">changeset</span> = <span class="ruby-identifier">changesets</span>.<span class="ruby-identifier">includes</span>(<span class="ruby-value">:import</span>).<span class="ruby-identifier">order</span>(<span class="ruby-value">:created_at</span>).<span class="ruby-identifier">last</span>
 
   <span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span>.<span class="ruby-identifier">transaction</span> <span class="ruby-keyword">do</span>
     <span class="ruby-identifier">new_record</span> = <span class="ruby-keyword">super</span>
@@ -1041,7 +1040,7 @@ reason, but we should be trying again to vaccinate these children.</pre>
         <div class="method-description">
 
 
-          
+          <p>This method overrides the implementation in <a href="PendingChangesConcern.html"><code>PendingChangesConcern</code></a></p>
 
 
             <div class="method-calls-super">
@@ -1398,9 +1397,9 @@ reason, but we should be trying again to vaccinate these children.</pre>
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span>
 
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">apply_pending_changes_to_new_record!</span>
+<span class="ruby-comment"># This method overrides the implementation in `PendingChangesConcern`</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">apply_pending_changes_to_new_record!</span>(<span class="ruby-value">changeset:</span>)
   <span class="ruby-identifier">new_record</span> = <span class="ruby-keyword">nil</span>
-  <span class="ruby-identifier">changeset</span> = <span class="ruby-identifier">changesets</span>.<span class="ruby-identifier">includes</span>(<span class="ruby-value">:import</span>).<span class="ruby-identifier">order</span>(<span class="ruby-value">:created_at</span>).<span class="ruby-identifier">last</span>
 
   <span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span>.<span class="ruby-identifier">transaction</span> <span class="ruby-keyword">do</span>
     <span class="ruby-identifier">new_record</span> = <span class="ruby-keyword">super</span>
@@ -2382,9 +2381,9 @@ reason, but we should be trying again to vaccinate these children.</pre>
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span>
 
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">apply_pending_changes_to_new_record!</span>
+<span class="ruby-comment"># This method overrides the implementation in `PendingChangesConcern`</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">apply_pending_changes_to_new_record!</span>(<span class="ruby-value">changeset:</span>)
   <span class="ruby-identifier">new_record</span> = <span class="ruby-keyword">nil</span>
-  <span class="ruby-identifier">changeset</span> = <span class="ruby-identifier">changesets</span>.<span class="ruby-identifier">includes</span>(<span class="ruby-value">:import</span>).<span class="ruby-identifier">order</span>(<span class="ruby-value">:created_at</span>).<span class="ruby-identifier">last</span>
 
   <span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span>.<span class="ruby-identifier">transaction</span> <span class="ruby-keyword">do</span>
     <span class="ruby-identifier">new_record</span> = <span class="ruby-keyword">super</span>
@@ -3313,9 +3312,9 @@ reason, but we should be trying again to vaccinate these children.</pre>
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span>
 
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">apply_pending_changes_to_new_record!</span>
+<span class="ruby-comment"># This method overrides the implementation in `PendingChangesConcern`</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">apply_pending_changes_to_new_record!</span>(<span class="ruby-value">changeset:</span>)
   <span class="ruby-identifier">new_record</span> = <span class="ruby-keyword">nil</span>
-  <span class="ruby-identifier">changeset</span> = <span class="ruby-identifier">changesets</span>.<span class="ruby-identifier">includes</span>(<span class="ruby-value">:import</span>).<span class="ruby-identifier">order</span>(<span class="ruby-value">:created_at</span>).<span class="ruby-identifier">last</span>
 
   <span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span>.<span class="ruby-identifier">transaction</span> <span class="ruby-keyword">do</span>
     <span class="ruby-identifier">new_record</span> = <span class="ruby-keyword">super</span>
