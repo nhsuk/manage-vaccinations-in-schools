@@ -16,9 +16,9 @@
 #  ethnic_background          :integer
 #  ethnic_background_other    :string
 #  ethnic_group               :integer
-#  family_name                :string           not null
+#  family_name                :citext           not null
 #  gender_code                :integer          default("not_known"), not null
-#  given_name                 :string           not null
+#  given_name                 :citext           not null
 #  home_educated              :boolean
 #  invalidated_at             :datetime
 #  local_authority_mhclg_code :string
@@ -227,22 +227,22 @@ class Patient < ApplicationRecord
                         )
             end
 
-          ilike_scope =
+          like_scope =
             terms.reduce(self) do |scope, term|
               if term.length < 3
                 scope.and where(
-                            "family_name ILIKE :term || '%' OR given_name ILIKE :term || '%'",
+                            "family_name LIKE :term || '%' OR given_name LIKE :term || '%'",
                             term:
                           )
               else
                 scope.and where(
-                            "family_name ILIKE '%' || :term || '%' OR given_name ILIKE '%' || :term || '%'",
+                            "family_name LIKE '%' || :term || '%' OR given_name LIKE '%' || :term || '%'",
                             term:
                           )
               end
             end
 
-          similarity_scope.or(ilike_scope).order(
+          similarity_scope.or(like_scope).order(
             Arel.sql(
               "(STRICT_WORD_SIMILARITY(given_name, :query) + STRICT_WORD_SIMILARITY(family_name, :query)) DESC",
               query:
@@ -495,32 +495,23 @@ class Patient < ApplicationRecord
       return [patient]
     end
 
-    scope =
-      Patient.where(
-        "given_name ILIKE ? AND family_name ILIKE ?",
-        given_name,
-        family_name
-      ).where(date_of_birth:)
+    scope = Patient.where(given_name:, family_name:).where(date_of_birth:)
 
     if address_postcode.present?
       scope =
         if include_3_out_of_4_matches
           scope
             .or(
-              Patient.where(
-                "given_name ILIKE ? AND family_name ILIKE ?",
-                given_name,
-                family_name
-              ).where(address_postcode:)
+              Patient.where(given_name:, family_name:).where(address_postcode:)
             )
             .or(
-              Patient.where("given_name ILIKE ?", given_name).where(
+              Patient.where(given_name:).where(
                 date_of_birth:,
                 address_postcode:
               )
             )
             .or(
-              Patient.where("family_name ILIKE ?", family_name).where(
+              Patient.where(family_name:).where(
                 date_of_birth:,
                 address_postcode:
               )
