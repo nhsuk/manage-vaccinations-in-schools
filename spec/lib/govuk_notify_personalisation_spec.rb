@@ -109,7 +109,6 @@ describe GovukNotifyPersonalisation do
           team_privacy_notice_url: "https://example.com/privacy-notice",
           team_privacy_policy_url: "https://example.com/privacy-policy",
           vaccination: "HPV vaccination",
-          vaccination_sms: "HPV vaccination",
           vaccination_and_dates: "HPV vaccination on Thursday 1 January",
           vaccination_and_dates_sms: "HPV vaccination on Thursday 1 January",
           vaccination_and_method: "HPV vaccination",
@@ -134,8 +133,8 @@ describe GovukNotifyPersonalisation do
       let(:programmes) { [Programme.mmr] }
       let(:date_of_birth) { Programme::MIN_MMRV_ELIGIBILITY_DATE + 1.month }
 
-      it { should include(vaccination_sms: "MMR vaccination") }
-      it { should include(vaccination_and_dates_sms: "MMR vaccination") }
+      it { should include(vaccination: "MMRV vaccination") }
+      it { should include(vaccination_and_dates_sms: "MMRV vaccination") }
 
       it "generates consent link with mmrv variant" do
         expect(to_h[:consent_link]).to end_with("/mmrv/start")
