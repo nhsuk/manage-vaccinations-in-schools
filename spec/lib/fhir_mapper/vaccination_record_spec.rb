@@ -517,8 +517,10 @@ describe FHIRMapper::VaccinationRecord do
         end
 
         its(:performed_at) do
-          should eq Time.parse("2025-04-06T23:59:50.2+01:00")
+          should eq Time.parse("2025-04-06T23:59:50+01:00")
         end
+        its(:performed_at_date) { should eq Date.new(2025, 4, 6) }
+        its(:performed_at_time) { should eq Time.new(2000, 1, 1, 23, 59, 50, "+00:00") }
 
         its(:delivery_method) { should eq "intramuscular" }
         its(:delivery_site) { should eq "left_arm_upper_position" }
@@ -555,7 +557,12 @@ describe FHIRMapper::VaccinationRecord do
         end
 
         its(:performed_at) do
-          should eq Time.parse("2025-04-06T23:59:50.2+01:00")
+          should eq Time.parse("2025-04-06T23:59:50+01:00")
+        end
+        its(:performed_at_date) { should eq Date.new(2025, 4, 6) }
+
+        its(:performed_at_time) do
+          should eq Time.new(2000, 1, 1, 23, 59, 50, "+00:00")
         end
 
         its(:delivery_method) { should eq "nasal_spray" }
@@ -595,7 +602,12 @@ describe FHIRMapper::VaccinationRecord do
         end
 
         its(:performed_at) do
-          should eq Time.parse("2025-04-06T23:59:50.2+01:00")
+          should eq Time.parse("2025-04-06T23:59:50+01:00")
+        end
+        its(:performed_at_date) { should eq Date.new(2025, 4, 6) }
+
+        its(:performed_at_time) do
+          should eq Time.new(2000, 1, 1, 23, 59, 50, "+00:00")
         end
 
         its(:delivery_method) { should eq "nasal_spray" }
@@ -634,6 +646,9 @@ describe FHIRMapper::VaccinationRecord do
         end
 
         its(:performed_at) { should eq Time.parse("2025-09-30T00:00:00+00:00") }
+        its(:performed_at_date) { should eq Date.new(2025, 9, 30) }
+        its(:performed_at_time) { should eq Time.new(2000, 1, 1, 1, 0, 0, "+00:00") }
+
         its(:delivery_method) { should eq "nasal_spray" }
         its(:delivery_site) { should eq "nose" }
         its(:full_dose) { should be true }
@@ -664,7 +679,12 @@ describe FHIRMapper::VaccinationRecord do
         its(:batch_expiry) { should eq Date.new(2026, 7, 2) }
 
         its(:performed_at) do
-          should eq Time.parse("2025-04-06T23:59:50.2+01:00")
+          should eq Time.parse("2025-04-06T23:59:50+01:00")
+        end
+        its(:performed_at_date) { should eq Date.new(2025, 4, 6) }
+
+        its(:performed_at_time) do
+          should eq Time.new(2000, 1, 1, 23, 59, 50, "+00:00")
         end
 
         its(:delivery_method) { should eq "intramuscular" }
@@ -699,6 +719,9 @@ describe FHIRMapper::VaccinationRecord do
         its(:batch_expiry) { should be_nil }
 
         its(:performed_at) { should eq Time.parse("2023-12-07T00:00:00+00:00") }
+        its(:performed_at_date) { should eq Date.new(2023, 12, 7) }
+        its(:performed_at_time) { should eq Time.new(2000, 1, 1, 0, 0, 0, "+00:00") }
+
         its(:delivery_method) { should be_nil }
         its(:delivery_site) { should be_nil }
         its(:full_dose) { should be true }
@@ -721,9 +744,12 @@ describe FHIRMapper::VaccinationRecord do
           should have_attributes(snomed_product_code: "43208811000001106")
         end
 
+        its(:performed_at) { should eq Time.parse("2025-10-06T00:00:00+00:00") }
+        its(:performed_at_date) { should eq Date.new(2025, 10, 6) }
+        its(:performed_at_time) { should eq Time.new(2000, 1, 1, 1, 0, 0, "+00:00") }
+
         its(:batch_number) { should be_nil }
         its(:batch_expiry) { should be_nil }
-        its(:performed_at) { should eq Time.parse("2025-10-06T00:00:00+00:00") }
         its(:delivery_method) { should be_nil }
         its(:delivery_site) { should be_nil }
         its(:full_dose) { should be_nil }
@@ -743,9 +769,12 @@ describe FHIRMapper::VaccinationRecord do
           should have_attributes(snomed_product_code: "43207411000001105")
         end
 
+        its(:performed_at) { should eq Time.parse("2025-10-06T00:00:00+00:00") }
+        its(:performed_at_date) { should eq Date.new(2025, 10, 6) }
+        its(:performed_at_time) { should eq Time.new(2000, 1, 1, 1, 0, 0, "+00:00") }
+
         its(:batch_number) { should be_nil }
         its(:batch_expiry) { should be_nil }
-        its(:performed_at) { should eq Time.parse("2025-10-06T00:00:00+00:00") }
         its(:delivery_method) { should be_nil }
         its(:delivery_site) { should be_nil }
         its(:full_dose) { should be true }
@@ -771,6 +800,9 @@ describe FHIRMapper::VaccinationRecord do
         end
 
         its(:performed_at) { should eq Time.parse("2025-09-20T00:00:00+00:00") }
+        its(:performed_at_date) { should eq Date.new(2025, 9, 20) }
+        its(:performed_at_time) { should eq Time.new(2000, 1, 1, 1, 0, 0, "+00:00") }
+
         its(:delivery_method) { should eq "intramuscular" }
         its(:delivery_site) { should be_nil }
         its(:full_dose) { should be true }
@@ -797,7 +829,11 @@ describe FHIRMapper::VaccinationRecord do
 
         its(:batch_number) { should eq "bb2222" }
         its(:batch_expiry) { should eq Date.new(2030, 1, 1) }
+
         its(:performed_at) { should eq Time.parse("2025-08-28T11:45:30+01:00") }
+        its(:performed_at_date) { should eq Date.new(2025, 8, 28) }
+        its(:performed_at_time) { should eq Time.new(2000, 1, 1, 11, 45, 30, "+00:00") }
+
         its(:delivery_method) { should eq "nasal_spray" }
         its(:delivery_site) { should eq "nose" }
         its(:full_dose) { should be true }
@@ -828,7 +864,11 @@ describe FHIRMapper::VaccinationRecord do
 
         its(:batch_number) { should eq "aa1111" }
         its(:batch_expiry) { should eq Date.new(2030, 1, 1) }
+
         its(:performed_at) { should eq Time.parse("2025-10-06T07:57:32+01:00") }
+        its(:performed_at_date) { should eq Date.new(2025, 10, 6) }
+        its(:performed_at_time) { should eq Time.new(2000, 1, 1, 7, 57, 32, "+00:00") }
+
         its(:delivery_method) { should be_nil }
         its(:delivery_site) { should be_nil }
         its(:full_dose) { should be true }
@@ -857,7 +897,11 @@ describe FHIRMapper::VaccinationRecord do
         its(:vaccine) { should be_nil }
         its(:batch_number) { should be_nil }
         its(:batch_expiry) { should be_nil }
+
         its(:performed_at) { should eq Time.parse("2023-12-07T00:00:00+00:00") }
+        its(:performed_at_date) { should eq Date.new(2023, 12, 7) }
+        its(:performed_at_time) { should eq Time.new(2000, 1, 1, 0, 0, 0, "+00:00") }
+
         its(:delivery_method) { should be_nil }
         its(:delivery_site) { should be_nil }
         its(:full_dose) { should be true }
@@ -895,6 +939,9 @@ describe FHIRMapper::VaccinationRecord do
         end
 
         its(:performed_at) { should eq Time.parse("2025-11-03T15:30:34+00:00") }
+        its(:performed_at_date) { should eq Date.new(2025, 11, 3) }
+        its(:performed_at_time) { should eq Time.new(2000, 1, 1, 15, 30, 34, "+00:00") }
+
         its(:delivery_method) { should eq "intramuscular" }
         its(:delivery_site) { should eq "left_arm_upper_position" }
         its(:full_dose) { should be true }
@@ -934,6 +981,9 @@ describe FHIRMapper::VaccinationRecord do
         end
 
         its(:performed_at) { should eq Time.parse("2025-11-03T15:31:07+00:00") }
+        its(:performed_at_date) { should eq Date.new(2025, 11, 3) }
+        its(:performed_at_time) { should eq Time.new(2000, 1, 1, 15, 31, 7, "+00:00") }
+
         its(:delivery_method) { should eq "intramuscular" }
         its(:delivery_site) { should eq "left_arm_upper_position" }
         its(:full_dose) { should be true }
@@ -973,6 +1023,9 @@ describe FHIRMapper::VaccinationRecord do
         end
 
         its(:performed_at) { should eq Time.parse("2025-11-03T15:31:37+00:00") }
+        its(:performed_at_date) { should eq Date.new(2025, 11, 3) }
+        its(:performed_at_time) { should eq Time.new(2000, 1, 1, 15, 31, 37, "+00:00") }
+
         its(:delivery_method) { should eq "intramuscular" }
         its(:delivery_site) { should eq "left_arm_upper_position" }
         its(:full_dose) { should be true }
@@ -1016,6 +1069,9 @@ describe FHIRMapper::VaccinationRecord do
         end
 
         its(:performed_at) { should eq Time.parse("2025-11-03T15:11:11+00:00") }
+        its(:performed_at_date) { should eq Date.new(2025, 11, 3) }
+        its(:performed_at_time) { should eq Time.new(2000, 1, 1, 15, 11, 11, "+00:00") }
+
         its(:delivery_method) { should eq "intramuscular" }
         its(:delivery_site) { should eq "left_arm_upper_position" }
         its(:full_dose) { should be true }
@@ -1059,6 +1115,9 @@ describe FHIRMapper::VaccinationRecord do
         end
 
         its(:performed_at) { should eq Time.parse("2025-01-27T08:49:44+0000") }
+        its(:performed_at_date) { should eq Date.new(2025, 1, 27) }
+        its(:performed_at_time) { should eq Time.new(2000, 1, 1, 8, 49, 44, "+00:00") }
+
         its(:delivery_method) { should eq "intramuscular" }
         its(:delivery_site) { should eq "left_arm_upper_position" }
         its(:full_dose) { should be true }

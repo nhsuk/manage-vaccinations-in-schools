@@ -253,7 +253,7 @@
   "patient": {
     "reference": "#Pat1"
   },
-  "occurrenceDateTime": "2025-04-06T23:59:50.2+01:00",
+  "occurrenceDateTime": "2025-04-06T23:59:50+01:00",
   "recorded": "2025-03-12T13:28:17.12+00:00",
   "primarySource": true,
   "manufacturer": {
