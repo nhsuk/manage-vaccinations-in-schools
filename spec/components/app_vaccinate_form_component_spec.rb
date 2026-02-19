@@ -25,6 +25,15 @@ describe AppVaccinateFormComponent do
 
   let(:component) { described_class.new(vaccinate_form) }
 
+  let(:update_status) do
+    patient.programme_status(
+      programme,
+      academic_year: session.academic_year
+    ).assign
+  end
+
+  before { update_status }
+
   describe "#render" do
     subject { render_inline(component) }
 
@@ -121,6 +130,12 @@ describe AppVaccinateFormComponent do
   describe "#dose_sequence" do
     subject { component.send(:dose_sequence) }
 
+    let(:prior_vaccination_records) { nil }
+    let(:update_status) do
+      prior_vaccination_records
+      patient.programme_status(programme, academic_year: session.academic_year).assign
+    end
+
     context "with HPV programme" do
       let(:programme) { Programme.hpv }
 
@@ -148,7 +163,15 @@ describe AppVaccinateFormComponent do
     context "with MMR programme" do
       let(:programme) { Programme.mmr }
 
-      it { should be_nil }
+      it { should eq(1) }
+
+      context "with an existing vaccination record" do
+        let(:prior_vaccination_records) do
+          create(:vaccination_record, patient:, programme:, dose_sequence: 1)
+        end
+
+        it { should eq(2) }
+      end
     end
   end
 end
