@@ -48,9 +48,9 @@ class CohortImportRow < PatientImportRow
 
   def validate_address_postcode
     if address_postcode.nil?
-      errors.add(:base, "<code>CHILD_POSTCODE</code> is missing")
+      errors.add(:base, "<code>CHILD_POSTCODE</code> is required")
     elsif address_postcode.blank?
-      errors.add(address_postcode.header, "is required but missing")
+      errors.add(address_postcode.header, "Enter a valid postcode, like SW1A 1AA.")
     elsif address_postcode.to_postcode.nil?
       errors.add(address_postcode.header, "should be a postcode, like SW1A 1AA")
     end
@@ -58,9 +58,9 @@ class CohortImportRow < PatientImportRow
 
   def validate_school_urn
     if school_urn.nil?
-      errors.add(:base, "<code>CHILD_SCHOOL_URN</code> is missing")
+      errors.add(:base, "<code>CHILD_SCHOOL_URN</code> is required")
     elsif school_urn.blank?
-      errors.add(school_urn.header, "is required but missing")
+      errors.add(school_urn.header, "Enter a school URN.")
     elsif schools.where(urn: school_urn.to_s).where.not(site: nil).exists?
       errors.add(
         school_urn.header,

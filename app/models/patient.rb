@@ -79,6 +79,7 @@ class Patient < ApplicationRecord
   has_many :notify_log_entries
   has_many :parent_relationships, -> { order(:created_at) }
   has_many :patient_locations
+  has_many :patient_merge_log_entries
   has_many :patient_programme_vaccinations_searches
   has_many :patient_specific_directions
   has_many :patient_teams
@@ -476,7 +477,7 @@ class Patient < ApplicationRecord
              end
 
   after_update :sync_vaccinations_to_nhs_immunisations_api
-  after_update :generate_important_notice_if_needed
+  after_commit :generate_important_notice_if_needed, on: :update
   after_commit :search_vaccinations_from_nhs_immunisations_api, on: :update
   before_destroy :destroy_childless_parents
 
@@ -754,6 +755,26 @@ class Patient < ApplicationRecord
         new_patient.patient_teams.build(team_id: patient_team.team_id, sources:)
       end
     end
+  end
+
+  # This method overrides the implementation in `PendingChangesConcern`
+  def apply_pending_changes_to_new_record!(changeset:)
+    new_record = nil
+
+    ActiveRecord::Base.transaction do
+      new_record = super
+
+      if changeset
+        changeset.update!(patient_id: new_record.id)
+        changeset
+          .import
+          .parent_relationships
+          .where(patient_id: id)
+          .update_all(patient_id: new_record.id)
+      end
+    end
+
+    new_record
   end
 
   def clear_pending_sessions!(team: nil)

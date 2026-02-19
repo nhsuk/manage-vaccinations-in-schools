@@ -58,16 +58,54 @@ class ImportDuplicateForm
   end
 
   def discard_pending_changes!
+    remove_imported_parent_relationships_if_needed!
+
     object.patient.discard_pending_changes! if object.respond_to?(:patient)
 
     object.discard_pending_changes!
   end
 
   def keep_both_changes!
-    object.apply_pending_changes_to_new_record! if can_keep_both? && can_apply?
+    return unless can_keep_both?
+    return unless can_apply?
+
+    object.apply_pending_changes_to_new_record!(
+      changeset: changeset_for_keep_both
+    )
+  end
+
+  def changeset_for_keep_both
+    scope = object.changesets.includes(:import).order(:created_at)
+
+    return scope.last unless Flipper.enabled?(:import_review_screen)
+
+    completed_import_statuses = %w[
+      processed
+      partially_processed
+      removing_parent_relationships
+    ]
+
+    scope
+      .processed
+      .select { completed_import_statuses.include?(it.import&.status) }
+      .last
   end
 
   def reset_count!
     TeamCachedCounts.new(current_team).reset_import_issues!
+  end
+
+  def remove_imported_parent_relationships_if_needed!
+    return unless object.is_a?(Patient)
+
+    changeset = object.changesets.includes(:import).order(:created_at).last
+    return if changeset.nil?
+
+    changeset
+      .import
+      .parent_relationships
+      .includes(:patient)
+      .where(patient: object)
+      .find_each(&:destroy!)
   end
 end

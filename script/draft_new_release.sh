@@ -19,7 +19,22 @@ fi
 release_tag=$1
 latest_release=$(gh release list --json name,isLatest --jq '.[] | select(.isLatest)|.name')
 
+if [[ -n "$latest_release" ]]; then
+  echo "Latest release found: $latest_release"
+else
+  echo "No latest release found."
+  exit 2
+fi
+
+
 pr_numbers=$(git log --pretty=format:"%s" "$latest_release"..origin/main | grep -oE 'Merge pull request #([0-9]+)' | grep -oE '[0-9]+')
+
+if [[ -z "$pr_numbers" ]]; then
+  sha_from=$(git rev-parse --short "$latest_release")
+  sha_to=$(git rev-parse --short origin/main)
+  echo "No pull requests found in $latest_release..main (${sha_from}..${sha_to})."
+  exit 3
+fi
 
 pre_release_tasks=""
 post_release_tasks=""

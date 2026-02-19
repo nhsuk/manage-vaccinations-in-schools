@@ -40,7 +40,7 @@ class Onboarding
       type
       workgroup
     ],
-    national_reporting: %i[name type workgroup]
+    national_reporting: %i[name type workgroup national_reporting_cut_off_date]
   }.freeze
 
   SUBTEAM_ATTRIBUTES = {

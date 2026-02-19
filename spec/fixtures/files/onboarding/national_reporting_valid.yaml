@@ -5,3 +5,4 @@ team:
   name: NHS Trust
   type: national_reporting
   workgroup: nhstrust
+  national_reporting_cut_off_date: 2026-01-01

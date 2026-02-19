@@ -226,7 +226,7 @@ This runs tests in the `end_to_end` rails environment which will not interfere w
 ```shell
 RAILS_ENV=end_to_end bin/rails db:setup
 RAILS_ENV=end_to_end bin/rails feature_flags:enable_for_development
-RAILS_ENV=end_to_end bin/mavis gias import
+RAILS_ENV=end_to_end bin/mavis gias import --input-file=spec/fixtures/dfe-schools.zip
 RAILS_ENV=end_to_end bin/rails assets:precompile
 ```
 

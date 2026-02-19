@@ -68,7 +68,6 @@ describe ImmunisationImportRow do
 
   let(:valid_national_reporting_common_data) do
     valid_patient_data.deep_dup.merge(
-      "ANATOMICAL_SITE" => "Left Deltoid",
       "BATCH_EXPIRY_DATE" => "20260106",
       "DATE_OF_VACCINATION" => "20260105",
       "BATCH_NUMBER" => "123",
@@ -81,12 +80,14 @@ describe ImmunisationImportRow do
       "VACCINATED" => "Y",
       "PERFORMING_PROFESSIONAL_FORENAME" => vaccinator.given_name,
       "PERFORMING_PROFESSIONAL_SURNAME" => vaccinator.family_name,
-      "VACCINE_GIVEN" => "AstraZeneca Fluenz LAIV"
+      "VACCINE_GIVEN" => "AstraZeneca Fluenz LAIV",
+      "ANATOMICAL_SITE" => "nasal"
     )
   end
   let(:valid_national_reporting_hpv_data) do
     valid_national_reporting_common_data.deep_dup.merge(
       "VACCINE_GIVEN" => "Gardasil9",
+      "ANATOMICAL_SITE" => "Left Deltoid",
       "DOSE_SEQUENCE" => "1",
       "CARE_SETTING" => "1" # School
     )
@@ -100,7 +101,7 @@ describe ImmunisationImportRow do
     context "for a point_of_care upload" do
       let(:import_type) { "point_of_care" }
 
-      context "with an empty row" do
+      context "with an empty spreadsheet" do
         let(:data) { {} }
 
         it "has errors" do
@@ -115,6 +116,53 @@ describe ImmunisationImportRow do
             "<code>PERSON_POSTCODE</code> or <code>Postcode</code> is required",
             "<code>PROGRAMME</code> or <code>Vaccination type</code> is required",
             "<code>REASON_NOT_VACCINATED</code> is required"
+          )
+        end
+      end
+
+      context "with headers, but an empty row" do
+        let(:data) do
+          {
+            "ORGANISATION_CODE" => "",
+            "SCHOOL_NAME" => "",
+            "SCHOOL_URN" => "",
+            "NHS_NUMBER" => "",
+            "PERSON_FORENAME" => "",
+            "PERSON_SURNAME" => "",
+            "PERSON_DOB" => "",
+            "PERSON_POSTCODE" => "",
+            "PERSON_GENDER_CODE" => "",
+            "PROGRAMME" => "",
+            "DATE_OF_VACCINATION" => "",
+            "REASON_NOT_VACCINATED" => "",
+            "VACCINATED" => "",
+            "BATCH_EXPIRY_DATE" => "",
+            "BATCH_NUMBER" => "",
+            "ANATOMICAL_SITE" => "",
+            "PERFORMING_PROFESSIONAL_FORENAME" => "",
+            "PERFORMING_PROFESSIONAL_SURNAME" => "",
+            "VACCINE_GIVEN" => ""
+          }
+        end
+
+        it "has the correct errors" do
+          expect(immunisation_import_row).to be_invalid
+
+          expect(immunisation_import_row.errors.to_hash).to eq(
+            {
+              VACCINATED: [
+                "You need to record whether the child was vaccinated or not. " \
+                  "Enter ‘Y’ or ‘N’ in the ‘VACCINATED’ column."
+              ],
+              DATE_OF_VACCINATION: ["Enter a date."],
+              PERSON_DOB: ["Enter a date of birth."],
+              PERSON_FORENAME: ["Enter a first name."],
+              PERSON_GENDER_CODE: ["Enter a gender or gender code."],
+              PERSON_SURNAME: ["Enter a last name."],
+              PERSON_POSTCODE: ["Enter a valid postcode, such as SW1A 1AA."],
+              PROGRAMME: ["Enter a programme."],
+              REASON_NOT_VACCINATED: ["Enter a valid reason."]
+            }
           )
         end
       end
@@ -204,7 +252,7 @@ describe ImmunisationImportRow do
         it "has errors" do
           expect(immunisation_import_row).to be_invalid
           expect(immunisation_import_row.errors["VACCINE_GIVEN"]).to eq(
-            ["is required"]
+            ["Enter a vaccine name."]
           )
         end
       end
@@ -226,7 +274,7 @@ describe ImmunisationImportRow do
         it "has errors" do
           expect(immunisation_import_row).to be_invalid
           expect(immunisation_import_row.errors["REASON_NOT_VACCINATED"]).to eq(
-            ["Enter a valid reason"]
+            ["Enter a valid reason."]
           )
         end
       end
@@ -653,7 +701,7 @@ describe ImmunisationImportRow do
           expect(immunisation_import_row).to be_invalid
           expect(
             immunisation_import_row.errors["PERFORMING_PROFESSIONAL_EMAIL"]
-          ).to include("Enter a valid email address")
+          ).to include("Enter a valid email address.")
         end
       end
 
@@ -1039,6 +1087,45 @@ describe ImmunisationImportRow do
         end
       end
 
+      shared_context "when performed_at is before the team's cut off date" do
+        context "when the team has a cut off date" do
+          let(:team) do
+            create(
+              :team,
+              :national_reporting,
+              ods_code: "ABC",
+              programmes:,
+              national_reporting_cut_off_date: Date.new(2026, 2, 1)
+            )
+          end
+
+          it "returns an error" do
+            expect(immunisation_import_row).to be_invalid
+            expect(
+              immunisation_import_row.errors[:DATE_OF_VACCINATION]
+            ).to include(
+              "must be on or after your team's start date with Mavis national reporting: 1 February 2026"
+            )
+          end
+        end
+
+        context "when the team has no cut off date" do
+          let(:team) do
+            create(
+              :team,
+              :national_reporting,
+              ods_code: "ABC",
+              programmes:,
+              national_reporting_cut_off_date: nil
+            )
+          end
+
+          it "doesn't return an error" do
+            expect(immunisation_import_row).to be_valid
+          end
+        end
+      end
+
       context "of unknown type (no VACCINE_GIVEN)" do
         context "with an empty row" do
           let(:data) { {} }
@@ -1116,6 +1203,55 @@ describe ImmunisationImportRow do
           include_examples "it is equivalent to `VACCINATED` being `Y`"
         end
 
+        context "with headers, but an empty row" do
+          let(:data) do
+            {
+              "ORGANISATION_CODE" => "",
+              "SCHOOL_NAME" => "",
+              "SCHOOL_URN" => "",
+              "NHS_NUMBER" => "",
+              "PERSON_FORENAME" => "",
+              "PERSON_SURNAME" => "",
+              "PERSON_DOB" => "",
+              "PERSON_POSTCODE" => "",
+              "PERSON_GENDER_CODE" => "",
+              "DATE_OF_VACCINATION" => "",
+              "VACCINATED" => "",
+              "PERFORMING_PROFESSIONAL_FORENAME" => "",
+              "PERFORMING_PROFESSIONAL_SURNAME" => "",
+              "VACCINE_GIVEN" => "",
+              "ANATOMICAL_SITE" => "",
+              "BATCH_EXPIRY_DATE" => "",
+              "BATCH_NUMBER" => "",
+              "LOCAL_PATIENT_ID" => "",
+              "LOCAL_PATIENT_ID_URI" => ""
+            }
+          end
+
+          it "has the correct errors" do
+            expect(immunisation_import_row).to be_invalid
+
+            expect(immunisation_import_row.errors.to_hash).to eq(
+              {
+                BATCH_EXPIRY_DATE: ["Enter a batch expiry date."],
+                BATCH_NUMBER: ["Enter a batch number."],
+                DATE_OF_VACCINATION: ["Enter a date."],
+                ANATOMICAL_SITE: ["Enter an anatomical site."],
+                LOCAL_PATIENT_ID: ["Enter a local patient ID."],
+                LOCAL_PATIENT_ID_URI: ["Enter a local patient ID URI."],
+                PERSON_DOB: ["Enter a date of birth."],
+                PERSON_FORENAME: ["Enter a first name."],
+                PERSON_GENDER_CODE: ["Enter a gender or gender code."],
+                PERSON_SURNAME: ["Enter a last name."],
+                PERSON_POSTCODE: ["Enter a valid postcode, such as SW1A 1AA."],
+                ORGANISATION_CODE: ["Enter an organisation code."],
+                SCHOOL_URN: ["Enter a school URN."],
+                VACCINE_GIVEN: ["Enter a vaccine name."]
+              }
+            )
+          end
+        end
+
         context "when `VACCINATED` is `Y`" do
           let(:data) { basic_flu_data.merge({ "VACCINATED" => "Y" }) }
 
@@ -1125,6 +1261,12 @@ describe ImmunisationImportRow do
         include_examples "when `VACCINATED` is `N`"
 
         include_examples "when Mavis columns are present, which the national reporting upload should ignore"
+
+        context "when performed_at is after the team's cut off date" do
+          let(:data) { valid_national_reporting_flu_data }
+
+          include_examples "when performed_at is before the team's cut off date"
+        end
       end
 
       context "of type hpv" do
@@ -1158,6 +1300,23 @@ describe ImmunisationImportRow do
         include_examples "when `VACCINATED` is `N`"
 
         include_examples "when Mavis columns are present, which the national reporting upload should ignore"
+
+        context "with an anatomical site which is not appropriate for the vaccine" do
+          let(:data) { valid_hpv_data.merge("ANATOMICAL_SITE" => "nasal") }
+
+          it "has errors" do
+            expect(immunisation_import_row).to be_invalid
+            expect(immunisation_import_row.errors["ANATOMICAL_SITE"]).to eq(
+              ["Enter a anatomical site that is appropriate for the vaccine."]
+            )
+          end
+        end
+
+        context "when performed_at is after the team's cut off date" do
+          let(:data) { valid_national_reporting_hpv_data }
+
+          include_examples "when performed_at is before the team's cut off date"
+        end
       end
     end
   end
@@ -2549,11 +2708,12 @@ describe ImmunisationImportRow do
       end
 
       context "of type flu" do
-        shared_examples "accepts a VACCINE_GIVEN code" do |vaccine_given, snomed_product_code|
+        shared_examples "accepts a VACCINE_GIVEN code" do |vaccine_given, snomed_product_code, anatomical_site|
           context "with code: #{vaccine_given}" do
             let(:data) do
               valid_national_reporting_flu_data.merge(
-                "VACCINE_GIVEN" => vaccine_given
+                "VACCINE_GIVEN" => vaccine_given,
+                "ANATOMICAL_SITE" => anatomical_site || "right deltoid"
               )
             end
 
@@ -2646,7 +2806,8 @@ describe ImmunisationImportRow do
 
         include_examples "accepts a VACCINE_GIVEN code",
                          "AstraZeneca Fluenz LAIV",
-                         "43208811000001106"
+                         "43208811000001106",
+                         "nasal"
         include_examples "accepts a VACCINE_GIVEN code",
                          "Viatris Quadrivalent Influvac sub - unit Tetra - QIVe",
                          "45354911000001100"
@@ -2676,6 +2837,8 @@ describe ImmunisationImportRow do
               performed_by_given_name: vaccinator.given_name,
               performed_by_family_name: vaccinator.family_name,
               vaccine:,
+              delivery_site: "nose",
+              delivery_method: "nasal_spray",
               batch_number: "456", # different
               batch_expiry: Date.new(2026, 1, 6) # identical
             )
@@ -2702,6 +2865,8 @@ describe ImmunisationImportRow do
               performed_by_given_name: vaccinator.given_name,
               performed_by_family_name: vaccinator.family_name,
               vaccine:,
+              delivery_site: "nose",
+              delivery_method: "nasal_spray",
               batch_number: "123", # identical
               batch_expiry: Date.new(2026, 1, 6) # identical
             )

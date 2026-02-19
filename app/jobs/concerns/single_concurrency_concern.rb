@@ -6,5 +6,5 @@ module SingleConcurrencyConcern
   include Sidekiq::Job
   include Sidekiq::Throttled::Job
 
-  included { sidekiq_throttle concurrency: { limit: 1 } }
+  included { sidekiq_throttle concurrency: { limit: 1, ttl: 1.hour.to_i } }
 end

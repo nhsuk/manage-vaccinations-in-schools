@@ -69,6 +69,9 @@ class AppActivityLogComponent < ViewComponent::Base
           session ? scope.where(location: session.location) : scope
         end
 
+    @patient_merge_log_entries =
+      @patient.patient_merge_log_entries.includes(:user)
+
     @patient_specific_directions =
       @patient
         .patient_specific_directions
@@ -105,6 +108,7 @@ class AppActivityLogComponent < ViewComponent::Base
               :notify_log_entries,
               :patient,
               :patient_locations,
+              :patient_merge_log_entries,
               :patient_specific_directions,
               :pre_screenings,
               :attendance_records,
@@ -124,6 +128,7 @@ class AppActivityLogComponent < ViewComponent::Base
       gillick_assessment_events,
       note_events,
       notify_events,
+      patient_merge_events,
       patient_specific_direction_events,
       pre_screening_events,
       session_events,
@@ -305,6 +310,21 @@ class AppActivityLogComponent < ViewComponent::Base
         at: notify_log_entry.created_at,
         by: notify_log_entry.sent_by,
         programmes: notify_log_entry.programmes
+      }
+    end
+  end
+
+  def patient_merge_events
+    patient_merge_log_entries.map do |patient_merge_log_entry|
+      {
+        title: "Child record merged",
+        body:
+          "The record for #{patient_merge_log_entry.merged_patient_name} (date of birth " \
+            "#{patient_merge_log_entry.merged_patient_dob.to_fs(:long)}) was merged with the record for " \
+            "#{patient.full_name} (date of birth #{patient.date_of_birth.to_fs(:long)}) because they have the same " \
+            "NHS number (#{patient_merge_log_entry.merged_patient_nhs_number}).",
+        at: patient_merge_log_entry.created_at,
+        by: patient_merge_log_entry.user
       }
     end
   end

@@ -5,12 +5,14 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
     vaccination_record,
     current_user:,
     change_links: {},
-    show_notes: true
+    show_notes: true,
+    comparing: false
   )
     @vaccination_record = vaccination_record
     @current_user = current_user
     @change_links = change_links
     @show_notes = show_notes
+    @comparing = comparing
 
     @identity_check = vaccination_record.identity_check
     @patient = vaccination_record.patient
@@ -316,7 +318,8 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
         end && Flipper.enabled?(:imms_api_integration)
       if @vaccination_record.respond_to?(:sync_status) &&
            correct_feature_flags_enabled &&
-           @vaccination_record.correct_source_for_nhs_immunisations_api?
+           @vaccination_record.correct_source_for_nhs_immunisations_api? &&
+           !@comparing
         summary_list.with_row do |row|
           row.with_key { "Synced with NHS England?" }
           row.with_value do

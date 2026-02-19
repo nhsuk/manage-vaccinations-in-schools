@@ -134,7 +134,9 @@ class Reports::CareplusExporter
               patient.date_of_birth.strftime("%d/%m/%Y"),
               patient.restricted? ? "" : patient.address_line_1,
               consents[patient.id]&.name || "",
-              99, # Ethnicity, 99 is "Not known"
+              # We use an empty value for ethnicity, rather than the official unknown value of 99,
+              # to prevent overwriting existing values in CarePlus
+              "",
               date.strftime("%d/%m/%Y"),
               records.first.performed_at.strftime("%H:%M"),
               session.location.school? ? "SC" : "CL", # Venue Type

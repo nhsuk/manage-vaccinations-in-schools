@@ -27,7 +27,11 @@ class AppPatientSummaryComponent < ViewComponent::Base
            to: :helpers
 
   def rows
-    [nhs_number_row, date_of_birth_row, address_row]
+    [
+      nhs_number_row,
+      date_of_birth_row,
+      (address_row unless patient.restricted?)
+    ].compact
   end
 
   def classes

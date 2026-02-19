@@ -3,7 +3,9 @@
 describe Onboarding do
   subject(:onboarding) { described_class.new(config) }
 
-  let(:config) { YAML.safe_load(file_fixture(filename).read) }
+  let(:config) do
+    YAML.safe_load(file_fixture(filename).read, permitted_classes: [Date])
+  end
 
   let!(:programmes) { [Programme.hpv] }
   # rubocop:disable RSpec/IndexedLet
@@ -95,6 +97,7 @@ describe Onboarding do
       expect(team.careplus_staff_code).to be_nil
       expect(team.careplus_staff_type).to be_nil
       expect(team.programmes).to match_array(programmes)
+      expect(team.national_reporting_cut_off_date).to eq(Date.new(2026, 1, 1))
 
       expect(team.locations.generic_clinic.count).to eq(0)
       expect(team.locations.community_clinic.count).to eq(0)

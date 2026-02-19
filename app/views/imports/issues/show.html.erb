@@ -20,6 +20,7 @@
       <% else %>
         <%= render AppVaccinationRecordSummaryComponent.new(
               @vaccination_record.with_pending_changes, current_user:,
+                                                        comparing: true,
             ) %>
       <% end %>
     <% end %>
@@ -32,7 +33,7 @@
         <%= render AppChildSummaryComponent.new(@patient) %>
       <% else %>
         <%= render AppVaccinationRecordSummaryComponent.new(
-              @vaccination_record, current_user:,
+              @vaccination_record, current_user:, comparing: true,
             ) %>
       <% end %>
     <% end %>
