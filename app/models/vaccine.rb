@@ -154,22 +154,40 @@ class Vaccine < ApplicationRecord
       }
     },
     "mmr" => {
-      "injection" => {
-        code: "38598009",
-        term:
-          "Administration of vaccine product containing only Measles " \
-            "morbillivirus and Mumps orthorubulavirus and Rubella virus " \
-            "antigens"
-      }
+      "injection" => [
+        {
+          code: "38598009",
+          term:
+            "Administration of vaccine product containing only Measles " \
+              "morbillivirus and Mumps orthorubulavirus and Rubella virus " \
+              "antigens"
+        },
+        {
+          code: "170433008",
+          term:
+            "Administration of second dose of vaccine product containing only " \
+              "Measles morbillivirus and Mumps orthorubulavirus and Rubella virus " \
+              "antigens"
+        }
+      ]
     },
     "mmrv" => {
-      "injection" => {
-        code: "432636005",
-        term:
-          "Administration of vaccine product containing only Human " \
-            "alphaherpesvirus 3 and Measles morbillivirus and Mumps " \
-            "orthorubulavirus and Rubella virus antigens"
-      }
+      "injection" => [
+        {
+          code: "432636005",
+          term:
+            "Administration of vaccine product containing only Human " \
+              "alphaherpesvirus 3 and Measles morbillivirus and Mumps " \
+              "orthorubulavirus and Rubella virus antigens"
+        },
+        {
+          code: "433733003",
+          term:
+            "Administration of second dose of vaccine product containing " \
+              "only Human alphaherpesvirus 3 and Measles morbillivirus and " \
+              "Mumps orthorubulavirus and Rubella virus antigens"
+        }
+      ]
     },
     "td_ipv" => {
       "injection" => {

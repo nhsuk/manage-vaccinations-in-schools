@@ -91,13 +91,33 @@ describe Vaccine do
     context "with an MMR vaccine" do
       let(:vaccine) { build(:vaccine, :mmr) }
 
-      it { should eq("38598009") }
+      context "and first dose" do
+        let(:dose_sequence) { 1 }
+
+        it { should eq("38598009") }
+      end
+
+      context "and second dose" do
+        let(:dose_sequence) { 2 }
+
+        it { should eq("170433008") }
+      end
     end
 
     context "with an MMRV vaccine" do
       let(:vaccine) { build(:vaccine, :mmrv) }
 
-      it { should eq("432636005") }
+      context "and first dose" do
+        let(:dose_sequence) { 1 }
+
+        it { should eq("432636005") }
+      end
+
+      context "and second dose" do
+        let(:dose_sequence) { 2 }
+
+        it { should eq("433733003") }
+      end
     end
   end
 
@@ -145,24 +165,48 @@ describe Vaccine do
     context "with an MMR vaccine" do
       let(:vaccine) { build(:vaccine, :mmr) }
 
-      it do
-        expect(vaccine.snomed_procedure_term).to eq(
-          "Administration of vaccine product containing only Measles " \
-            "morbillivirus and Mumps orthorubulavirus and Rubella virus " \
-            "antigens"
-        )
+      context "with dose sequence 1" do
+        it do
+          expect(vaccine.snomed_procedure_term(dose_sequence: 1)).to eq(
+            "Administration of vaccine product containing only Measles " \
+              "morbillivirus and Mumps orthorubulavirus and Rubella virus " \
+              "antigens"
+          )
+        end
+      end
+
+      context "with dose sequence 2" do
+        it do
+          expect(vaccine.snomed_procedure_term(dose_sequence: 2)).to eq(
+            "Administration of second dose of vaccine product containing only " \
+              "Measles morbillivirus and Mumps orthorubulavirus and Rubella virus " \
+              "antigens"
+          )
+        end
       end
     end
 
     context "with an MMRV vaccine" do
       let(:vaccine) { build(:vaccine, :mmrv) }
 
-      it do
-        expect(vaccine.snomed_procedure_term).to eq(
-          "Administration of vaccine product containing only Human " \
-            "alphaherpesvirus 3 and Measles morbillivirus and Mumps " \
-            "orthorubulavirus and Rubella virus antigens"
-        )
+      context "with dose sequence 1" do
+        it do
+          expect(vaccine.snomed_procedure_term(dose_sequence: 1)).to eq(
+            "Administration of vaccine product containing only Human " \
+              "alphaherpesvirus 3 and Measles morbillivirus and Mumps " \
+              "orthorubulavirus and Rubella virus antigens"
+          )
+        end
+      end
+
+      context "with dose sequence 2" do
+        it do
+          expect(vaccine.snomed_procedure_term(dose_sequence: 2)).to eq(
+            "Administration of second dose of vaccine product containing " \
+              "only Human alphaherpesvirus 3 and Measles morbillivirus and " \
+              "Mumps orthorubulavirus and Rubella virus antigens"
+          )
+        end
       end
     end
   end
