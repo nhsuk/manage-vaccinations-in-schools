@@ -74,7 +74,7 @@ class DraftVaccinationRecord
       (:dose if administered? && can_be_half_dose? && !reported_as_already_vaccinated?),
       (:batch if administered? && !reported_as_already_vaccinated?),
       (
-        if !already_had? && (session&.generic_clinic? || national_reporting_user_and_record?)
+        if !reported_as_already_vaccinated? && (session&.generic_clinic? || national_reporting_user_and_record?)
           :location
         end
       ),
