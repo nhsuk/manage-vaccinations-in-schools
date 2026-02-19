@@ -83,7 +83,6 @@ class GovukNotifyPersonalisation
       team_privacy_policy_url:,
       today_or_date_of_vaccination:,
       vaccination:,
-      vaccination_sms:,
       vaccination_and_dates:,
       vaccination_and_dates_sms:,
       vaccination_and_method:,
@@ -488,19 +487,6 @@ class GovukNotifyPersonalisation
     end
   end
 
-  # TODO: Remove this method when schools start offering MMRV.
-  # When that happens:
-  # - Remove vaccination_sms method and use vaccination instead
-  # - Update email template 5462c441-81c0-4ac0-821f-713b4178f8ba to use
-  #   vaccination variable instead of hardcoded 'MMR catch-up vaccinations'
-  def vaccination_sms
-    if is_catch_up? && mmr_programme&.mmrv_variant?
-      return vaccination&.gsub("MMRV", "MMR")
-    end
-
-    vaccination
-  end
-
   def vaccination_and_dates
     if next_or_today_session_dates_or.present?
       "#{vaccination} on #{next_or_today_session_dates_or}"
@@ -512,9 +498,9 @@ class GovukNotifyPersonalisation
   # TODO: Remove this method when schools start offering MMRV.
   def vaccination_and_dates_sms
     if next_or_today_session_dates_or.present?
-      "#{vaccination_sms} on #{next_or_today_session_dates_or}"
+      "#{vaccination} on #{next_or_today_session_dates_or}"
     else
-      vaccination_sms
+      vaccination
     end
   end
 
