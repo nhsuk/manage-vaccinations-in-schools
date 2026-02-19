@@ -4113,7 +4113,7 @@
     (<span class="ruby-value">:dose</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">administered?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">can_be_half_dose?</span>),
     (<span class="ruby-value">:batch</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">administered?</span>),
     (
-      <span class="ruby-keyword">if</span> <span class="ruby-identifier">session</span>&amp;.<span class="ruby-identifier">generic_clinic?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">national_reporting_user_and_record?</span>
+      <span class="ruby-keyword">if</span> <span class="ruby-operator">!</span><span class="ruby-identifier">already_had?</span> <span class="ruby-operator">&amp;&amp;</span> (<span class="ruby-identifier">session</span>&amp;.<span class="ruby-identifier">generic_clinic?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">national_reporting_user_and_record?</span>)
         <span class="ruby-value">:location</span>
       <span class="ruby-keyword">end</span>
     ),
