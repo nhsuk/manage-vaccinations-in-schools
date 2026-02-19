@@ -45,12 +45,9 @@ describe "Td/IPV" do
       then_i_see_the_date_page
 
       when_i_fill_in_the_date_and_continue
-      then_i_see_the_location_page
 
-      when_i_fill_in_the_location_and_continue
       and_i_confirm_the_details
       then_i_see_the_patient_is_already_vaccinated
-      and_i_see_that_the_location_is_waterloo_hospital
       and_the_consent_requests_are_sent
       then_the_parent_doesnt_receive_a_consent_request
     end
@@ -225,10 +222,6 @@ describe "Td/IPV" do
 
   def and_i_see_that_the_location_is_unknown
     expect(page).to have_content("LocationUnknown")
-  end
-
-  def and_i_see_that_the_location_is_waterloo_hospital
-    expect(page).to have_content("LocationWaterloo Hospital")
   end
 
   def and_i_cannot_record_the_patient_as_already_vaccinated

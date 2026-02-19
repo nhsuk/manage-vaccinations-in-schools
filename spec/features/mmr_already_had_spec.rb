@@ -64,6 +64,33 @@ describe "MMR/MMRV" do
       then_the_parent_doesnt_receive_a_consent_request
     end
 
+    scenario "record a patient as already had their 1st MMR dose and then edit dates" do
+      given_an_mmr_programme_with_a_session
+      and_a_patient_is_in_the_session_born_after_january_2020
+      and_the_patient_doesnt_need_triage
+      and_the_patient_has_not_had_a_first_dose
+
+      when_i_go_the_session
+      then_i_see_one_patient_needing_consent
+      and_i_click_on_the_patient
+      then_i_see_the_patient_needs_consent
+
+      when_i_click_record_as_already_had_first_dose
+      then_i_see_the_did_you_have_mmr_or_mmrv_page
+
+      when_i_choose_mmr_and_continue
+      then_i_see_the_mmr_date_page
+
+      when_i_fill_in_the_date_and_time_and_continue
+      then_i_see_the_confirmation_page
+
+      when_i_click_link_to_change_the_date
+      then_i_see_the_mmr_date_page
+      when_i_change_the_date_and_continue
+      then_i_see_the_confirmation_page
+      and_i_see_the_updated_date_in_the_summary
+    end
+
     scenario "record a patient born before January 2020 as already had their 1st MMR dose outside the school session" do
       given_an_mmr_programme_with_a_session
       and_a_patient_is_in_the_session_born_before_january_2020
@@ -340,5 +367,27 @@ describe "MMR/MMRV" do
 
   def then_the_parent_doesnt_receive_a_consent_request
     expect(EmailDeliveryJob.deliveries).to be_empty
+  end
+
+  def when_i_click_link_to_change_the_date
+    within(".nhsuk-summary-list__actions[contains('Change date')]") do
+      click_on "Change"
+    end
+  end
+
+  def when_i_change_the_date_and_continue
+    @vaccination_date += 1.day
+
+    fill_in "Day", with: @vaccination_date.day
+    fill_in "Month", with: @vaccination_date.month
+    fill_in "Year", with: @vaccination_date.year
+
+    click_on "Continue"
+  end
+
+  def and_i_see_the_updated_date_in_the_summary
+    expect(page).to have_content(
+      "Date#{@vaccination_date.strftime("%-d %B %Y")}"
+    )
   end
 end
