@@ -583,6 +583,8 @@
 
         <li ><a href="#method-i-can_keep_both-3F">can_keep_both?</a></li>
 
+        <li ><a href="#method-i-changeset_for_keep_both">changeset_for_keep_both</a></li>
+
         <li ><a href="#method-i-discard_pending_changes-21">discard_pending_changes!</a></li>
 
         <li ><a href="#method-i-keep_both_changes-21">keep_both_changes!</a></li>
@@ -892,6 +894,61 @@
       </div>
 
 
+      <div id="method-i-changeset_for_keep_both" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-changeset_for_keep_both" title="Link to this method">
+                <span class="method-name">changeset_for_keep_both</span>
+                <span class="method-args">()</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="changeset_for_keep_both-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/forms/import_duplicate_form.rb, line 77</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">changeset_for_keep_both</span>
+  <span class="ruby-identifier">scope</span> = <span class="ruby-identifier">object</span>.<span class="ruby-identifier">changesets</span>.<span class="ruby-identifier">includes</span>(<span class="ruby-value">:import</span>).<span class="ruby-identifier">order</span>(<span class="ruby-value">:created_at</span>)
+
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">scope</span>.<span class="ruby-identifier">last</span> <span class="ruby-keyword">unless</span> <span class="ruby-constant">Flipper</span>.<span class="ruby-identifier">enabled?</span>(<span class="ruby-value">:import_review_screen</span>)
+
+  <span class="ruby-identifier">completed_import_statuses</span> = <span class="ruby-node">%w[
+    processed
+    partially_processed
+    removing_parent_relationships
+  ]</span>
+
+  <span class="ruby-identifier">scope</span>
+    .<span class="ruby-identifier">processed</span>
+    .<span class="ruby-identifier">select</span> { <span class="ruby-identifier">completed_import_statuses</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">it</span>.<span class="ruby-identifier">import</span>&amp;.<span class="ruby-identifier">status</span>) }
+    .<span class="ruby-identifier">last</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
       <div id="method-i-discard_pending_changes-21" class="method-detail anchor-link ">
         <div class="method-header">
 
@@ -959,10 +1016,12 @@
           <div class="method-source-code" id="keep_both_changes-21-source">
             <pre class="ruby"><span class="ruby-comment"># File app/forms/import_duplicate_form.rb, line 68</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">keep_both_changes!</span>
-  <span class="ruby-keyword">if</span> <span class="ruby-identifier">can_keep_both?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">can_apply?</span>
-    <span class="ruby-identifier">changeset</span> = <span class="ruby-identifier">object</span>.<span class="ruby-identifier">changesets</span>.<span class="ruby-identifier">includes</span>(<span class="ruby-value">:import</span>).<span class="ruby-identifier">order</span>(<span class="ruby-value">:created_at</span>).<span class="ruby-identifier">last</span>
-    <span class="ruby-identifier">object</span>.<span class="ruby-identifier">apply_pending_changes_to_new_record!</span>(<span class="ruby-value">changeset:</span>)
-  <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">can_keep_both?</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">can_apply?</span>
+
+  <span class="ruby-identifier">object</span>.<span class="ruby-identifier">apply_pending_changes_to_new_record!</span>(
+    <span class="ruby-value">changeset:</span> <span class="ruby-identifier">changeset_for_keep_both</span>
+  )
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -1002,7 +1061,7 @@
             </details>
           </div>
           <div class="method-source-code" id="remove_imported_parent_relationships_if_needed-21-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/forms/import_duplicate_form.rb, line 79</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/forms/import_duplicate_form.rb, line 98</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">remove_imported_parent_relationships_if_needed!</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">object</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Patient</span>)
 
@@ -1054,7 +1113,7 @@
             </details>
           </div>
           <div class="method-source-code" id="reset_count-21-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/forms/import_duplicate_form.rb, line 75</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/forms/import_duplicate_form.rb, line 94</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">reset_count!</span>
   <span class="ruby-constant">TeamCachedCounts</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">current_team</span>).<span class="ruby-identifier">reset_import_issues!</span>
 <span class="ruby-keyword">end</span></pre>
