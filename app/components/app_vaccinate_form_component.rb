@@ -73,7 +73,10 @@ class AppVaccinateFormComponent < ViewComponent::Base
 
   def healthcare_assistant? = current_user.is_healthcare_assistant?
 
-  def dose_sequence = programme.default_dose_sequence
+  def dose_sequence
+    return if programme.td_ipv? || programme.menacwy?
+    patient.programme_status(programme, academic_year:).dose_sequence
+  end
 
   COMMON_DELIVERY_SITES = {
     "injection" => %w[left_arm_upper_position right_arm_upper_position],
