@@ -130,10 +130,12 @@ class GovukNotifyPersonalisation
   def consent_link
     return nil if session.nil? || programmes.empty?
 
+    programme_params = programmes.flat_map { it.variant_for(patient:).to_param }
+
     host +
       start_parent_interface_consent_forms_path(
         session,
-        programmes.map(&:to_param).join("-")
+        programme_params.join("-")
       )
   end
 

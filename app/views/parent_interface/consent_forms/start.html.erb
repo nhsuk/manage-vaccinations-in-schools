@@ -1,14 +1,15 @@
-<%= h1 t(@programmes.map(&:type).join("-"), scope: %i[consent_forms start title]), size: "xl" %>
+<% programme_params = @programmes.map(&:to_param).join("-") %>
+<%= h1 t(programme_params, scope: %i[consent_forms start title]), size: "xl" %>
 
 <% @programmes.each do |programme| %>
-  <%= render "parent_interface/consent_forms/start/#{programme.type}" %>
+  <%= render "parent_interface/consent_forms/start/#{programme.to_param}" %>
 <% end %>
 
 <h2 class="nhsuk-heading-m">Give or refuse consent</h2>
 
 <%= form_with url: url_for(action: :create) do |f| %>
   <%= hidden_field_tag :session_slug, @session.slug %>
-  <%= hidden_field_tag :programme_types, @programmes.map(&:type).join("-") %>
+  <%= hidden_field_tag :programme_types, programme_params %>
   <%= f.govuk_submit "Start now", role: "link" %>
 <% end %>
 
