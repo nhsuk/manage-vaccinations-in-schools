@@ -20,7 +20,7 @@ class SelectTeamForm
     unless Settings.cis2.enabled
       cis2_info.update!(
         organisation_code: team.organisation.ods_code,
-        role_code: CIS2Info::NURSE_ROLE,
+        role_code: CIS2Info::NURSE_ROLES.first,
         workgroups: [team.workgroup]
       )
     end
