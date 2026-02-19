@@ -55,13 +55,21 @@ describe ImportDuplicateForm do
             :class_import,
             :import_issue,
             import: class_import,
-            patient: existing_patient
+            patient: existing_patient,
+            status: :processed
           )
         end
 
         before do
           existing_patient.update!(pending_changes: { "given_name" => "Twin" })
           class_import.parent_relationships << import_relationship
+          class_import.update!(
+            status: :processed,
+            processed_at: Time.current,
+            new_record_count: 0,
+            changed_record_count: 0,
+            exact_duplicate_record_count: 0
+          )
         end
 
         it "moves imported parent relationships to the new patient when keeping both" do
@@ -200,6 +208,70 @@ describe ImportDuplicateForm do
 
       it "returns the standard options" do
         expect(form.apply_changes_options).to eq(%w[discard])
+      end
+    end
+  end
+
+  describe "#changeset_for_keep_both" do
+    subject(:selected_changeset) { form.send(:changeset_for_keep_both) }
+
+    let(:team) { create(:team, programmes: [programme]) }
+    let(:session) { create(:session, team:, programmes: [programme]) }
+    let(:existing_patient) { create(:patient) }
+
+    let(:form) do
+      described_class.new(
+        apply_changes: "keep_both",
+        object: existing_patient,
+        current_team: team
+      )
+    end
+
+    let(:completed_import) { create(:class_import, :processed, session:) }
+
+    let(:incomplete_import) do
+      create(:class_import, session:, status: :in_review)
+    end
+
+    let!(:eligible_old) do
+      create(
+        :patient_changeset,
+        :class_import,
+        :import_issue,
+        import: completed_import,
+        patient: existing_patient,
+        status: :processed,
+        matched_on_nhs_number: false,
+        created_at: 3.minutes.ago
+      )
+    end
+
+    let!(:newest_processed_but_incomplete_import) do
+      create(
+        :patient_changeset,
+        :class_import,
+        :import_issue,
+        import: incomplete_import,
+        patient: existing_patient,
+        status: :processed,
+        matched_on_nhs_number: false,
+        created_at: 1.minute.ago
+      )
+    end
+
+    context "when import_review_screen is enabled" do
+      before { Flipper.enable(:import_review_screen) }
+
+      it "returns the latest processed changeset from a completed import" do
+        expect(selected_changeset.id).to eq(eligible_old.id)
+      end
+    end
+
+    context "when import_review_screen is disabled" do
+      it "returns the latest changeset regardless of statuses" do
+        expect(selected_changeset.id).to eq(
+          newest_processed_but_incomplete_import.id
+        )
       end
     end
   end
