@@ -15,6 +15,10 @@ describe Reports::CareplusExporter do
 
   let(:academic_year) { AcademicYear.current }
 
+  let(:parsed_csv) { CSV.parse(csv) }
+  let(:headers) { parsed_csv.first }
+  let(:data_rows) { parsed_csv[1..] }
+
   shared_examples "generates a report" do
     let(:programmes) { [programme] }
     let(:team) do
@@ -34,9 +38,6 @@ describe Reports::CareplusExporter do
       )
     end
     let(:session) { create(:session, team:, programmes:, location:) }
-    let(:parsed_csv) { CSV.parse(csv) }
-    let(:headers) { parsed_csv.first }
-    let(:data_rows) { parsed_csv[1..] }
 
     it "includes the expected headers" do
       expect(headers).to include(
@@ -377,6 +378,25 @@ describe Reports::CareplusExporter do
       let(:expected_vaccine_code) { "MMRV" }
 
       include_examples "generates a report"
+    end
+
+    context "with a second dose vaccination record" do
+      let(:team) { create(:team, programmes: [programme]) }
+      let(:session) { create(:session, team:, programmes: [programme]) }
+
+      it "outputs 1B for the dose field" do
+        patient = create(:patient, session:)
+        create(
+          :vaccination_record,
+          programme:,
+          vaccine: Vaccine.find_by!(brand: "Priorix"),
+          patient:,
+          session:,
+          dose_sequence: 2
+        )
+
+        expect(data_rows.first[headers.index("Dose 1")]).to eq("1B")
+      end
     end
   end
 
