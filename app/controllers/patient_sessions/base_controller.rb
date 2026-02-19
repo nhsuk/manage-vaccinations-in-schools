@@ -44,15 +44,13 @@ class PatientSessions::BaseController < ApplicationController
   end
 
   def set_programme
-    return unless params.key?(:programme_type) || params.key?(:type)
+    requested_type = params[:programme_type].presence || params[:type].presence
+    return unless requested_type
 
     programme =
       @session
         .programmes_for(patient: @patient)
-        .find do |programme|
-          programme.type == params[:programme_type] ||
-            programme.type == params[:type]
-        end
+        .find { it.variants.any? { |v| v.to_param == requested_type } }
 
     raise ActiveRecord::RecordNotFound if programme.nil?
 
