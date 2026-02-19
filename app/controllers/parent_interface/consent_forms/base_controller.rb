@@ -48,7 +48,10 @@ module ParentInterface
           @consent_form.consent_form_programmes.map(&:programme)
         elsif @session.present? && params[:programme_types].present?
           types = params[:programme_types].split("-")
-          @session.programmes.select { it.type.in?(types) }
+
+          @session.programmes.flat_map do
+            it.variants.select { it.to_param.in?(types) }
+          end
         end
 
       raise ActiveRecord::RecordNotFound if @programmes.empty?

@@ -136,6 +136,19 @@ describe GovukNotifyPersonalisation do
 
       it { should include(vaccination_sms: "MMR vaccination") }
       it { should include(vaccination_and_dates_sms: "MMR vaccination") }
+
+      it "generates consent link with mmrv variant" do
+        expect(to_h[:consent_link]).to end_with("/mmrv/start")
+      end
+    end
+
+    context "when it's an MMR programme and patient is NOT eligible for MMRV" do
+      let(:programmes) { [Programme.mmr] }
+      let(:date_of_birth) { Programme::MIN_MMRV_ELIGIBILITY_DATE - 1.month }
+
+      it "generates consent link with mmr variant" do
+        expect(to_h[:consent_link]).to end_with("/mmr/start")
+      end
     end
   end
 

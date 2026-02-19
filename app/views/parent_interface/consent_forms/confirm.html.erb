@@ -20,7 +20,7 @@
     <% programme = consent_form_programme.programme %>
 
     <%= render AppCardComponent.new do |card| %>
-      <% card.with_heading { t(programme.type, scope: %i[consent_forms confirm consent_card_title]) } %>
+      <% card.with_heading { t(programme.to_param, scope: %i[consent_forms confirm consent_card_title]) } %>
 
       <%= govuk_summary_list do |summary_list|
             summary_list.with_row do |row|
