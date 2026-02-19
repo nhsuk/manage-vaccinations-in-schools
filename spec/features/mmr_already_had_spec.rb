@@ -63,6 +63,10 @@ describe "MMR/MMRV" do
       and_the_dose_number_is_first
       and_the_consent_requests_are_sent
       then_the_parent_doesnt_receive_a_consent_request
+
+      when_the_status_updater_runs
+      and_i_navigate_to_the_patient_record
+      then_i_see_that_the_vaccination_record_has_outcome_vaccinated
     end
 
     scenario "record a patient as already had their 1st MMR dose and then edit dates" do
@@ -138,6 +142,10 @@ describe "MMR/MMRV" do
       and_the_dose_number_is_second
       and_the_consent_requests_are_sent
       then_the_parent_doesnt_receive_a_consent_request
+
+      when_the_status_updater_runs
+      and_i_navigate_to_the_patient_record
+      then_i_see_that_the_vaccination_record_has_outcome_vaccinated
     end
   end
 
@@ -397,5 +405,21 @@ describe "MMR/MMRV" do
     expect(page).to have_content(
       "Date#{@vaccination_date.strftime("%-d %B %Y")}"
     )
+  end
+
+  def when_the_status_updater_runs
+    PatientStatusUpdaterJob.perform_inline(@patient.id)
+  end
+
+  def and_i_navigate_to_the_patient_record
+    visit patient_path(@patient)
+  end
+
+  def then_i_see_that_the_vaccination_record_has_outcome_vaccinated
+    expect(page).to have_content("Vaccination date #{@vaccination_date.strftime("%-d %B %Y")}")
+    expect(page).to have_content("Location Unknown")
+    expect(page).to have_content("Programme MMR")
+    expect(page).to have_content("Source Manual report")
+    expect(page).to have_content("Outcome Vaccinated")
   end
 end
