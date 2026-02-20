@@ -654,6 +654,23 @@
 
 
 
+    <section class="constants-list">
+      <header>
+        <h3 id="constants"><a href="#constants">Constants</a></h3>
+      </header>
+      <dl>
+
+        <dt id="GENDER_CODE_MAPPINGS">GENDER_CODE_MAPPINGS</dt>
+
+        <dd>
+
+          
+        </dd>
+
+
+      </dl>
+    </section>
+
 
 
 
@@ -693,6 +710,13 @@
 
   <span class="ruby-identifier">private</span>
 
+  <span class="ruby-constant">GENDER_CODE_MAPPINGS</span> = {
+    <span class="ruby-value">female:</span> <span class="ruby-string">&quot;F&quot;</span>,
+    <span class="ruby-value">male:</span> <span class="ruby-string">&quot;M&quot;</span>,
+    <span class="ruby-value">not_known:</span> <span class="ruby-string">&quot;U&quot;</span>,
+    <span class="ruby-value">not_specified:</span> <span class="ruby-string">&quot;I&quot;</span>
+  }.<span class="ruby-identifier">with_indifferent_access</span>.<span class="ruby-identifier">freeze</span>
+
   <span class="ruby-identifier">attr_reader</span> <span class="ruby-value">:team</span>, <span class="ruby-value">:programme</span>, <span class="ruby-value">:academic_year</span>, <span class="ruby-value">:start_date</span>, <span class="ruby-value">:end_date</span>
 
   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">headers</span>
@@ -717,7 +741,8 @@
       <span class="ruby-operator">*</span><span class="ruby-identifier">vaccine_columns</span>(<span class="ruby-value">2</span>),
       <span class="ruby-operator">*</span><span class="ruby-identifier">vaccine_columns</span>(<span class="ruby-value">3</span>),
       <span class="ruby-operator">*</span><span class="ruby-identifier">vaccine_columns</span>(<span class="ruby-value">4</span>),
-      <span class="ruby-operator">*</span><span class="ruby-identifier">vaccine_columns</span>(<span class="ruby-value">5</span>)
+      <span class="ruby-operator">*</span><span class="ruby-identifier">vaccine_columns</span>(<span class="ruby-value">5</span>),
+      <span class="ruby-string">&quot;Gender&quot;</span>
     ]
   <span class="ruby-keyword">end</span>
 
@@ -817,14 +842,15 @@
               <span class="ruby-operator">*</span><span class="ruby-identifier">vaccine_fields</span>(<span class="ruby-identifier">records</span>, <span class="ruby-value">1</span>),
               <span class="ruby-operator">*</span><span class="ruby-identifier">vaccine_fields</span>(<span class="ruby-identifier">records</span>, <span class="ruby-value">2</span>),
               <span class="ruby-operator">*</span><span class="ruby-identifier">vaccine_fields</span>(<span class="ruby-identifier">records</span>, <span class="ruby-value">3</span>),
-              <span class="ruby-operator">*</span><span class="ruby-identifier">vaccine_fields</span>(<span class="ruby-identifier">records</span>, <span class="ruby-value">4</span>)
+              <span class="ruby-operator">*</span><span class="ruby-identifier">vaccine_fields</span>(<span class="ruby-identifier">records</span>, <span class="ruby-value">4</span>),
+              <span class="ruby-constant">GENDER_CODE_MAPPINGS</span>[<span class="ruby-identifier">patient</span>.<span class="ruby-identifier">gender_code</span>]
             ]
           <span class="ruby-keyword">end</span>
       <span class="ruby-keyword">end</span>
   <span class="ruby-keyword">end</span>
 
   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">blank_vaccine_fields</span>
-    [<span class="ruby-string">&quot;&quot;</span>, <span class="ruby-string">&quot;&quot;</span>, <span class="ruby-string">&quot;&quot;</span>, <span class="ruby-string">&quot;&quot;</span>, <span class="ruby-string">&quot;&quot;</span>, <span class="ruby-string">&quot;&quot;</span>]
+    [<span class="ruby-string">&quot;&quot;</span>, <span class="ruby-string">&quot;&quot;</span>, <span class="ruby-string">&quot;&quot;</span>, <span class="ruby-string">&quot;&quot;</span>, <span class="ruby-string">&quot;&quot;</span>, <span class="ruby-string">&quot;&quot;</span>, <span class="ruby-string">&quot;&quot;</span>]
   <span class="ruby-keyword">end</span>
 
   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccine_fields</span>(<span class="ruby-identifier">vaccination_records</span>, <span class="ruby-identifier">index</span>)
@@ -1001,9 +1027,9 @@
             </details>
           </div>
           <div class="method-source-code" id="blank_vaccine_fields-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/careplus_exporter.rb, line 159</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/careplus_exporter.rb, line 168</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">blank_vaccine_fields</span>
-  [<span class="ruby-string">&quot;&quot;</span>, <span class="ruby-string">&quot;&quot;</span>, <span class="ruby-string">&quot;&quot;</span>, <span class="ruby-string">&quot;&quot;</span>, <span class="ruby-string">&quot;&quot;</span>, <span class="ruby-string">&quot;&quot;</span>]
+  [<span class="ruby-string">&quot;&quot;</span>, <span class="ruby-string">&quot;&quot;</span>, <span class="ruby-string">&quot;&quot;</span>, <span class="ruby-string">&quot;&quot;</span>, <span class="ruby-string">&quot;&quot;</span>, <span class="ruby-string">&quot;&quot;</span>, <span class="ruby-string">&quot;&quot;</span>]
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -1092,7 +1118,7 @@
             </details>
           </div>
           <div class="method-source-code" id="coded_site-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/careplus_exporter.rb, line 204</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/careplus_exporter.rb, line 213</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">coded_site</span>(<span class="ruby-identifier">site</span>)
   {
     <span class="ruby-value">left_arm_upper_position:</span> <span class="ruby-string">&quot;ULA&quot;</span>,
@@ -1145,7 +1171,7 @@
             </details>
           </div>
           <div class="method-source-code" id="consents-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/careplus_exporter.rb, line 109</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/careplus_exporter.rb, line 117</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">consents</span>
   <span class="ruby-ivar">@consents</span> <span class="ruby-operator">||=</span>
     <span class="ruby-constant">Consent</span>
@@ -1197,7 +1223,7 @@
             </details>
           </div>
           <div class="method-source-code" id="headers-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/careplus_exporter.rb, line 31</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/careplus_exporter.rb, line 38</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">headers</span>
   [
     <span class="ruby-string">&quot;NHS Number&quot;</span>,
@@ -1220,7 +1246,8 @@
     <span class="ruby-operator">*</span><span class="ruby-identifier">vaccine_columns</span>(<span class="ruby-value">2</span>),
     <span class="ruby-operator">*</span><span class="ruby-identifier">vaccine_columns</span>(<span class="ruby-value">3</span>),
     <span class="ruby-operator">*</span><span class="ruby-identifier">vaccine_columns</span>(<span class="ruby-value">4</span>),
-    <span class="ruby-operator">*</span><span class="ruby-identifier">vaccine_columns</span>(<span class="ruby-value">5</span>)
+    <span class="ruby-operator">*</span><span class="ruby-identifier">vaccine_columns</span>(<span class="ruby-value">5</span>),
+    <span class="ruby-string">&quot;Gender&quot;</span>
   ]
 <span class="ruby-keyword">end</span></pre>
           </div>
@@ -1261,7 +1288,7 @@
             </details>
           </div>
           <div class="method-source-code" id="rows-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/careplus_exporter.rb, line 123</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/careplus_exporter.rb, line 131</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">rows</span>(<span class="ruby-value">patient:</span>, <span class="ruby-value">vaccination_records:</span>)
   <span class="ruby-identifier">vaccination_records</span>
     .<span class="ruby-identifier">group_by</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:session</span>)
@@ -1292,7 +1319,8 @@
             <span class="ruby-operator">*</span><span class="ruby-identifier">vaccine_fields</span>(<span class="ruby-identifier">records</span>, <span class="ruby-value">1</span>),
             <span class="ruby-operator">*</span><span class="ruby-identifier">vaccine_fields</span>(<span class="ruby-identifier">records</span>, <span class="ruby-value">2</span>),
             <span class="ruby-operator">*</span><span class="ruby-identifier">vaccine_fields</span>(<span class="ruby-identifier">records</span>, <span class="ruby-value">3</span>),
-            <span class="ruby-operator">*</span><span class="ruby-identifier">vaccine_fields</span>(<span class="ruby-identifier">records</span>, <span class="ruby-value">4</span>)
+            <span class="ruby-operator">*</span><span class="ruby-identifier">vaccine_fields</span>(<span class="ruby-identifier">records</span>, <span class="ruby-value">4</span>),
+            <span class="ruby-constant">GENDER_CODE_MAPPINGS</span>[<span class="ruby-identifier">patient</span>.<span class="ruby-identifier">gender_code</span>]
           ]
         <span class="ruby-keyword">end</span>
     <span class="ruby-keyword">end</span>
@@ -1335,7 +1363,7 @@
             </details>
           </div>
           <div class="method-source-code" id="vaccination_records-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/careplus_exporter.rb, line 69</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/careplus_exporter.rb, line 77</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccination_records</span>
   <span class="ruby-identifier">scope</span> =
     <span class="ruby-constant">VaccinationRecord</span>
@@ -1413,7 +1441,7 @@
             </details>
           </div>
           <div class="method-source-code" id="vaccine_code-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/careplus_exporter.rb, line 219</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/careplus_exporter.rb, line 228</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccine_code</span>(<span class="ruby-identifier">vaccination_record</span>)
   <span class="ruby-identifier">programme</span> = <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">programme</span>
 
@@ -1471,7 +1499,7 @@
             </details>
           </div>
           <div class="method-source-code" id="vaccine_columns-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/careplus_exporter.rb, line 57</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/careplus_exporter.rb, line 65</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccine_columns</span>(<span class="ruby-identifier">number</span>)
   [
     <span class="ruby-node">&quot;Vaccine #{number}&quot;</span>,
@@ -1521,7 +1549,7 @@
             </details>
           </div>
           <div class="method-source-code" id="vaccine_fields-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/careplus_exporter.rb, line 163</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/careplus_exporter.rb, line 172</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccine_fields</span>(<span class="ruby-identifier">vaccination_records</span>, <span class="ruby-identifier">index</span>)
   <span class="ruby-identifier">record</span> = <span class="ruby-identifier">vaccination_records</span>[<span class="ruby-identifier">index</span>]
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">blank_vaccine_fields</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">record</span>
