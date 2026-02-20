@@ -371,6 +371,22 @@ describe Reports::CareplusExporter do
       let(:expected_vaccine_code) { "MMR" }
 
       include_examples "generates a report"
+
+      context "with a second dose vaccination record" do
+        it "outputs 1B for the MMR dose sequence field" do
+          patient = create(:patient, session:)
+          create(
+            :vaccination_record,
+            programme:,
+            vaccine:,
+            patient:,
+            session:,
+            dose_sequence: 2
+          )
+
+          expect(data_rows.first[headers.index("Dose 1")]).to eq("1B")
+        end
+      end
     end
 
     context "and an MMRV vaccine" do
@@ -378,25 +394,6 @@ describe Reports::CareplusExporter do
       let(:expected_vaccine_code) { "MMRV" }
 
       include_examples "generates a report"
-    end
-
-    context "with a second dose vaccination record" do
-      let(:team) { create(:team, programmes: [programme]) }
-      let(:session) { create(:session, team:, programmes: [programme]) }
-
-      it "outputs 1B for the dose field" do
-        patient = create(:patient, session:)
-        create(
-          :vaccination_record,
-          programme:,
-          vaccine: Vaccine.find_by!(brand: "Priorix"),
-          patient:,
-          session:,
-          dose_sequence: 2
-        )
-
-        expect(data_rows.first[headers.index("Dose 1")]).to eq("1B")
-      end
     end
   end
 
