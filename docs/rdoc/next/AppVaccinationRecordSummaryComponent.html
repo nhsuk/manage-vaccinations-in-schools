@@ -747,7 +747,7 @@
       <span class="ruby-identifier">row</span>.<span class="ruby-identifier">with_value</span> { <span class="ruby-identifier">programme_value</span> }
     <span class="ruby-keyword">end</span>
 
-    <span class="ruby-keyword">if</span> <span class="ruby-ivar">@vaccination_record</span>.<span class="ruby-identifier">administered?</span>
+    <span class="ruby-keyword">if</span> <span class="ruby-ivar">@vaccination_record</span>.<span class="ruby-identifier">administered?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-ivar">@vaccination_record</span>.<span class="ruby-identifier">sourced_from_manual_report?</span>
       <span class="ruby-identifier">summary_list</span>.<span class="ruby-identifier">with_row</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">row</span><span class="ruby-operator">|</span>
         <span class="ruby-identifier">row</span>.<span class="ruby-identifier">with_key</span> { <span class="ruby-string">&quot;Vaccine&quot;</span> }
 

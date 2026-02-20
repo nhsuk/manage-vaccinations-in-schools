@@ -680,7 +680,7 @@
     <span class="ruby-value">first_active_wizard_step:</span>,
     <span class="ruby-value">location_id:</span> <span class="ruby-keyword">nil</span>,
     <span class="ruby-value">location_name:</span> <span class="ruby-string">&quot;Unknown&quot;</span>,
-    <span class="ruby-value">outcome:</span> <span class="ruby-value">:already_had</span>,
+    <span class="ruby-value">outcome:</span> (<span class="ruby-constant">Flipper</span>.<span class="ruby-identifier">enabled?</span>(<span class="ruby-value">:already_vaccinated</span>) <span class="ruby-operator">?</span> <span class="ruby-value">:administered</span> <span class="ruby-operator">:</span> <span class="ruby-value">:already_had</span>),
     <span class="ruby-value">patient:</span> <span class="ruby-ivar">@patient</span>,
     <span class="ruby-value">performed_at:</span> (<span class="ruby-constant">Time</span>.<span class="ruby-identifier">current</span> <span class="ruby-keyword">unless</span> <span class="ruby-constant">Flipper</span>.<span class="ruby-identifier">enabled?</span>(<span class="ruby-value">:already_vaccinated</span>)),
     <span class="ruby-value">performed_by_user_id:</span>
@@ -691,7 +691,7 @@
       (<span class="ruby-identifier">current_user</span>.<span class="ruby-identifier">id</span> <span class="ruby-keyword">if</span> <span class="ruby-constant">Flipper</span>.<span class="ruby-identifier">enabled?</span>(<span class="ruby-value">:already_vaccinated</span>)),
     <span class="ruby-value">reported_at:</span> (<span class="ruby-constant">Time</span>.<span class="ruby-identifier">current</span> <span class="ruby-keyword">if</span> <span class="ruby-constant">Flipper</span>.<span class="ruby-identifier">enabled?</span>(<span class="ruby-value">:already_vaccinated</span>)),
     <span class="ruby-value">session:</span> <span class="ruby-ivar">@session</span>,
-    <span class="ruby-value">source:</span> <span class="ruby-string">&quot;service&quot;</span>
+    <span class="ruby-value">source:</span> (<span class="ruby-constant">Flipper</span>.<span class="ruby-identifier">enabled?</span>(<span class="ruby-value">:already_vaccinated</span>) <span class="ruby-operator">?</span> <span class="ruby-value">:manual_report</span> <span class="ruby-operator">:</span> <span class="ruby-value">:service</span>)
   )
 
   <span class="ruby-identifier">redirect_to</span> <span class="ruby-identifier">draft_vaccination_record_path</span>(

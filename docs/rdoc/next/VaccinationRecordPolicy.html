@@ -997,7 +997,7 @@
     (
       <span class="ruby-identifier">record</span>.<span class="ruby-identifier">performed_by_user_id</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">user</span>.<span class="ruby-identifier">id</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">user</span>.<span class="ruby-identifier">is_nurse?</span> <span class="ruby-operator">||</span>
         <span class="ruby-identifier">user</span>.<span class="ruby-identifier">is_prescriber?</span>
-    ) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">record</span>.<span class="ruby-identifier">sourced_from_service?</span> <span class="ruby-operator">&amp;&amp;</span>
+    ) <span class="ruby-operator">&amp;&amp;</span> (<span class="ruby-identifier">record</span>.<span class="ruby-identifier">sourced_from_service?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">record</span>.<span class="ruby-identifier">sourced_from_manual_report?</span>) <span class="ruby-operator">&amp;&amp;</span>
       <span class="ruby-identifier">record</span>.<span class="ruby-identifier">performed_ods_code</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">user</span>.<span class="ruby-identifier">selected_organisation</span>.<span class="ruby-identifier">ods_code</span>
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">team</span>.<span class="ruby-identifier">has_national_reporting_access?</span>
     <span class="ruby-identifier">record</span>.<span class="ruby-identifier">sourced_from_national_reporting?</span> <span class="ruby-operator">&amp;&amp;</span>
@@ -1145,7 +1145,7 @@
     (
       <span class="ruby-identifier">record</span>.<span class="ruby-identifier">performed_by_user_id</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">user</span>.<span class="ruby-identifier">id</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">user</span>.<span class="ruby-identifier">is_nurse?</span> <span class="ruby-operator">||</span>
         <span class="ruby-identifier">user</span>.<span class="ruby-identifier">is_prescriber?</span>
-    ) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">record</span>.<span class="ruby-identifier">sourced_from_service?</span> <span class="ruby-operator">&amp;&amp;</span>
+    ) <span class="ruby-operator">&amp;&amp;</span> (<span class="ruby-identifier">record</span>.<span class="ruby-identifier">sourced_from_service?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">record</span>.<span class="ruby-identifier">sourced_from_manual_report?</span>) <span class="ruby-operator">&amp;&amp;</span>
       <span class="ruby-identifier">record</span>.<span class="ruby-identifier">performed_ods_code</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">user</span>.<span class="ruby-identifier">selected_organisation</span>.<span class="ruby-identifier">ods_code</span>
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">team</span>.<span class="ruby-identifier">has_national_reporting_access?</span>
     <span class="ruby-identifier">record</span>.<span class="ruby-identifier">sourced_from_national_reporting?</span> <span class="ruby-operator">&amp;&amp;</span>
@@ -1243,7 +1243,7 @@
     (
       <span class="ruby-identifier">record</span>.<span class="ruby-identifier">performed_by_user_id</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">user</span>.<span class="ruby-identifier">id</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">user</span>.<span class="ruby-identifier">is_nurse?</span> <span class="ruby-operator">||</span>
         <span class="ruby-identifier">user</span>.<span class="ruby-identifier">is_prescriber?</span>
-    ) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">record</span>.<span class="ruby-identifier">sourced_from_service?</span> <span class="ruby-operator">&amp;&amp;</span>
+    ) <span class="ruby-operator">&amp;&amp;</span> (<span class="ruby-identifier">record</span>.<span class="ruby-identifier">sourced_from_service?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">record</span>.<span class="ruby-identifier">sourced_from_manual_report?</span>) <span class="ruby-operator">&amp;&amp;</span>
       <span class="ruby-identifier">record</span>.<span class="ruby-identifier">performed_ods_code</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">user</span>.<span class="ruby-identifier">selected_organisation</span>.<span class="ruby-identifier">ods_code</span>
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">team</span>.<span class="ruby-identifier">has_national_reporting_access?</span>
     <span class="ruby-identifier">record</span>.<span class="ruby-identifier">sourced_from_national_reporting?</span> <span class="ruby-operator">&amp;&amp;</span>
