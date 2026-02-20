@@ -6,7 +6,38 @@ if [ "$SERVER_TYPE" == "web" ]; then
   echo "Starting web server..."
   "$BIN_DIR"/prometheus_exporter &
   sleep 5
-  exec "$BIN_DIR"/thrust "$BIN_DIR"/rails server
+
+  if [ "$HTTP_MODE" = "HTTPS" ]; then
+    echo "Generating self-signed TLS certificate..."
+
+    if [ -z "$TLS_DOMAIN" ]; then
+      echo "TLS_DOMAIN environment variable must be set for HTTPS mode."
+      exit 1
+    fi
+
+    CERT_STORAGE="${THRUSTER_STORAGE_PATH:-/rails/storage/thruster}"
+
+    mkdir -p "${CERT_STORAGE}"
+    chmod 0700 "${CERT_STORAGE}"
+
+    openssl ecparam -genkey -name prime256v1 -noout -out /tmp/tls_key.pem 2>/dev/null
+    openssl req -x509 -new -key /tmp/tls_key.pem -sha256 -days 365 \
+      -subj "/CN=${TLS_DOMAIN}" \
+      -addext "subjectAltName=DNS:${TLS_DOMAIN},IP:127.0.0.1" \
+      -out /tmp/tls_cert.pem 2>/dev/null
+
+    # Pre-populate Thruster's autocert DirCache so it uses our cert and skips ACME.
+    # Format: EC private key PEM + certificate PEM concatenated; filename = domain (no suffix = ECDSA).
+    cat /tmp/tls_key.pem /tmp/tls_cert.pem > "${CERT_STORAGE}/${TLS_DOMAIN}"
+    chmod 0600 "${CERT_STORAGE}/${TLS_DOMAIN}"
+
+    export HTTPS_PORT="${HTTP_PORT:-4000}"
+    export HTTP_PORT="8080"
+
+    exec "$BIN_DIR"/thrust "$BIN_DIR"/rails server
+  else
+    exec "$BIN_DIR"/thrust "$BIN_DIR"/rails server
+  fi
 elif [ "$SERVER_TYPE" == "sidekiq" ]; then
   echo "Starting sidekiq server..."
   "$BIN_DIR"/prometheus_exporter &

@@ -5,5 +5,5 @@ psql -h "$DB_HOST" -d "$DB_NAME" -U "$(echo $DB_CREDENTIALS | jq -r .username)" 
   echo "DB connection could not be established: Internal healthcheck failed."; exit 1;
 }
 if [[ -n "$1" ]]; then
-  curl -f "$1" || { echo "Endpoint $1 did not return a 200 response."; exit 2; }
+  curl -kf "$1" || { echo "Endpoint $1 did not return a 200 response."; exit 2; }
 fi
