@@ -345,12 +345,3 @@ jobs:
           aws-region: eu-west-2
       - name: Stop dockerized dev image
         run: aws ecs stop-task --cluster assurance-testing --task ${{ needs.wait-for-task-stability.outputs.task_arn }}
-  enforce-end-to-end-tests:
-    name: Check if end-to-end tests passed if required
-    needs: [ call-end-to-end-tests ]
-    if: ${{ always() && github.event_name == 'pull_request' }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check end-to-end tests passed or were skipped
-        run: |
-          echo "All good" # TODO: Remove in followup PR
