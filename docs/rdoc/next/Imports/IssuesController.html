@@ -743,9 +743,11 @@
             <pre class="ruby"><span class="ruby-comment"># File app/controllers/imports/issues_controller.rb, line 20</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">update</span>
   <span class="ruby-keyword">if</span> <span class="ruby-ivar">@form</span>.<span class="ruby-identifier">save</span>
-    <span class="ruby-identifier">redirect_to</span> <span class="ruby-identifier">imports_issues_path</span>, <span class="ruby-value">flash:</span> { <span class="ruby-value">success:</span> <span class="ruby-string">&quot;Record updated&quot;</span> }
+    <span class="ruby-identifier">redirect_target</span> = <span class="ruby-identifier">params</span>[<span class="ruby-value">:return_to</span>].<span class="ruby-identifier">presence</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">imports_issues_path</span>
+
+    <span class="ruby-identifier">redirect_to</span> <span class="ruby-identifier">redirect_target</span>, <span class="ruby-value">flash:</span> { <span class="ruby-value">success:</span> <span class="ruby-string">&quot;Record updated&quot;</span> }
   <span class="ruby-keyword">else</span>
-    <span class="ruby-identifier">render</span> <span class="ruby-value">:show</span>, <span class="ruby-value">status:</span> <span class="ruby-value">:unprocessable_content</span> <span class="ruby-keyword">and</span> <span class="ruby-keyword">return</span>
+    <span class="ruby-identifier">render</span> <span class="ruby-value">:show</span>, <span class="ruby-value">status:</span> <span class="ruby-value">:unprocessable_content</span>
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
