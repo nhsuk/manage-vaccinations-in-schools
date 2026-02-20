@@ -345,10 +345,10 @@ jobs:
     name: Notify deployment status
     runs-on: ubuntu-latest
     needs: [ deploy-service, run-migrations ]
-    if: ${{ !cancelled() }}
+    if: ${{ !cancelled() && inputs.environment == 'production' }}
     steps:
       - name: Notify deployment success
-        if: ${{ env.environment == 'production' &&  needs.deploy-service.result == 'success' }}
+        if: ${{ needs.deploy-service.result == 'success' }} 
         uses: slackapi/slack-github-action@91efab103c0de0a537f72a35f6b8cda0ee76bf0a
         with:
           webhook: ${{ secrets.SLACK_MAVIS_RELEASES_WEBHOOK_URL }}
@@ -360,8 +360,38 @@ jobs:
                 text:
                   type: "mrkdwn"
                   text: "*${{ env.app_version }}* is deployed :ship:"
+      - name: Checkout code
+        if: ${{ needs.deploy-service.result == 'success' }}
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Generate slack channel topic
+        if: ${{ needs.deploy-service.result == 'success' }}
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_MAVIS_TECH_WEBHOOK_URL }}
+        run: |
+          CURRENT_VERSION=${{ env.app_version }}
+          major=${CURRENT_VERSION#v};
+          major=${major%%.*};
+          minor=${CURRENT_VERSION#v${major}.};
+          minor=${minor%%.*};
+          new_minor=$((minor+1));
+          patch=${CURRENT_VERSION#v${major}.${minor}.};
+          NEXT_VERSION=$(echo "v${major}.${new_minor}.${patch}")
+          TOPIC="release: ${{ env.app_version }} - main: ${{ env.app_version }} - next: ${NEXT_VERSION}"
+          echo "TOPIC=$TOPIC" >> $GITHUB_ENV
+      - name: Update slack topic
+        if: ${{ needs.deploy-service.result == 'success' }}
+        uses: slackapi/slack-github-action@91efab103c0de0a537f72a35f6b8cda0ee76bf0a
+        with:
+          method: conversations.setTopic
+          token: ${{ secrets.MAVIS_DEPLOYMENT_BOT_OAUTH_TOKEN }}
+          errors: true
+          payload: |
+            channel: ${{ secrets.MAVIS_TECH_CHANNEL_ID }}
+            topic: "${{ env.TOPIC }}"
       - name: Notify deployment failure
-        if: ${{ env.environment == 'production' && (needs.deploy-service.result == 'failure' || needs.run-migrations.result == 'failure') }}
+        if: ${{ needs.deploy-service.result == 'failure' || needs.run-migrations.result == 'failure' }}
         uses: slackapi/slack-github-action@91efab103c0de0a537f72a35f6b8cda0ee76bf0a
         with:
           webhook: ${{ secrets.SLACK_MAVIS_RELEASES_WEBHOOK_URL }}
