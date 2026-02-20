@@ -23,7 +23,8 @@ describe "Immunisation imports duplicates" do
     then_i_should_see_a_success_message
     and_the_duplicate_record_should_be_persisted
 
-    when_i_review_the_second_duplicate_record
+    when_i_visit_the_import_issues_page
+    and_i_review_the_second_duplicate_record
     then_i_should_see_the_second_duplicate_record
 
     when_i_choose_to_keep_the_previously_uploaded_record
@@ -137,6 +138,10 @@ describe "Immunisation imports duplicates" do
     visit dashboard_path
   end
 
+  def when_i_visit_the_import_issues_page
+    visit imports_issues_path
+  end
+
   def and_i_click_on_the_upload_link
     click_on "Upload records"
     choose "Vaccination records"
@@ -212,7 +217,7 @@ describe "Immunisation imports duplicates" do
     expect(page).to have_content("There is a problem")
   end
 
-  def when_i_review_the_second_duplicate_record
+  def and_i_review_the_second_duplicate_record
     click_on "Review HAMILTON, Joanna"
   end
 
