@@ -58,7 +58,28 @@ describe AppSessionSummaryComponent do
       context "for MMR(V) programme" do
         let(:programmes) { [Programme.mmr] }
 
-        it { should have_link("View the MMR online consent form") }
+        it "shows separate links for MMR and MMRV variants" do
+          expect(rendered).to have_link(
+            "View the MMR online consent form (opens in new tab)"
+          )
+          expect(rendered).to have_link(
+            "View the MMRV online consent form (opens in new tab)"
+          )
+        end
+
+        it "links to the correct MMR variant consent form" do
+          expect(rendered).to have_link(
+            "View the MMR online consent form (opens in new tab)",
+            href: %r{/consents/#{session.slug}/mmr/start$}
+          )
+        end
+
+        it "links to the correct MMRV variant consent form" do
+          expect(rendered).to have_link(
+            "View the MMRV online consent form (opens in new tab)",
+            href: %r{/consents/#{session.slug}/mmrv/start$}
+          )
+        end
       end
     end
   end

@@ -85,6 +85,9 @@ class ConsentNotification < ApplicationRecord
     mail_template =
       if is_school
         group = ProgrammeGrouper.call(programmes).first.first
+
+        group = :mmrv if group == :mmr && patient.eligible_for_mmrv?
+
         :"#{template}_#{group}"
       else
         template

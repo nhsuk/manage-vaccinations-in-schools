@@ -5,6 +5,7 @@
 # Table name: consent_form_programmes
 #
 #  id                 :bigint           not null, primary key
+#  disease_types      :enum             is an Array
 #  notes              :text             default(""), not null
 #  programme_type     :enum             not null
 #  reason_for_refusal :integer
@@ -30,6 +31,12 @@ describe ConsentFormProgramme do
 
   describe "#vaccines" do
     context "when there are MMR and MMRV vaccines" do
+      before do
+        consent_form_programme.update!(
+          disease_types: Programme::Variant::DISEASE_TYPES[programme.type]
+        )
+      end
+
       it "only returns MMR vaccines" do
         # Ensure that the MMRV vaccines do actually exist!
         expect(Vaccine.where(brand: %w[ProQuad Priorix-Tetra]).count).to eq(2)
