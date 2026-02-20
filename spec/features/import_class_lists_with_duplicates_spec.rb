@@ -26,7 +26,8 @@ describe "Class list imports duplicates" do
     then_i_should_see_a_success_message
     and_the_first_record_should_be_updated
 
-    when_i_review_the_second_duplicate_record
+    when_i_visit_the_import_issues_page
+    and_i_review_the_second_duplicate_record
     then_i_should_see_the_second_duplicate_record
 
     when_i_choose_to_keep_the_existing_record
@@ -34,7 +35,8 @@ describe "Class list imports duplicates" do
     then_i_should_see_a_success_message
     and_the_second_record_should_not_be_updated
 
-    when_i_review_the_third_duplicate_record
+    when_i_visit_the_import_issues_page
+    and_i_review_the_third_duplicate_record
     then_i_should_see_the_third_duplicate_record
 
     when_i_choose_to_keep_both_records
@@ -69,7 +71,8 @@ describe "Class list imports duplicates" do
       then_i_should_see_a_success_message
       and_the_first_record_should_be_updated
 
-      when_i_review_the_second_duplicate_record
+      when_i_visit_the_import_issues_page
+      and_i_review_the_second_duplicate_record
       then_i_should_see_the_second_duplicate_record
 
       when_i_choose_to_keep_the_existing_record
@@ -77,7 +80,8 @@ describe "Class list imports duplicates" do
       then_i_should_see_a_success_message
       and_the_second_record_should_not_be_updated
 
-      when_i_review_the_third_duplicate_record
+      when_i_visit_the_import_issues_page
+      and_i_review_the_third_duplicate_record
       then_i_should_see_the_third_duplicate_record
 
       when_i_choose_to_keep_both_records
@@ -191,6 +195,10 @@ describe "Class list imports duplicates" do
     click_on "Waterloo Road"
   end
 
+  def when_i_visit_the_import_issues_page
+    visit imports_issues_path
+  end
+
   def and_i_start_adding_children_to_the_school
     click_on "Import class lists"
   end
@@ -262,7 +270,7 @@ describe "Class list imports duplicates" do
     expect(@existing_patient.pending_changes).to eq({})
   end
 
-  def when_i_review_the_second_duplicate_record
+  def and_i_review_the_second_duplicate_record
     click_on "Review JONES, Sarah"
   end
 
@@ -277,7 +285,7 @@ describe "Class list imports duplicates" do
     expect(@second_patient.pending_changes).to eq({})
   end
 
-  def when_i_review_the_third_duplicate_record
+  def and_i_review_the_third_duplicate_record
     click_on "Review SALLES, Jenny"
   end
 

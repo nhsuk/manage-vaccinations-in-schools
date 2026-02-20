@@ -27,9 +27,11 @@ describe "Child record imports duplicates" do
     when_i_choose_to_keep_the_duplicate_record
     and_i_confirm_my_selection
     then_i_should_see_a_success_message
+    and_i_should_return_to_the_import_page
     and_the_first_duplicate_record_should_be_persisted
 
-    when_i_review_the_second_duplicate_record
+    when_i_visit_the_import_issues_page
+    and_i_review_the_second_duplicate_record
     then_i_should_see_the_second_duplicate_record
 
     when_i_choose_to_keep_the_previously_uploaded_record
@@ -37,7 +39,8 @@ describe "Child record imports duplicates" do
     then_i_should_see_a_success_message
     and_the_second_record_should_not_be_updated
 
-    when_i_review_the_third_duplicate_record
+    when_i_visit_the_import_issues_page
+    and_i_review_the_third_duplicate_record
     then_i_should_see_the_third_duplicate_record
 
     when_i_choose_to_keep_both_records
@@ -75,9 +78,11 @@ describe "Child record imports duplicates" do
       when_i_choose_to_keep_the_duplicate_record
       and_i_confirm_my_selection
       then_i_should_see_a_success_message
+      and_i_should_return_to_the_import_page
       and_the_first_duplicate_record_should_be_persisted
 
-      when_i_review_the_second_duplicate_record
+      when_i_visit_the_import_issues_page
+      and_i_review_the_second_duplicate_record
       then_i_should_see_the_second_duplicate_record
 
       when_i_choose_to_keep_the_previously_uploaded_record
@@ -85,7 +90,8 @@ describe "Child record imports duplicates" do
       then_i_should_see_a_success_message
       and_the_second_record_should_not_be_updated
 
-      when_i_review_the_third_duplicate_record
+      when_i_visit_the_import_issues_page
+      and_i_review_the_third_duplicate_record
       then_i_should_see_the_third_duplicate_record
 
       when_i_choose_to_keep_both_records
@@ -132,8 +138,10 @@ describe "Child record imports duplicates" do
     and_i_choose_to_keep_the_duplicate_record
     and_i_confirm_my_selection
     then_search_vaccination_records_in_nhs_job_should_be_enqueued
+    and_i_should_return_to_the_import_page
 
-    when_i_review_the_second_duplicate_record_jimmy
+    when_i_visit_the_import_issues_page
+    and_i_review_the_second_duplicate_record_jimmy
     and_i_choose_to_keep_the_previously_uploaded_record
     and_i_confirm_my_selection
     then_search_vaccination_records_in_nhs_job_should_be_enqueued_for_second_patient
@@ -272,6 +280,10 @@ describe "Child record imports duplicates" do
     click_link "Import", match: :first
   end
 
+  def when_i_visit_the_import_issues_page
+    visit imports_issues_path
+  end
+
   def and_i_start_adding_children_to_the_cohort
     click_button "Upload records"
     choose "Child records"
@@ -325,6 +337,7 @@ describe "Child record imports duplicates" do
   def when_i_choose_to_keep_the_previously_uploaded_record
     choose "Keep existing child"
   end
+
   alias_method :and_i_choose_to_keep_the_previously_uploaded_record,
                :when_i_choose_to_keep_the_previously_uploaded_record
 
@@ -339,6 +352,11 @@ describe "Child record imports duplicates" do
 
   def then_i_should_see_a_success_message
     expect(page).to have_content("Record updated")
+  end
+
+  def and_i_should_return_to_the_import_page
+    cohort_import = CohortImport.order(:created_at).last
+    expect(page).to have_current_path(cohort_import_path(cohort_import))
   end
 
   def when_i_review_the_first_duplicate_record
@@ -363,11 +381,11 @@ describe "Child record imports duplicates" do
     expect(page).to have_content("There is a problem")
   end
 
-  def when_i_review_the_second_duplicate_record
+  def and_i_review_the_second_duplicate_record
     click_on "Review SMITH, James"
   end
 
-  def when_i_review_the_second_duplicate_record_jimmy
+  def and_i_review_the_second_duplicate_record_jimmy
     click_on "Review SMITH, Jimmy"
   end
 
@@ -410,7 +428,7 @@ describe "Child record imports duplicates" do
     expect(session).to eq(@session)
   end
 
-  def when_i_review_the_third_duplicate_record
+  def and_i_review_the_third_duplicate_record
     click_on "Review DOE, Mark"
   end
 
