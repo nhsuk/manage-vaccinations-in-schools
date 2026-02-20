@@ -45,7 +45,7 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
         row.with_value { programme_value }
       end
 
-      if @vaccination_record.administered?
+      if @vaccination_record.administered? && !@vaccination_record.sourced_from_manual_report?
         summary_list.with_row do |row|
           row.with_key { "Vaccine" }
 
@@ -350,12 +350,6 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
   def outcome_value
     outcome =
       VaccinationRecord.human_enum_name(:outcome, @vaccination_record.outcome)
-
-    if Flipper.enabled?(:already_vaccinated) &&
-         @vaccination_record.already_had? &&
-         @vaccination_record.reported_as_already_vaccinated?
-      outcome = VaccinationRecord.human_enum_name(:outcome, "administered")
-    end
 
     highlight_if(outcome, @vaccination_record.outcome_changed?)
   end
