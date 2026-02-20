@@ -31,18 +31,20 @@ class PatientSessions::ProgrammesController < PatientSessions::BaseController
       first_active_wizard_step:,
       location_id: nil,
       location_name: "Unknown",
-      outcome: (Flipper.enabled?(:already_vaccinated) ? :administered : :already_had),
+      outcome:
+        (Flipper.enabled?(:already_vaccinated) ? :administered : :already_had),
       patient: @patient,
       performed_at: (Time.current unless Flipper.enabled?(:already_vaccinated)),
       performed_by_user_id:
         (current_user.id unless Flipper.enabled?(:already_vaccinated)),
       performed_ods_code: current_team.organisation.ods_code,
-      programme: @programme,
+      programme: programme_for_record_already_vaccinated,
       reported_by_id:
         (current_user.id if Flipper.enabled?(:already_vaccinated)),
       reported_at: (Time.current if Flipper.enabled?(:already_vaccinated)),
       session: @session,
-      source: (Flipper.enabled?(:already_vaccinated) ? :manual_report : :service)
+      source:
+        (Flipper.enabled?(:already_vaccinated) ? :manual_report : :service)
     )
 
     redirect_to draft_vaccination_record_path(
@@ -65,5 +67,13 @@ class PatientSessions::ProgrammesController < PatientSessions::BaseController
 
   def eligible_for_mmr_or_mmrv?
     @programme.mmr? && @patient.eligible_for_mmrv?
+  end
+
+  def programme_for_record_already_vaccinated
+    if Flipper.enabled?(:already_vaccinated) && @programme.mmr? &&
+         !@patient.eligible_for_mmrv?
+      @programme = Programme::Variant.new(@programme, variant_type: "mmr")
+    end
+    @programme
   end
 end
