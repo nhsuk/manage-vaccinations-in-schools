@@ -35,6 +35,9 @@ Rails.application.configure do
   # Store uploaded files on the local file system in a temporary directory.
   config.active_storage.service = :test
 
+  # Disable Active Storage's image processing, we don't use it and it complains on startup.
+  config.active_storage.variant_processor = :disabled
+
   # Print deprecation notices to the stderr.
   config.active_support.deprecation = :stderr
 
