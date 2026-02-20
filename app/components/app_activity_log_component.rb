@@ -401,7 +401,7 @@ class AppActivityLogComponent < ViewComponent::Base
           if (vaccine = vaccination_record.vaccine)
             "Vaccinated with #{vaccine.brand}"
           elsif vaccination_record.sourced_from_manual_report? ||
-              vaccination_record.sourced_from_historical_upload?
+                vaccination_record.sourced_from_historical_upload?
             "Historical vaccination record added"
           else
             "Vaccinated"
@@ -412,10 +412,13 @@ class AppActivityLogComponent < ViewComponent::Base
 
       subtitle =
         if vaccination_record.administered? &&
-              vaccination_record.reported_at.present? &&
-              (vaccination_record.sourced_from_manual_report? ||
-              vaccination_record.sourced_from_historical_upload?)
-          "Record added #{vaccination_record.reported_at.to_fs(:long)}. Vaccination given #{vaccination_record.performed_at.to_fs(:long)}."
+             vaccination_record.reported_at.present? &&
+             (
+               vaccination_record.sourced_from_manual_report? ||
+                 vaccination_record.sourced_from_historical_upload?
+             )
+          "Record added #{vaccination_record.reported_at.to_fs(:long)}. " \
+            "Vaccination given #{vaccination_record.performed_at.to_date.to_fs(:long)}."
         end
 
       kept = {
