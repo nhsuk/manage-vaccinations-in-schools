@@ -3,9 +3,10 @@
 # To get the latest version of the zip:
 # 1. Go to https://digital.nhs.uk/services/organisation-data-service/data-search-and-export/csv-downloads/gp-and-gp-practice-related-data
 # 2. Download the zip file "epraccur"
-# 3. Place it in db/data/nhs-gp-practices.zip
+# 3. Extract the zip file
+# 3. Place epraccur.csv in db/data/nhs-gp-practices.csv
 #
-# Alternatively, you can run this task.
+# Alternatively, you can run this task, which downloads directly from https://www.odsdatasearchandexport.nhs.uk/api/getReport?report=epraccur
 
 module MavisCLI
   module GPPractices
@@ -14,7 +15,7 @@ module MavisCLI
 
       option :output_file,
              aliases: ["-o"],
-             default: "db/data/nhs-gp-practices.zip",
+             default: "db/data/nhs-gp-practices.csv",
              desc: "file path to write GP practice database to"
 
       def call(output_file:, **)
@@ -24,13 +25,10 @@ module MavisCLI
         agent = Mechanize.new
         agent.user_agent_alias = "Mac Safari"
 
-        puts "Visiting the downloads page"
-        agent.get(
-          "https://digital.nhs.uk/services/organisation-data-service/data-search-and-export/csv-downloads/gp-and-gp-practice-related-data"
-        )
-
         puts "Download the GP practices data"
-        epraccur_file = agent.click("epraccur")
+        epraccur_file = agent.get(
+          "https://www.odsdatasearchandexport.nhs.uk/api/getReport?report=epraccur"
+        )
         puts "Writing #{output_file}"
         epraccur_file.save!(output_file)
         puts "File downloaded successfully to #{output_file}"
