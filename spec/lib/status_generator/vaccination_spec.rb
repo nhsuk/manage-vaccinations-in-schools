@@ -640,13 +640,13 @@ describe StatusGenerator::Vaccination do
     context "for MenACWY programme" do
       let(:programme) { Programme.menacwy }
 
-      include_examples "with 0 and 1 vaccination records"
+      it { should be_nil }
     end
 
     context "for Td/IPV programme" do
       let(:programme) { Programme.td_ipv }
 
-      include_examples "with 0 and 1 vaccination records"
+      it { should be_nil }
     end
 
     context "for flu programme" do
