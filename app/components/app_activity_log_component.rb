@@ -400,6 +400,9 @@ class AppActivityLogComponent < ViewComponent::Base
         if vaccination_record.administered?
           if (vaccine = vaccination_record.vaccine)
             "Vaccinated with #{vaccine.brand}"
+          elsif vaccination_record.sourced_from_manual_report? ||
+              vaccination_record.sourced_from_historical_upload?
+            "Historical vaccination record added"
           else
             "Vaccinated"
           end
