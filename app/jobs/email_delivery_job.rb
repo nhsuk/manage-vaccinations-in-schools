@@ -16,9 +16,7 @@ class EmailDeliveryJob < NotifyDeliveryJob
     team: nil,
     vaccination_record: nil
   )
-    template_id = GOVUK_NOTIFY_EMAIL_TEMPLATES[template_name.to_sym]
-    raise UnknownTemplate if template_id.nil?
-
+    template_name_sym = template_name.to_sym
     personalisation =
       GovukNotifyPersonalisation.new(
         academic_year:,
@@ -33,7 +31,7 @@ class EmailDeliveryJob < NotifyDeliveryJob
       )
 
     email_address =
-      if template_name == :consent_unknown_contact_details_warning
+      if template_name_sym == :consent_unknown_contact_details_warning
         personalisation.parent&.email
       else
         personalisation.consent_form&.parent_email ||
@@ -42,9 +40,23 @@ class EmailDeliveryJob < NotifyDeliveryJob
 
     return if email_address.nil?
 
+    email_renderer = NotifyTemplateRenderer.for(:email)
+    template_id, personalisation_hash =
+      if use_local_template?(template_name_sym)
+        rendered = email_renderer.render(template_name_sym, personalisation)
+        [
+          email_renderer.passthrough_template_id,
+          { subject: rendered[:subject], body: rendered[:body] }
+        ]
+      else
+        tid = email_renderer.template_id_for(template_name_sym)
+        raise UnknownTemplate if tid.nil?
+        [tid, personalisation.to_h]
+      end
+
     args = {
       email_address:,
-      personalisation: personalisation.to_h,
+      personalisation: personalisation_hash,
       template_id:
     }
 
@@ -91,5 +103,15 @@ class EmailDeliveryJob < NotifyDeliveryJob
           { programme_type: it.type, disease_types: it.disease_types }
         end
     )
+  end
+
+  def use_local_template?(template_name_sym)
+    return false unless passthrough_email_configured?
+
+    NotifyTemplateRenderer.for(:email).template_exists?(template_name_sym)
+  end
+
+  def passthrough_email_configured?
+    NotifyTemplateRenderer.for(:email).passthrough_configured?
   end
 end

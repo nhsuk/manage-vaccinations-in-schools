@@ -95,9 +95,9 @@ class NotifyLogEntry < ApplicationRecord
     if GOVUK_NOTIFY_UNUSED_TEMPLATES.include?(template_id)
       GOVUK_NOTIFY_UNUSED_TEMPLATES.fetch(template_id)
     elsif email?
-      GOVUK_NOTIFY_EMAIL_TEMPLATES.key(template_id)
+      NotifyTemplateRenderer.for(:email).template_name_for(template_id)
     elsif sms?
-      GOVUK_NOTIFY_SMS_TEMPLATES.key(template_id)
+      NotifyTemplateRenderer.for(:sms).template_name_for(template_id)
     end
   end
 end
