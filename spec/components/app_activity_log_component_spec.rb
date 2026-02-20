@@ -221,7 +221,8 @@ describe AppActivityLogComponent do
 
     include_examples "card",
                      title: "Historical vaccination record added",
-                     date: "Record added 15 December 2025 at 2:33pm. Vaccination given 6 January 2025.",
+                     date:
+                       "Record added 15 December 2025 at 2:33pm. Vaccination given 6 January 2025.",
                      programme: "Flu"
 
     include_examples "card",
