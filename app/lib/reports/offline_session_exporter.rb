@@ -375,7 +375,6 @@ class Reports::OfflineSessionExporter
     # future, but it works for now.
 
     programme_variant = programme.variant_for(patient:)
-    programmes = [programme_variant, programme]
 
     row[:organisation_code] = organisation.ods_code
 
@@ -402,7 +401,10 @@ class Reports::OfflineSessionExporter
     row[:anatomical_site] = Cell.new(
       allowed_values: ImmunisationImportRow::DELIVERY_SITES.keys
     )
-    row[:dose_sequence] = programmes.first.default_dose_sequence
+    row[:dose_sequence] = patient.programme_status(
+      programme,
+      academic_year:
+    ).dose_sequence
     row[:reason_not_vaccinated] = Cell.new(
       allowed_values: ImmunisationImportRow::REASONS_NOT_ADMINISTERED.keys
     )

@@ -675,6 +675,26 @@ describe ImmunisationImportRow do
         end
       end
 
+      context "vaccination in an MMR session and no dose sequence is provided" do
+        let(:programmes) { [Programme.mmr] }
+        let(:session) { create(:session, team:, programmes:) }
+
+        let(:data) do
+          {
+            "SESSION_ID" => session.id.to_s,
+            "PROGRAMME" => "MMR",
+            "VACCINATED" => "Y"
+          }
+        end
+
+        it "has errors" do
+          expect(immunisation_import_row).to be_invalid
+          expect(immunisation_import_row.errors[:base]).to include(
+            "<code>DOSE_SEQUENCE</code> or <code>Vaccination type</code> is required"
+          )
+        end
+      end
+
       context "HPV vaccination in previous academic year, no vaccinator details provided" do
         let(:programmes) { [Programme.hpv] }
 
