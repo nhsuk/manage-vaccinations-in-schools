@@ -13,139 +13,14 @@ module MavisCLI
       def call(input_file:, **)
         MavisCLI.load_rails
 
-        Zip::File.open(input_file) do |zip|
-          csv_entry = zip.glob("edubasealldata*.csv").first
-          csv_content = csv_entry.get_input_stream.read
+        logger = Logger.new($stdout)
+        logger.formatter =
+          proc { |_severity, _datetime, _progname, msg| "#{msg}\n" }
 
-          rows =
-            CSV.parse(csv_content, headers: true, encoding: "ISO-8859-1:UTF-8")
+        row_count = ::GIAS.row_count(input_file)
+        progress_bar = MavisCLI.progress_bar(row_count)
 
-          row_count = rows.length
-          batch_size = 1000
-          schools = []
-
-          puts "Starting import of #{row_count} schools."
-          progress_bar = MavisCLI.progress_bar(row_count + 1)
-
-          rows.each do |row|
-            gias_establishment_number = row["EstablishmentNumber"]
-            next if gias_establishment_number.blank? # closed school that never opened
-
-            schools << Location.new(
-              type: :school,
-              urn: row["URN"],
-              gias_local_authority_code: row["LA (code)"],
-              gias_establishment_number:,
-              gias_phase: Integer(row["PhaseOfEducation (code)"]),
-              gias_year_groups: process_year_groups(row),
-              name: row["EstablishmentName"],
-              address_line_1: row["Street"],
-              address_line_2: [
-                row["Locality"],
-                row["Address3"]
-              ].compact_blank.join(", "),
-              address_town: row["Town"],
-              address_postcode: row["Postcode"],
-              status: Integer(row["EstablishmentStatus (code)"]),
-              url: process_url(row["SchoolWebsite"].presence)
-            )
-
-            if schools.size >= batch_size
-              import_schools(schools)
-              update_sites(schools)
-              schools.clear
-            end
-
-            progress_bar.increment
-          end
-
-          unless schools.empty?
-            import_schools(schools)
-            update_sites(schools)
-          end
-        end
-      end
-
-      def import_schools(schools)
-        Location.import!(
-          schools,
-          on_duplicate_key_update: {
-            conflict_target: %i[urn],
-            index_predicate: "site IS NULL",
-            columns: %i[
-              address_line_1
-              address_line_2
-              address_postcode
-              address_town
-              gias_establishment_number
-              gias_local_authority_code
-              gias_phase
-              gias_year_groups
-              name
-              status
-              url
-            ]
-          }
-        )
-      end
-
-      def update_sites(schools)
-        schools_by_urn = schools.index_by(&:urn)
-
-        sites =
-          Location
-            .where(urn: schools_by_urn.keys)
-            .where.not(site: nil)
-            .distinct
-            .map do |site|
-              school = schools_by_urn[site.urn]
-
-              site.assign_attributes(
-                gias_establishment_number: school.gias_establishment_number,
-                gias_local_authority_code: school.gias_local_authority_code,
-                gias_phase: school.gias_phase,
-                gias_year_groups: school.gias_year_groups,
-                status: school.status,
-                url: school.url
-              )
-
-              site
-            end
-
-        return if sites.empty?
-
-        Location.import!(
-          sites,
-          on_duplicate_key_update: {
-            conflict_target: %i[urn site],
-            columns: %i[
-              gias_establishment_number
-              gias_local_authority_code
-              gias_phase
-              gias_year_groups
-              status
-              url
-            ]
-          }
-        )
-      end
-
-      # Some URLs from the GIAS CSV are missing the protocol.
-      def process_url(url)
-        return nil if url.blank?
-
-        # Some school URLs don't start with http:// and https://
-        url = url.start_with?("http://", "https://") ? url : "https://#{url}"
-
-        # Legh Vale school has a URL of http:www.leghvale.st-helens.sch.uk
-        # which is not a valid URL.
-        url.gsub!("http:www", "http://www")
-      end
-
-      def process_year_groups(row)
-        low_year_group = row["StatutoryLowAge"].to_i - 4
-        high_year_group = row["StatutoryHighAge"].to_i - 5
-        (low_year_group..high_year_group).to_a
+        ::GIAS.import(input_file:, progress_bar:, logger:)
       end
     end
   end
