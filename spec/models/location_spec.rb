@@ -492,4 +492,57 @@ describe Location do
       end
     end
   end
+
+  describe "#teams_for_academic_year" do
+    subject(:teams_for_academic_year) do
+      location.teams_for_academic_year(target_year)
+    end
+
+    let(:location) { create(:school) }
+    let(:team_a) { create(:team) }
+    let(:team_b) { create(:team) }
+    let(:team_c) { create(:team) }
+    let(:current_year) { AcademicYear.current }
+    let(:next_year) { AcademicYear.current + 1 }
+    let(:target_year) { current_year }
+
+    before do
+      location.attach_to_team!(team_a, academic_year: current_year)
+      location.attach_to_team!(team_b, academic_year: current_year)
+      location.attach_to_team!(team_c, academic_year: next_year)
+    end
+
+    context "when requesting current academic year teams" do
+      it "returns only teams for the current academic year" do
+        expect(teams_for_academic_year).to contain_exactly(team_a, team_b)
+      end
+
+      it "does not return teams from other academic years" do
+        expect(teams_for_academic_year).not_to include(team_c)
+      end
+    end
+
+    context "when requesting next academic year teams" do
+      let(:target_year) { next_year }
+
+      it "returns only teams for the next academic year" do
+        expect(teams_for_academic_year).to contain_exactly(team_c)
+      end
+
+      it "does not return teams from other academic years" do
+        expect(teams_for_academic_year).not_to include(team_a, team_b)
+      end
+    end
+
+    context "when the location has no teams for the specified year" do
+      let(:location_without_teams) { create(:school) }
+      let(:pending_year) { AcademicYear.pending }
+
+      it "returns an empty array" do
+        expect(
+          location_without_teams.teams_for_academic_year(pending_year)
+        ).to be_empty
+      end
+    end
+  end
 end
