@@ -764,13 +764,20 @@ class Patient < ApplicationRecord
     ActiveRecord::Base.transaction do
       new_record = super
 
-      if changeset
-        changeset.update!(patient_id: new_record.id)
-        changeset
-          .import
+      if changeset && new_record
+        import = changeset.import
+
+        # Parent relationships that were imported (and attached to the original
+        # patient during matching) must move across to the duplicated patient.
+        import
           .parent_relationships
           .where(patient_id: id)
           .update_all(patient_id: new_record.id)
+
+        # Ensure the import itself is linked to the new patient record, not
+        # the original one, so the import summary reflects what was created.
+        import.patients.delete(self)
+        import.patients << new_record
       end
     end
 
