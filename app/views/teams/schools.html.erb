@@ -9,13 +9,20 @@
   </div>
   <div class="nhsuk-grid-column-three-quarters">
     <%= render AppCardComponent.new do |card| %>
-      <% card.with_heading(level: 2, actions: [{ text: "Add a new school site", href: draft_school_site_path(:school) }]) { "Schools" } %>
+      <% card.with_heading(
+           level: 2,
+           actions: [
+                      { text: "Add a new school", href: draft_school_path(:urn) },
+                      { text: "Add a new school site", href: draft_school_site_path(:school) },
+                    ],
+         ) { "Schools" } %>
 
       <%= govuk_table do |table| %>
         <% table.with_head do |head| %>
           <% head.with_row do |row| %>
             <% row.with_cell { "Name" } %>
             <% row.with_cell { "URN" } %>
+            <% row.with_cell { "Actions" } if @schools.where.not(site: nil).present? %>
           <% end %>
         <% end %>
         <% table.with_body do |body| %>
@@ -31,6 +38,13 @@
                      .html_safe
                  } %>
                  <% row.with_cell { tag.span(school.urn_and_site, class: "app-u-code") } %>
+                   <%= row.with_cell do %>
+                 <% if school.site.present? %>
+                     <%= render AppActionListComponent.new do |action_list| %>
+                       <% action_list.with_item(text: "Edit", href: edit_team_school_path(school)) %>
+                     <% end %>
+                   <% end %>
+                 <% end %>
             <% end %>
           <% end %>
         <% end %>

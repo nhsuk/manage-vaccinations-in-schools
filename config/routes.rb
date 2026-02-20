@@ -163,6 +163,7 @@ Rails.application.routes.draw do
   resource :draft_vaccination_record,
            only: %i[show update],
            path: "draft-vaccination-record/:id"
+  resource :draft_school, only: %i[show update], path: "draft-school/:id"
   resource :draft_school_site,
            only: %i[show update],
            path: "draft-school-site/:id"
@@ -337,6 +338,15 @@ Rails.application.routes.draw do
       get :schools
       get :sessions
       get :clinics
+    end
+
+    resources :schools, only: %i[edit update], controller: "teams/schools" do
+      member do
+        get "edit/name", action: :edit_name
+        put "edit/name", action: :update_name
+        get "edit/address", action: :edit_address
+        put "edit/address", action: :update_address
+      end
     end
   end
 

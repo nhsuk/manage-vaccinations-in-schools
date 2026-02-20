@@ -55,6 +55,7 @@ en:
     timeline: timeline
     triage: triage
     type: type
+    urn: urn
     vaccine: vaccine
     vaccinator: vaccinator
     when: when

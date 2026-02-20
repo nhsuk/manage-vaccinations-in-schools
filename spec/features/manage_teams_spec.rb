@@ -43,10 +43,77 @@ describe "Manage teams" do
     then_i_am_redirected_to_the_start_of_the_wizard
   end
 
+  scenario "Editing a school site" do
+    given_my_team_exists
+    and_sites_exist
+
+    when_i_click_on_team_settings
+    when_i_click_on_schools
+    then_i_see_the_team_schools
+    and_i_can_only_edit_school_sites
+
+    when_i_click_on_edit_a_school_site
+    then_i_see_the_school_summary_with_edit_links
+
+    when_i_click_on_change_name
+    and_i_fill_in_the_new_name_with_same_value_as_another_site
+    then_i_see_a_name_validation_error
+
+    when_i_fill_in_the_new_name
+    and_i_continue
+    then_i_see_the_name_is_updated
+
+    when_i_click_on_change_address
+    and_i_fill_in_the_new_address
+    and_i_continue
+    then_i_see_the_address_is_updated
+
+    when_i_click_continue
+    then_i_see_the_team_schools
+    and_the_site_details_are_updated
+  end
+
+  scenario "Adding a school" do
+    given_my_team_exists
+    and_a_school_exists
+
+    when_i_click_on_team_settings
+    when_i_click_on_schools
+    then_i_see_the_team_schools
+
+    when_i_click_on_add_a_new_school
+    then_i_see_the_find_school_form
+
+    when_i_fill_in_the_urn_with_a_school_already_assigned_to_the_team
+    and_i_continue
+    then_i_see_a_validation_error_that_the_school_is_already_assigned
+
+    when_i_fill_in_the_urn_with_a_different_school
+    and_i_continue
+    then_i_see_the_confirm_school_form
+
+    when_i_confirm_the_school
+    then_i_see_the_school_confirmation_banner
+    and_a_school_is_created
+  end
+
   def given_my_team_exists
     @team = create(:team, :with_one_nurse)
     create(:school, team: @team, urn: "12345")
+    create(:school, team: @team, urn: "34567")
     create(:community_clinic, team: @team)
+  end
+
+  def and_a_school_exists
+    @school = create(:school, urn: "100000")
+  end
+
+  def and_sites_exist
+    @site_a = @team.schools.first
+    @site_a.update!(site: "A")
+
+    @site_b =
+      create(:school, team: @team, urn: @site_a.urn, site: "B", name: "Site B")
   end
 
   def when_i_click_on_team_settings
@@ -78,6 +145,74 @@ describe "Manage teams" do
     expect(page).to have_content("Schools")
     expect(page).to have_content(@team.schools.first.name)
     expect(page).to have_content(@team.schools.first.address_line_1)
+  end
+
+  def and_i_can_only_edit_school_sites
+    expect(page).not_to have_link("Edit", href: edit_team_school_path("34567"))
+
+    expect(page).to have_link("Edit", href: edit_team_school_path("12345A"))
+    expect(page).to have_link("Edit", href: edit_team_school_path("12345B"))
+  end
+
+  def when_i_click_on_edit_a_school_site
+    within("tr", text: "Site B") { click_on "Edit" }
+  end
+
+  def then_i_see_the_school_summary_with_edit_links
+    expect(page).to have_content("Site B")
+    expect(page).to have_link("Change", text: /name/i)
+    expect(page).to have_link("Change", text: /address/i)
+  end
+
+  def when_i_click_on_change_name
+    click_on "Change name"
+  end
+
+  def and_i_fill_in_the_new_name_with_same_value_as_another_site
+    fill_in "School name", with: @site_a.name
+    click_on "Continue"
+  end
+
+  def then_i_see_a_name_validation_error
+    expect(page).to have_content("This site name is already in use")
+  end
+
+  def when_i_fill_in_the_new_name
+    fill_in "School name", with: "Updated Site B Name"
+  end
+
+  def then_i_see_the_name_is_updated
+    expect(page).to have_content("Updated Site B Name")
+  end
+
+  def when_i_click_on_change_address
+    click_on "Change address"
+  end
+
+  def and_i_fill_in_the_new_address
+    fill_in "Address line 1", with: "456 New Street"
+    fill_in "Address line 2", with: "Floor 2"
+    fill_in "Town", with: "New Town"
+    fill_in "Postcode", with: "SW1A 2AA"
+  end
+
+  def then_i_see_the_address_is_updated
+    expect(page).to have_content("456 New Street")
+    expect(page).to have_content("New Town")
+    expect(page).to have_content("SW1A 2AA")
+  end
+
+  def when_i_click_continue
+    click_on "Continue"
+  end
+
+  def and_the_site_details_are_updated
+    @site_b.reload
+    expect(@site_b.name).to eq("Updated Site B Name")
+    expect(@site_b.address_line_1).to eq("456 New Street")
+    expect(@site_b.address_line_2).to eq("Floor 2")
+    expect(@site_b.address_town).to eq("New Town")
+    expect(@site_b.address_postcode).to eq("SW1A 2AA")
   end
 
   def when_i_click_on_sessions
@@ -135,7 +270,7 @@ describe "Manage teams" do
   end
 
   def and_a_school_site_is_created
-    expect(Location.school.count).to eq(2)
+    expect(Location.school.count).to eq(3)
 
     site = Location.school.last
     expect(site.name).to eq("New School Site")
@@ -150,5 +285,48 @@ describe "Manage teams" do
 
   def when_i_go_back
     visit draft_school_site_path("confirm")
+  end
+
+  def when_i_click_on_add_a_new_school
+    click_on "Add a new school"
+  end
+
+  def then_i_see_the_find_school_form
+    expect(page).to have_content("Find a school to add to your team")
+    expect(page).to have_field("School URN")
+  end
+
+  def when_i_fill_in_the_urn_with_a_school_already_assigned_to_the_team
+    fill_in "School URN", with: "12345"
+  end
+
+  def when_i_fill_in_the_urn_with_a_different_school
+    fill_in "School URN", with: "100000"
+  end
+
+  def then_i_see_a_validation_error_that_the_school_is_already_assigned
+    expect(page).to have_content(
+      "This school or its sites are already assigned to your team"
+    )
+  end
+
+  def then_i_see_the_confirm_school_form
+    expect(page).to have_content("Confirm school")
+    expect(page).to have_content("Is this the correct school?")
+  end
+
+  def when_i_confirm_the_school
+    choose "Yes, add this school"
+    click_on "Continue"
+  end
+
+  def then_i_see_the_school_confirmation_banner
+    expect(page).to have_content("has been added to your team.")
+  end
+
+  def and_a_school_is_created
+    school = @team.schools.find_by(urn: "100000")
+    expect(school).to be_present
+    expect(school.teams).to include(@team)
   end
 end
