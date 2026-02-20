@@ -13,6 +13,7 @@ describe SchoolPolicy do
 
   permissions :index?,
               :create?,
+              :edit?,
               :import?,
               :new?,
               :patients?,
@@ -22,7 +23,7 @@ describe SchoolPolicy do
     it { should_not permit(national_reporting_user, location) }
   end
 
-  permissions :edit?, :destroy?, :update? do
+  permissions :destroy?, :update? do
     it { should_not permit(point_of_care_user, location) }
     it { should_not permit(national_reporting_user, location) }
   end

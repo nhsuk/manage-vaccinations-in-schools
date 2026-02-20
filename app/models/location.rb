@@ -173,6 +173,13 @@ class Location < ApplicationRecord
     validates :gias_local_authority_code, presence: true
     validates :gias_phase, presence: true
     validates :urn, presence: true
+    validates :name,
+              uniqueness: {
+                scope: :urn,
+                message:
+                  "This site name is already in use. Enter a different name."
+              },
+              if: -> { site.present? }
   end
 
   normalizes :site, with: -> { it.presence&.strip }
