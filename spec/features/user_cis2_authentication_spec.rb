@@ -62,7 +62,7 @@ describe "User CIS2 authentication", :cis2 do
       uid: @user.uid,
       given_name: "Admin",
       family_name: "Test",
-      role_code: CIS2Info::MEDICAL_SECRETARY_ROLE,
+      role_code: CIS2Info::MEDICAL_SECRETARY_ROLES.first,
       org_code: @team.organisation.ods_code,
       org_name: @team.name,
       workgroups: [@team.workgroup]

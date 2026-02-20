@@ -10,7 +10,7 @@ RSpec.describe API::Reporting::OneTimeTokensController do
     {
       "organisation_code" => organisation.ods_code,
       "workgroups" => [team.workgroup],
-      "role_code" => CIS2Info::NURSE_ROLE,
+      "role_code" => CIS2Info::NURSE_ROLES.first,
       "activity_codes" => []
     }
   end
@@ -224,7 +224,7 @@ RSpec.describe API::Reporting::OneTimeTokensController do
       {
         "organisation_code" => organisation.ods_code,
         "workgroups" => [team.workgroup],
-        "role_code" => CIS2Info::NURSE_ROLE,
+        "role_code" => CIS2Info::NURSE_ROLES.first,
         "activity_codes" => []
       }
     end

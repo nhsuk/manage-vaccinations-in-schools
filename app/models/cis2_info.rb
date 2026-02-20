@@ -3,8 +3,8 @@
 class CIS2Info
   include RequestSessionPersistable
 
-  NURSE_ROLE = "S8000:G8000:R8001"
-  MEDICAL_SECRETARY_ROLE = "S8000:G8001:R8006"
+  NURSE_ROLES = %w[S8000:G8000:R8001 S8000:G8000:R8003].freeze
+  MEDICAL_SECRETARY_ROLES = %w[S8000:G8001:R8006 S8001:G8002:R8008].freeze
   SUPPORT_ROLE = "S8001:G8005:R8015"
 
   SUPPORT_WORKGROUP = "mavissupport"
@@ -46,15 +46,15 @@ class CIS2Info
     organisation&.teams&.exists?(workgroup: workgroups) || false
 
   def is_medical_secretary?
-    role_code == MEDICAL_SECRETARY_ROLE
+    MEDICAL_SECRETARY_ROLES.include?(role_code)
   end
 
   def is_nurse?
-    role_code == NURSE_ROLE
+    NURSE_ROLES.include?(role_code)
   end
 
   def is_healthcare_assistant?
-    role_code == MEDICAL_SECRETARY_ROLE &&
+    MEDICAL_SECRETARY_ROLES.include?(role_code) &&
       activity_codes.include?(PERSONAL_MEDICATION_ADMINISTRATION_ACTIVITY_CODE)
   end
 

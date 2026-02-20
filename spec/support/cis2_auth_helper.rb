@@ -44,8 +44,8 @@ module CIS2AuthHelper
               "person_roleid" => "wrong-role",
               "org_code" => "A9A5A",
               "role_name" =>
-                '"Clinical":"Clinical Provision":"Health Professional Access Role"',
-              "role_code" => "S8000:G8000:R8003",
+                '"Clinical":"Clinical Provision":"Healthcare Student Access Role"',
+              "role_code" => "S8000:G8000:R8004",
               "activities" => [],
               "activity_codes" => [],
               "workgroups" => [],
@@ -120,9 +120,9 @@ module CIS2AuthHelper
     ods_code = organisation.ods_code
 
     role_code = {
-      healthcare_assistant: CIS2Info::MEDICAL_SECRETARY_ROLE,
-      medical_secretary: CIS2Info::MEDICAL_SECRETARY_ROLE,
-      nurse: CIS2Info::NURSE_ROLE,
+      healthcare_assistant: CIS2Info::MEDICAL_SECRETARY_ROLES.first,
+      medical_secretary: CIS2Info::MEDICAL_SECRETARY_ROLES.first,
+      nurse: CIS2Info::NURSE_ROLES.first,
       prescriber: nil
     }.fetch(role)
 
@@ -150,7 +150,7 @@ module CIS2AuthHelper
     given_name: "Nurse",
     family_name: "Test",
     email: nil,
-    role_code: CIS2Info::NURSE_ROLE,
+    role_code: CIS2Info::NURSE_ROLES.first,
     org_code: nil,
     org_name: "Test SAIS Org",
     user_only_has_one_role: false,

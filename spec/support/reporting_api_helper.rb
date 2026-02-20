@@ -10,7 +10,7 @@ module ReportingAPIHelper
         cis2_info: {
           organisation_code: team.organisation.ods_code,
           workgroups: [team.workgroup],
-          role_code: CIS2Info::NURSE_ROLE
+          role_code: CIS2Info::NURSE_ROLES.first
         }
       }
     }
