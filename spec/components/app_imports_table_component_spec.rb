@@ -59,11 +59,11 @@ describe AppImportsTableComponent do
   end
 
   it "renders a card heading" do
-    expect(rendered).to have_css(".nhsuk-card__heading", text: "11 imports")
+    expect(rendered).to have_css(".nhsuk-card__heading", text: "11 uploads")
   end
 
   it "renders the headers" do
-    expect(rendered).to have_css(".nhsuk-table__header", text: "Imported on")
+    expect(rendered).to have_css(".nhsuk-table__header", text: "Uploaded on")
     expect(rendered).to have_css(".nhsuk-table__header", text: "Type")
     expect(rendered).to have_css(".nhsuk-table__header", text: "Status")
     expect(rendered).to have_css(".nhsuk-table__header", text: "Records")

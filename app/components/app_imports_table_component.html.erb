@@ -1,6 +1,6 @@
 <%= render AppCardComponent.new(feature: true) do |card| %>
   <% card.with_heading(level: 3) do %>
-    <%= pluralize(imports.count, "import") %>
+    <%= pluralize(imports.count, "upload") %>
   <% end %>
 
   <%= govuk_table(html_attributes: {
@@ -8,7 +8,7 @@
                   }) do |table| %>
     <% table.with_head do |head| %>
       <% head.with_row do |row| %>
-        <% row.with_cell(text: "Imported on") %>
+        <% row.with_cell(text: "Uploaded on") %>
         <% unless @team.has_national_reporting_access? %>
           <% row.with_cell(text: "Type") %>
         <% end %>
@@ -21,7 +21,7 @@
       <% imports.each do |import| %>
         <% body.with_row do |row| %>
           <% row.with_cell do %>
-            <span class="nhsuk-table-responsive__heading">Imported on</span>
+            <span class="nhsuk-table-responsive__heading">Uploaded on</span>
             <%= link_to import.created_at.to_fs(:long), path(import) %>
             <br />
             <span class="nhsuk-u-secondary-text-color nhsuk-u-font-size-16">
