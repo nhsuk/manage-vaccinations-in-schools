@@ -69,8 +69,8 @@ describe "MMR/MMRV" do
       then_i_see_that_the_vaccination_record_has_outcome_vaccinated
 
       when_i_open_the_activity_log
-      then_i_see_a_historical_vaccination_log_entry_for_mmr
-      and_it_includes_the_programme_and_both_reported_and_performed_at_dates
+      then_i_see_a_historical_vaccination_log_entry
+      and_it_includes_the_mmr_programme_and_both_reported_and_performed_at_dates
     end
 
     scenario "record a patient as already had their 1st MMR dose and then edit dates" do
@@ -150,6 +150,10 @@ describe "MMR/MMRV" do
       when_the_status_updater_runs
       and_i_navigate_to_the_patient_record
       then_i_see_that_the_vaccination_record_has_outcome_vaccinated
+
+      when_i_open_the_activity_log
+      then_i_see_a_historical_vaccination_log_entry
+      and_it_includes_the_mmrv_programme_and_both_reported_and_performed_at_dates
     end
   end
 
@@ -433,13 +437,19 @@ describe "MMR/MMRV" do
     click_on "Activity log"
   end
 
-  def then_i_see_a_historical_vaccination_log_entry_for_mmr
+  def then_i_see_a_historical_vaccination_log_entry
     expect(page).to have_content("Historical vaccination record added")
   end
 
-  def and_it_includes_the_programme_and_both_reported_and_performed_at_dates
+  def and_it_includes_the_mmr_programme_and_both_reported_and_performed_at_dates
     expect(page).to have_content(
       "MMR   Record added 1 July 2025 at 12:00am. Vaccination given #{@vaccination_date.strftime("%-d %B %Y")}."
+    )
+  end
+
+  def and_it_includes_the_mmrv_programme_and_both_reported_and_performed_at_dates
+    expect(page).to have_content(
+      "MMRV   Record added 1 July 2025 at 12:00am. Vaccination given #{@vaccination_date.strftime("%-d %B %Y")}."
     )
   end
 end
