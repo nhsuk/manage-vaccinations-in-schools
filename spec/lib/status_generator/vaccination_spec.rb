@@ -606,16 +606,15 @@ describe StatusGenerator::Vaccination do
   describe "#dose_sequence" do
     subject(:dose_sequence) { generator.dose_sequence }
 
-    it { should be_nil }
+    let(:patient) do
+      create(:patient, :consent_given_triage_not_needed, session:)
+    end
+    let(:session) { create(:session, programmes: [programme]) }
 
-    context "for MMR programme" do
-      let(:programme) { Programme.mmr }
-      let(:session) { create(:session, programmes: [programme]) }
-      let(:patient) do
-        create(:patient, :consent_given_triage_not_needed, session:)
+    shared_examples "with 0 and 1 vaccination records" do
+      context "with no existing vaccination record" do
+        it { should eq(1) }
       end
-
-      it { should eq(1) }
 
       context "with an existing vaccination record" do
         before do
@@ -624,6 +623,36 @@ describe StatusGenerator::Vaccination do
 
         it { should eq(2) }
       end
+    end
+
+    context "for MMR programme" do
+      let(:programme) { Programme.mmr }
+
+      include_examples "with 0 and 1 vaccination records"
+    end
+
+    context "for HPV programme" do
+      let(:programme) { Programme.hpv }
+
+      include_examples "with 0 and 1 vaccination records"
+    end
+
+    context "for MenACWY programme" do
+      let(:programme) { Programme.menacwy }
+
+      it { should be_nil }
+    end
+
+    context "for Td/IPV programme" do
+      let(:programme) { Programme.td_ipv }
+
+      it { should be_nil }
+    end
+
+    context "for flu programme" do
+      let(:programme) { Programme.flu }
+
+      include_examples "with 0 and 1 vaccination records"
     end
   end
 

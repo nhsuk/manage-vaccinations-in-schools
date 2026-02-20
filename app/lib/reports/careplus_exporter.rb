@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class Reports::CareplusExporter
+  MMR_DOSE_CODES = { 1 => "1P", 2 => "1B" }.freeze
+
   def initialize(team:, programme:, academic_year:, start_date:, end_date:)
     @team = team
     @programme = programme
@@ -176,7 +178,7 @@ class Reports::CareplusExporter
     [
       record.vaccine.snomed_product_code, # Vaccine X
       vaccine_code(record), # Code X field
-      record.dose_sequence.present? ? "#{record.dose_sequence}P" : "", # Dose X field
+      dose_sequence_code(record), # Dose X field
       "", # Reason Not Given X
       coded_site(record.delivery_site), # Site X; Coded value
       record.vaccine.manufacturer, # Manufacturer X
@@ -223,6 +225,18 @@ class Reports::CareplusExporter
       nose: "N"
       # We don't implement the other codes currently
     }.fetch(site.to_sym)
+  end
+
+  def dose_sequence_code(record)
+    return "" if record.dose_sequence.blank?
+
+    if record.programme.mmr?
+      MMR_DOSE_CODES.fetch(record.dose_sequence) do
+        raise "Unexpected MMR dose sequence: #{record.dose_sequence}"
+      end
+    else
+      "#{record.dose_sequence}P"
+    end
   end
 
   def vaccine_code(vaccination_record)

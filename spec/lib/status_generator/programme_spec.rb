@@ -33,7 +33,7 @@ describe StatusGenerator::Programme do
     its(:consent_vaccine_methods) { should be_empty }
     its(:date) { should eq(vaccination_record.performed_at.to_date) }
     its(:disease_types) { should eq(%w[human_papillomavirus]) }
-    its(:dose_sequence) { should be_nil }
+    its(:dose_sequence) { should eq(2) }
     its(:location_id) { should eq(location.id) }
     its(:status) { should be(:vaccinated_already) }
     its(:vaccine_methods) { should be_empty }
@@ -51,7 +51,7 @@ describe StatusGenerator::Programme do
     its(:consent_vaccine_methods) { should be_empty }
     its(:date) { should eq(vaccination_record.performed_at.to_date) }
     its(:disease_types) { should eq(%w[human_papillomavirus]) }
-    its(:dose_sequence) { should be_nil }
+    its(:dose_sequence) { should eq(2) }
     its(:location_id) { should eq(location.id) }
     its(:status) { should be(:vaccinated_fully) }
     its(:vaccine_methods) { should be_empty }
@@ -226,7 +226,7 @@ describe StatusGenerator::Programme do
     its(:consent_vaccine_methods) { should contain_exactly("injection") }
     its(:date) { should eq(Date.tomorrow) }
     its(:disease_types) { should eq(programme.disease_types) }
-    its(:dose_sequence) { should be_nil }
+    its(:dose_sequence) { should eq(1) }
     its(:location_id) { should be_nil }
     its(:status) { should be(:cannot_vaccinate_delay_vaccination) }
     its(:vaccine_methods) { should contain_exactly("injection") }
@@ -245,14 +245,14 @@ describe StatusGenerator::Programme do
     its(:consent_vaccine_methods) { should contain_exactly("injection") }
     its(:date) { should be_nil }
     its(:disease_types) { should eq(programme.disease_types) }
-    its(:dose_sequence) { should be_nil }
+    its(:dose_sequence) { should eq(1) }
     its(:location_id) { should be_nil }
     its(:status) { should be(:needs_triage) }
     its(:vaccine_methods) { should be_nil }
     its(:without_gelatine) { should be_nil }
   end
 
-  context "when triaged as do not vaccinated" do
+  context "when triaged as do not vaccinate" do
     let(:programme) { Programme.td_ipv }
 
     before do
@@ -264,7 +264,7 @@ describe StatusGenerator::Programme do
     its(:consent_vaccine_methods) { should contain_exactly("injection") }
     its(:date) { should be_nil }
     its(:disease_types) { should eq(programme.disease_types) }
-    its(:dose_sequence) { should be_nil }
+    its(:dose_sequence) { should eq(1) }
     its(:location_id) { should be_nil }
     its(:status) { should be(:cannot_vaccinate_do_not_vaccinate) }
     its(:vaccine_methods) { should be_nil }
@@ -280,7 +280,7 @@ describe StatusGenerator::Programme do
     its(:consent_vaccine_methods) { should contain_exactly("injection") }
     its(:date) { should be_nil }
     its(:disease_types) { should eq(programme.disease_types) }
-    its(:dose_sequence) { should be_nil }
+    its(:dose_sequence) { should eq(1) }
     its(:location_id) { should be_nil }
     its(:status) { should be(:needs_triage) }
     its(:vaccine_methods) { should be_nil }
@@ -329,7 +329,7 @@ describe StatusGenerator::Programme do
     its(:consent_vaccine_methods) { should be_empty }
     its(:date) { should be_nil }
     its(:disease_types) { should be_nil }
-    its(:dose_sequence) { should be_nil }
+    its(:dose_sequence) { should eq(1) }
     its(:location_id) { should be_nil }
     its(:status) { should be(:needs_consent_no_response) }
     its(:vaccine_methods) { should be_nil }
