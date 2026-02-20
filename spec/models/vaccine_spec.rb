@@ -59,7 +59,7 @@ describe Vaccine do
     context "with an injection flu vaccine" do
       let(:vaccine) { build(:vaccine, :flu, :injection) }
 
-      context "and first dose" do
+      context "with first dose" do
         let(:dose_sequence) { 1 }
 
         it { should eq("985151000000100") }
@@ -75,7 +75,7 @@ describe Vaccine do
     context "with a nasal flu vaccine" do
       let(:vaccine) { build(:vaccine, :flu, :nasal) }
 
-      context "and first dose" do
+      context "with first dose" do
         let(:dose_sequence) { 1 }
 
         it { should eq("884861000000100") }
@@ -91,7 +91,7 @@ describe Vaccine do
     context "with an MMR vaccine" do
       let(:vaccine) { build(:vaccine, :mmr) }
 
-      context "and first dose" do
+      context "with first dose" do
         let(:dose_sequence) { 1 }
 
         it { should eq("38598009") }
@@ -107,7 +107,7 @@ describe Vaccine do
     context "with an MMRV vaccine" do
       let(:vaccine) { build(:vaccine, :mmrv) }
 
-      context "and first dose" do
+      context "with first dose" do
         let(:dose_sequence) { 1 }
 
         it { should eq("432636005") }
@@ -122,22 +122,30 @@ describe Vaccine do
   end
 
   describe "#snomed_procedure_term" do
+    subject(:procedure_term) { vaccine.snomed_procedure_term(dose_sequence:) }
+
+    let(:dose_sequence) { 1 }
+
     context "with flu injection vaccine" do
       let(:vaccine) { build(:vaccine, :flu, :injection) }
 
-      context "with dose sequence 1" do
-        it "returns the term for first dose injection" do
-          expect(vaccine.snomed_procedure_term(dose_sequence: 1)).to eq(
-            "Administration of first inactivated seasonal influenza vaccination"
-          )
+      context "with first dose" do
+        let(:dose_sequence) { 1 }
+
+        it do
+          should eq(
+                   "Administration of first inactivated seasonal influenza vaccination"
+                 )
         end
       end
 
-      context "with dose sequence 2" do
-        it "returns the term for second dose injection" do
-          expect(vaccine.snomed_procedure_term(dose_sequence: 2)).to eq(
-            "Administration of second inactivated seasonal influenza vaccination"
-          )
+      context "with second dose" do
+        let(:dose_sequence) { 2 }
+
+        it do
+          should eq(
+                   "Administration of second inactivated seasonal influenza vaccination"
+                 )
         end
       end
     end
@@ -145,19 +153,23 @@ describe Vaccine do
     context "with flu nasal vaccine" do
       let(:vaccine) { build(:vaccine, :flu, :nasal) }
 
-      context "with dose sequence 1" do
-        it "returns the term for first dose nasal" do
-          expect(vaccine.snomed_procedure_term(dose_sequence: 1)).to eq(
-            "Administration of first intranasal seasonal influenza vaccination"
-          )
+      context "with first dose" do
+        let(:dose_sequence) { 1 }
+
+        it do
+          should eq(
+                   "Administration of first intranasal seasonal influenza vaccination"
+                 )
         end
       end
 
-      context "with dose sequence 2" do
-        it "returns the term for second dose nasal" do
-          expect(vaccine.snomed_procedure_term(dose_sequence: 2)).to eq(
-            "Administration of second intranasal seasonal influenza vaccination"
-          )
+      context "with second dose" do
+        let(:dose_sequence) { 2 }
+
+        it do
+          should eq(
+                   "Administration of second intranasal seasonal influenza vaccination"
+                 )
         end
       end
     end
@@ -165,9 +177,11 @@ describe Vaccine do
     context "with an MMR vaccine" do
       let(:vaccine) { build(:vaccine, :mmr) }
 
-      context "with dose sequence 1" do
+      context "with first dose" do
+        let(:dose_sequence) { 1 }
+
         it do
-          expect(vaccine.snomed_procedure_term(dose_sequence: 1)).to eq(
+          expect(procedure_term).to eq(
             "Administration of vaccine product containing only Measles " \
               "morbillivirus and Mumps orthorubulavirus and Rubella virus " \
               "antigens"
@@ -175,9 +189,11 @@ describe Vaccine do
         end
       end
 
-      context "with dose sequence 2" do
+      context "with second dose" do
+        let(:dose_sequence) { 2 }
+
         it do
-          expect(vaccine.snomed_procedure_term(dose_sequence: 2)).to eq(
+          expect(procedure_term).to eq(
             "Administration of second dose of vaccine product containing only " \
               "Measles morbillivirus and Mumps orthorubulavirus and Rubella virus " \
               "antigens"
@@ -189,9 +205,11 @@ describe Vaccine do
     context "with an MMRV vaccine" do
       let(:vaccine) { build(:vaccine, :mmrv) }
 
-      context "with dose sequence 1" do
+      context "with first dose" do
+        let(:dose_sequence) { 1 }
+
         it do
-          expect(vaccine.snomed_procedure_term(dose_sequence: 1)).to eq(
+          expect(procedure_term).to eq(
             "Administration of vaccine product containing only Human " \
               "alphaherpesvirus 3 and Measles morbillivirus and Mumps " \
               "orthorubulavirus and Rubella virus antigens"
@@ -199,9 +217,11 @@ describe Vaccine do
         end
       end
 
-      context "with dose sequence 2" do
+      context "with second dose" do
+        let(:dose_sequence) { 2 }
+
         it do
-          expect(vaccine.snomed_procedure_term(dose_sequence: 2)).to eq(
+          expect(procedure_term).to eq(
             "Administration of second dose of vaccine product containing " \
               "only Human alphaherpesvirus 3 and Measles morbillivirus and " \
               "Mumps orthorubulavirus and Rubella virus antigens"
