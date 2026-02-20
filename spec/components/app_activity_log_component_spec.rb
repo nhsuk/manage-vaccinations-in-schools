@@ -175,7 +175,7 @@ describe AppActivityLogComponent do
         session:,
         performed_at: Date.new(2025, 1, 6),
         performed_by: nil,
-        reported_at: Time.zone.local(2025, 12, 15, 14, 33, 23),
+        reported_at: Time.zone.local(2025, 2, 15, 14, 33, 23),
         source: :manual_report,
         vaccine: nil
       )
@@ -222,7 +222,7 @@ describe AppActivityLogComponent do
     include_examples "card",
                      title: "Historical vaccination record added",
                      date:
-                       "Record added 15 December 2025 at 2:33pm. Vaccination given 6 January 2025.",
+                       "Record added 15 February 2025 at 2:33pm. Vaccination given 6 January 2025.",
                      programme: "Flu"
 
     include_examples "card",
