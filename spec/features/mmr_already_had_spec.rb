@@ -278,7 +278,7 @@ describe "MMR/MMRV" do
   end
 
   def then_i_see_the_mmr_date_instead_of_the_mmr_or_mmrv_page
-    expect(page).to have_content("When was the MMR(V) vaccination given?")
+    expect(page).to have_content("When was the MMR vaccination given?")
   end
 
   def when_i_fill_in_the_date_and_time_and_continue
