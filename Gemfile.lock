@@ -24,10 +24,10 @@ GIT
 
 GIT
   remote: https://github.com/x-govuk/govuk-form-builder.git
-  revision: 8fb16627dec7d2786e481029e1645a85e4d7df15
+  revision: 475bc37a45379ec1ee32993d55eaf357fa4c2aa7
   ref: main
   specs:
-    govuk_design_system_formbuilder (5.13.0)
+    govuk_design_system_formbuilder (6.0.0b1)
       actionview (>= 6.1)
       activemodel (>= 6.1)
       activesupport (>= 6.1)
