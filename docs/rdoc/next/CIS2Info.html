@@ -685,7 +685,7 @@
         </dd>
 
 
-        <dt id="MEDICAL_SECRETARY_ROLE">MEDICAL_SECRETARY_ROLE</dt>
+        <dt id="MEDICAL_SECRETARY_ROLES">MEDICAL_SECRETARY_ROLES</dt>
 
         <dd>
 
@@ -693,7 +693,7 @@
         </dd>
 
 
-        <dt id="NURSE_ROLE">NURSE_ROLE</dt>
+        <dt id="NURSE_ROLES">NURSE_ROLES</dt>
 
         <dd>
 
@@ -965,15 +965,15 @@
   <span class="ruby-identifier">organisation</span>&amp;.<span class="ruby-identifier">teams</span>&amp;.<span class="ruby-identifier">exists?</span>(<span class="ruby-value">workgroup:</span> <span class="ruby-identifier">workgroups</span>) <span class="ruby-operator">||</span> <span class="ruby-keyword">false</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">is_medical_secretary?</span>
-  <span class="ruby-identifier">role_code</span> <span class="ruby-operator">==</span> <span class="ruby-constant">MEDICAL_SECRETARY_ROLE</span>
+  <span class="ruby-constant">MEDICAL_SECRETARY_ROLES</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">role_code</span>)
 <span class="ruby-keyword">end</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">is_nurse?</span>
-  <span class="ruby-identifier">role_code</span> <span class="ruby-operator">==</span> <span class="ruby-constant">NURSE_ROLE</span>
+  <span class="ruby-constant">NURSE_ROLES</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">role_code</span>)
 <span class="ruby-keyword">end</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">is_healthcare_assistant?</span>
-  <span class="ruby-identifier">role_code</span> <span class="ruby-operator">==</span> <span class="ruby-constant">MEDICAL_SECRETARY_ROLE</span> <span class="ruby-operator">&amp;&amp;</span>
+  <span class="ruby-constant">MEDICAL_SECRETARY_ROLES</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">role_code</span>) <span class="ruby-operator">&amp;&amp;</span>
     <span class="ruby-identifier">activity_codes</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-constant">PERSONAL_MEDICATION_ADMINISTRATION_ACTIVITY_CODE</span>)
 <span class="ruby-keyword">end</span>
 
@@ -1066,7 +1066,7 @@
           <div class="method-source-code" id="is_healthcare_assistant-3F-source">
             <pre class="ruby"><span class="ruby-comment"># File app/models/cis2_info.rb, line 56</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">is_healthcare_assistant?</span>
-  <span class="ruby-identifier">role_code</span> <span class="ruby-operator">==</span> <span class="ruby-constant">MEDICAL_SECRETARY_ROLE</span> <span class="ruby-operator">&amp;&amp;</span>
+  <span class="ruby-constant">MEDICAL_SECRETARY_ROLES</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">role_code</span>) <span class="ruby-operator">&amp;&amp;</span>
     <span class="ruby-identifier">activity_codes</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-constant">PERSONAL_MEDICATION_ADMINISTRATION_ACTIVITY_CODE</span>)
 <span class="ruby-keyword">end</span></pre>
           </div>
@@ -1109,7 +1109,7 @@
           <div class="method-source-code" id="is_medical_secretary-3F-source">
             <pre class="ruby"><span class="ruby-comment"># File app/models/cis2_info.rb, line 48</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">is_medical_secretary?</span>
-  <span class="ruby-identifier">role_code</span> <span class="ruby-operator">==</span> <span class="ruby-constant">MEDICAL_SECRETARY_ROLE</span>
+  <span class="ruby-constant">MEDICAL_SECRETARY_ROLES</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">role_code</span>)
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -1151,7 +1151,7 @@
           <div class="method-source-code" id="is_nurse-3F-source">
             <pre class="ruby"><span class="ruby-comment"># File app/models/cis2_info.rb, line 52</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">is_nurse?</span>
-  <span class="ruby-identifier">role_code</span> <span class="ruby-operator">==</span> <span class="ruby-constant">NURSE_ROLE</span>
+  <span class="ruby-constant">NURSE_ROLES</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">role_code</span>)
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -1513,15 +1513,15 @@
   <span class="ruby-identifier">organisation</span>&amp;.<span class="ruby-identifier">teams</span>&amp;.<span class="ruby-identifier">exists?</span>(<span class="ruby-value">workgroup:</span> <span class="ruby-identifier">workgroups</span>) <span class="ruby-operator">||</span> <span class="ruby-keyword">false</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">is_medical_secretary?</span>
-  <span class="ruby-identifier">role_code</span> <span class="ruby-operator">==</span> <span class="ruby-constant">MEDICAL_SECRETARY_ROLE</span>
+  <span class="ruby-constant">MEDICAL_SECRETARY_ROLES</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">role_code</span>)
 <span class="ruby-keyword">end</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">is_nurse?</span>
-  <span class="ruby-identifier">role_code</span> <span class="ruby-operator">==</span> <span class="ruby-constant">NURSE_ROLE</span>
+  <span class="ruby-constant">NURSE_ROLES</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">role_code</span>)
 <span class="ruby-keyword">end</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">is_healthcare_assistant?</span>
-  <span class="ruby-identifier">role_code</span> <span class="ruby-operator">==</span> <span class="ruby-constant">MEDICAL_SECRETARY_ROLE</span> <span class="ruby-operator">&amp;&amp;</span>
+  <span class="ruby-constant">MEDICAL_SECRETARY_ROLES</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">role_code</span>) <span class="ruby-operator">&amp;&amp;</span>
     <span class="ruby-identifier">activity_codes</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-constant">PERSONAL_MEDICATION_ADMINISTRATION_ACTIVITY_CODE</span>)
 <span class="ruby-keyword">end</span>
 
