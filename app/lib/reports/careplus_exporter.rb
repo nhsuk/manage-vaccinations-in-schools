@@ -169,7 +169,7 @@ class Reports::CareplusExporter
     [
       record.vaccine.snomed_product_code, # Vaccine X
       vaccine_code(record), # Code X field
-      dose_field(record), # Dose X field
+      dose_sequence_code(record), # Dose X field
       "", # Reason Not Given X
       coded_site(record.delivery_site), # Site X; Coded value
       record.vaccine.manufacturer, # Manufacturer X
@@ -218,7 +218,7 @@ class Reports::CareplusExporter
     }.fetch(site.to_sym)
   end
 
-  def dose_field(record)
+  def dose_sequence_code(record)
     return "" if record.dose_sequence.blank?
 
     if record.programme.mmr?
