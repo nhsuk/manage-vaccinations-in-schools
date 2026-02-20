@@ -400,6 +400,9 @@ class AppActivityLogComponent < ViewComponent::Base
         if vaccination_record.administered?
           if (vaccine = vaccination_record.vaccine)
             "Vaccinated with #{vaccine.brand}"
+          elsif vaccination_record.sourced_from_manual_report? ||
+                vaccination_record.sourced_from_historical_upload?
+            "Historical vaccination record added"
           else
             "Vaccinated"
           end
@@ -407,12 +410,20 @@ class AppActivityLogComponent < ViewComponent::Base
           "Vaccination not given: #{vaccination_record.human_enum_name(:outcome)}"
         end
 
+      subtitle =
+        if historical_vaccination_event?(vaccination_record)
+          "Record added #{vaccination_record.reported_at.to_fs(:long)}. " \
+            "Vaccination given #{vaccination_record.performed_at.to_date.to_fs(:long)}."
+        end
+      at = historical_vaccination_event?(vaccination_record) ? vaccination_record.reported_at : vaccination_record.performed_at
+
       kept = {
         title:,
         body: vaccination_record.notes,
-        at: vaccination_record.performed_at,
+        at:,
         by: vaccination_record.performed_by,
-        programmes: [vaccination_record.programme]
+        programmes: [vaccination_record.programme],
+        subtitle:
       }
 
       discarded =
@@ -426,6 +437,14 @@ class AppActivityLogComponent < ViewComponent::Base
 
       [kept, discarded].compact
     end
+  end
+
+  def historical_vaccination_event?(vaccination_record)
+    vaccination_record.reported_at.present? &&
+    (
+      vaccination_record.sourced_from_manual_report? ||
+        vaccination_record.sourced_from_historical_upload?
+    )
   end
 
   def attendance_events
