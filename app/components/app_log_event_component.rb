@@ -38,7 +38,8 @@ class AppLogEventComponent < ViewComponent::Base
     by: nil,
     programmes: [],
     invalidated: false,
-    card: false
+    card: false,
+    subtitle: nil
   )
     @title = title
     @body = body
@@ -47,6 +48,7 @@ class AppLogEventComponent < ViewComponent::Base
     @programmes = programmes
     @invalidated = invalidated
     @card = card
+    @subtitle = subtitle
   end
 
   private
@@ -54,6 +56,6 @@ class AppLogEventComponent < ViewComponent::Base
   attr_reader :title, :body, :programmes, :invalidated, :card
 
   def subtitle
-    safe_join([@at, @by].compact, " &middot; ".html_safe)
+    @subtitle || safe_join([@at, @by].compact, " &middot; ".html_safe)
   end
 end
