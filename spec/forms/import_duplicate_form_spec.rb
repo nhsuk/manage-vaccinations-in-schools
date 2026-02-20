@@ -63,6 +63,7 @@ describe ImportDuplicateForm do
         before do
           existing_patient.update!(pending_changes: { "given_name" => "Twin" })
           class_import.parent_relationships << import_relationship
+          class_import.patients << existing_patient
           class_import.update!(
             status: :processed,
             processed_at: Time.current,
@@ -85,8 +86,11 @@ describe ImportDuplicateForm do
           new_patient = changeset.reload.patient
 
           expect(new_patient).not_to eq(existing_patient)
+
           expect(import_relationship.reload.patient).to eq(new_patient)
           expect(existing_relationship.reload.patient).to eq(existing_patient)
+
+          expect(class_import.patients.reload).to contain_exactly(new_patient)
         end
 
         it "removes imported parent relationships when discarding changes" do
