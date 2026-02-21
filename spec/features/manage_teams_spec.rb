@@ -26,6 +26,7 @@ describe "Manage teams" do
 
     when_i_click_on_add_a_new_school_site
     then_i_see_the_select_school_site_form
+    and_i_do_not_see_schools_from_previous_year_in_the_dropdown
 
     when_i_select_a_school
     and_i_continue
@@ -45,7 +46,12 @@ describe "Manage teams" do
 
   def given_my_team_exists
     @team = create(:team, :with_one_nurse)
-    create(:school, team: @team, urn: "12345")
+    @school = create(:school, team: @team, urn: "12345")
+    @school_last_year = create(:school, urn: "67890")
+    @school_last_year.attach_to_team!(
+      @team,
+      academic_year: AcademicYear.pending - 1
+    )
     create(:community_clinic, team: @team)
   end
 
@@ -76,8 +82,9 @@ describe "Manage teams" do
 
   def then_i_see_the_team_schools
     expect(page).to have_content("Schools")
-    expect(page).to have_content(@team.schools.first.name)
-    expect(page).to have_content(@team.schools.first.address_line_1)
+    expect(page).to have_content(@school.name)
+    expect(page).to have_content(@school.address_line_1)
+    expect(page).not_to have_content(@school_last_year.urn)
   end
 
   def when_i_click_on_sessions
@@ -99,8 +106,15 @@ describe "Manage teams" do
   alias_method :then_i_am_redirected_to_the_start_of_the_wizard,
                :then_i_see_the_select_school_site_form
 
+  def and_i_do_not_see_schools_from_previous_year_in_the_dropdown
+    expect(page).not_to have_select(
+      "draft-school-site-urn-field",
+      with_options: [@school_last_year.name]
+    )
+  end
+
   def when_i_select_a_school
-    select @team.schools.first.name
+    select @school.name
   end
 
   def and_i_continue
@@ -135,7 +149,7 @@ describe "Manage teams" do
   end
 
   def and_a_school_site_is_created
-    expect(Location.school.count).to eq(2)
+    expect(Location.school.count).to eq(3)
 
     site = Location.school.last
     expect(site.name).to eq("New School Site")
