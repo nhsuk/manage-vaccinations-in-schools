@@ -51,7 +51,13 @@ class DraftSchoolSitesController < ApplicationController
   end
 
   def set_school_options
-    @school_options = policy_scope(Location).school.order(:urn, :name)
+    @school_options =
+      policy_scope(Location)
+        .school
+        .joins(:team_locations)
+        .where(team_locations: { academic_year: AcademicYear.pending })
+        .distinct
+        .order(:urn, :name)
   end
 
   def set_steps
