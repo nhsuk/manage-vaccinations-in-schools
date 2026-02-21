@@ -294,6 +294,7 @@ describe "Verbal consent" do
 
   def then_an_email_is_sent_to_the_parent_confirming_their_consent
     expect_email_to(@parent.email, :consent_confirmation_given)
+      .with_content_including("Dear parent or guardian", "agreed")
   end
 
   def and_a_text_is_sent_to_the_parent_confirming_their_consent

@@ -1,0 +1,18 @@
+---
+template_id: "c6c8dbfc-b429-4468-bd0b-176e771b5a8e"
+template_name: consent_confirmation_given
+subject: "<%= vaccination %> consent confirmation for <%= short_patient_name %>"
+---
+Dear parent or guardian,
+
+You've agreed for <%= short_patient_name %> to have the <%= vaccination %> at <%= location_name %>.
+
+<%= consented_vaccine_methods_message %>
+
+<% if next_or_today_session_dates.present? %>
+The vaccination session is on <%= next_or_today_session_dates %>.
+<% end %>
+
+<%= subteam_name %>
+<%= subteam_email %>
+<%= subteam_phone %>
