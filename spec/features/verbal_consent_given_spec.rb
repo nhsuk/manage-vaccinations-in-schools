@@ -313,7 +313,12 @@ describe "Verbal consent" do
   end
 
   def then_an_email_is_sent_to_the_parent_confirming_their_consent
-    expect_email_to(@parent.email, :consent_confirmation_given)
+    expect(email_deliveries).to include(
+      matching_notify_email(
+        to: @parent.email,
+        template: :consent_confirmation_given
+      ).with_content_including("You’ve given consent", "withdraw your consent")
+    )
   end
 
   def and_a_text_is_sent_to_the_parent_confirming_their_consent
