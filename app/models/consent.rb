@@ -197,6 +197,14 @@ class Consent < ApplicationRecord
             health_answers: consent_form.health_answers,
             notes: consent_form_programme.notes,
             parent:,
+            parent_full_name: consent_form.parent_full_name,
+            parent_email: consent_form.parent_email,
+            parent_phone: consent_form.parent_phone,
+            parent_phone_receive_updates:
+              consent_form.parent_phone_receive_updates,
+            parent_relationship_type: consent_form.parent_relationship_type,
+            parent_relationship_other_name:
+              consent_form.parent_relationship_other_name,
             programme_type: consent_form_programme.programme_type,
             reason_for_refusal: consent_form_programme.reason_for_refusal,
             recorded_by: current_user,

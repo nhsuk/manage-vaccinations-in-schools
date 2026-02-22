@@ -155,6 +155,19 @@ describe Consent do
         )
       end
 
+      it "saves parent details to the consent" do
+        expect(consent).to have_attributes(
+          parent_full_name: consent_form.parent_full_name,
+          parent_email: consent_form.parent_email,
+          parent_phone: consent_form.parent_phone,
+          parent_phone_receive_updates:
+            consent_form.parent_phone_receive_updates,
+          parent_relationship_type: consent_form.parent_relationship_type,
+          parent_relationship_other_name:
+            consent_form.parent_relationship_other_name
+        )
+      end
+
       it "creates a parent" do
         expect(consent.parent).to have_attributes(
           contact_method_other_details:
