@@ -75,6 +75,9 @@ class Consent < ApplicationRecord
              optional: true,
              foreign_key: :recorded_by_user_id
 
+  normalizes :parent_email, with: EmailAddressNormaliser.new
+  normalizes :parent_phone, with: PhoneNumberNormaliser.new
+
   scope :for_session,
         ->(session) { where(programme_type: session.programme_types) }
 
@@ -105,7 +108,11 @@ class Consent < ApplicationRecord
   def self.verbal_routes = routes.except("website", "self_consent")
 
   def name
-    via_self_consent? ? patient.full_name : parent.label
+    if via_self_consent?
+      patient.full_name
+    else
+      parent_full_name.presence || parent.label
+    end
   end
 
   delegate :vaccines, to: :programme

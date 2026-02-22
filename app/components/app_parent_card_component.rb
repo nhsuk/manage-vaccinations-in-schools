@@ -1,19 +1,19 @@
 # frozen_string_literal: true
 
 class AppParentCardComponent < ViewComponent::Base
-  def initialize(parent_relationship:, change_links: {})
-    @parent_relationship = parent_relationship
+  def initialize(consentable, change_links: {})
+    @consentable = consentable
     @change_links = change_links
   end
 
   def call
     render AppCardComponent.new do |card|
       card.with_heading(level: 2) { "Parent or guardian" }
-      render AppParentSummaryComponent.new(parent_relationship:, change_links:)
+      render AppConsentParentSummaryComponent.new(@consentable, change_links:)
     end
   end
 
   private
 
-  attr_reader :parent_relationship, :change_links
+  attr_reader :change_links
 end

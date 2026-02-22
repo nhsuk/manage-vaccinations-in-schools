@@ -30,8 +30,9 @@
   <%= render AppConsentPatientSummaryComponent.new(@draft_consent) %>
 <% end %>
 
-<% if (parent_relationship = @draft_consent.parent_relationship).present? %>
-  <%= render AppParentCardComponent.new(parent_relationship:, change_links: {
+<% if @draft_consent.parent_relationship.present? %>
+  <%= render AppParentCardComponent.new(@draft_consent,
+                                        change_links: {
                                           name: wizard_path("parent-details"),
                                           relationship: wizard_path("parent-details"),
                                           email: wizard_path("parent-details"),

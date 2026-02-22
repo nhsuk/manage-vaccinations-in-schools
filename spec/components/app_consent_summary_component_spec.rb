@@ -117,4 +117,53 @@ describe AppConsentSummaryComponent do
       )
     end
   end
+
+  context "when showing email and phone" do
+    let(:parent) do
+      create(:parent, email: "parent@example.com", phone: "07700900123")
+    end
+    let(:consent) do
+      create(
+        :consent,
+        parent:,
+        parent_email: "stored@example.com",
+        parent_phone: "07700900456"
+      )
+    end
+    let(:component) do
+      described_class.new(
+        consent,
+        show_email_address: true,
+        show_phone_number: true
+      )
+    end
+
+    it "uses stored parent details" do
+      expect(rendered).to have_content("stored@example.com")
+      expect(rendered).to have_content("07700 900456")
+      expect(rendered).not_to have_content("parent@example.com")
+      expect(rendered).not_to have_content("07700 900123")
+    end
+  end
+
+  context "when showing email and phone without stored details (legacy consent)" do
+    let(:parent) do
+      create(:parent, email: "parent@example.com", phone: "07700900123")
+    end
+    let(:consent) do
+      create(:consent, parent:, parent_email: nil, parent_phone: nil)
+    end
+    let(:component) do
+      described_class.new(
+        consent,
+        show_email_address: true,
+        show_phone_number: true
+      )
+    end
+
+    it "falls back to parent object details" do
+      expect(rendered).to have_content("parent@example.com")
+      expect(rendered).to have_content("07700 900123")
+    end
+  end
 end

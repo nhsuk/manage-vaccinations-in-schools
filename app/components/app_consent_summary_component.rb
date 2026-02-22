@@ -54,15 +54,23 @@ class AppConsentSummaryComponent < ViewComponent::Base
   end
 
   def phone_number_row
-    if show_phone_number && (phone = consent.parent&.phone).present?
-      { key: { text: "Phone number" }, value: { text: phone } }
+    if show_phone_number && parent_phone.present?
+      { key: { text: "Phone number" }, value: { text: parent_phone } }
     end
   end
 
   def email_address_row
-    if show_email_address && (email = consent.parent&.email).present?
-      { key: { text: "Email address" }, value: { text: email } }
+    if show_email_address && parent_email.present?
+      { key: { text: "Email address" }, value: { text: parent_email } }
     end
+  end
+
+  def parent_phone
+    @parent_phone ||= consent.parent_phone.presence || consent.parent&.phone
+  end
+
+  def parent_email
+    @parent_email ||= consent.parent_email.presence || consent.parent&.email
   end
 
   def programme_row
