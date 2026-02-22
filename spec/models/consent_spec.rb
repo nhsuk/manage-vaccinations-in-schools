@@ -12,6 +12,12 @@
 #  notes                                           :text             default(""), not null
 #  notify_parent_on_refusal                        :boolean
 #  notify_parents_on_vaccination                   :boolean
+#  parent_email                                    :string
+#  parent_full_name                                :string
+#  parent_phone                                    :string
+#  parent_phone_receive_updates                    :boolean
+#  parent_relationship_other_name                  :string
+#  parent_relationship_type                        :string
 #  patient_already_vaccinated_notification_sent_at :datetime
 #  programme_type                                  :enum             not null
 #  reason_for_refusal                              :integer

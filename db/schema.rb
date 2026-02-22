@@ -281,7 +281,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_25_094039) do
     t.text "notes", default: "", null: false
     t.boolean "notify_parent_on_refusal"
     t.boolean "notify_parents_on_vaccination"
+    t.string "parent_email"
+    t.string "parent_full_name"
     t.bigint "parent_id"
+    t.string "parent_phone"
+    t.boolean "parent_phone_receive_updates"
+    t.string "parent_relationship_other_name"
+    t.string "parent_relationship_type"
     t.datetime "patient_already_vaccinated_notification_sent_at"
     t.bigint "patient_id", null: false
     t.enum "programme_type", null: false, enum_type: "programme_type"
