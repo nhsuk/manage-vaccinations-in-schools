@@ -163,9 +163,8 @@ Rails.application.routes.draw do
   resource :draft_vaccination_record,
            only: %i[show update],
            path: "draft-vaccination-record/:id"
-  resource :draft_school_site,
-           only: %i[show update],
-           path: "draft-school-site/:id"
+
+  resource :draft_school, only: %i[show update], path: "draft-school/:id"
 
   resources :immunisation_imports,
             path: "immunisation-imports",
@@ -265,7 +264,6 @@ Rails.application.routes.draw do
     get "import"
     get "patients"
     get "sessions"
-    collection { get "new-site", to: redirect("/draft-school-site/school") }
   end
 
   resources :sessions, only: %i[index new show edit], param: :slug do
@@ -337,6 +335,11 @@ Rails.application.routes.draw do
       get :schools
       get :sessions
       get :clinics
+    end
+    resources :schools,
+              only: %i[create edit update],
+              controller: "teams/schools" do
+      collection { get :new_site }
     end
   end
 

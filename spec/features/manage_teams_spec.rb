@@ -41,7 +41,7 @@ describe "Manage teams" do
     and_a_school_site_is_created
 
     when_i_go_back
-    then_i_am_redirected_to_the_start_of_the_wizard
+    then_i_am_redirected_to_the_schools_list
   end
 
   def given_my_team_exists
@@ -87,6 +87,9 @@ describe "Manage teams" do
     expect(page).not_to have_content(@school_last_year.urn)
   end
 
+  alias_method :then_i_am_redirected_to_the_schools_list,
+               :then_i_see_the_team_schools
+
   def when_i_click_on_sessions
     find(".app-sub-navigation__link", text: "Sessions").click
   end
@@ -102,9 +105,6 @@ describe "Manage teams" do
   def then_i_see_the_select_school_site_form
     expect(page).to have_content("Which school do you want to add a site to?")
   end
-
-  alias_method :then_i_am_redirected_to_the_start_of_the_wizard,
-               :then_i_see_the_select_school_site_form
 
   def and_i_do_not_see_schools_from_previous_year_in_the_dropdown
     expect(page).not_to have_select(
@@ -163,6 +163,6 @@ describe "Manage teams" do
   end
 
   def when_i_go_back
-    visit draft_school_site_path("confirm")
+    visit draft_school_path("confirm")
   end
 end

@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
-class DraftSchoolSite
+class DraftSchool
   include RequestSessionPersistable
+  include EditableWrapper
   include WizardStepConcern
 
   attribute :urn, :string
@@ -10,8 +11,6 @@ class DraftSchoolSite
   attribute :address_line_2, :string
   attribute :address_town, :string
   attribute :address_postcode, :string
-
-  attribute :wizard_step, :string
 
   def initialize(request_session:, current_user:, **attributes)
     @current_user = current_user

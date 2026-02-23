@@ -6,7 +6,7 @@
 
   <%= h1 "Which school do you want to add a site to?" %>
 
-  <%= form_with(model: @draft_school_site, url: wizard_path, method: :put) do |f| %>
+  <%= form_with(model: @draft_school, url: wizard_path, method: :put) do |f| %>
     <%= f.govuk_select :urn,
                        label: {
                          text: "Select a school",

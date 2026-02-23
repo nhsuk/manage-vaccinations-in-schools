@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-describe DraftSchoolSite do
-  subject(:draft_school_site) do
+describe DraftSchool do
+  subject(:draft_school) do
     described_class.new(request_session:, current_user:, **attributes)
   end
 
@@ -53,8 +53,8 @@ describe DraftSchoolSite do
         end
 
         it "is invalid" do
-          expect(draft_school_site).not_to be_valid(:update)
-          expect(draft_school_site.errors[:name]).to include(
+          expect(draft_school).not_to be_valid(:update)
+          expect(draft_school.errors[:name]).to include(
             "This site name is already in use. Enter a different name."
           )
         end
@@ -85,8 +85,8 @@ describe DraftSchoolSite do
         end
 
         it "is invalid" do
-          expect(draft_school_site).not_to be_valid(:update)
-          expect(draft_school_site.errors[:name]).to include(
+          expect(draft_school).not_to be_valid(:update)
+          expect(draft_school.errors[:name]).to include(
             "includes invalid character(s)"
           )
         end
@@ -121,7 +121,7 @@ describe DraftSchoolSite do
     let(:attributes) { {} }
 
     it "returns the correct steps" do
-      expect(draft_school_site.wizard_steps).to eq(%i[school details confirm])
+      expect(draft_school.wizard_steps).to eq(%i[school details confirm])
     end
   end
 
@@ -129,19 +129,19 @@ describe DraftSchoolSite do
     context "when urn is nil" do
       let(:attributes) { { urn: nil } }
 
-      it { expect(draft_school_site.parent_school).to be_nil }
+      it { expect(draft_school.parent_school).to be_nil }
     end
 
     context "when urn is set" do
       let(:attributes) { { urn: school.urn } }
 
-      it { expect(draft_school_site.parent_school).to eq(school) }
+      it { expect(draft_school.parent_school).to eq(school) }
     end
 
     context "when urn does not match any school" do
       let(:attributes) { { urn: "999999" } }
 
-      it { expect(draft_school_site.parent_school).to be_nil }
+      it { expect(draft_school.parent_school).to be_nil }
     end
 
     context "when school belongs to a different team" do
@@ -149,7 +149,7 @@ describe DraftSchoolSite do
       let(:other_school) { create(:school, :secondary, team: other_team) }
       let(:attributes) { { urn: other_school.urn } }
 
-      it { expect(draft_school_site.parent_school).to be_nil }
+      it { expect(draft_school.parent_school).to be_nil }
     end
   end
 
@@ -157,14 +157,14 @@ describe DraftSchoolSite do
     context "when urn is blank" do
       let(:attributes) { { urn: nil } }
 
-      it { expect(draft_school_site.existing_names).to eq([]) }
+      it { expect(draft_school.existing_names).to eq([]) }
     end
 
     context "when urn is set" do
       let(:attributes) { { urn: school.urn } }
 
       it "returns names of schools with the same URN" do
-        expect(draft_school_site.existing_names).to include(school.name)
+        expect(draft_school.existing_names).to include(school.name)
       end
     end
 
@@ -189,7 +189,7 @@ describe DraftSchoolSite do
       let(:attributes) { { urn: school.urn } }
 
       it "returns all site names" do
-        expect(draft_school_site.existing_names).to include(
+        expect(draft_school.existing_names).to include(
           school.name,
           "School Site A",
           "School Site B"
@@ -201,7 +201,7 @@ describe DraftSchoolSite do
   describe "#request_session_key" do
     let(:attributes) { {} }
 
-    it { expect(draft_school_site.request_session_key).to eq("draft_school") }
+    it { expect(draft_school.request_session_key).to eq("draft_school") }
   end
 
   describe "#address_parts" do
@@ -209,7 +209,7 @@ describe DraftSchoolSite do
       let(:attributes) { valid_attributes }
 
       it "returns all address parts" do
-        expect(draft_school_site.address_parts).to eq(
+        expect(draft_school.address_parts).to eq(
           ["123 Main Street", "Floor 2", "London", "SW1A 1AA"]
         )
       end
@@ -221,7 +221,7 @@ describe DraftSchoolSite do
       end
 
       it "excludes blank fields" do
-        expect(draft_school_site.address_parts).to eq(
+        expect(draft_school.address_parts).to eq(
           ["123 Main Street", "SW1A 1AA"]
         )
       end
@@ -230,59 +230,59 @@ describe DraftSchoolSite do
     context "with no address fields" do
       let(:attributes) { {} }
 
-      it { expect(draft_school_site.address_parts).to eq([]) }
+      it { expect(draft_school.address_parts).to eq([]) }
     end
   end
 
   describe "normalization" do
     let(:attributes) { valid_attributes.merge(wizard_step: :details) }
 
-    it "normalizes whitespace in name" do
-      draft_school_site.name = "  School   Name  "
-      draft_school_site.valid?(:update)
-      expect(draft_school_site.name).to eq("School Name")
+    it "normalises whitespace in name" do
+      draft_school.name = "  School   Name  "
+      draft_school.valid?(:update)
+      expect(draft_school.name).to eq("School Name")
     end
 
     it "removes zero-width joiners from name" do
-      draft_school_site.name = "School\u200DName"
-      draft_school_site.valid?(:update)
-      expect(draft_school_site.name).to eq("SchoolName")
+      draft_school.name = "School\u200DName"
+      draft_school.valid?(:update)
+      expect(draft_school.name).to eq("SchoolName")
     end
 
     it "removes non-breaking spaces from name" do
-      draft_school_site.name = "School\u00A0Name"
-      draft_school_site.valid?(:update)
-      expect(draft_school_site.name).to eq("School Name")
+      draft_school.name = "School\u00A0Name"
+      draft_school.valid?(:update)
+      expect(draft_school.name).to eq("School Name")
     end
 
-    it "normalizes whitespace in address_line_1" do
-      draft_school_site.address_line_1 = "  123   Main   Street  "
-      draft_school_site.valid?(:update)
-      expect(draft_school_site.address_line_1).to eq("123 Main Street")
+    it "normalises whitespace in address_line_1" do
+      draft_school.address_line_1 = "  123   Main   Street  "
+      draft_school.valid?(:update)
+      expect(draft_school.address_line_1).to eq("123 Main Street")
     end
 
     it "removes zero-width joiners from address_line_1" do
-      draft_school_site.address_line_1 = "123\u200DMain\u200DStreet"
-      draft_school_site.valid?(:update)
-      expect(draft_school_site.address_line_1).to eq("123MainStreet")
+      draft_school.address_line_1 = "123\u200DMain\u200DStreet"
+      draft_school.valid?(:update)
+      expect(draft_school.address_line_1).to eq("123MainStreet")
     end
 
-    it "normalizes whitespace in address_line_2" do
-      draft_school_site.address_line_2 = "  Floor   2  "
-      draft_school_site.valid?(:update)
-      expect(draft_school_site.address_line_2).to eq("Floor 2")
+    it "normalises whitespace in address_line_2" do
+      draft_school.address_line_2 = "  Floor   2  "
+      draft_school.valid?(:update)
+      expect(draft_school.address_line_2).to eq("Floor 2")
     end
 
-    it "normalizes whitespace in address_town" do
-      draft_school_site.address_town = "  Greater   London  "
-      draft_school_site.valid?(:update)
-      expect(draft_school_site.address_town).to eq("Greater London")
+    it "normalises whitespace in address_town" do
+      draft_school.address_town = "  Greater   London  "
+      draft_school.valid?(:update)
+      expect(draft_school.address_town).to eq("Greater London")
     end
 
     it "returns nil for blank values after normalization" do
-      draft_school_site.address_line_2 = "   "
-      draft_school_site.valid?(:update)
-      expect(draft_school_site.address_line_2).to be_nil
+      draft_school.address_line_2 = "   "
+      draft_school.valid?(:update)
+      expect(draft_school.address_line_2).to be_nil
     end
   end
 
@@ -290,32 +290,32 @@ describe DraftSchoolSite do
     let(:attributes) { valid_attributes }
 
     it "persists to session on save" do
-      draft_school_site.save!
+      draft_school.save!
       expect(request_session["draft_school"]).to eq(
         {
           "address_line_1" => "123 Main Street",
           "address_line_2" => "Floor 2",
           "address_postcode" => "SW1A 1AA",
           "address_town" => "London",
+          "editing_id" => nil,
           "name" => "New Site Name",
-          "urn" => school.urn,
-          "wizard_step" => nil
+          "urn" => school.urn
         }
       )
     end
 
     it "clears session on clear!" do
-      draft_school_site.save!
-      draft_school_site.clear!
+      draft_school.save!
+      draft_school.clear!
       expect(request_session["draft_school"]).to eq(
         {
           "address_line_1" => nil,
           "address_line_2" => nil,
           "address_postcode" => nil,
           "address_town" => nil,
+          "editing_id" => nil,
           "name" => nil,
           "urn" => nil,
-          "wizard_step" => nil
         }
       )
     end

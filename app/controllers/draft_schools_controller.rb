@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class DraftSchoolSitesController < ApplicationController
+class DraftSchoolsController < ApplicationController
   before_action :set_draft_school
   before_action :set_school
   before_action :redirect_if_session_cleared, only: %i[show update]
@@ -8,6 +8,7 @@ class DraftSchoolSitesController < ApplicationController
   include WizardControllerConcern
 
   before_action :set_school_options, if: -> { current_step == :school }
+  before_action :set_address, if: -> { current_step == :details }
   before_action :set_site_letter, if: -> { current_step == :confirm }
 
   skip_after_action :verify_policy_scoped
@@ -24,22 +25,21 @@ class DraftSchoolSitesController < ApplicationController
     case current_step
     when :school
       handle_school
-    when :details
-      handle_details
     when :confirm
       handle_confirm
+    else
+      @draft_school.assign_attributes(update_params)
     end
 
     reload_steps
 
-    render_wizard @draft_school_site
+    render_wizard @draft_school
   end
 
   private
 
   def set_draft_school
-    @draft_school_site =
-      DraftSchoolSite.new(request_session: session, current_user:)
+    @draft_school = DraftSchool.new(request_session: session, current_user:)
   end
 
   def set_school
@@ -47,7 +47,7 @@ class DraftSchoolSitesController < ApplicationController
   end
 
   def set_site_letter
-    @site_letter = next_site_letter(@draft_school_site.urn)
+    @site_letter = next_site_letter(@draft_school.urn)
   end
 
   def set_school_options
@@ -61,44 +61,39 @@ class DraftSchoolSitesController < ApplicationController
   end
 
   def set_steps
-    self.steps = @draft_school_site.wizard_steps
+    self.steps = @draft_school.wizard_steps
+  end
+
+  def set_address
+    parent_school = @draft_school.parent_school
+
+    @draft_school.address_line_1 ||= parent_school&.address_line_1
+    @draft_school.address_line_2 ||= parent_school&.address_line_2
+    @draft_school.address_town ||= parent_school&.address_town
+    @draft_school.address_postcode ||= parent_school&.address_postcode
   end
 
   def handle_school
-    @draft_school_site.clear!
-    @draft_school_site.assign_attributes(update_params)
-
-    if @draft_school_site.valid?
-      parent_school = @draft_school_site.parent_school
-
-      @draft_school_site.address_line_1 ||= parent_school&.address_line_1
-      @draft_school_site.address_line_2 ||= parent_school&.address_line_2
-      @draft_school_site.address_town ||= parent_school&.address_town
-      @draft_school_site.address_postcode ||= parent_school&.address_postcode
-
-      @draft_school_site.wizard_step = current_step
-    end
-  end
-
-  def handle_details
-    @draft_school_site.assign_attributes(update_params)
-    @draft_school_site.wizard_step = current_step
+    @draft_school.clear!
+    @draft_school.assign_attributes(update_params)
   end
 
   def handle_confirm
-    return unless @draft_school_site.save
+    return unless @draft_school.save
 
-    parent_school = @draft_school_site.parent_school
+    @draft_school.assign_attributes(update_params)
+
+    parent_school = @draft_school.parent_school
     @school = parent_school.dup
 
     @school.assign_attributes(
-      urn: @draft_school_site.urn,
-      site: next_site_letter(@draft_school_site.urn),
-      name: @draft_school_site.name,
-      address_line_1: @draft_school_site.address_line_1,
-      address_line_2: @draft_school_site.address_line_2,
-      address_town: @draft_school_site.address_town,
-      address_postcode: @draft_school_site.address_postcode
+      urn: @draft_school.urn,
+      site: next_site_letter(@draft_school.urn),
+      name: @draft_school.name,
+      address_line_1: @draft_school.address_line_1,
+      address_line_2: @draft_school.address_line_2,
+      address_town: @draft_school.address_town,
+      address_postcode: @draft_school.address_postcode
     )
 
     ActiveRecord::Base.transaction do
@@ -121,7 +116,7 @@ class DraftSchoolSitesController < ApplicationController
 
     flash[:success] = "#{@school.name} has been added to your team."
 
-    @draft_school_site.clear!
+    @draft_school.clear!
   end
 
   def finish_wizard_path
@@ -142,7 +137,7 @@ class DraftSchoolSitesController < ApplicationController
     }.fetch(current_step)
 
     params
-      .fetch(:draft_school_site, {})
+      .fetch(:draft_school, {})
       .permit(permitted_attributes)
       .merge(wizard_step: current_step)
   end
@@ -157,9 +152,9 @@ class DraftSchoolSitesController < ApplicationController
 
   def redirect_if_session_cleared
     return if params[:id] == "wicked_finish"
-    return if session[:draft_school_site].present?
-    return if params[:id] == "school"
+    return if params[:id] == "school" # Allow school selection step even with blank URN
+    return if session[:draft_school].present? && @draft_school.urn.present?
 
-    redirect_to wizard_path(:school) if @draft_school_site.urn.blank?
+    redirect_to schools_team_path if @draft_school.urn.blank?
   end
 end
