@@ -692,7 +692,7 @@
     <span class="ruby-value">performed_by_user_id:</span>
       (<span class="ruby-identifier">current_user</span>.<span class="ruby-identifier">id</span> <span class="ruby-keyword">unless</span> <span class="ruby-constant">Flipper</span>.<span class="ruby-identifier">enabled?</span>(<span class="ruby-value">:already_vaccinated</span>)),
     <span class="ruby-value">performed_ods_code:</span> <span class="ruby-identifier">current_team</span>.<span class="ruby-identifier">organisation</span>.<span class="ruby-identifier">ods_code</span>,
-    <span class="ruby-value">programme:</span> <span class="ruby-ivar">@programme</span>,
+    <span class="ruby-value">programme:</span> <span class="ruby-identifier">programme_for_record_already_vaccinated</span>,
     <span class="ruby-value">reported_by_id:</span>
       (<span class="ruby-identifier">current_user</span>.<span class="ruby-identifier">id</span> <span class="ruby-keyword">if</span> <span class="ruby-constant">Flipper</span>.<span class="ruby-identifier">enabled?</span>(<span class="ruby-value">:already_vaccinated</span>)),
     <span class="ruby-value">reported_at:</span> (<span class="ruby-constant">Time</span>.<span class="ruby-identifier">current</span> <span class="ruby-keyword">if</span> <span class="ruby-constant">Flipper</span>.<span class="ruby-identifier">enabled?</span>(<span class="ruby-value">:already_vaccinated</span>)),
