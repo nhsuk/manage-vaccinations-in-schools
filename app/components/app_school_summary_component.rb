@@ -74,7 +74,7 @@ class AppSchoolSummaryComponent < ViewComponent::Base
   end
 
   def urn_row
-    {
+    row = {
       key: {
         text: "URN"
       },
@@ -82,6 +82,12 @@ class AppSchoolSummaryComponent < ViewComponent::Base
         text: tag.span(schoolable.urn_and_site, class: "app-u-code")
       }
     }
+
+    if (href = change_links[:urn])
+      row[:actions] = [{ text: "Change parent school", href: }]
+    end
+
+    row
   end
 
   def year_groups_row

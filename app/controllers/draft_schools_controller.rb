@@ -9,7 +9,7 @@ class DraftSchoolsController < ApplicationController
 
   before_action :set_school_options, if: -> { current_step == :school }
   before_action :set_address, if: -> { current_step == :details }
-  before_action :set_site_letter, if: -> { current_step == :confirm }
+  before_action :set_back_link_path
 
   skip_after_action :verify_policy_scoped
 
@@ -46,10 +46,6 @@ class DraftSchoolsController < ApplicationController
     @school = Location.new
   end
 
-  def set_site_letter
-    @site_letter = next_site_letter(@draft_school.urn)
-  end
-
   def set_school_options
     @school_options =
       policy_scope(Location)
@@ -73,6 +69,22 @@ class DraftSchoolsController < ApplicationController
     @draft_school.address_postcode ||= parent_school&.address_postcode
   end
 
+  def set_back_link_path
+    @back_link_path =
+      if @draft_school.editing? && current_step != :confirm
+        wizard_path("confirm")
+      elsif first_step_of_flow?
+        schools_team_path
+      else
+        previous_wizard_path
+      end
+  end
+
+  def first_step_of_flow?
+    (current_step == :confirm && @draft_school.editing?) ||
+      current_step == @draft_school.wizard_steps.first
+  end
+
   def handle_school
     @draft_school.clear!
     @draft_school.assign_attributes(update_params)
@@ -88,7 +100,7 @@ class DraftSchoolsController < ApplicationController
 
     @school.assign_attributes(
       urn: @draft_school.urn,
-      site: next_site_letter(@draft_school.urn),
+      site: @draft_school.next_site_letter,
       name: @draft_school.name,
       address_line_1: @draft_school.address_line_1,
       address_line_2: @draft_school.address_line_2,
@@ -125,7 +137,7 @@ class DraftSchoolsController < ApplicationController
 
   def update_params
     permitted_attributes = {
-      school: [:urn_and_site],
+      school: [:parent_urn_and_site],
       details: %i[
         name
         address_line_1
@@ -140,14 +152,6 @@ class DraftSchoolsController < ApplicationController
       .fetch(:draft_school, {})
       .permit(permitted_attributes)
       .merge(wizard_step: current_step)
-  end
-
-  def next_site_letter(urn)
-    existing_sites =
-      policy_scope(Location).where(urn:).pluck(:site).compact.sort
-    return "B" if existing_sites.empty?
-
-    existing_sites.max_by { [it.length, it] }.next
   end
 
   def redirect_if_session_cleared

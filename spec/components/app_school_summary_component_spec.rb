@@ -6,21 +6,24 @@ describe AppSchoolSummaryComponent do
   let(:component) { described_class.new(school, change_links:) }
 
   let(:programmes) { [Programme.hpv] }
+  let(:team) { create(:team, programmes:) }
+  let(:academic_year) { AcademicYear.pending }
   let(:school) do
     create(
       :school,
       :secondary,
       name: "Streeling University",
-      urn: 123_456,
+      urn: "123456",
       address_line_1: "10 Downing Street",
       address_line_2: "Example Way",
       address_postcode: "SW1A 1AA",
       address_town: "London",
       gias_year_groups: [7, 8, 9, 10, 11],
-      programmes:
+      programmes:,
+      team:,
+      academic_year:
     )
   end
-  let(:team) { create(:team, programmes:) }
   let(:change_links) { {} }
 
   it { should have_content("ProgrammesHPV") }
@@ -44,5 +47,58 @@ describe AppSchoolSummaryComponent do
 
     it { should have_link("Change name") }
     it { should have_link("Change address") }
+  end
+
+  context "when schoolable is a DraftSchool (adding a new site)" do
+    let(:team) { create(:team, :with_one_nurse, programmes:) }
+    let(:current_user) { team.users.first }
+    let(:existing_school) do
+      create(:school, :secondary, urn: "123456", team:, programmes:)
+    end
+    let(:draft_school) do
+      DraftSchool.new(
+        request_session: {
+        },
+        current_user:,
+        name: "Edited School Name",
+        address_line_1: "20 Downing Street",
+        address_line_2: "New Way",
+        address_town: "London",
+        address_postcode: "SW1A 2AA",
+        parent_urn_and_site: existing_school.urn_and_site
+      )
+    end
+    let(:component) { described_class.new(draft_school, change_links:) }
+
+    it { should have_content("URN") }
+    it { should have_content("123456") }
+
+    it { should have_content("Name") }
+    it { should have_content("Edited School Name") }
+
+    it { should have_content("Address") }
+    it { should have_content("20 Downing Street, New Way, London, SW1A 2AA") }
+
+    it "shows phase from the underlying location" do
+      expect(rendered).to have_content("Phase")
+      expect(rendered).to have_content("Secondary")
+    end
+
+    it "shows programmes from the underlying location" do
+      expect(rendered).to have_content("Programmes")
+      expect(rendered).to have_content("HPV")
+    end
+
+    it "shows year groups from the underlying location" do
+      expect(rendered).to have_content("Year groups")
+      expect(rendered).to have_content("Years 7 to 11")
+    end
+
+    context "with change links" do
+      let(:change_links) { { name: "/name", address: "/address" } }
+
+      it { should have_link("Change name") }
+      it { should have_link("Change address") }
+    end
   end
 end

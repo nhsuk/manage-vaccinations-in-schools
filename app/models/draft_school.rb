@@ -5,7 +5,7 @@ class DraftSchool
   include EditableWrapper
   include WizardStepConcern
 
-  attribute :urn_and_site, :string
+  attribute :parent_urn_and_site, :string
   attribute :name, :string
   attribute :address_line_1, :string
   attribute :address_line_2, :string
@@ -38,7 +38,7 @@ class DraftSchool
   end
 
   on_wizard_step :school, exact: true do
-    validates :urn_and_site, presence: true
+    validates :parent_urn_and_site, presence: true
   end
 
   on_wizard_step :details, exact: true do
@@ -56,13 +56,13 @@ class DraftSchool
   end
 
   def parent_school
-    return nil if urn_and_site.blank?
+    return nil if parent_urn_and_site.blank?
 
     @parent_school ||=
       LocationPolicy::Scope
         .new(@current_user, Location)
         .resolve
-        .find_by_urn_and_site(urn_and_site)
+        .find_by_urn_and_site(parent_urn_and_site)
   end
 
   def urn
@@ -84,5 +84,36 @@ class DraftSchool
       address_town,
       address_postcode
     ].compact_blank
+  end
+
+  def urn_and_site
+    return nil if urn.blank?
+
+    "#{urn}#{next_site_letter}"
+  end
+
+  def next_site_letter
+    return nil if urn.blank?
+
+    existing_sites = Location.where(urn:).pluck(:site).compact.sort
+    return "B" if existing_sites.empty?
+
+    existing_sites.max_by { [it.length, it] }.next
+  end
+
+  def source_location
+    parent_school
+  end
+
+  def year_groups
+    source_location&.year_groups || []
+  end
+
+  def programmes
+    source_location&.programmes || []
+  end
+
+  def human_enum_name(attr)
+    source_location&.human_enum_name(attr)
   end
 end

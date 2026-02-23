@@ -12,7 +12,7 @@ describe AppSchoolCardComponent do
       :school,
       :secondary,
       name: "Streeling University",
-      urn: 123_456,
+      urn: "123456",
       address_line_1: "10 Downing Street",
       address_line_2: "Example Way",
       address_postcode: "SW1A 1AA",

@@ -13,7 +13,7 @@ describe DraftSchool do
 
   let(:valid_attributes) do
     {
-      urn_and_site: school.urn_and_site,
+      parent_urn_and_site: school.urn_and_site,
       name: "New Site Name",
       address_line_1: "123 Main Street",
       address_line_2: "Floor 2",
@@ -26,11 +26,11 @@ describe DraftSchool do
     context "on the school step" do
       let(:attributes) { { wizard_step: :school } }
 
-      it { should validate_presence_of(:urn_and_site).on(:update) }
+      it { should validate_presence_of(:parent_urn_and_site).on(:update) }
 
       context "with valid urn_and_site" do
         let(:attributes) do
-          { wizard_step: :school, urn_and_site: school.urn_and_site }
+          { wizard_step: :school, parent_urn_and_site: school.urn_and_site }
         end
 
         it { should be_valid(:update) }
@@ -129,19 +129,19 @@ describe DraftSchool do
 
   describe "#parent_school" do
     context "when urn_and_site is nil" do
-      let(:attributes) { { urn_and_site: nil } }
+      let(:attributes) { { parent_urn_and_site: nil } }
 
       it { expect(draft_school.parent_school).to be_nil }
     end
 
     context "when urn_and_site is set" do
-      let(:attributes) { { urn_and_site: school.urn_and_site } }
+      let(:attributes) { { parent_urn_and_site: school.urn_and_site } }
 
       it { expect(draft_school.parent_school).to eq(school) }
     end
 
     context "when urn_and_site does not match any school" do
-      let(:attributes) { { urn_and_site: "999999" } }
+      let(:attributes) { { parent_urn_and_site: "999999" } }
 
       it { expect(draft_school.parent_school).to be_nil }
     end
@@ -149,7 +149,7 @@ describe DraftSchool do
     context "when school belongs to a different team" do
       let(:other_team) { create(:team) }
       let(:other_school) { create(:school, :secondary, team: other_team) }
-      let(:attributes) { { urn_and_site: other_school.urn_and_site } }
+      let(:attributes) { { parent_urn_and_site: other_school.urn_and_site } }
 
       it { expect(draft_school.parent_school).to be_nil }
     end
@@ -157,13 +157,13 @@ describe DraftSchool do
 
   describe "#existing_names" do
     context "when urn_and_site is blank" do
-      let(:attributes) { { urn_and_site: nil } }
+      let(:attributes) { { parent_urn_and_site: nil } }
 
       it { expect(draft_school.existing_names).to eq([]) }
     end
 
     context "when urn_and_site is set" do
-      let(:attributes) { { urn_and_site: school.urn_and_site } }
+      let(:attributes) { { parent_urn_and_site: school.urn_and_site } }
 
       it "returns names of schools with the same URN" do
         expect(draft_school.existing_names).to include(school.name)
@@ -188,7 +188,7 @@ describe DraftSchool do
         )
       end
 
-      let(:attributes) { { urn_and_site: school.urn_and_site } }
+      let(:attributes) { { parent_urn_and_site: school.urn_and_site } }
 
       it "returns all site names" do
         expect(draft_school.existing_names).to include(
@@ -301,7 +301,7 @@ describe DraftSchool do
           "address_town" => "London",
           "editing_id" => nil,
           "name" => "New Site Name",
-          "urn_and_site" => school.urn_and_site
+          "parent_urn_and_site" => school.urn_and_site
         }
       )
     end
@@ -317,9 +317,40 @@ describe DraftSchool do
           "address_town" => nil,
           "editing_id" => nil,
           "name" => nil,
-          "urn_and_site" => nil
+          "parent_urn_and_site" => nil
         }
       )
+    end
+  end
+
+  describe "#urn_and_site" do
+    context "when creating a new site" do
+      let(:attributes) { valid_attributes }
+
+      it "returns the URN with the next site letter" do
+        expect(draft_school.urn_and_site).to eq("#{school.urn}B")
+      end
+
+      context "when sites already exist" do
+        before do
+          create(:school, urn: school.urn, site: "A", name: "Site A")
+          create(:school, urn: school.urn, site: "B", name: "Site B")
+        end
+
+        it "returns the URN with the next available site letter" do
+          expect(draft_school.urn_and_site).to eq("#{school.urn}C")
+        end
+      end
+    end
+  end
+
+  describe "#source_location" do
+    context "when creating a new site" do
+      let(:attributes) { valid_attributes }
+
+      it "returns the parent school" do
+        expect(draft_school.source_location).to eq(school)
+      end
     end
   end
 end
