@@ -893,24 +893,23 @@
 
     <span class="ruby-constant">ProgrammeGrouper</span>
       .<span class="ruby-identifier">call</span>(<span class="ruby-identifier">session</span>.<span class="ruby-identifier">programmes</span>)
-      .<span class="ruby-identifier">map</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">_group</span>, <span class="ruby-identifier">programmes</span><span class="ruby-operator">|</span>
-        <span class="ruby-identifier">names</span> =
-          <span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">map</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">programme</span><span class="ruby-operator">|</span>
-            <span class="ruby-comment"># TODO: This enables us to show &quot;MMR&quot; for the &quot;MMR(V)&quot; programme</span>
-            <span class="ruby-comment">#  but will probably need fixing once we collect consent for MMRV.</span>
-            <span class="ruby-constant">I18n</span>.<span class="ruby-identifier">t</span>(<span class="ruby-identifier">programme</span>.<span class="ruby-identifier">type</span>, <span class="ruby-value">scope:</span> <span class="ruby-value">:programme_types</span>)
+      .<span class="ruby-identifier">flat_map</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">_group</span>, <span class="ruby-identifier">programmes</span><span class="ruby-operator">|</span>
+        <span class="ruby-identifier">variants</span> =
+          <span class="ruby-keyword">if</span> <span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">first</span>.<span class="ruby-identifier">mmr?</span>
+            <span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">first</span>.<span class="ruby-identifier">variants</span>.<span class="ruby-identifier">map</span> { [<span class="ruby-identifier">it</span>.<span class="ruby-identifier">name</span>, <span class="ruby-identifier">it</span>.<span class="ruby-identifier">to_param</span>] }
+          <span class="ruby-keyword">else</span>
+            <span class="ruby-identifier">names</span> = <span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:name</span>).<span class="ruby-identifier">to_sentence</span>
+            <span class="ruby-identifier">param</span> = <span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:to_param</span>).<span class="ruby-identifier">join</span>(<span class="ruby-string">&quot;-&quot;</span>)
+            [[<span class="ruby-identifier">names</span>, <span class="ruby-identifier">param</span>]]
           <span class="ruby-keyword">end</span>
 
-        <span class="ruby-identifier">label</span> = <span class="ruby-node">&quot;View the #{names.to_sentence} online consent form&quot;</span>
-
-        <span class="ruby-identifier">helpers</span>.<span class="ruby-identifier">govuk_link_to</span>(
-          <span class="ruby-identifier">label</span>,
-          <span class="ruby-identifier">start_parent_interface_consent_forms_path</span>(
-            <span class="ruby-identifier">session</span>,
-            <span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:to_param</span>).<span class="ruby-identifier">join</span>(<span class="ruby-string">&quot;-&quot;</span>)
-          ),
-          <span class="ruby-value">new_tab:</span> <span class="ruby-keyword">true</span>
-        )
+        <span class="ruby-identifier">variants</span>.<span class="ruby-identifier">map</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">name</span>, <span class="ruby-identifier">param</span><span class="ruby-operator">|</span>
+          <span class="ruby-identifier">helpers</span>.<span class="ruby-identifier">govuk_link_to</span>(
+            <span class="ruby-node">&quot;View the #{name} online consent form&quot;</span>,
+            <span class="ruby-identifier">start_parent_interface_consent_forms_path</span>(<span class="ruby-identifier">session</span>, <span class="ruby-identifier">param</span>),
+            <span class="ruby-value">new_tab:</span> <span class="ruby-keyword">true</span>
+          )
+        <span class="ruby-keyword">end</span>
       <span class="ruby-keyword">end</span>
   <span class="ruby-keyword">end</span>
 
@@ -964,7 +963,7 @@
             </details>
           </div>
           <div class="method-source-code" id="classes-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/components/app_session_summary_component.rb, line 192</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/components/app_session_summary_component.rb, line 191</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">classes</span>
   <span class="ruby-identifier">full_width</span> <span class="ruby-operator">?</span> <span class="ruby-node">%w[app-summary-list--full-width]</span> <span class="ruby-operator">:</span> []
 <span class="ruby-keyword">end</span></pre>
@@ -1156,7 +1155,7 @@
             </details>
           </div>
           <div class="method-source-code" id="download_consent_links-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/components/app_session_summary_component.rb, line 184</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/components/app_session_summary_component.rb, line 183</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">download_consent_links</span>
   <span class="ruby-identifier">session</span>.<span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">map</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">programme</span><span class="ruby-operator">|</span>
     <span class="ruby-identifier">name</span> = <span class="ruby-constant">I18n</span>.<span class="ruby-identifier">t</span>(<span class="ruby-identifier">programme</span>.<span class="ruby-identifier">type</span>, <span class="ruby-value">scope:</span> <span class="ruby-value">:programme_types</span>)
@@ -1257,24 +1256,23 @@
 
   <span class="ruby-constant">ProgrammeGrouper</span>
     .<span class="ruby-identifier">call</span>(<span class="ruby-identifier">session</span>.<span class="ruby-identifier">programmes</span>)
-    .<span class="ruby-identifier">map</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">_group</span>, <span class="ruby-identifier">programmes</span><span class="ruby-operator">|</span>
-      <span class="ruby-identifier">names</span> =
-        <span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">map</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">programme</span><span class="ruby-operator">|</span>
-          <span class="ruby-comment"># TODO: This enables us to show &quot;MMR&quot; for the &quot;MMR(V)&quot; programme</span>
-          <span class="ruby-comment">#  but will probably need fixing once we collect consent for MMRV.</span>
-          <span class="ruby-constant">I18n</span>.<span class="ruby-identifier">t</span>(<span class="ruby-identifier">programme</span>.<span class="ruby-identifier">type</span>, <span class="ruby-value">scope:</span> <span class="ruby-value">:programme_types</span>)
+    .<span class="ruby-identifier">flat_map</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">_group</span>, <span class="ruby-identifier">programmes</span><span class="ruby-operator">|</span>
+      <span class="ruby-identifier">variants</span> =
+        <span class="ruby-keyword">if</span> <span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">first</span>.<span class="ruby-identifier">mmr?</span>
+          <span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">first</span>.<span class="ruby-identifier">variants</span>.<span class="ruby-identifier">map</span> { [<span class="ruby-identifier">it</span>.<span class="ruby-identifier">name</span>, <span class="ruby-identifier">it</span>.<span class="ruby-identifier">to_param</span>] }
+        <span class="ruby-keyword">else</span>
+          <span class="ruby-identifier">names</span> = <span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:name</span>).<span class="ruby-identifier">to_sentence</span>
+          <span class="ruby-identifier">param</span> = <span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:to_param</span>).<span class="ruby-identifier">join</span>(<span class="ruby-string">&quot;-&quot;</span>)
+          [[<span class="ruby-identifier">names</span>, <span class="ruby-identifier">param</span>]]
         <span class="ruby-keyword">end</span>
 
-      <span class="ruby-identifier">label</span> = <span class="ruby-node">&quot;View the #{names.to_sentence} online consent form&quot;</span>
-
-      <span class="ruby-identifier">helpers</span>.<span class="ruby-identifier">govuk_link_to</span>(
-        <span class="ruby-identifier">label</span>,
-        <span class="ruby-identifier">start_parent_interface_consent_forms_path</span>(
-          <span class="ruby-identifier">session</span>,
-          <span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:to_param</span>).<span class="ruby-identifier">join</span>(<span class="ruby-string">&quot;-&quot;</span>)
-        ),
-        <span class="ruby-value">new_tab:</span> <span class="ruby-keyword">true</span>
-      )
+      <span class="ruby-identifier">variants</span>.<span class="ruby-identifier">map</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">name</span>, <span class="ruby-identifier">param</span><span class="ruby-operator">|</span>
+        <span class="ruby-identifier">helpers</span>.<span class="ruby-identifier">govuk_link_to</span>(
+          <span class="ruby-node">&quot;View the #{name} online consent form&quot;</span>,
+          <span class="ruby-identifier">start_parent_interface_consent_forms_path</span>(<span class="ruby-identifier">session</span>, <span class="ruby-identifier">param</span>),
+          <span class="ruby-value">new_tab:</span> <span class="ruby-keyword">true</span>
+        )
+      <span class="ruby-keyword">end</span>
     <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
           </div>

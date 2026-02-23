@@ -741,6 +741,9 @@ fk_rails_...  (session_id =&gt; sessions.id)</pre>
   <span class="ruby-identifier">mail_template</span> =
     <span class="ruby-keyword">if</span> <span class="ruby-identifier">is_school</span>
       <span class="ruby-identifier">group</span> = <span class="ruby-constant">ProgrammeGrouper</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">programmes</span>).<span class="ruby-identifier">first</span>.<span class="ruby-identifier">first</span>
+
+      <span class="ruby-identifier">group</span> = <span class="ruby-value">:mmrv</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">group</span> <span class="ruby-operator">==</span> <span class="ruby-value">:mmr</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">eligible_for_mmrv?</span>
+
       <span class="ruby-value">:&quot;#{template}_#{group}&quot;</span>
     <span class="ruby-keyword">else</span>
       <span class="ruby-identifier">template</span>
@@ -863,6 +866,9 @@ fk_rails_...  (session_id =&gt; sessions.id)</pre>
   <span class="ruby-identifier">mail_template</span> =
     <span class="ruby-keyword">if</span> <span class="ruby-identifier">is_school</span>
       <span class="ruby-identifier">group</span> = <span class="ruby-constant">ProgrammeGrouper</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">programmes</span>).<span class="ruby-identifier">first</span>.<span class="ruby-identifier">first</span>
+
+      <span class="ruby-identifier">group</span> = <span class="ruby-value">:mmrv</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">group</span> <span class="ruby-operator">==</span> <span class="ruby-value">:mmr</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">eligible_for_mmrv?</span>
+
       <span class="ruby-value">:&quot;#{template}_#{group}&quot;</span>
     <span class="ruby-keyword">else</span>
       <span class="ruby-identifier">template</span>
@@ -969,6 +975,9 @@ fk_rails_...  (session_id =&gt; sessions.id)</pre>
     <span class="ruby-identifier">mail_template</span> =
       <span class="ruby-keyword">if</span> <span class="ruby-identifier">is_school</span>
         <span class="ruby-identifier">group</span> = <span class="ruby-constant">ProgrammeGrouper</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">programmes</span>).<span class="ruby-identifier">first</span>.<span class="ruby-identifier">first</span>
+
+        <span class="ruby-identifier">group</span> = <span class="ruby-value">:mmrv</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">group</span> <span class="ruby-operator">==</span> <span class="ruby-value">:mmr</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">eligible_for_mmrv?</span>
+
         <span class="ruby-value">:&quot;#{template}_#{group}&quot;</span>
       <span class="ruby-keyword">else</span>
         <span class="ruby-identifier">template</span>
@@ -1084,6 +1093,9 @@ fk_rails_...  (session_id =&gt; sessions.id)</pre>
   <span class="ruby-identifier">mail_template</span> =
     <span class="ruby-keyword">if</span> <span class="ruby-identifier">is_school</span>
       <span class="ruby-identifier">group</span> = <span class="ruby-constant">ProgrammeGrouper</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">programmes</span>).<span class="ruby-identifier">first</span>.<span class="ruby-identifier">first</span>
+
+      <span class="ruby-identifier">group</span> = <span class="ruby-value">:mmrv</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">group</span> <span class="ruby-operator">==</span> <span class="ruby-value">:mmr</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">eligible_for_mmrv?</span>
+
       <span class="ruby-value">:&quot;#{template}_#{group}&quot;</span>
     <span class="ruby-keyword">else</span>
       <span class="ruby-identifier">template</span>
@@ -1192,6 +1204,9 @@ fk_rails_...  (session_id =&gt; sessions.id)</pre>
   <span class="ruby-identifier">mail_template</span> =
     <span class="ruby-keyword">if</span> <span class="ruby-identifier">is_school</span>
       <span class="ruby-identifier">group</span> = <span class="ruby-constant">ProgrammeGrouper</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">programmes</span>).<span class="ruby-identifier">first</span>.<span class="ruby-identifier">first</span>
+
+      <span class="ruby-identifier">group</span> = <span class="ruby-value">:mmrv</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">group</span> <span class="ruby-operator">==</span> <span class="ruby-value">:mmr</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">eligible_for_mmrv?</span>
+
       <span class="ruby-value">:&quot;#{template}_#{group}&quot;</span>
     <span class="ruby-keyword">else</span>
       <span class="ruby-identifier">template</span>
@@ -1304,6 +1319,9 @@ fk_rails_...  (session_id =&gt; sessions.id)</pre>
   <span class="ruby-identifier">mail_template</span> =
     <span class="ruby-keyword">if</span> <span class="ruby-identifier">is_school</span>
       <span class="ruby-identifier">group</span> = <span class="ruby-constant">ProgrammeGrouper</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">programmes</span>).<span class="ruby-identifier">first</span>.<span class="ruby-identifier">first</span>
+
+      <span class="ruby-identifier">group</span> = <span class="ruby-value">:mmrv</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">group</span> <span class="ruby-operator">==</span> <span class="ruby-value">:mmr</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">eligible_for_mmrv?</span>
+
       <span class="ruby-value">:&quot;#{template}_#{group}&quot;</span>
     <span class="ruby-keyword">else</span>
       <span class="ruby-identifier">template</span>
