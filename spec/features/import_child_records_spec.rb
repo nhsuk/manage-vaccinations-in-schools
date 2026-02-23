@@ -140,6 +140,7 @@ describe "Import child records" do
 
       then_the_changeset_should_belong_to_the_new_patient
       and_the_pds_search_results_should_belong_to_the_new_patient
+      and_the_import_screen_should_link_to_the_new_patient
     end
   end
 
@@ -424,6 +425,12 @@ describe "Import child records" do
 
   def then_i_should_see_a_success_message
     expect(page).to have_content("Record updated")
+  end
+
+  def and_the_import_screen_should_link_to_the_new_patient
+    find(".nhsuk-details__summary", text: /imported record/i).click
+
+    expect(page).to have_link("REED, Taylor", href: patient_path(new_patient))
   end
 
   def then_the_changeset_should_belong_to_the_new_patient
