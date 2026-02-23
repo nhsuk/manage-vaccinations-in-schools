@@ -3,7 +3,9 @@
 describe MavisCLI::Teams::SetNationalReportingCutOffDate do
   describe "#call" do
     subject(:command) do
-      described_class.new.call(workgroup: team.workgroup, date: date, clear:)
+      capture_output do
+        described_class.new.call(workgroup: team.workgroup, date: date, clear:)
+      end
     end
 
     let(:date) { "2026-02-01" }
