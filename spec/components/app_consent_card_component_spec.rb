@@ -58,7 +58,11 @@ describe AppConsentCardComponent do
         create(:consent, programme:, vaccine_methods: %w[nasal injection])
       end
 
-      it { should have_content("Chosen vaccineNo preference") }
+      it do
+        expect(rendered).to have_content(
+          "Chosen vaccineNasal spray or injected vaccine"
+        )
+      end
     end
   end
 end

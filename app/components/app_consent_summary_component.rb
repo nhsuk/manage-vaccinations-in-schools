@@ -141,7 +141,7 @@ class AppConsentSummaryComponent < ViewComponent::Base
       elsif consent.without_gelatine
         gelatine_free_vaccine_text
       else
-        "No preference"
+        no_preference_text
       end
 
     { key: { text: "Chosen vaccine" }, value: { text: value } }
@@ -152,6 +152,16 @@ class AppConsentSummaryComponent < ViewComponent::Base
       "Injected vaccine only"
     else
       "Gelatine-free injected vaccine only"
+    end
+  end
+
+  def no_preference_text
+    if programme.has_multiple_vaccine_methods?
+      "Nasal spray or injected vaccine"
+    elsif programme.vaccine_may_contain_gelatine?
+      "Gelatine-free injected vaccine or injected vaccine"
+    else
+      "No preference"
     end
   end
 
