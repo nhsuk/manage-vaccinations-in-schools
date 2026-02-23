@@ -7,7 +7,7 @@
   <%= h1 "Which school do you want to add a site to?" %>
 
   <%= form_with(model: @draft_school, url: wizard_path, method: :put) do |f| %>
-    <%= f.govuk_select :urn,
+    <%= f.govuk_select :urn_and_site,
                        label: {
                          text: "Select a school",
                        },
@@ -15,7 +15,7 @@
       <%= tag.option "", value: "" %>
       <% @school_options.each do |school| %>
         <%= tag.option location_display_name(school, show_urn: true),
-                       value: school.urn,
+                       value: school.urn_and_site,
                        data: { hint: format_address_single_line(school) } %>
       <% end %>
     <% end %>

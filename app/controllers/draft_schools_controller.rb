@@ -125,7 +125,7 @@ class DraftSchoolsController < ApplicationController
 
   def update_params
     permitted_attributes = {
-      school: [:urn],
+      school: [:urn_and_site],
       details: %i[
         name
         address_line_1

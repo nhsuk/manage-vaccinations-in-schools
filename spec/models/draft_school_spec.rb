@@ -13,7 +13,7 @@ describe DraftSchool do
 
   let(:valid_attributes) do
     {
-      urn: school.urn,
+      urn_and_site: school.urn_and_site,
       name: "New Site Name",
       address_line_1: "123 Main Street",
       address_line_2: "Floor 2",
@@ -26,10 +26,12 @@ describe DraftSchool do
     context "on the school step" do
       let(:attributes) { { wizard_step: :school } }
 
-      it { should validate_presence_of(:urn).on(:update) }
+      it { should validate_presence_of(:urn_and_site).on(:update) }
 
-      context "with valid urn" do
-        let(:attributes) { { wizard_step: :school, urn: school.urn } }
+      context "with valid urn_and_site" do
+        let(:attributes) do
+          { wizard_step: :school, urn_and_site: school.urn_and_site }
+        end
 
         it { should be_valid(:update) }
       end
@@ -126,20 +128,20 @@ describe DraftSchool do
   end
 
   describe "#parent_school" do
-    context "when urn is nil" do
-      let(:attributes) { { urn: nil } }
+    context "when urn_and_site is nil" do
+      let(:attributes) { { urn_and_site: nil } }
 
       it { expect(draft_school.parent_school).to be_nil }
     end
 
-    context "when urn is set" do
-      let(:attributes) { { urn: school.urn } }
+    context "when urn_and_site is set" do
+      let(:attributes) { { urn_and_site: school.urn_and_site } }
 
       it { expect(draft_school.parent_school).to eq(school) }
     end
 
-    context "when urn does not match any school" do
-      let(:attributes) { { urn: "999999" } }
+    context "when urn_and_site does not match any school" do
+      let(:attributes) { { urn_and_site: "999999" } }
 
       it { expect(draft_school.parent_school).to be_nil }
     end
@@ -147,21 +149,21 @@ describe DraftSchool do
     context "when school belongs to a different team" do
       let(:other_team) { create(:team) }
       let(:other_school) { create(:school, :secondary, team: other_team) }
-      let(:attributes) { { urn: other_school.urn } }
+      let(:attributes) { { urn_and_site: other_school.urn_and_site } }
 
       it { expect(draft_school.parent_school).to be_nil }
     end
   end
 
   describe "#existing_names" do
-    context "when urn is blank" do
-      let(:attributes) { { urn: nil } }
+    context "when urn_and_site is blank" do
+      let(:attributes) { { urn_and_site: nil } }
 
       it { expect(draft_school.existing_names).to eq([]) }
     end
 
-    context "when urn is set" do
-      let(:attributes) { { urn: school.urn } }
+    context "when urn_and_site is set" do
+      let(:attributes) { { urn_and_site: school.urn_and_site } }
 
       it "returns names of schools with the same URN" do
         expect(draft_school.existing_names).to include(school.name)
@@ -186,7 +188,7 @@ describe DraftSchool do
         )
       end
 
-      let(:attributes) { { urn: school.urn } }
+      let(:attributes) { { urn_and_site: school.urn_and_site } }
 
       it "returns all site names" do
         expect(draft_school.existing_names).to include(
@@ -299,7 +301,7 @@ describe DraftSchool do
           "address_town" => "London",
           "editing_id" => nil,
           "name" => "New Site Name",
-          "urn" => school.urn
+          "urn_and_site" => school.urn_and_site
         }
       )
     end
@@ -315,7 +317,7 @@ describe DraftSchool do
           "address_town" => nil,
           "editing_id" => nil,
           "name" => nil,
-          "urn" => nil,
+          "urn_and_site" => nil
         }
       )
     end
