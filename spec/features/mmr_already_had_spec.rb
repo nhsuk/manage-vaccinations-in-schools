@@ -260,12 +260,12 @@ describe "MMR/MMRV" do
   end
 
   def when_i_choose_mmr_and_continue
-    choose "No"
+    choose "No, they got the MMR vaccine"
     click_on "Continue"
   end
 
   def when_i_choose_mmrv_and_continue
-    choose "Yes"
+    choose "Yes, they got the MMRV vaccine"
     click_on "Continue"
   end
 
