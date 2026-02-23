@@ -24,3 +24,4 @@ jobs:
       - uses: jdx/mise-action@v3
         with:
           install_args: hk pkl
+      - run: hk check --all
