@@ -229,7 +229,7 @@ describe "Important notices" do
     click_button "Upload records"
     choose "Child records"
     click_button "Continue"
-    attach_file("cohort_import[csv]", "spec/fixtures/cohort_import/valid.csv")
+    attach_file_fixture "cohort_import[csv]", "cohort_import/valid.csv"
     click_on "Continue"
 
     wait_for_import_to_complete(CohortImport)
@@ -247,10 +247,8 @@ describe "Important notices" do
     click_button "Upload records"
     choose "Child records"
     click_button "Continue"
-    attach_file(
-      "cohort_import[csv]",
-      "spec/fixtures/cohort_import/valid_unknown_school.csv"
-    )
+    attach_file_fixture "cohort_import[csv]",
+                        "cohort_import/valid_unknown_school.csv"
     click_on "Continue"
 
     wait_for_import_to_complete(CohortImport)

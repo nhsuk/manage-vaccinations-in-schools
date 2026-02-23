@@ -291,10 +291,8 @@ describe "Child record imports duplicates" do
   end
 
   def and_i_upload_a_file_with_duplicate_records
-    attach_file(
-      "cohort_import[csv]",
-      "spec/fixtures/cohort_import/valid_with_duplicates.csv"
-    )
+    attach_file_fixture "cohort_import[csv]",
+                        "cohort_import/valid_with_duplicates.csv"
     click_on "Continue"
     wait_for_import_to_complete(CohortImport)
   end
