@@ -28,16 +28,36 @@ describe "National reporting team homepage and navigation" do
     then_i_should_see_the_childs_card
   end
 
-  scenario "Child record page shows vaccination records first and cannot be archived" do
-    given_i_am_signed_in_as_an_national_reporting_team
-    and_i_upload_a_valid_file
-    when_i_visit_the_children_page
-    and_i_search_for_a_child(search_term: "Harry")
-    and_i_click_on_the_childs_card(given_name: "Harry", family_name: "Potter")
-    then_i_should_see_vaccinations_then_child_details
-    and_the_activity_log_is_hidden
-    and_child_cannot_be_archived
-    and_child_does_not_look_archived
+  context "when the child record redesign feature flag is enabled" do
+    before { Flipper.enable(:child_record_redesign) }
+
+    scenario "Child record page shows vaccination records first and cannot be archived" do
+      given_i_am_signed_in_as_an_national_reporting_team
+      and_i_upload_a_valid_file
+      when_i_visit_the_children_page
+      and_i_search_for_a_child(search_term: "Harry")
+      and_i_click_on_the_childs_card(given_name: "Harry", family_name: "Potter")
+      then_i_should_see_vaccinations_then_child_record
+      and_the_activity_log_is_hidden
+      and_child_cannot_be_archived
+      and_child_does_not_look_archived
+    end
+  end
+
+  context "when the child record redesign feature flag is NOT enabled" do
+    before { Flipper.disable(:child_record_redesign) }
+
+    scenario "Child record page shows vaccination records first and cannot be archived" do
+      given_i_am_signed_in_as_an_national_reporting_team
+      and_i_upload_a_valid_file
+      when_i_visit_the_children_page
+      and_i_search_for_a_child(search_term: "Harry")
+      and_i_click_on_the_childs_card(given_name: "Harry", family_name: "Potter")
+      then_i_should_see_vaccinations_then_child_details
+      and_the_activity_log_is_hidden
+      and_child_cannot_be_archived
+      and_child_does_not_look_archived
+    end
   end
 
   scenario "Parent details are not shown for a child with parents" do
@@ -188,6 +208,13 @@ describe "National reporting team homepage and navigation" do
     app_cards = page.all(".app-card")
     expect(app_cards.count).to eq(2)
     expect(app_cards[0]).to have_content("Vaccinations")
+    expect(app_cards[1]).to have_content("Child’s details")
+  end
+
+  def then_i_should_see_vaccinations_then_child_record
+    app_cards = page.all(".app-card")
+    expect(app_cards.count).to eq(2)
+    expect(app_cards[0]).to have_content("Vaccinations")
     expect(app_cards[1]).to have_content("Child record")
   end
 
@@ -218,10 +245,6 @@ describe "National reporting team homepage and navigation" do
     expect(page).not_to have_css(
       ".app-secondary-navigation__current",
       text: "Activity log"
-    )
-    expect(page).not_to have_css(
-      ".app-secondary-navigation__current",
-      text: "Child record"
     )
   end
 

@@ -3,7 +3,7 @@
 class AppPatientCardComponent < ViewComponent::Base
   erb_template <<-ERB
     <%= render AppCardComponent.new(section: true) do |card| %>
-      <% card.with_heading(level: heading_level, actions: heading_actions) { "Child record" } %>
+      <% card.with_heading(level: heading_level, actions: heading_actions) { Flipper.enabled?(:child_record_redesign) ? "Child record" : "Child’s details" } %>
 
       <% important_notices.each do |notice| %>
         <%= render AppStatusComponent.new(text: notice) %>

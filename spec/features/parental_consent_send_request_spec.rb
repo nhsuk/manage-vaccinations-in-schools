@@ -217,8 +217,8 @@ describe "Parental consent" do
   )
     expect(page).to have_content(
       "Consent #{clinic ? "clinic" : "school"} request#{clinic ? "" : " #{programme_name.downcase}"} sent" \
-        "\n#{@parent.email}\n" \
-        "#{programme_name}   1 January 2024 at 12:00am · USER, Test"
+        "\nUSER, Test · 1 January 2024 at 12:00am" \
+        "\n#{@parent.email}"
     )
   end
 

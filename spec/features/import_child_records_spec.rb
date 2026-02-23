@@ -231,7 +231,7 @@ describe "Import child records" do
   end
 
   def then_i_should_see_the_patient_details
-    expect(page).to have_content("Child record")
+    expect(page).to have_content(Flipper.enabled?(:child_record_redesign) ? "Child record" : "Child’s details")
     expect(page).to have_content("DOE, Mark")
   end
 
