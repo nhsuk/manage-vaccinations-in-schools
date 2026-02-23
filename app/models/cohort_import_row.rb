@@ -50,7 +50,10 @@ class CohortImportRow < PatientImportRow
     if address_postcode.nil?
       errors.add(:base, "<code>CHILD_POSTCODE</code> is required")
     elsif address_postcode.blank?
-      errors.add(address_postcode.header, "Enter a valid postcode, like SW1A 1AA.")
+      errors.add(
+        address_postcode.header,
+        "Enter a valid postcode, like SW1A 1AA."
+      )
     elsif address_postcode.to_postcode.nil?
       errors.add(address_postcode.header, "should be a postcode, like SW1A 1AA")
     end

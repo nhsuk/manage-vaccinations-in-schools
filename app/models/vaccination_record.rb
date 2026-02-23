@@ -114,10 +114,7 @@ class VaccinationRecord < ApplicationRecord
   belongs_to :vaccine, optional: true
 
   belongs_to :performed_by_user, class_name: "User", optional: true
-  belongs_to :reported_by,
-             class_name: "User",
-             foreign_key: :reported_by_id,
-             optional: true
+  belongs_to :reported_by, class_name: "User", optional: true
   belongs_to :supplied_by,
              class_name: "User",
              foreign_key: :supplied_by_user_id,

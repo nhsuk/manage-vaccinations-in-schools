@@ -258,17 +258,15 @@ describe ImportantNoticeGeneratorJob do
             school_move_log_entry: school_move_log_entry_a
           )
 
-          expect do
+          important_notices =
+            ImportantNotice
+              .active(team: team_a)
+              .team_changed
+              .where(patient: patient_no_association)
+
+          expect {
             described_class.perform_now([patient_no_association.id])
-          end.not_to(
-            change do
-              ImportantNotice
-                .active(team: team_a)
-                .team_changed
-                .where(patient: patient_no_association)
-                .count
-            end
-          )
+          }.not_to change(important_notices, :count)
         end
       end
     end
