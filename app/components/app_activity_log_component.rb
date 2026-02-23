@@ -415,7 +415,14 @@ class AppActivityLogComponent < ViewComponent::Base
           "Record added #{vaccination_record.reported_at.to_fs(:long)}. " \
             "Vaccination given #{vaccination_record.performed_at.to_date.to_fs(:long)}."
         end
-      at = historical_vaccination_event?(vaccination_record) ? vaccination_record.reported_at : vaccination_record.performed_at
+      at =
+        (
+          if historical_vaccination_event?(vaccination_record)
+            vaccination_record.reported_at
+          else
+            vaccination_record.performed_at
+          end
+        )
 
       kept = {
         title:,
@@ -441,10 +448,10 @@ class AppActivityLogComponent < ViewComponent::Base
 
   def historical_vaccination_event?(vaccination_record)
     vaccination_record.reported_at.present? &&
-    (
-      vaccination_record.sourced_from_manual_report? ||
-        vaccination_record.sourced_from_historical_upload?
-    )
+      (
+        vaccination_record.sourced_from_manual_report? ||
+          vaccination_record.sourced_from_historical_upload?
+      )
   end
 
   def attendance_events

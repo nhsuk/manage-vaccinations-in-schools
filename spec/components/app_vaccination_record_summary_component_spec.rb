@@ -116,7 +116,12 @@ describe AppVaccinationRecordSummaryComponent do
     context "when manually reported that vaccination was already had" do
       let(:source) { "manual_report" }
 
-      it { should_not have_css(".nhsuk-summary-list__row", text: "MethodIntramuscular") }
+      it do
+        expect(rendered).not_to have_css(
+          ".nhsuk-summary-list__row",
+          text: "MethodIntramuscular"
+        )
+      end
     end
   end
 
@@ -131,7 +136,12 @@ describe AppVaccinationRecordSummaryComponent do
     context "when manually reported that vaccination was already had" do
       let(:source) { "manual_report" }
 
-      it { should_not have_css(".nhsuk-summary-list__row", text: "MethodIntramuscular") }
+      it do
+        expect(rendered).not_to have_css(
+          ".nhsuk-summary-list__row",
+          text: "MethodIntramuscular"
+        )
+      end
     end
   end
 
