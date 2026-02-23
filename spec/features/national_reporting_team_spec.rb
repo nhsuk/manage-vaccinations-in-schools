@@ -35,7 +35,6 @@ describe "National reporting team homepage and navigation" do
     and_i_search_for_a_child(search_term: "Harry")
     and_i_click_on_the_childs_card(given_name: "Harry", family_name: "Potter")
     then_i_should_see_vaccinations_then_child_details
-    and_the_activity_log_is_hidden
     and_child_cannot_be_archived
     and_child_does_not_look_archived
   end
@@ -211,10 +210,6 @@ describe "National reporting team homepage and navigation" do
 
   def and_i_should_not_see_add_parent_button
     expect(page).not_to have_content("Add parent or guardian")
-  end
-
-  def and_the_activity_log_is_hidden
-    expect(page).not_to have_content("Activity log")
   end
 
   def and_i_should_see_the_national_reporting_service_guide_link

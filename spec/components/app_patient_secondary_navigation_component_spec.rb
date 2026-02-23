@@ -30,37 +30,58 @@ describe AppPatientSecondaryNavigationComponent do
   context "when authorised" do
     let(:allowed) { true }
 
-    context "with the child record tab selected by default" do
-      it "renders the navigation with child record tab selected" do
-        expect(rendered).to have_css(
-          ".app-secondary-navigation",
-          text: "Child record"
-        )
-        expect(rendered).to have_css(".app-secondary-navigation", text: "Flu")
-        expect(rendered).to have_css(".app-secondary-navigation", text: "HPV")
-        expect(rendered).to have_css(
-          ".app-secondary-navigation__current",
-          text: "Child record"
-        )
+    context "with the :child_record_redesign feature flag enabled" do
+      before { Flipper.enable(:child_record_redesign) }
+
+      context "with the child record tab selected by default" do
+        it "renders the navigation with child record tab selected" do
+          expect(rendered).to have_css(
+            ".app-secondary-navigation",
+            text: "Child record"
+          )
+          expect(rendered).to have_css(".app-secondary-navigation", text: "Flu")
+          expect(rendered).to have_css(".app-secondary-navigation", text: "HPV")
+          expect(rendered).to have_css(
+            ".app-secondary-navigation__current",
+            text: "Child record"
+          )
+        end
+      end
+
+      context "with the Flu tab selected" do
+        let(:component) do
+          described_class.new(patient:, current_user:, selected_tab: "flu")
+        end
+
+        it "renders the navigation with Flu tab selected when declared" do
+          expect(rendered).to have_css(
+            ".app-secondary-navigation",
+            text: "Child record"
+          )
+          expect(rendered).to have_css(".app-secondary-navigation", text: "Flu")
+          expect(rendered).to have_css(".app-secondary-navigation", text: "HPV")
+          expect(rendered).to have_css(
+            ".app-secondary-navigation__current",
+            text: "Flu"
+          )
+        end
       end
     end
 
-    context "with the Flu tab selected" do
-      let(:component) do
-        described_class.new(patient:, current_user:, selected_tab: "flu")
-      end
+    context "with the :child_record_redesign feature flag disabled" do
+      before { Flipper.disable(:child_record_redesign) }
 
-      it "renders the navigation with Flu tab selected when declared" do
-        expect(rendered).to have_css(
-          ".app-secondary-navigation",
-          text: "Child record"
-        )
-        expect(rendered).to have_css(".app-secondary-navigation", text: "Flu")
-        expect(rendered).to have_css(".app-secondary-navigation", text: "HPV")
-        expect(rendered).to have_css(
-          ".app-secondary-navigation__current",
-          text: "Flu"
-        )
+      context "with the child record tab selected by default" do
+        it "renders the navigation with child record tab selected" do
+          expect(rendered).to have_css(
+            ".app-secondary-navigation",
+            text: "Child’s details"
+          )
+          expect(rendered).to have_css(
+            ".app-secondary-navigation",
+            text: "Activity log"
+          )
+        end
       end
     end
   end

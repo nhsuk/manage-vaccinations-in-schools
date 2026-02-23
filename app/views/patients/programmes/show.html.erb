@@ -10,12 +10,12 @@
 <%= render AppPatientSecondaryNavigationComponent.new(
       patient: @patient,
       current_user: current_user,
-      selected_tab: @programme.type
+      selected_tab: @programme.type,
     ) %>
 
 <%= render AppCardComponent.new(section: true) do |card| %>
   <% card.with_heading { "Vaccinations" } %>
   <%= render AppPatientVaccinationTableComponent.new(
-        @patient, academic_year: AcademicYear.current, show_caption: false, programme: @programme
+        @patient, academic_year: AcademicYear.current, show_caption: false, programme: @programme,
       ) %>
 <% end %>
