@@ -22,14 +22,16 @@ class DraftSchoolsController < ApplicationController
   def update
     authorize Location, :create?, policy_class: SchoolPolicy
 
+    @draft_school.assign_attributes(update_params)
+
     case current_step
     when :school
       handle_school
     when :confirm
       handle_confirm
-    else
-      @draft_school.assign_attributes(update_params)
     end
+
+    jump_to("confirm") if @draft_school.editing? && current_step != :confirm
 
     reload_steps
 
@@ -61,7 +63,7 @@ class DraftSchoolsController < ApplicationController
   end
 
   def set_address
-    parent_school = @draft_school.parent_school
+    parent_school = @draft_school.source_location
 
     @draft_school.address_line_1 ||= parent_school&.address_line_1
     @draft_school.address_line_2 ||= parent_school&.address_line_2
@@ -95,38 +97,47 @@ class DraftSchoolsController < ApplicationController
 
     @draft_school.assign_attributes(update_params)
 
-    parent_school = @draft_school.parent_school
-    @school = parent_school.dup
+    source_school = @draft_school.source_location
 
-    @school.assign_attributes(
-      urn: @draft_school.urn,
-      site: @draft_school.next_site_letter,
-      name: @draft_school.name,
-      address_line_1: @draft_school.address_line_1,
-      address_line_2: @draft_school.address_line_2,
-      address_town: @draft_school.address_town,
-      address_postcode: @draft_school.address_postcode
-    )
+    if @draft_school.editing?
+      @draft_school.write_to!(source_school)
 
-    ActiveRecord::Base.transaction do
-      @school.save!
-      academic_year = AcademicYear.pending
+      source_school.save!
 
-      parent_school
-        .teams_for_academic_year(academic_year)
-        .each do |team|
-          @school.attach_to_team!(team, academic_year:)
-          @school.import_year_groups_from_gias!(academic_year:)
-          @school.import_default_programme_year_groups!(
-            team.programmes,
-            academic_year:
-          )
-        end
+      flash[:success] = "#{source_school.name} has been updated."
+    else
+      @school = source_school.dup
 
-      parent_school.update!(site: "A") if parent_school.site.nil?
+      @school.assign_attributes(
+        urn: @draft_school.urn,
+        site: @draft_school.next_site_letter,
+        name: @draft_school.name,
+        address_line_1: @draft_school.address_line_1,
+        address_line_2: @draft_school.address_line_2,
+        address_town: @draft_school.address_town,
+        address_postcode: @draft_school.address_postcode
+      )
+
+      ActiveRecord::Base.transaction do
+        @school.save!
+        academic_year = AcademicYear.pending
+
+        source_school
+          .teams_for_academic_year(academic_year)
+          .each do |team|
+            @school.attach_to_team!(team, academic_year:)
+            @school.import_year_groups_from_gias!(academic_year:)
+            @school.import_default_programme_year_groups!(
+              team.programmes,
+              academic_year:
+            )
+          end
+
+        source_school.update!(site: "A") if source_school.site.nil?
+      end
+
+      flash[:success] = "#{@school.name} has been added to your team."
     end
-
-    flash[:success] = "#{@school.name} has been added to your team."
 
     @draft_school.clear!
   end

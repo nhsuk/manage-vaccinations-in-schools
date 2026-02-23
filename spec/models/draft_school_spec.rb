@@ -120,38 +120,61 @@ describe DraftSchool do
   end
 
   describe "#wizard_steps" do
-    let(:attributes) { {} }
+    context "when creating a new site" do
+      let(:attributes) { {} }
 
-    it "returns the correct steps" do
-      expect(draft_school.wizard_steps).to eq(%i[school details confirm])
+      it "returns all steps including school selection" do
+        expect(draft_school.wizard_steps).to eq(%i[school details confirm])
+      end
+    end
+
+    context "when editing an existing site" do
+      let(:attributes) { { editing_id: school.id } }
+
+      it "skips the school selection step" do
+        expect(draft_school.wizard_steps).to eq(%i[details confirm])
+      end
     end
   end
 
-  describe "#parent_school" do
-    context "when urn_and_site is nil" do
-      let(:attributes) { { parent_urn_and_site: nil } }
+  describe "#source_location" do
+    context "when adding a new site" do
+      context "when parent_urn_and_site is nil" do
+        let(:attributes) { { parent_urn_and_site: nil } }
 
-      it { expect(draft_school.parent_school).to be_nil }
+        it { expect(draft_school.source_location).to be_nil }
+      end
+
+      context "when parent_urn_and_site is set" do
+        let(:attributes) { { parent_urn_and_site: school.urn_and_site } }
+
+        it { expect(draft_school.source_location).to eq(school) }
+      end
+
+      context "when parent_urn_and_site does not match any school" do
+        let(:attributes) { { parent_urn_and_site: "999999" } }
+
+        it { expect(draft_school.source_location).to be_nil }
+      end
+
+      context "when school belongs to a different team" do
+        let(:other_team) { create(:team) }
+        let(:other_school) { create(:school, :secondary, team: other_team) }
+        let(:attributes) { { parent_urn_and_site: other_school.urn_and_site } }
+
+        it { expect(draft_school.source_location).to be_nil }
+      end
     end
 
-    context "when urn_and_site is set" do
-      let(:attributes) { { parent_urn_and_site: school.urn_and_site } }
+    context "when editing an existing site" do
+      let(:existing_site) do
+        create(:school, urn: school.urn, site: "A", name: "Site A")
+      end
+      let(:attributes) { { editing_id: existing_site.id } }
 
-      it { expect(draft_school.parent_school).to eq(school) }
-    end
-
-    context "when urn_and_site does not match any school" do
-      let(:attributes) { { parent_urn_and_site: "999999" } }
-
-      it { expect(draft_school.parent_school).to be_nil }
-    end
-
-    context "when school belongs to a different team" do
-      let(:other_team) { create(:team) }
-      let(:other_school) { create(:school, :secondary, team: other_team) }
-      let(:attributes) { { parent_urn_and_site: other_school.urn_and_site } }
-
-      it { expect(draft_school.parent_school).to be_nil }
+      it "returns the location being edited" do
+        expect(draft_school.source_location).to eq(existing_site)
+      end
     end
   end
 
@@ -342,15 +365,161 @@ describe DraftSchool do
         end
       end
     end
+
+    context "when editing an existing site" do
+      let(:existing_site) do
+        create(:school, urn: school.urn, site: "A", name: "Site A")
+      end
+      let(:attributes) { { editing_id: existing_site.id } }
+
+      it "returns the location's urn_and_site" do
+        expect(draft_school.urn_and_site).to eq(existing_site.urn_and_site)
+      end
+    end
   end
 
-  describe "#source_location" do
+  describe "#urn" do
     context "when creating a new site" do
       let(:attributes) { valid_attributes }
 
-      it "returns the parent school" do
-        expect(draft_school.source_location).to eq(school)
+      it "returns the parent school's URN" do
+        expect(draft_school.urn).to eq(school.urn)
       end
+    end
+
+    context "when editing an existing site" do
+      let(:existing_site) do
+        create(:school, urn: "654321", site: "A", name: "Site A")
+      end
+      let(:attributes) { { editing_id: existing_site.id } }
+
+      it "returns the location's URN" do
+        expect(draft_school.urn).to eq("654321")
+      end
+    end
+  end
+
+  describe "#next_site_letter" do
+    let(:attributes) { valid_attributes }
+
+    context "when no sites exist" do
+      it "returns B" do
+        expect(draft_school.next_site_letter).to eq("B")
+      end
+    end
+
+    context "when site A exists" do
+      before { create(:school, urn: school.urn, site: "A") }
+
+      it "returns B" do
+        expect(draft_school.next_site_letter).to eq("B")
+      end
+    end
+
+    context "when sites A and B exist" do
+      before do
+        create(:school, urn: school.urn, site: "A")
+        create(:school, urn: school.urn, site: "B")
+      end
+
+      it "returns C" do
+        expect(draft_school.next_site_letter).to eq("C")
+      end
+    end
+
+    context "when site Z exists" do
+      before { create(:school, urn: school.urn, site: "Z") }
+
+      it "returns AA" do
+        expect(draft_school.next_site_letter).to eq("AA")
+      end
+    end
+  end
+
+  describe "#year_groups" do
+    context "when creating a new site" do
+      let(:attributes) { valid_attributes }
+
+      it "returns the parent school's year groups" do
+        expect(draft_school.year_groups).to eq(school.year_groups)
+      end
+    end
+
+    context "when editing an existing site" do
+      let(:existing_site) do
+        create(:school, urn: school.urn, site: "A", gias_year_groups: [10, 11])
+      end
+      let(:attributes) { { editing_id: existing_site.id } }
+
+      it "returns the location's year groups" do
+        expect(draft_school.year_groups).to eq(existing_site.year_groups)
+      end
+    end
+  end
+
+  describe "#programmes" do
+    context "when creating a new site" do
+      let(:programmes) { [Programme.hpv] }
+      let(:attributes) { valid_attributes }
+
+      it "returns the parent school's programmes" do
+        expect(draft_school.programmes).to match_array(school.programmes)
+      end
+    end
+
+    context "when editing an existing site" do
+      let(:programmes) { [Programme.hpv, Programme.flu] }
+      let(:existing_site) do
+        create(:school, urn: school.urn, site: "A", team:, programmes:)
+      end
+      let(:attributes) { { editing_id: existing_site.id } }
+
+      it "returns the location's programmes" do
+        expect(draft_school.programmes).to match_array(programmes)
+      end
+    end
+  end
+
+  describe "#human_enum_name" do
+    context "when creating a new site" do
+      let(:attributes) { valid_attributes }
+
+      it "delegates to the parent school" do
+        expect(draft_school.human_enum_name(:phase)).to eq(
+          school.human_enum_name(:phase)
+        )
+      end
+    end
+
+    context "when editing an existing site" do
+      let(:existing_site) do
+        create(:school, :primary, urn: school.urn, site: "A")
+      end
+      let(:attributes) { { editing_id: existing_site.id } }
+
+      it "delegates to the location being edited" do
+        expect(draft_school.human_enum_name(:phase)).to eq("Primary")
+      end
+    end
+  end
+
+  describe "#readable_attribute_names" do
+    let(:attributes) { {} }
+
+    it "returns the list of readable attributes" do
+      expect(draft_school.readable_attribute_names).to eq(
+        %w[name address_line_1 address_line_2 address_town address_postcode]
+      )
+    end
+  end
+
+  describe "#writable_attribute_names" do
+    let(:attributes) { {} }
+
+    it "returns the list of writable attributes" do
+      expect(draft_school.writable_attribute_names).to eq(
+        %w[name address_line_1 address_line_2 address_town address_postcode]
+      )
     end
   end
 end

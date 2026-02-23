@@ -12,4 +12,16 @@ class Teams::SchoolsController < ApplicationController
 
     redirect_to draft_school_path(:school)
   end
+
+  def edit
+    school = Location.find_by_urn_and_site(params[:urn_and_site])
+    authorize school, :edit?, policy_class: SchoolPolicy
+
+    draft_school = DraftSchool.new(request_session: session, current_user:)
+    draft_school.clear!
+    draft_school.clear_changes_information
+    draft_school.read_from!(school)
+
+    redirect_to draft_school_path(:confirm)
+  end
 end

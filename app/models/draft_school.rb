@@ -34,7 +34,7 @@ class DraftSchool
   end
 
   def wizard_steps
-    %i[school details confirm]
+    [(:school unless editing?), :details, :confirm].compact
   end
 
   on_wizard_step :school, exact: true do
@@ -55,24 +55,25 @@ class DraftSchool
     validates :address_postcode, postcode: true
   end
 
-  def parent_school
+  # Returns the source location based on context:
+  # - When editing: the location being edited
+  # - When adding site: the parent school to add a site to
+  def source_location
+    return Location.find(editing_id) if editing?
     return nil if parent_urn_and_site.blank?
 
-    @parent_school ||=
-      LocationPolicy::Scope
-        .new(@current_user, Location)
-        .resolve
-        .find_by_urn_and_site(parent_urn_and_site)
-  end
-
-  def urn
-    parent_school&.urn
+    LocationPolicy::Scope
+      .new(@current_user, Location)
+      .resolve
+      .find_by_urn_and_site(parent_urn_and_site)
   end
 
   def existing_names
     return [] if urn.blank?
 
-    Location.where(urn:).pluck(:name)
+    scope = Location.where(urn:)
+    scope = scope.where.not(id: editing_id) if editing?
+    scope.pluck(:name)
   end
 
   def request_session_key = "draft_school"
@@ -86,10 +87,26 @@ class DraftSchool
     ].compact_blank
   end
 
-  def urn_and_site
-    return nil if urn.blank?
+  def readable_attribute_names
+    writable_attribute_names
+  end
 
-    "#{urn}#{next_site_letter}"
+  def writable_attribute_names
+    %w[name address_line_1 address_line_2 address_town address_postcode]
+  end
+
+  def urn
+    source_location&.urn
+  end
+
+  def urn_and_site
+    if editing?
+      source_location&.urn_and_site
+    else
+      return nil if urn.blank?
+
+      "#{urn}#{next_site_letter}"
+    end
   end
 
   def next_site_letter
@@ -99,10 +116,6 @@ class DraftSchool
     return "B" if existing_sites.empty?
 
     existing_sites.max_by { [it.length, it] }.next
-  end
-
-  def source_location
-    parent_school
   end
 
   def year_groups
