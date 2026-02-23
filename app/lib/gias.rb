@@ -44,6 +44,9 @@ module GIAS
         logger.info "Download button never appeared, aborting"
         false
       end
+    rescue StandardError => e
+      logger.error "#{e.class}: #{e.message}"
+      raise
     end
 
     def import(input_file:, progress_bar: nil, logger: Rails.logger)
@@ -89,6 +92,11 @@ module GIAS
           update_sites(schools)
         end
       end
+
+      logger.info "Import complete"
+    rescue StandardError => e
+      logger.error "#{e.class}: #{e.message}"
+      raise
     end
 
     def check_import(input_file:, progress_bar: nil)
@@ -259,6 +267,9 @@ That are proposed to be closed in import: #{schools_with_future_sessions[:closin
           logger.info "    New:      #{change[:new]}"
         end
       end
+    rescue StandardError => e
+      logger.error "#{e.class}: #{e.message}"
+      raise
     end
 
     def process_url(url)
