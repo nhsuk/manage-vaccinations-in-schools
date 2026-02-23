@@ -132,8 +132,10 @@ describe "HPV vaccination" do
         :patient,
         :consent_given_triage_not_needed,
         :in_attendance,
+        programmes: [programme],
         session: @session
       )
+    PatientStatusUpdater.call(patient: @patient)
 
     sign_in team.users.first
   end
