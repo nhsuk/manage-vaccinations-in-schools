@@ -9,7 +9,7 @@ Faker::Config.locale = "en-GB"
 
 def set_feature_flags
   FeatureFlagFactory.call
-  FeatureFlagFactory.enable_for_development!
+  FeatureFlagFactory.enable_for_development!(check_rails_env: false)
 end
 
 def seed_vaccines
