@@ -45,7 +45,8 @@ class PatientProgrammeStatusResolver
   def prefix = programme_status.programme.name
 
   def text
-    if programme_status.due? && (count = programme_status.dose_sequence)
+    if programme_status.due? && programme_status.programme.mmr? &&
+         (count = programme_status.dose_sequence)
       "Due #{count.ordinalize} dose"
     else
       I18n.t(programme_status.status, scope: %i[status programme label])
