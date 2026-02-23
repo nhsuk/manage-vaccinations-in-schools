@@ -149,10 +149,8 @@ describe "Immunisation imports duplicates" do
   end
 
   def and_i_upload_a_file_with_duplicate_records
-    attach_file(
-      "immunisation_import[csv]",
-      "spec/fixtures/immunisation_import/point_of_care/valid_hpv.csv"
-    )
+    attach_file_fixture "immunisation_import[csv]",
+                        "immunisation_import/point_of_care/valid_hpv.csv"
     click_on "Continue"
     wait_for_import_to_complete(ImmunisationImport)
   end

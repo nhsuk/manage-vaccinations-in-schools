@@ -212,10 +212,7 @@ describe "Class list imports duplicates" do
   end
 
   def and_i_upload_a_file_with_duplicate_records
-    attach_file(
-      "class_import[csv]",
-      "spec/fixtures/class_import/duplicates.csv"
-    )
+    attach_file_fixture "class_import[csv]", "class_import/duplicates.csv"
     click_on "Continue"
     wait_for_import_to_complete(ClassImport)
   end
