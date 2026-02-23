@@ -485,7 +485,7 @@ GEM
       activesupport (>= 3.0.0)
     raabro (1.4.0)
     racc (1.8.1)
-    rack (3.2.4)
+    rack (3.2.5)
     rack-oauth2 (2.3.0)
       activesupport
       attr_required
@@ -555,7 +555,7 @@ GEM
     redcarpet (3.6.1)
     redis (5.4.1)
       redis-client (>= 0.22.0)
-    redis-client (0.26.3)
+    redis-client (0.26.4)
       connection_pool
     redis-prescription (2.6.0)
     regexp_parser (2.11.3)
@@ -657,11 +657,12 @@ GEM
     sentry-rails (6.3.0)
       railties (>= 5.2.0)
       sentry-ruby (~> 6.3.0)
-    sentry-ruby (6.3.0)
+    sentry-ruby (6.3.1)
       bigdecimal
       concurrent-ruby (~> 1.0, >= 1.0.2)
-    sentry-sidekiq (6.3.0)
-      sentry-ruby (~> 6.3.0)
+      logger
+    sentry-sidekiq (6.3.1)
+      sentry-ruby (~> 6.3.1)
       sidekiq (>= 5.0)
     shoulda-matchers (7.0.1)
       activesupport (>= 7.1)
