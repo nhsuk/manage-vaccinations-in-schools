@@ -168,6 +168,7 @@ rescue ActiveRecord::PendingMigrationError => e
 end
 
 RSpec::Matchers.define_negated_matcher :not_change, :change
+
 RSpec.configure do |config|
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
   config.fixture_paths = [Rails.root.join("/spec/fixtures")]

@@ -132,10 +132,8 @@ describe("National reporting immunisation imports") do
   end
 
   def when_i_upload_an_invalid_file
-    attach_file(
-      "immunisation_import[csv]",
-      "spec/fixtures/immunisation_import/national_reporting/invalid_rows.csv"
-    )
+    attach_file_fixture "immunisation_import[csv]",
+                        "immunisation_import/national_reporting/invalid_rows.csv"
     click_on "Continue"
     wait_for_import_to_complete(ImmunisationImport)
   end
@@ -162,10 +160,8 @@ describe("National reporting immunisation imports") do
   end
 
   def and_i_upload_a_valid_mixed_file
-    attach_file(
-      "immunisation_import[csv]",
-      "spec/fixtures/immunisation_import/national_reporting/valid_mixed_flu_hpv.csv"
-    )
+    attach_file_fixture "immunisation_import[csv]",
+                        "immunisation_import/national_reporting/valid_mixed_flu_hpv.csv"
     click_on "Continue"
     wait_for_import_to_complete(ImmunisationImport)
   end

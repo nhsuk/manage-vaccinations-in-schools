@@ -4,14 +4,7 @@ module NotifyTemplateHelper
   def populate_notify_template(personalisation)
     return unless RSpec.current_example.metadata[:notify_template]
 
-    template_path = Rails.root.join("spec/fixtures/notify_template.txt")
-
-    unless File.exist?(template_path)
-      puts "[WARNING] Template file not found at: #{template_path}"
-      return
-    end
-
-    template = File.read(template_path)
+    template = file_fixture("notify-template.txt").read
 
     # Replace ((variable??text)) conditionals
     populated =

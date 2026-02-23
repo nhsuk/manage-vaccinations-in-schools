@@ -12,7 +12,7 @@ describe BulkRemoveParentRelationshipsJob do
 
   let(:team) { create(:team) }
   let(:file) { "valid.csv" }
-  let(:csv) { fixture_file_upload("spec/fixtures/class_import/#{file}") }
+  let(:csv) { fixture_file_upload("class_import/#{file}") }
   let(:import) { create(:class_import, csv:, team:) }
 
   let(:user) { create(:user, team:) }

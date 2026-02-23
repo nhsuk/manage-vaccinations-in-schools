@@ -46,7 +46,7 @@ describe ClassImport do
   let(:session) { create(:session, location:, programmes:, team:) }
 
   let(:file) { "valid.csv" }
-  let(:csv) { fixture_file_upload("spec/fixtures/class_import/#{file}") }
+  let(:csv) { fixture_file_upload("class_import/#{file}") }
 
   it_behaves_like "a CSVImportable model"
 

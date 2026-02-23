@@ -281,10 +281,14 @@ describe "Import child records" do
     Flipper.enable(:import_search_pds)
     Flipper.enable(:import_low_pds_match_rate)
 
-    csv_path =
-      Rails.root.join("spec/fixtures/cohort_import/pds_extravaganza.csv")
+    csv =
+      CSV.new(
+        file_fixture("cohort_import/pds_extravaganza.csv").read,
+        headers: true,
+        header_converters: :symbol
+      )
 
-    CSV.foreach(csv_path, headers: true, header_converters: :symbol) do |row|
+    csv.each do |row|
       family_name = row[:child_last_name]
       given_name = row[:child_first_name]
       birthdate = row[:child_date_of_birth]
@@ -459,7 +463,7 @@ describe "Import child records" do
     click_button "Upload records"
     choose "Child records"
     click_button "Continue"
-    attach_file("cohort_import[csv]", "spec/fixtures/cohort_import/#{filename}")
+    attach_file_fixture "cohort_import[csv]", "cohort_import/#{filename}"
     click_on "Continue"
 
     wait_for_import_to_complete(CohortImport)
@@ -494,10 +498,7 @@ describe "Import child records" do
   end
 
   def when_i_upload_a_valid_file
-    attach_file(
-      "class_import[csv]",
-      "spec/fixtures/class_import/pds_extravaganza.csv"
-    )
+    attach_file_fixture "class_import[csv]", "class_import/pds_extravaganza.csv"
     click_on "Continue"
     wait_for_import_to_complete(ClassImport)
   end
