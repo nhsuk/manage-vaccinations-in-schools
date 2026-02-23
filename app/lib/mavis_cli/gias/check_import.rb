@@ -13,9 +13,10 @@ module MavisCLI
       def call(input_file:, **)
         MavisCLI.load_rails
 
-        logger = Logger.new($stdout)
-        logger.formatter =
+        base_logger = Logger.new($stdout)
+        base_logger.formatter =
           proc { |_severity, _datetime, _progname, msg| "#{msg}\n" }
+        logger = ActiveSupport::TaggedLogging.new(base_logger)
 
         row_count = ::GIAS.row_count(input_file)
         progress_bar = MavisCLI.progress_bar(row_count)

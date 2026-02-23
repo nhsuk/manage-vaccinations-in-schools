@@ -21,9 +21,10 @@ module MavisCLI
              desc: "file path to write GIAS database to"
 
       def call(output_file:, **)
-        logger = Logger.new($stdout)
-        logger.formatter =
+        base_logger = Logger.new($stdout)
+        base_logger.formatter =
           proc { |_severity, _datetime, _progname, msg| "#{msg}\n" }
+        logger = ActiveSupport::TaggedLogging.new(base_logger)
 
         ::GIAS.download(output_file:, logger:)
       end
