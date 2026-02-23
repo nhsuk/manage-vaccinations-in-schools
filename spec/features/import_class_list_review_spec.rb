@@ -158,30 +158,22 @@ describe "Import class lists" do
   end
 
   def when_i_upload_a_valid_file
-    attach_file(
-      "class_import[csv]",
-      "spec/fixtures/class_import/review_one.csv"
-    )
+    attach_file_fixture "class_import[csv]", "class_import/review_one.csv"
     click_on "Continue"
     wait_for_import_to_complete_until_review(ClassImport)
   end
 
   def when_i_upload_another_valid_file
     travel_to Time.zone.now + 10.minutes do
-      attach_file(
-        "class_import[csv]",
-        "spec/fixtures/class_import/review_two.csv"
-      )
+      attach_file_fixture "class_import[csv]", "class_import/review_two.csv"
       click_on "Continue"
       wait_for_import_to_complete_until_review(ClassImport)
     end
   end
 
   def when_i_upload_a_file_with_one_new_patient
-    attach_file(
-      "class_import[csv]",
-      "spec/fixtures/class_import/review_one_new_patient.csv"
-    )
+    attach_file_fixture "class_import[csv]",
+                        "class_import/review_one_new_patient.csv"
     click_on "Continue"
     wait_for_import_to_complete_until_review(ClassImport)
   end

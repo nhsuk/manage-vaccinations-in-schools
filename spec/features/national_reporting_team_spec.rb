@@ -158,10 +158,8 @@ describe "National reporting team homepage and navigation" do
   def and_i_upload_a_valid_file
     visit imports_path
     click_on "Upload records"
-    attach_file(
-      "immunisation_import[csv]",
-      "spec/fixtures/immunisation_import/national_reporting/valid_mixed_flu_hpv.csv"
-    )
+    attach_file_fixture "immunisation_import[csv]",
+                        "immunisation_import/national_reporting/valid_mixed_flu_hpv.csv"
     click_on "Continue"
     wait_for_import_to_complete(ImmunisationImport)
     expect(page).to have_content("2 imported records")

@@ -275,10 +275,8 @@ describe "Offline vaccination" do
     choose "Vaccination records"
     click_on "Continue"
 
-    attach_file(
-      "immunisation_import[csv]",
-      "spec/fixtures/immunisation_import/valid_hpv_offline_spreadsheet.csv"
-    )
+    attach_file_fixture "immunisation_import[csv]",
+                        "immunisation_import/valid_hpv_offline_spreadsheet.csv"
     click_on "Continue"
     wait_for_import_to_complete(ImmunisationImport)
   end

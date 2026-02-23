@@ -24,7 +24,7 @@ describe API::Testing::TeamsController do
     let(:cohort_import) do
       create(
         :cohort_import,
-        csv: fixture_file_upload("spec/fixtures/cohort_import/valid.csv"),
+        csv: fixture_file_upload("cohort_import/valid.csv"),
         team:
       )
     end
@@ -34,7 +34,7 @@ describe API::Testing::TeamsController do
         :immunisation_import,
         csv:
           fixture_file_upload(
-            "spec/fixtures/immunisation_import/point_of_care/valid_hpv.csv"
+            "immunisation_import/point_of_care/valid_hpv.csv"
           ),
         team:
       )

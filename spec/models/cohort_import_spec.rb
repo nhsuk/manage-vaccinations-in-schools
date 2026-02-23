@@ -40,7 +40,7 @@ describe CohortImport do
   let(:team) { create(:team, :with_generic_clinic, programmes:) }
 
   let(:file) { "valid.csv" }
-  let(:csv) { fixture_file_upload("spec/fixtures/cohort_import/#{file}") }
+  let(:csv) { fixture_file_upload("cohort_import/#{file}") }
   let(:academic_year) { AcademicYear.current }
 
   # Ensure location URN matches the URN in our fixture files
