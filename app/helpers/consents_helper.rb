@@ -66,4 +66,28 @@ module ConsentsHelper
       govuk_tag(text:, classes: "nhsuk-tag--#{colour}")
     end
   end
+
+  def consent_parent_name(consentable)
+    consentable.parent_full_name.presence ||
+      (consentable.respond_to?(:parent) ? consentable.parent&.full_name : nil)
+  end
+
+  def consent_parent_email(consentable)
+    consentable.parent_email.presence ||
+      (consentable.respond_to?(:parent) ? consentable.parent&.email : nil)
+  end
+
+  def consent_parent_phone(consentable)
+    consentable.parent_phone.presence ||
+      (consentable.respond_to?(:parent) ? consentable.parent&.phone : nil)
+  end
+
+  def consent_parent_phone_receive_updates(consentable)
+    value = consentable.parent_phone_receive_updates
+    if value.nil? && consentable.respond_to?(:parent)
+      consentable.parent&.phone_receive_updates
+    else
+      value
+    end
+  end
 end
