@@ -931,7 +931,10 @@
     <span class="ruby-keyword">if</span> <span class="ruby-identifier">address_postcode</span>.<span class="ruby-identifier">nil?</span>
       <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_POSTCODE&lt;/code&gt; is required&quot;</span>)
     <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">address_postcode</span>.<span class="ruby-identifier">blank?</span>
-      <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">address_postcode</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;Enter a valid postcode, like SW1A 1AA.&quot;</span>)
+      <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(
+        <span class="ruby-identifier">address_postcode</span>.<span class="ruby-identifier">header</span>,
+        <span class="ruby-string">&quot;Enter a valid postcode, like SW1A 1AA.&quot;</span>
+      )
     <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">address_postcode</span>.<span class="ruby-identifier">to_postcode</span>.<span class="ruby-identifier">nil?</span>
       <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">address_postcode</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;should be a postcode, like SW1A 1AA&quot;</span>)
     <span class="ruby-keyword">end</span>
@@ -1099,7 +1102,10 @@
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">address_postcode</span>.<span class="ruby-identifier">nil?</span>
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_POSTCODE&lt;/code&gt; is required&quot;</span>)
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">address_postcode</span>.<span class="ruby-identifier">blank?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">address_postcode</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;Enter a valid postcode, like SW1A 1AA.&quot;</span>)
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(
+      <span class="ruby-identifier">address_postcode</span>.<span class="ruby-identifier">header</span>,
+      <span class="ruby-string">&quot;Enter a valid postcode, like SW1A 1AA.&quot;</span>
+    )
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">address_postcode</span>.<span class="ruby-identifier">to_postcode</span>.<span class="ruby-identifier">nil?</span>
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">address_postcode</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;should be a postcode, like SW1A 1AA&quot;</span>)
   <span class="ruby-keyword">end</span>
@@ -1142,7 +1148,7 @@
             </details>
           </div>
           <div class="method-source-code" id="validate_school_urn-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/cohort_import_row.rb, line 59</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/cohort_import_row.rb, line 62</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_school_urn</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">school_urn</span>.<span class="ruby-identifier">nil?</span>
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_SCHOOL_URN&lt;/code&gt; is required&quot;</span>)
