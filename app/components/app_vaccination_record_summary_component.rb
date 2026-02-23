@@ -45,7 +45,8 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
         row.with_value { programme_value }
       end
 
-      if @vaccination_record.administered? && !@vaccination_record.sourced_from_manual_report?
+      if @vaccination_record.administered? &&
+           !@vaccination_record.sourced_from_manual_report?
         summary_list.with_row do |row|
           row.with_key { "Vaccine" }
 
