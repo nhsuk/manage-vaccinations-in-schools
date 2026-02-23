@@ -605,6 +605,7 @@ en:
         hpv: Consent for the HPV vaccination
         menacwy: Consent for the MenACWY vaccination
         mmr: Consent for the MMR vaccination
+        mmrv: Consent for the MMRV vaccination
         td_ipv: Consent for the Td/IPV vaccination
       i_agree: Consent given
     notes:
@@ -621,6 +622,7 @@ en:
         hpv: Give or refuse consent for the HPV vaccination
         menacwy-td_ipv: Give or refuse consent for the MenACWY and Td/IPV vaccinations
         mmr: Give or refuse consent for an MMR catch-up vaccination
+        mmrv: Give or refuse consent for an MMRV catch-up vaccination
   dashboard:
     index:
       title: Home

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_17_111256) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_18_163043) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -202,6 +202,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_17_111256) do
 
   create_table "consent_form_programmes", force: :cascade do |t|
     t.bigint "consent_form_id", null: false
+    t.enum "disease_types", array: true, enum_type: "disease_type"
     t.text "notes", default: "", null: false
     t.enum "programme_type", null: false, enum_type: "programme_type"
     t.integer "reason_for_refusal"

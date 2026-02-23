@@ -5,6 +5,7 @@
 # Table name: consent_form_programmes
 #
 #  id                 :bigint           not null, primary key
+#  disease_types      :enum             is an Array
 #  notes              :text             default(""), not null
 #  programme_type     :enum             not null
 #  reason_for_refusal :integer
@@ -36,7 +37,11 @@ class ConsentFormProgramme < ApplicationRecord
   delegate :flu?, :hpv?, :menacwy?, :mmr?, :td_ipv?, to: :programme
 
   def disease_types
-    # TODO: Update this when we allow parents to submit consent for MMRV.
+    # Use database column if populated, otherwise fall back to default logic
+    # for records created before disease_types column was added
+    db_value = super
+    return db_value if db_value.present?
+
     if programme_type == "mmr"
       Programme::Variant::DISEASE_TYPES["mmr"]
     else
@@ -46,7 +51,7 @@ class ConsentFormProgramme < ApplicationRecord
 
   def vaccines
     VaccineCriteria.from_consentable(self).apply(
-      Vaccine.active.where(programme_type:)
+      Vaccine.active.where(programme_type:, disease_types:)
     )
   end
 
