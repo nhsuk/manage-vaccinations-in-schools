@@ -1,4 +1,8 @@
-class ChangeVaccinationRecordsSourceCheckConstraint < ActiveRecord::Migration[8.1]
+# frozen_string_literal: true
+
+class ChangeVaccinationRecordsSourceCheckConstraint < ActiveRecord::Migration[
+  8.1
+]
   def up
     remove_check_constraint :vaccination_records, name: "source_check"
 

@@ -71,10 +71,16 @@ class DraftVaccinationRecord
       (:outcome if can_change_outcome?),
       (:supplier if requires_supplied_by?),
       (:delivery if administered? && !reported_as_already_vaccinated?),
-      (:dose if administered? && can_be_half_dose? && !reported_as_already_vaccinated?),
+      (
+        if administered? && can_be_half_dose? &&
+             !reported_as_already_vaccinated?
+          :dose
+        end
+      ),
       (:batch if administered? && !reported_as_already_vaccinated?),
       (
-        if !reported_as_already_vaccinated? && (session&.generic_clinic? || national_reporting_user_and_record?)
+        if !reported_as_already_vaccinated? &&
+             (session&.generic_clinic? || national_reporting_user_and_record?)
           :location
         end
       ),
@@ -162,7 +168,8 @@ class DraftVaccinationRecord
 
   with_options on: :update,
                if: -> do
-                 required_for_step?(:confirm, exact: true) && administered? && !reported_as_already_vaccinated?
+                 required_for_step?(:confirm, exact: true) && administered? &&
+                   !reported_as_already_vaccinated?
                end do
     validates :delivery_method,
               :delivery_site,
@@ -191,7 +198,8 @@ class DraftVaccinationRecord
   end
 
   def reported_as_already_vaccinated?
-    Flipper.enabled?(:already_vaccinated) && administered? && sourced_from_manual_report?
+    Flipper.enabled?(:already_vaccinated) && administered? &&
+      sourced_from_manual_report?
   end
 
   # So that a form error matches to a field in this model
@@ -488,8 +496,10 @@ class DraftVaccinationRecord
   def can_be_half_dose? = vaccine_method == "nasal"
 
   def can_change_outcome?
-    ((outcome != "already_had" && reported_at.nil?) || editing? || session.nil? || session.today?) &&
-      !national_reporting_user_and_record?
+    (
+      (outcome != "already_had" && reported_at.nil?) || editing? ||
+        session.nil? || session.today?
+    ) && !national_reporting_user_and_record?
   end
 
   def requires_supplied_by?
