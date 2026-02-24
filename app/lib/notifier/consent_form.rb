@@ -11,14 +11,18 @@ class Notifier::ConsentForm
         .call(consent_form.given_consent_form_programmes)
         .each_value do |consent_form_programmes|
           programme_types = consent_form_programmes.map(&:programme_type)
-          send_confirmation_given(programme_types:)
+          disease_types =
+            consent_form_programmes.flat_map(&:disease_types).uniq.presence
+          send_confirmation_given(programme_types:, disease_types:)
         end
 
       ProgrammeGrouper
         .call(consent_form.refused_consent_form_programmes)
         .each_value do |consent_form_programmes|
           programme_types = consent_form_programmes.map(&:programme_type)
-          send_confirmation_refused(programme_types:)
+          disease_types =
+            consent_form_programmes.flat_map(&:disease_types).uniq.presence
+          send_confirmation_refused(programme_types:, disease_types:)
         end
     else
       send_confirmation_refused
@@ -51,9 +55,10 @@ class Notifier::ConsentForm
 
   attr_reader :consent_form
 
-  def send_confirmation_given(programme_types: nil)
+  def send_confirmation_given(programme_types: nil, disease_types: nil)
     params = { consent_form: }
     params[:programme_types] = programme_types if programme_types
+    params[:disease_types] = disease_types if disease_types
 
     if consent_form.health_answers_require_triage?
       EmailDeliveryJob.perform_later(:consent_confirmation_triage, **params)
@@ -68,9 +73,10 @@ class Notifier::ConsentForm
     end
   end
 
-  def send_confirmation_refused(programme_types: nil)
+  def send_confirmation_refused(programme_types: nil, disease_types: nil)
     params = { consent_form: }
     params[:programme_types] = programme_types if programme_types
+    params[:disease_types] = disease_types if disease_types
 
     EmailDeliveryJob.perform_later(:consent_confirmation_refused, **params)
 

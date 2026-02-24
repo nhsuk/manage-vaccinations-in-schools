@@ -44,6 +44,7 @@ describe ConsentNotification do
     let(:parents) { create_list(:parent, 2) }
     let(:patient) { create(:patient, parents:, session:) }
     let(:programmes) { [Programme.hpv] }
+    let(:disease_types) { programmes.flat_map(&:disease_types).uniq.presence }
     let(:programme_types) { programmes.map(&:type) }
     let(:team) { create(:team, programmes:) }
     let(:location) { create(:school, team:) }
@@ -67,12 +68,14 @@ describe ConsentNotification do
         expect { create_and_send! }.to have_delivered_email(
           :consent_school_request_hpv
         ).with(
+          disease_types:,
           parent: parents.first,
           patient:,
           programme_types:,
           session:,
           sent_by: current_user
         ).and have_delivered_email(:consent_school_request_hpv).with(
+                disease_types:,
                 parent: parents.second,
                 patient:,
                 programme_types:,
@@ -88,6 +91,7 @@ describe ConsentNotification do
           expect { create_and_send! }.to have_delivered_email(
             :consent_school_request_doubles
           ).with(
+            disease_types:,
             parent: parents.first,
             patient:,
             programme_types:,
@@ -104,6 +108,7 @@ describe ConsentNotification do
           expect { create_and_send! }.to have_delivered_email(
             :consent_school_request_flu
           ).with(
+            disease_types:,
             parent: parents.first,
             patient:,
             programme_types:,
@@ -117,12 +122,14 @@ describe ConsentNotification do
         expect { create_and_send! }.to have_delivered_sms(
           :consent_school_request
         ).with(
+          disease_types:,
           parent: parents.first,
           patient:,
           programme_types:,
           session:,
           sent_by: current_user
         ).and have_delivered_sms(:consent_school_request).with(
+                disease_types:,
                 parent: parents.second,
                 patient:,
                 programme_types:,
@@ -140,6 +147,7 @@ describe ConsentNotification do
           expect { create_and_send! }.to have_delivered_sms(
             :consent_school_request
           ).with(
+            disease_types:,
             parent:,
             patient:,
             programme_types:,
@@ -168,12 +176,14 @@ describe ConsentNotification do
         expect { create_and_send! }.to have_delivered_email(
           :consent_clinic_request
         ).with(
+          disease_types:,
           parent: parents.first,
           patient:,
           programme_types:,
           session:,
           sent_by: current_user
         ).and have_delivered_email(:consent_clinic_request).with(
+                disease_types:,
                 parent: parents.second,
                 patient:,
                 programme_types:,
@@ -186,12 +196,14 @@ describe ConsentNotification do
         expect { create_and_send! }.to have_delivered_sms(
           :consent_clinic_request
         ).with(
+          disease_types:,
           parent: parents.first,
           patient:,
           programme_types:,
           session:,
           sent_by: current_user
         ).and have_delivered_sms(:consent_clinic_request).with(
+                disease_types:,
                 parent: parents.second,
                 patient:,
                 programme_types:,
@@ -209,6 +221,7 @@ describe ConsentNotification do
           expect { create_and_send! }.to have_delivered_sms(
             :consent_clinic_request
           ).with(
+            disease_types:,
             parent:,
             patient:,
             programme_types:,
@@ -236,12 +249,14 @@ describe ConsentNotification do
         expect { create_and_send! }.to have_delivered_email(
           :consent_school_initial_reminder_hpv
         ).with(
+          disease_types:,
           parent: parents.first,
           patient:,
           programme_types:,
           session:,
           sent_by: current_user
         ).and have_delivered_email(:consent_school_initial_reminder_hpv).with(
+                disease_types:,
                 parent: parents.second,
                 patient:,
                 programme_types:,
@@ -257,6 +272,7 @@ describe ConsentNotification do
           expect { create_and_send! }.to have_delivered_email(
             :consent_school_initial_reminder_doubles
           ).with(
+            disease_types:,
             parent: parents.first,
             patient:,
             programme_types:,
@@ -273,6 +289,7 @@ describe ConsentNotification do
           expect { create_and_send! }.to have_delivered_email(
             :consent_school_initial_reminder_flu
           ).with(
+            disease_types:,
             parent: parents.first,
             patient:,
             programme_types:,
@@ -286,12 +303,14 @@ describe ConsentNotification do
         expect { create_and_send! }.to have_delivered_sms(
           :consent_school_reminder
         ).with(
+          disease_types:,
           parent: parents.first,
           patient:,
           programme_types:,
           session:,
           sent_by: current_user
         ).and have_delivered_sms(:consent_school_reminder).with(
+                disease_types:,
                 parent: parents.second,
                 patient:,
                 programme_types:,
@@ -309,6 +328,7 @@ describe ConsentNotification do
           expect { create_and_send! }.to have_delivered_sms(
             :consent_school_reminder
           ).with(
+            disease_types:,
             parent:,
             patient:,
             programme_types:,
@@ -336,6 +356,7 @@ describe ConsentNotification do
         expect { create_and_send! }.to have_delivered_email(
           :consent_school_subsequent_reminder_hpv
         ).with(
+          disease_types:,
           parent: parents.first,
           patient:,
           programme_types:,
@@ -344,6 +365,7 @@ describe ConsentNotification do
         ).and have_delivered_email(
                 :consent_school_subsequent_reminder_hpv
               ).with(
+                disease_types:,
                 parent: parents.second,
                 patient:,
                 programme_types:,
@@ -359,6 +381,7 @@ describe ConsentNotification do
           expect { create_and_send! }.to have_delivered_email(
             :consent_school_subsequent_reminder_doubles
           ).with(
+            disease_types:,
             parent: parents.first,
             patient:,
             programme_types:,
@@ -375,6 +398,7 @@ describe ConsentNotification do
           expect { create_and_send! }.to have_delivered_email(
             :consent_school_subsequent_reminder_flu
           ).with(
+            disease_types:,
             parent: parents.first,
             patient:,
             programme_types:,
@@ -388,12 +412,14 @@ describe ConsentNotification do
         expect { create_and_send! }.to have_delivered_sms(
           :consent_school_reminder
         ).with(
+          disease_types:,
           parent: parents.first,
           patient:,
           programme_types:,
           session:,
           sent_by: current_user
         ).and have_delivered_sms(:consent_school_reminder).with(
+                disease_types:,
                 parent: parents.second,
                 patient:,
                 programme_types:,
@@ -411,6 +437,7 @@ describe ConsentNotification do
           expect { create_and_send! }.to have_delivered_sms(
             :consent_school_reminder
           ).with(
+            disease_types:,
             parent:,
             patient:,
             programme_types:,

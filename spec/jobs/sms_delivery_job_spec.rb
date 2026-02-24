@@ -32,6 +32,7 @@ describe SMSDeliveryJob do
         academic_year:,
         consent:,
         consent_form:,
+        disease_types:,
         parent:,
         patient:,
         programme_types:,
@@ -46,6 +47,7 @@ describe SMSDeliveryJob do
     let(:academic_year) { session.academic_year }
     let(:consent) { nil }
     let(:consent_form) { nil }
+    let(:disease_types) { programmes.flat_map(&:disease_types) }
     let(:parent) { create(:parent, phone: "01234 567890") }
     let(:patient) { create(:patient) }
     let(:programme_types) { programmes.map(&:type) }
@@ -60,6 +62,7 @@ describe SMSDeliveryJob do
         academic_year:,
         consent:,
         consent_form:,
+        disease_types:,
         parent:,
         patient:,
         programme_types:,

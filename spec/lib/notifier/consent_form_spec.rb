@@ -9,15 +9,23 @@ describe Notifier::ConsentForm do
     subject(:send_confirmation) { notifier.send_confirmation }
 
     it "sends a confirmation email" do
+      programme_types = consent_form.programme_types
+      disease_types =
+        consent_form.consent_form_programmes.flat_map(&:disease_types).uniq
+
       expect { send_confirmation }.to have_delivered_email(
         :consent_confirmation_given
-      ).with(consent_form:, programme_types: consent_form.programme_types)
+      ).with(consent_form:, programme_types:, disease_types:)
     end
 
     it "sends a consent given text" do
+      programme_types = consent_form.programme_types
+      disease_types =
+        consent_form.consent_form_programmes.flat_map(&:disease_types).uniq
+
       expect { send_confirmation }.to have_delivered_sms(
         :consent_confirmation_given
-      ).with(consent_form:, programme_types: consent_form.programme_types)
+      ).with(consent_form:, programme_types:, disease_types:)
     end
 
     context "when user refuses consent" do
@@ -55,10 +63,12 @@ describe Notifier::ConsentForm do
           :consent_confirmation_given
         ).with(
           consent_form:,
-          programme_types: [menacwy_programme.type]
+          programme_types: [menacwy_programme.type],
+          disease_types: menacwy_programme.disease_types
         ).and have_delivered_email(:consent_confirmation_refused).with(
                 consent_form:,
-                programme_types: [td_ipv_programme.type]
+                programme_types: [td_ipv_programme.type],
+                disease_types: td_ipv_programme.disease_types
               )
       end
 
@@ -67,10 +77,12 @@ describe Notifier::ConsentForm do
           :consent_confirmation_given
         ).with(
           consent_form:,
-          programme_types: [menacwy_programme.type]
+          programme_types: [menacwy_programme.type],
+          disease_types: menacwy_programme.disease_types
         ).and have_delivered_sms(:consent_confirmation_refused).with(
                 consent_form:,
-                programme_types: [td_ipv_programme.type]
+                programme_types: [td_ipv_programme.type],
+                disease_types: td_ipv_programme.disease_types
               )
       end
     end
@@ -79,9 +91,13 @@ describe Notifier::ConsentForm do
       before { consent_form.health_answers.last.response = "yes" }
 
       it "sends an confirmation needs triage email" do
+        programme_types = consent_form.programme_types
+        disease_types =
+          consent_form.consent_form_programmes.flat_map(&:disease_types).uniq
+
         expect { send_confirmation }.to have_delivered_email(
           :consent_confirmation_triage
-        ).with(consent_form:, programme_types: consent_form.programme_types)
+        ).with(consent_form:, programme_types:, disease_types:)
       end
 
       it "doesn't send a text" do
@@ -105,13 +121,55 @@ describe Notifier::ConsentForm do
       end
 
       it "sends an confirmation needs triage email" do
+        programme_types = consent_form.programme_types
+        disease_types =
+          consent_form.consent_form_programmes.flat_map(&:disease_types).uniq
+
         expect { send_confirmation }.to have_delivered_email(
           :consent_confirmation_clinic
-        ).with(consent_form:, programme_types: consent_form.programme_types)
+        ).with(consent_form:, programme_types:, disease_types:)
       end
 
       it "doesn't send a text" do
         expect { send_confirmation }.not_to have_delivered_sms
+      end
+    end
+
+    context "when user consents to MMRV" do
+      let(:team) { create(:team, programmes: [Programme.mmr]) }
+      let(:patient) do
+        create(
+          :patient,
+          date_of_birth: Date.new(2020, 6, 1) # Eligible for MMRV
+        )
+      end
+      let(:session) { create(:session, team:, programmes: [Programme.mmr]) }
+      let(:consent_form) do
+        create(
+          :consent_form,
+          :recorded,
+          session:,
+          given_name: patient.given_name,
+          family_name: patient.family_name,
+          date_of_birth: patient.date_of_birth
+        )
+      end
+
+      before do
+        consent_form.consent_form_programmes.first.update!(
+          disease_types: %w[measles mumps rubella varicella],
+          response: "given"
+        )
+      end
+
+      it "sends confirmation email with disease_types including varicella" do
+        expect { send_confirmation }.to have_delivered_email(
+          :consent_confirmation_given
+        ).with(
+          consent_form:,
+          programme_types: consent_form.programme_types,
+          disease_types: %w[measles mumps rubella varicella]
+        )
       end
     end
   end
