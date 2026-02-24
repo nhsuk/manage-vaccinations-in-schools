@@ -247,7 +247,10 @@ en:
       consent:
         reason_for_refusals:
           already_vaccinated: Vaccine already received
-          contains_gelatine: Vaccine contains gelatine from pigs
+          contains_gelatine: Vaccine contains gelatine
+          contains_gelatine_flu: Nasal vaccine contains gelatine
+          contains_gelatine_mmr: Do not want my child to have the MMR vaccine that contains gelatine
+          contains_gelatine_mmrv: Do not want my child to have the MMRV vaccine that contains gelatine
           medical: Medical reasons
           other: Other
           personal_choice: Personal choice

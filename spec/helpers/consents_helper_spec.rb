@@ -1,0 +1,99 @@
+# frozen_string_literal: true
+
+describe ConsentsHelper do
+  subject(:reasons) { helper.consent_refusal_reasons(consent) }
+
+  shared_examples "gelatine label" do |expected_label|
+    before do
+      create(
+        :vaccine,
+        :contains_gelatine,
+        programme_type: programme.type,
+        disease_types: programme.disease_types
+      )
+    end
+
+    it "uses the programme-specific gelatine label" do
+      reason = reasons.find { |reason| reason.value == "contains_gelatine" }
+      expect(reason.label).to eq(expected_label) if reason
+    end
+  end
+
+  describe "#consent_refusal_reasons" do
+    context "consent record" do
+      let(:consent) { build(:consent, programme:) }
+
+      context "when the programme is flu" do
+        let(:programme) { Programme.flu }
+
+        include_examples "gelatine label", "Nasal vaccine contains gelatine"
+      end
+
+      context "when the programme is MMR" do
+        let(:programme) do
+          Programme::Variant.new(Programme.mmr, variant_type: "mmr")
+        end
+
+        include_examples(
+          "gelatine label",
+          "Do not want my child to have the MMR vaccine that contains gelatine"
+        )
+      end
+
+      context "when the programme is MMRV" do
+        let(:programme) do
+          Programme::Variant.new(Programme.mmr, variant_type: "mmrv")
+        end
+
+        include_examples(
+          "gelatine label",
+          "Do not want my child to have the MMRV vaccine that contains gelatine"
+        )
+      end
+
+      context "when the programme is not flu or MMR" do
+        let(:programme) { Programme.hpv }
+
+        include_examples "gelatine label", "Vaccine contains gelatine"
+      end
+    end
+
+    context "consent_form record" do
+      let(:consent) { build(:consent_form, programmes: [programme]) }
+
+      context "when the programme is flu" do
+        let(:programme) { Programme.flu }
+
+        include_examples "gelatine label", "Nasal vaccine contains gelatine"
+      end
+
+      context "when the programme is MMR" do
+        let(:programme) do
+          Programme::Variant.new(Programme.mmr, variant_type: "mmr")
+        end
+
+        include_examples(
+          "gelatine label",
+          "Do not want my child to have the MMR vaccine that contains gelatine"
+        )
+      end
+
+      context "when the programme is MMRV" do
+        let(:programme) do
+          Programme::Variant.new(Programme.mmr, variant_type: "mmrv")
+        end
+
+        include_examples(
+          "gelatine label",
+          "Do not want my child to have the MMRV vaccine that contains gelatine"
+        )
+      end
+
+      context "when the programme is not flu or MMR" do
+        let(:programme) { Programme.hpv }
+
+        include_examples "gelatine label", "Vaccine contains gelatine"
+      end
+    end
+  end
+end
