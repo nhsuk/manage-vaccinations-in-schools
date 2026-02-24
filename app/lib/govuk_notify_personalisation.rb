@@ -10,6 +10,7 @@ class GovukNotifyPersonalisation
     academic_year: nil,
     consent: nil,
     consent_form: nil,
+    disease_types: nil,
     parent: nil,
     patient: nil,
     programme_types: nil,
@@ -35,7 +36,7 @@ class GovukNotifyPersonalisation
 
     @programmes =
       if programme_types.present?
-        Programme.find_all(programme_types, patient: @patient)
+        Programme.find_all(programme_types, disease_types:, patient: @patient)
       else
         consent_form&.programmes ||
           [consent&.programme || vaccination_record&.programme].compact
