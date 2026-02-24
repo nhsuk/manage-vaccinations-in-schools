@@ -111,6 +111,7 @@ require "rspec/rails"
 require "capybara/cuprite"
 require "capybara-screenshot/rspec"
 require "rack_session_access/capybara"
+require "console"
 
 Faker::Config.locale = "en-GB"
 
@@ -126,6 +127,8 @@ end
 
 Capybara.asset_host = "http://localhost:4000"
 Capybara.javascript_driver = :cuprite_custom
+
+Console.logger.off!
 Capybara.server = :falcon
 
 ActiveJob::Base.queue_adapter = :test
