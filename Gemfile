@@ -9,11 +9,11 @@ gem "rails", "8.1.2"
 # Framework gems
 gem "bootsnap", require: false
 gem "cssbundling-rails"
+gem "falcon"
+gem "falcon-rails"
 gem "jsbundling-rails"
 gem "pg"
 gem "propshaft"
-gem "puma"
-gem "thruster", require: false
 gem "turbo-rails"
 
 # Load before sentry-ruby to avoid race condition

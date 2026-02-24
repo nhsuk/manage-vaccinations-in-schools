@@ -80,6 +80,16 @@ COPY --from=build /rails /rails
 RUN groupadd --system --gid 1000 rails && \
     useradd rails --uid 1000 --gid 1000 --create-home --shell /bin/bash && \
     chown -R rails:rails db log storage tmp
+
+# Generate and install self-signed TLS certificates at build time.
+# Cannot use `bake localhost:install` as it requires sudo, so we do it manually
+RUN bundle exec ruby -e "require 'localhost'; Localhost::Authority.fetch" && \
+    cp /root/.local/state/localhost.rb/development.crt /usr/local/share/ca-certificates/localhost.crt && \
+    update-ca-certificates && \
+    mkdir -p /home/rails/.local/state && \
+    cp -r /root/.local/state/localhost.rb /home/rails/.local/state/localhost.rb && \
+    chown -R rails:rails /home/rails/.local
+
 USER 1000:1000
 
 # Entrypoint prepares the database.

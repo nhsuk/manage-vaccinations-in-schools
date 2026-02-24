@@ -126,7 +126,7 @@ end
 
 Capybara.asset_host = "http://localhost:4000"
 Capybara.javascript_driver = :cuprite_custom
-Capybara.server = :puma, { Silent: true }
+Capybara.server = :falcon
 
 ActiveJob::Base.queue_adapter = :test
 Sidekiq.testing!(:fake)
