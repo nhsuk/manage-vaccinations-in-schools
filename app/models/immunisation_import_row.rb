@@ -103,7 +103,6 @@ class ImmunisationImportRow
     @type = type&.to_sym
   end
 
-  # Convenience predicate helpers mirroring the enum on ImmunisationImport
   def point_of_care? = type == :point_of_care
 
   def national_reporting_flu? = national_reporting? && programme&.flu?
