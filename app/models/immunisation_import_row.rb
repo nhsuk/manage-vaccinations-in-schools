@@ -119,66 +119,6 @@ class ImmunisationImportRow
   def to_vaccination_record
     return if invalid? || national_reporting_not_administered? || patient.nil?
 
-    outcome = (administered ? "administered" : reason_not_administered_value)
-    source =
-      if imms_api_record?
-        "nhs_immunisations_api"
-      elsif offline_recording?
-        "service"
-      elsif point_of_care?
-        "historical_upload"
-      else
-        "national_reporting"
-      end
-
-    attributes = {
-      disease_types:,
-      dose_sequence: dose_sequence_value,
-      full_dose: true,
-      outcome:,
-      patient:,
-      performed_at_date:,
-      performed_by_user:,
-      performed_ods_code: performed_ods_code&.to_s,
-      programme_type: programme&.type,
-      protocol:,
-      session:,
-      supplied_by:
-    }
-
-    attributes.merge!(location:, location_name:) unless imms_api_record?
-    attributes.merge!(notify_parents: true) if session
-
-    if performed_by_user.nil? &&
-         (performed_by_family_name.present? || performed_by_given_name.present?)
-      attributes.merge!(
-        performed_by_family_name: performed_by_family_name&.to_s,
-        performed_by_given_name: performed_by_given_name&.to_s
-      )
-    end
-
-    if national_reporting?
-      attributes.merge!(
-        local_patient_id: local_patient_id&.to_s,
-        local_patient_id_uri: local_patient_id_uri&.to_s
-      )
-    end
-
-    attributes_to_stage_if_already_exists = {
-      batch_number: batch_name&.to_s,
-      batch_expiry: batch_expiry&.to_date,
-      discarded_at: nil,
-      notes: notes&.to_s,
-      performed_at_time:,
-      source:,
-      vaccine_id: vaccine&.id
-    }
-
-    delivery_attributes = {
-      delivery_method: delivery_method_value,
-      delivery_site: delivery_site_value
-    }
-
     vaccination_record =
       if national_reporting?
         VaccinationRecord.find_or_initialize_by(
@@ -240,9 +180,77 @@ class ImmunisationImportRow
   end
 
   def set_patient(candidates: nil)
+    # Invalidate the memoised `@attributes`, which might reference the old value of `@patient` (likely to be `nil`)
+    @attributes = nil
+
     @patient =
       existing_patients(candidates:)&.first ||
         Patient.new(new_patient_attributes)
+  end
+
+  def attributes
+    @attributes ||=
+      begin
+        outcome =
+          (administered ? "administered" : reason_not_administered_value)
+
+        attributes = {
+          disease_types:,
+          dose_sequence: dose_sequence_value,
+          full_dose: true,
+          outcome:,
+          patient:,
+          performed_at_date:,
+          performed_by_user:,
+          performed_ods_code: performed_ods_code&.to_s,
+          programme_type: programme&.type,
+          protocol:,
+          session:,
+          supplied_by:
+        }
+
+        attributes.merge!(location:, location_name:) unless imms_api_record?
+        attributes.merge!(notify_parents: true) if session
+
+        if performed_by_user.nil? &&
+             (
+               performed_by_family_name.present? ||
+                 performed_by_given_name.present?
+             )
+          attributes.merge!(
+            performed_by_family_name: performed_by_family_name&.to_s,
+            performed_by_given_name: performed_by_given_name&.to_s
+          )
+        end
+
+        if national_reporting?
+          attributes.merge!(
+            local_patient_id: local_patient_id&.to_s,
+            local_patient_id_uri: local_patient_id_uri&.to_s
+          )
+        end
+
+        attributes
+      end
+  end
+
+  def attributes_to_stage_if_already_exists
+    @attributes_to_stage_if_already_exists ||= {
+      batch_number: batch_name&.to_s,
+      batch_expiry: batch_expiry&.to_date,
+      discarded_at: nil,
+      notes: notes&.to_s,
+      performed_at_time:,
+      source:,
+      vaccine_id: vaccine&.id
+    }
+  end
+
+  def delivery_attributes
+    @delivery_attributes ||= {
+      delivery_method: delivery_method_value,
+      delivery_site: delivery_site_value
+    }
   end
 
   def batch_expiry = @data[:batch_expiry_date]
@@ -397,6 +405,18 @@ class ImmunisationImportRow
           .includes(:location, :session_programme_year_groups)
           .find_by(id:)
       end
+  end
+
+  def source
+    if imms_api_record?
+      "nhs_immunisations_api"
+    elsif offline_recording?
+      "service"
+    elsif point_of_care?
+      "historical_upload"
+    else
+      "national_reporting"
+    end
   end
 
   def protocol
