@@ -88,7 +88,13 @@ describe StatusGenerator::Programme do
 
       context "with a triage delay" do
         before do
-          create(:triage, :delay_vaccination, patient:, programme:, delay_vaccination_until: Date.tomorrow)
+          create(
+            :triage,
+            :delay_vaccination,
+            patient:,
+            programme:,
+            delay_vaccination_until: Date.tomorrow
+          )
         end
 
         its(:status) { should be(:cannot_vaccinate_delay_vaccination) }
@@ -101,7 +107,13 @@ describe StatusGenerator::Programme do
 
       context "with a triage delay" do
         before do
-          create(:triage, :delay_vaccination, patient:, programme:, delay_vaccination_until: Date.tomorrow)
+          create(
+            :triage,
+            :delay_vaccination,
+            patient:,
+            programme:,
+            delay_vaccination_until: Date.tomorrow
+          )
         end
 
         its(:status) { should be(:needs_consent_no_response) }
