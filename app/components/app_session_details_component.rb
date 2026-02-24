@@ -11,6 +11,7 @@ class AppSessionDetailsComponent < ViewComponent::Base
           show_dates: true,
           show_location: true,
           show_status: true,
+          show_consent_style: true
         ) %>
     <% end %>
   ERB

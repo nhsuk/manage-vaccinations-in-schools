@@ -6,6 +6,7 @@ class AppSessionSummaryComponent < ViewComponent::Base
     patient_count: nil,
     full_width: false,
     show_consent_forms: false,
+    show_consent_style: false,
     show_dates: false,
     show_location: false,
     show_status: false
@@ -14,6 +15,7 @@ class AppSessionSummaryComponent < ViewComponent::Base
     @patient_count = patient_count
     @full_width = full_width
     @show_consent_forms = show_consent_forms
+    @show_consent_style = show_consent_style
     @show_dates = show_dates
     @show_location = show_location
     @show_status = show_status
@@ -27,6 +29,7 @@ class AppSessionSummaryComponent < ViewComponent::Base
               :patient_count,
               :full_width,
               :show_consent_forms,
+              :show_consent_style,
               :show_dates,
               :show_location,
               :show_status
@@ -43,7 +46,8 @@ class AppSessionSummaryComponent < ViewComponent::Base
       status_row,
       dates_row,
       consent_period_row,
-      consent_forms_row
+      consent_forms_row,
+      consent_style_row
     ].compact
   end
 
@@ -139,6 +143,20 @@ class AppSessionSummaryComponent < ViewComponent::Base
       },
       value: {
         text: helpers.session_consent_period(session)
+      }
+    }
+  end
+
+  def consent_style_row
+    return unless show_consent_style
+    return unless "mmr".in? session.programme_types
+
+    {
+      key: {
+        text: "Type of MMR(V) consent request"
+      },
+      value: {
+        text: helpers.session_consent_style(session)
       }
     }
   end
