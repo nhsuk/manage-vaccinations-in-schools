@@ -461,11 +461,14 @@ class ImmunisationImportRow
 
   def must_be_current_academic_year? = programme&.flu? || national_reporting?
 
-  def explicit_mavis_dose? = !programme.doubles?
+  def dose_sequence_determined_automatically? = programme.doubles?
 
   def dose_sequence_required? =
     administered &&
-      ((offline_recording? && explicit_mavis_dose?) || national_reporting_hpv?)
+      (
+        (offline_recording? && !dose_sequence_determined_automatically?) ||
+          national_reporting_hpv?
+      )
 
   def academic_year = date_of_vaccination.to_date.academic_year
 
@@ -781,7 +784,7 @@ class ImmunisationImportRow
 
     if dose_sequence.present? ||
          parsed_vaccination_description_string&.dig(:dose_sequence).present?
-      if offline_recording? && !explicit_mavis_dose?
+      if offline_recording? && dose_sequence_determined_automatically?
         errors.add(
           field.header,
           "Do not provide a dose sequence for this programme (leave blank)."
