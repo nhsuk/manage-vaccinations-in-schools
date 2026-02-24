@@ -757,10 +757,12 @@ fk_rails_...  (session_id =&gt; sessions.id)</pre>
     <span class="ruby-keyword">end</span>
 
   <span class="ruby-identifier">programme_types</span> = <span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:type</span>)
+  <span class="ruby-identifier">disease_types</span> = <span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">flat_map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:disease_types</span>).<span class="ruby-identifier">presence</span>
 
   <span class="ruby-identifier">parents</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">parent</span><span class="ruby-operator">|</span>
     <span class="ruby-constant">EmailDeliveryJob</span>.<span class="ruby-identifier">perform_later</span>(
       <span class="ruby-identifier">mail_template</span>,
+      <span class="ruby-value">disease_types:</span>,
       <span class="ruby-value">parent:</span>,
       <span class="ruby-value">patient:</span>,
       <span class="ruby-value">programme_types:</span>,
@@ -770,6 +772,7 @@ fk_rails_...  (session_id =&gt; sessions.id)</pre>
 
     <span class="ruby-constant">SMSDeliveryJob</span>.<span class="ruby-identifier">perform_later</span>(
       <span class="ruby-identifier">text_template</span>,
+      <span class="ruby-value">disease_types:</span>,
       <span class="ruby-value">parent:</span>,
       <span class="ruby-value">patient:</span>,
       <span class="ruby-value">programme_types:</span>,
@@ -882,10 +885,12 @@ fk_rails_...  (session_id =&gt; sessions.id)</pre>
     <span class="ruby-keyword">end</span>
 
   <span class="ruby-identifier">programme_types</span> = <span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:type</span>)
+  <span class="ruby-identifier">disease_types</span> = <span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">flat_map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:disease_types</span>).<span class="ruby-identifier">presence</span>
 
   <span class="ruby-identifier">parents</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">parent</span><span class="ruby-operator">|</span>
     <span class="ruby-constant">EmailDeliveryJob</span>.<span class="ruby-identifier">perform_later</span>(
       <span class="ruby-identifier">mail_template</span>,
+      <span class="ruby-value">disease_types:</span>,
       <span class="ruby-value">parent:</span>,
       <span class="ruby-value">patient:</span>,
       <span class="ruby-value">programme_types:</span>,
@@ -895,6 +900,7 @@ fk_rails_...  (session_id =&gt; sessions.id)</pre>
 
     <span class="ruby-constant">SMSDeliveryJob</span>.<span class="ruby-identifier">perform_later</span>(
       <span class="ruby-identifier">text_template</span>,
+      <span class="ruby-value">disease_types:</span>,
       <span class="ruby-value">parent:</span>,
       <span class="ruby-value">patient:</span>,
       <span class="ruby-value">programme_types:</span>,
@@ -991,10 +997,12 @@ fk_rails_...  (session_id =&gt; sessions.id)</pre>
       <span class="ruby-keyword">end</span>
 
     <span class="ruby-identifier">programme_types</span> = <span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:type</span>)
+    <span class="ruby-identifier">disease_types</span> = <span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">flat_map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:disease_types</span>).<span class="ruby-identifier">presence</span>
 
     <span class="ruby-identifier">parents</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">parent</span><span class="ruby-operator">|</span>
       <span class="ruby-constant">EmailDeliveryJob</span>.<span class="ruby-identifier">perform_later</span>(
         <span class="ruby-identifier">mail_template</span>,
+        <span class="ruby-value">disease_types:</span>,
         <span class="ruby-value">parent:</span>,
         <span class="ruby-value">patient:</span>,
         <span class="ruby-value">programme_types:</span>,
@@ -1004,6 +1012,7 @@ fk_rails_...  (session_id =&gt; sessions.id)</pre>
 
       <span class="ruby-constant">SMSDeliveryJob</span>.<span class="ruby-identifier">perform_later</span>(
         <span class="ruby-identifier">text_template</span>,
+        <span class="ruby-value">disease_types:</span>,
         <span class="ruby-value">parent:</span>,
         <span class="ruby-value">patient:</span>,
         <span class="ruby-value">programme_types:</span>,
@@ -1109,10 +1118,12 @@ fk_rails_...  (session_id =&gt; sessions.id)</pre>
     <span class="ruby-keyword">end</span>
 
   <span class="ruby-identifier">programme_types</span> = <span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:type</span>)
+  <span class="ruby-identifier">disease_types</span> = <span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">flat_map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:disease_types</span>).<span class="ruby-identifier">presence</span>
 
   <span class="ruby-identifier">parents</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">parent</span><span class="ruby-operator">|</span>
     <span class="ruby-constant">EmailDeliveryJob</span>.<span class="ruby-identifier">perform_later</span>(
       <span class="ruby-identifier">mail_template</span>,
+      <span class="ruby-value">disease_types:</span>,
       <span class="ruby-value">parent:</span>,
       <span class="ruby-value">patient:</span>,
       <span class="ruby-value">programme_types:</span>,
@@ -1122,6 +1133,7 @@ fk_rails_...  (session_id =&gt; sessions.id)</pre>
 
     <span class="ruby-constant">SMSDeliveryJob</span>.<span class="ruby-identifier">perform_later</span>(
       <span class="ruby-identifier">text_template</span>,
+      <span class="ruby-value">disease_types:</span>,
       <span class="ruby-value">parent:</span>,
       <span class="ruby-value">patient:</span>,
       <span class="ruby-value">programme_types:</span>,
@@ -1220,10 +1232,12 @@ fk_rails_...  (session_id =&gt; sessions.id)</pre>
     <span class="ruby-keyword">end</span>
 
   <span class="ruby-identifier">programme_types</span> = <span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:type</span>)
+  <span class="ruby-identifier">disease_types</span> = <span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">flat_map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:disease_types</span>).<span class="ruby-identifier">presence</span>
 
   <span class="ruby-identifier">parents</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">parent</span><span class="ruby-operator">|</span>
     <span class="ruby-constant">EmailDeliveryJob</span>.<span class="ruby-identifier">perform_later</span>(
       <span class="ruby-identifier">mail_template</span>,
+      <span class="ruby-value">disease_types:</span>,
       <span class="ruby-value">parent:</span>,
       <span class="ruby-value">patient:</span>,
       <span class="ruby-value">programme_types:</span>,
@@ -1233,6 +1247,7 @@ fk_rails_...  (session_id =&gt; sessions.id)</pre>
 
     <span class="ruby-constant">SMSDeliveryJob</span>.<span class="ruby-identifier">perform_later</span>(
       <span class="ruby-identifier">text_template</span>,
+      <span class="ruby-value">disease_types:</span>,
       <span class="ruby-value">parent:</span>,
       <span class="ruby-value">patient:</span>,
       <span class="ruby-value">programme_types:</span>,
@@ -1335,10 +1350,12 @@ fk_rails_...  (session_id =&gt; sessions.id)</pre>
     <span class="ruby-keyword">end</span>
 
   <span class="ruby-identifier">programme_types</span> = <span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:type</span>)
+  <span class="ruby-identifier">disease_types</span> = <span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">flat_map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:disease_types</span>).<span class="ruby-identifier">presence</span>
 
   <span class="ruby-identifier">parents</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">parent</span><span class="ruby-operator">|</span>
     <span class="ruby-constant">EmailDeliveryJob</span>.<span class="ruby-identifier">perform_later</span>(
       <span class="ruby-identifier">mail_template</span>,
+      <span class="ruby-value">disease_types:</span>,
       <span class="ruby-value">parent:</span>,
       <span class="ruby-value">patient:</span>,
       <span class="ruby-value">programme_types:</span>,
@@ -1348,6 +1365,7 @@ fk_rails_...  (session_id =&gt; sessions.id)</pre>
 
     <span class="ruby-constant">SMSDeliveryJob</span>.<span class="ruby-identifier">perform_later</span>(
       <span class="ruby-identifier">text_template</span>,
+      <span class="ruby-value">disease_types:</span>,
       <span class="ruby-value">parent:</span>,
       <span class="ruby-value">patient:</span>,
       <span class="ruby-value">programme_types:</span>,

@@ -736,14 +736,18 @@
       .<span class="ruby-identifier">call</span>(<span class="ruby-identifier">consent_form</span>.<span class="ruby-identifier">given_consent_form_programmes</span>)
       .<span class="ruby-identifier">each_value</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">consent_form_programmes</span><span class="ruby-operator">|</span>
         <span class="ruby-identifier">programme_types</span> = <span class="ruby-identifier">consent_form_programmes</span>.<span class="ruby-identifier">map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:programme_type</span>)
-        <span class="ruby-identifier">send_confirmation_given</span>(<span class="ruby-value">programme_types:</span>)
+        <span class="ruby-identifier">disease_types</span> =
+          <span class="ruby-identifier">consent_form_programmes</span>.<span class="ruby-identifier">flat_map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:disease_types</span>).<span class="ruby-identifier">uniq</span>.<span class="ruby-identifier">presence</span>
+        <span class="ruby-identifier">send_confirmation_given</span>(<span class="ruby-value">programme_types:</span>, <span class="ruby-value">disease_types:</span>)
       <span class="ruby-keyword">end</span>
 
     <span class="ruby-constant">ProgrammeGrouper</span>
       .<span class="ruby-identifier">call</span>(<span class="ruby-identifier">consent_form</span>.<span class="ruby-identifier">refused_consent_form_programmes</span>)
       .<span class="ruby-identifier">each_value</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">consent_form_programmes</span><span class="ruby-operator">|</span>
         <span class="ruby-identifier">programme_types</span> = <span class="ruby-identifier">consent_form_programmes</span>.<span class="ruby-identifier">map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:programme_type</span>)
-        <span class="ruby-identifier">send_confirmation_refused</span>(<span class="ruby-value">programme_types:</span>)
+        <span class="ruby-identifier">disease_types</span> =
+          <span class="ruby-identifier">consent_form_programmes</span>.<span class="ruby-identifier">flat_map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:disease_types</span>).<span class="ruby-identifier">uniq</span>.<span class="ruby-identifier">presence</span>
+        <span class="ruby-identifier">send_confirmation_refused</span>(<span class="ruby-value">programme_types:</span>, <span class="ruby-value">disease_types:</span>)
       <span class="ruby-keyword">end</span>
   <span class="ruby-keyword">else</span>
     <span class="ruby-identifier">send_confirmation_refused</span>
@@ -787,7 +791,7 @@
             </details>
           </div>
           <div class="method-source-code" id="send_unknown_contact_details_warning-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/notifier/consent_form.rb, line 28</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/notifier/consent_form.rb, line 32</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">send_unknown_contact_details_warning</span>(<span class="ruby-value">patient:</span>)
   <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">parents</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">parent</span><span class="ruby-operator">|</span>
     <span class="ruby-keyword">if</span> <span class="ruby-identifier">parent</span>.<span class="ruby-identifier">email</span>.<span class="ruby-identifier">present?</span>
