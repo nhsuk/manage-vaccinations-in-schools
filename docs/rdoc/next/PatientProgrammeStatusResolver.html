@@ -684,7 +684,8 @@
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">prefix</span> = <span class="ruby-identifier">programme_status</span>.<span class="ruby-identifier">programme</span>.<span class="ruby-identifier">name</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">text</span>
-  <span class="ruby-keyword">if</span> <span class="ruby-identifier">programme_status</span>.<span class="ruby-identifier">due?</span> <span class="ruby-operator">&amp;&amp;</span> (<span class="ruby-identifier">count</span> = <span class="ruby-identifier">programme_status</span>.<span class="ruby-identifier">dose_sequence</span>)
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">programme_status</span>.<span class="ruby-identifier">due?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">programme_status</span>.<span class="ruby-identifier">programme</span>.<span class="ruby-identifier">mmr?</span> <span class="ruby-operator">&amp;&amp;</span>
+       (<span class="ruby-identifier">count</span> = <span class="ruby-identifier">programme_status</span>.<span class="ruby-identifier">dose_sequence</span>)
     <span class="ruby-node">&quot;Due #{count.ordinalize} dose&quot;</span>
   <span class="ruby-keyword">else</span>
     <span class="ruby-constant">I18n</span>.<span class="ruby-identifier">t</span>(<span class="ruby-identifier">programme_status</span>.<span class="ruby-identifier">status</span>, <span class="ruby-value">scope:</span> <span class="ruby-node">%i[status programme label]</span>)
@@ -866,7 +867,7 @@
             </details>
           </div>
           <div class="method-source-code" id="colour-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/patient_programme_status_resolver.rb, line 55</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/patient_programme_status_resolver.rb, line 56</span>
   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">colour</span> =
     <span class="ruby-constant">I18n</span>.<span class="ruby-identifier">t</span>(<span class="ruby-identifier">programme_status</span>.<span class="ruby-identifier">status</span>, <span class="ruby-value">scope:</span> <span class="ruby-node">%i[status programme colour]</span>)
 
@@ -933,7 +934,7 @@
             </details>
           </div>
           <div class="method-source-code" id="details_text-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/patient_programme_status_resolver.rb, line 58</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/patient_programme_status_resolver.rb, line 59</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">details_text</span>
   <span class="ruby-identifier">text</span> =
     <span class="ruby-constant">I18n</span>.<span class="ruby-identifier">t</span>(
@@ -1000,7 +1001,8 @@
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">prefix</span> = <span class="ruby-identifier">programme_status</span>.<span class="ruby-identifier">programme</span>.<span class="ruby-identifier">name</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">text</span>
-  <span class="ruby-keyword">if</span> <span class="ruby-identifier">programme_status</span>.<span class="ruby-identifier">due?</span> <span class="ruby-operator">&amp;&amp;</span> (<span class="ruby-identifier">count</span> = <span class="ruby-identifier">programme_status</span>.<span class="ruby-identifier">dose_sequence</span>)
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">programme_status</span>.<span class="ruby-identifier">due?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">programme_status</span>.<span class="ruby-identifier">programme</span>.<span class="ruby-identifier">mmr?</span> <span class="ruby-operator">&amp;&amp;</span>
+       (<span class="ruby-identifier">count</span> = <span class="ruby-identifier">programme_status</span>.<span class="ruby-identifier">dose_sequence</span>)
     <span class="ruby-node">&quot;Due #{count.ordinalize} dose&quot;</span>
   <span class="ruby-keyword">else</span>
     <span class="ruby-constant">I18n</span>.<span class="ruby-identifier">t</span>(<span class="ruby-identifier">programme_status</span>.<span class="ruby-identifier">status</span>, <span class="ruby-value">scope:</span> <span class="ruby-node">%i[status programme label]</span>)
@@ -1117,7 +1119,8 @@
           <div class="method-source-code" id="text-source">
             <pre class="ruby"><span class="ruby-comment"># File app/lib/patient_programme_status_resolver.rb, line 47</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">text</span>
-  <span class="ruby-keyword">if</span> <span class="ruby-identifier">programme_status</span>.<span class="ruby-identifier">due?</span> <span class="ruby-operator">&amp;&amp;</span> (<span class="ruby-identifier">count</span> = <span class="ruby-identifier">programme_status</span>.<span class="ruby-identifier">dose_sequence</span>)
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">programme_status</span>.<span class="ruby-identifier">due?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">programme_status</span>.<span class="ruby-identifier">programme</span>.<span class="ruby-identifier">mmr?</span> <span class="ruby-operator">&amp;&amp;</span>
+       (<span class="ruby-identifier">count</span> = <span class="ruby-identifier">programme_status</span>.<span class="ruby-identifier">dose_sequence</span>)
     <span class="ruby-node">&quot;Due #{count.ordinalize} dose&quot;</span>
   <span class="ruby-keyword">else</span>
     <span class="ruby-constant">I18n</span>.<span class="ruby-identifier">t</span>(<span class="ruby-identifier">programme_status</span>.<span class="ruby-identifier">status</span>, <span class="ruby-value">scope:</span> <span class="ruby-node">%i[status programme label]</span>)

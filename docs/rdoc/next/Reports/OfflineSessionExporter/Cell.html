@@ -794,7 +794,7 @@
             </details>
           </div>
           <div class="method-source-code" id="default_style_for-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/offline_session_exporter.rb, line 572</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/offline_session_exporter.rb, line 574</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">default_style_for</span>(<span class="ruby-identifier">type</span>)
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">type</span> <span class="ruby-operator">==</span> <span class="ruby-value">:date</span>
     { <span class="ruby-value">format_code:</span> <span class="ruby-string">&quot;dd/mm/yyyy&quot;</span> }
@@ -840,7 +840,7 @@
             </details>
           </div>
           <div class="method-source-code" id="default_type_for-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/offline_session_exporter.rb, line 561</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/offline_session_exporter.rb, line 563</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">default_type_for</span>(<span class="ruby-identifier">value</span>)
   <span class="ruby-keyword">case</span> <span class="ruby-identifier">value</span>
   <span class="ruby-keyword">when</span> <span class="ruby-constant">Date</span>
@@ -889,7 +889,7 @@
             </details>
           </div>
           <div class="method-source-code" id="new-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/offline_session_exporter.rb, line 519</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/offline_session_exporter.rb, line 521</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(
   <span class="ruby-identifier">value</span> = <span class="ruby-string">&quot;&quot;</span>,
   <span class="ruby-value">type:</span> <span class="ruby-keyword">nil</span>,
@@ -955,7 +955,7 @@
             </details>
           </div>
           <div class="method-source-code" id="add_data_validation_to-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/offline_session_exporter.rb, line 536</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/offline_session_exporter.rb, line 538</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">add_data_validation_to</span>(<span class="ruby-value">sheet:</span>, <span class="ruby-value">column_index:</span>, <span class="ruby-value">row_index:</span>)
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">allowed_values</span>.<span class="ruby-identifier">blank?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">allowed_formula</span>.<span class="ruby-identifier">blank?</span>
 

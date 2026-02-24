@@ -914,22 +914,40 @@ index_vaccines_on_upload_name             (upload_name) UNIQUE</pre>
       }
     },
     <span class="ruby-string">&quot;mmr&quot;</span> <span class="ruby-operator">=&gt;</span> {
-      <span class="ruby-string">&quot;injection&quot;</span> <span class="ruby-operator">=&gt;</span> {
-        <span class="ruby-value">code:</span> <span class="ruby-string">&quot;38598009&quot;</span>,
-        <span class="ruby-value">term:</span>
-          <span class="ruby-string">&quot;Administration of vaccine product containing only Measles &quot;</span> \
-            <span class="ruby-string">&quot;morbillivirus and Mumps orthorubulavirus and Rubella virus &quot;</span> \
-            <span class="ruby-string">&quot;antigens&quot;</span>
-      }
+      <span class="ruby-string">&quot;injection&quot;</span> <span class="ruby-operator">=&gt;</span> [
+        {
+          <span class="ruby-value">code:</span> <span class="ruby-string">&quot;38598009&quot;</span>,
+          <span class="ruby-value">term:</span>
+            <span class="ruby-string">&quot;Administration of vaccine product containing only Measles &quot;</span> \
+              <span class="ruby-string">&quot;morbillivirus and Mumps orthorubulavirus and Rubella virus &quot;</span> \
+              <span class="ruby-string">&quot;antigens&quot;</span>
+        },
+        {
+          <span class="ruby-value">code:</span> <span class="ruby-string">&quot;170433008&quot;</span>,
+          <span class="ruby-value">term:</span>
+            <span class="ruby-string">&quot;Administration of second dose of vaccine product containing only &quot;</span> \
+              <span class="ruby-string">&quot;Measles morbillivirus and Mumps orthorubulavirus and Rubella virus &quot;</span> \
+              <span class="ruby-string">&quot;antigens&quot;</span>
+        }
+      ]
     },
     <span class="ruby-string">&quot;mmrv&quot;</span> <span class="ruby-operator">=&gt;</span> {
-      <span class="ruby-string">&quot;injection&quot;</span> <span class="ruby-operator">=&gt;</span> {
-        <span class="ruby-value">code:</span> <span class="ruby-string">&quot;432636005&quot;</span>,
-        <span class="ruby-value">term:</span>
-          <span class="ruby-string">&quot;Administration of vaccine product containing only Human &quot;</span> \
-            <span class="ruby-string">&quot;alphaherpesvirus 3 and Measles morbillivirus and Mumps &quot;</span> \
-            <span class="ruby-string">&quot;orthorubulavirus and Rubella virus antigens&quot;</span>
-      }
+      <span class="ruby-string">&quot;injection&quot;</span> <span class="ruby-operator">=&gt;</span> [
+        {
+          <span class="ruby-value">code:</span> <span class="ruby-string">&quot;432636005&quot;</span>,
+          <span class="ruby-value">term:</span>
+            <span class="ruby-string">&quot;Administration of vaccine product containing only Human &quot;</span> \
+              <span class="ruby-string">&quot;alphaherpesvirus 3 and Measles morbillivirus and Mumps &quot;</span> \
+              <span class="ruby-string">&quot;orthorubulavirus and Rubella virus antigens&quot;</span>
+        },
+        {
+          <span class="ruby-value">code:</span> <span class="ruby-string">&quot;433733003&quot;</span>,
+          <span class="ruby-value">term:</span>
+            <span class="ruby-string">&quot;Administration of second dose of vaccine product containing &quot;</span> \
+              <span class="ruby-string">&quot;only Human alphaherpesvirus 3 and Measles morbillivirus and &quot;</span> \
+              <span class="ruby-string">&quot;Mumps orthorubulavirus and Rubella virus antigens&quot;</span>
+        }
+      ]
     },
     <span class="ruby-string">&quot;td_ipv&quot;</span> <span class="ruby-operator">=&gt;</span> {
       <span class="ruby-string">&quot;injection&quot;</span> <span class="ruby-operator">=&gt;</span> {
@@ -1087,7 +1105,7 @@ index_vaccines_on_upload_name             (upload_name) UNIQUE</pre>
             </details>
           </div>
           <div class="method-source-code" id="fhir_mapper-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/vaccine.rb, line 204</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/vaccine.rb, line 222</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">fhir_mapper</span>
   <span class="ruby-ivar">@fhir_mapper</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">FHIRMapper</span><span class="ruby-operator">::</span><span class="ruby-constant">Vaccine</span>.<span class="ruby-identifier">new</span>(<span class="ruby-keyword">self</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -1129,7 +1147,7 @@ index_vaccines_on_upload_name             (upload_name) UNIQUE</pre>
             </details>
           </div>
           <div class="method-source-code" id="snomed_procedure-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/vaccine.rb, line 185</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/vaccine.rb, line 203</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">snomed_procedure</span>(<span class="ruby-value">dose_sequence:</span> <span class="ruby-keyword">nil</span>)
   <span class="ruby-identifier">procedures</span> =
     <span class="ruby-constant">SNOMED_PROCEDURE</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">programme</span>.<span class="ruby-identifier">variant_type</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">type</span>).<span class="ruby-identifier">fetch</span>(
@@ -1176,7 +1194,7 @@ index_vaccines_on_upload_name             (upload_name) UNIQUE</pre>
             </details>
           </div>
           <div class="method-source-code" id="snomed_procedure_code-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/vaccine.rb, line 194</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/vaccine.rb, line 212</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">snomed_procedure_code</span>(<span class="ruby-value">dose_sequence:</span>)
   <span class="ruby-identifier">snomed_procedure</span>(<span class="ruby-value">dose_sequence:</span>).<span class="ruby-identifier">fetch</span>(<span class="ruby-value">:code</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -1218,7 +1236,7 @@ index_vaccines_on_upload_name             (upload_name) UNIQUE</pre>
             </details>
           </div>
           <div class="method-source-code" id="snomed_procedure_term-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/vaccine.rb, line 198</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/vaccine.rb, line 216</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">snomed_procedure_term</span>(<span class="ruby-value">dose_sequence:</span> <span class="ruby-keyword">nil</span>)
   <span class="ruby-identifier">snomed_procedure</span>(<span class="ruby-value">dose_sequence:</span>).<span class="ruby-identifier">fetch</span>(<span class="ruby-value">:term</span>)
 <span class="ruby-keyword">end</span></pre>

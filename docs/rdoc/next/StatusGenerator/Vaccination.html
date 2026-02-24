@@ -811,7 +811,7 @@
             <pre class="ruby"><span class="ruby-comment"># File app/lib/status_generator/vaccination.rb, line 60</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">dose_sequence</span>
   <span class="ruby-comment"># TODO: Implement this for multi-dose HPV and Td/IPV in a more generic way.</span>
-  <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">mmr?</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">td_ipv?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">menacwy?</span>
 
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">status_should_be_due?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">status_should_be_eligible?</span>
 

@@ -1086,7 +1086,6 @@
     <span class="ruby-comment"># future, but it works for now.</span>
 
     <span class="ruby-identifier">programme_variant</span> = <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">variant_for</span>(<span class="ruby-value">patient:</span>)
-    <span class="ruby-identifier">programmes</span> = [<span class="ruby-identifier">programme_variant</span>, <span class="ruby-identifier">programme</span>]
 
     <span class="ruby-identifier">row</span>[<span class="ruby-value">:organisation_code</span>] = <span class="ruby-identifier">organisation</span>.<span class="ruby-identifier">ods_code</span>
 
@@ -1113,7 +1112,10 @@
     <span class="ruby-identifier">row</span>[<span class="ruby-value">:anatomical_site</span>] = <span class="ruby-constant">Cell</span>.<span class="ruby-identifier">new</span>(
       <span class="ruby-value">allowed_values:</span> <span class="ruby-constant">ImmunisationImportRow</span><span class="ruby-operator">::</span><span class="ruby-constant">DELIVERY_SITES</span>.<span class="ruby-identifier">keys</span>
     )
-    <span class="ruby-identifier">row</span>[<span class="ruby-value">:dose_sequence</span>] = <span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">first</span>.<span class="ruby-identifier">default_dose_sequence</span>
+    <span class="ruby-identifier">row</span>[<span class="ruby-value">:dose_sequence</span>] = <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">programme_status</span>(
+      <span class="ruby-identifier">programme</span>,
+      <span class="ruby-value">academic_year:</span>
+    ).<span class="ruby-identifier">dose_sequence</span>
     <span class="ruby-identifier">row</span>[<span class="ruby-value">:reason_not_vaccinated</span>] = <span class="ruby-constant">Cell</span>.<span class="ruby-identifier">new</span>(
       <span class="ruby-value">allowed_values:</span> <span class="ruby-constant">ImmunisationImportRow</span><span class="ruby-operator">::</span><span class="ruby-constant">REASONS_NOT_ADMINISTERED</span>.<span class="ruby-identifier">keys</span>
     )
@@ -1545,7 +1547,6 @@
   <span class="ruby-comment"># future, but it works for now.</span>
 
   <span class="ruby-identifier">programme_variant</span> = <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">variant_for</span>(<span class="ruby-value">patient:</span>)
-  <span class="ruby-identifier">programmes</span> = [<span class="ruby-identifier">programme_variant</span>, <span class="ruby-identifier">programme</span>]
 
   <span class="ruby-identifier">row</span>[<span class="ruby-value">:organisation_code</span>] = <span class="ruby-identifier">organisation</span>.<span class="ruby-identifier">ods_code</span>
 
@@ -1572,7 +1573,10 @@
   <span class="ruby-identifier">row</span>[<span class="ruby-value">:anatomical_site</span>] = <span class="ruby-constant">Cell</span>.<span class="ruby-identifier">new</span>(
     <span class="ruby-value">allowed_values:</span> <span class="ruby-constant">ImmunisationImportRow</span><span class="ruby-operator">::</span><span class="ruby-constant">DELIVERY_SITES</span>.<span class="ruby-identifier">keys</span>
   )
-  <span class="ruby-identifier">row</span>[<span class="ruby-value">:dose_sequence</span>] = <span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">first</span>.<span class="ruby-identifier">default_dose_sequence</span>
+  <span class="ruby-identifier">row</span>[<span class="ruby-value">:dose_sequence</span>] = <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">programme_status</span>(
+    <span class="ruby-identifier">programme</span>,
+    <span class="ruby-value">academic_year:</span>
+  ).<span class="ruby-identifier">dose_sequence</span>
   <span class="ruby-identifier">row</span>[<span class="ruby-value">:reason_not_vaccinated</span>] = <span class="ruby-constant">Cell</span>.<span class="ruby-identifier">new</span>(
     <span class="ruby-value">allowed_values:</span> <span class="ruby-constant">ImmunisationImportRow</span><span class="ruby-operator">::</span><span class="ruby-constant">REASONS_NOT_ADMINISTERED</span>.<span class="ruby-identifier">keys</span>
   )
@@ -1815,7 +1819,7 @@
             </details>
           </div>
           <div class="method-source-code" id="batch_numbers_range_for_programme-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/offline_session_exporter.rb, line 462</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/offline_session_exporter.rb, line 464</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">batch_numbers_range_for_programme</span>(<span class="ruby-identifier">programme</span>)
   <span class="ruby-identifier">count</span> = <span class="ruby-identifier">batch_values_for_programme</span>(<span class="ruby-identifier">programme</span>).<span class="ruby-identifier">count</span>
   <span class="ruby-node">&quot;&#39;#{programme.type} Batch Numbers&#39;!$A2:$A#{count + 1}&quot;</span>
@@ -1858,7 +1862,7 @@
             </details>
           </div>
           <div class="method-source-code" id="batch_values_for_programme-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/offline_session_exporter.rb, line 429</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/offline_session_exporter.rb, line 431</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">batch_values_for_programme</span>(<span class="ruby-identifier">programme</span>, <span class="ruby-value">existing_batch:</span> <span class="ruby-keyword">nil</span>)
   <span class="ruby-identifier">batch_names</span> =
     (
@@ -1970,7 +1974,7 @@
             </details>
           </div>
           <div class="method-source-code" id="clinic_name_values-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/offline_session_exporter.rb, line 467</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/offline_session_exporter.rb, line 469</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">clinic_name_values</span>
   <span class="ruby-ivar">@clinic_name_values</span> <span class="ruby-operator">||=</span> <span class="ruby-identifier">team</span>.<span class="ruby-identifier">community_clinics</span>.<span class="ruby-identifier">pluck</span>(<span class="ruby-value">:name</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -2314,7 +2318,7 @@
             </details>
           </div>
           <div class="method-source-code" id="performing_professional_email_values-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/offline_session_exporter.rb, line 444</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/offline_session_exporter.rb, line 446</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">performing_professional_email_values</span>
   <span class="ruby-ivar">@performing_professional_email_values</span> <span class="ruby-operator">||=</span> <span class="ruby-identifier">team</span>.<span class="ruby-identifier">users</span>.<span class="ruby-identifier">pluck</span>(<span class="ruby-value">:email</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -2356,7 +2360,7 @@
             </details>
           </div>
           <div class="method-source-code" id="performing_professionals_range-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/offline_session_exporter.rb, line 448</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/offline_session_exporter.rb, line 450</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">performing_professionals_range</span>
   <span class="ruby-identifier">count</span> = <span class="ruby-identifier">performing_professional_email_values</span>.<span class="ruby-identifier">count</span>
   <span class="ruby-node">&quot;&#39;Performing Professionals&#39;!$A2:$A#{count + 1}&quot;</span>
@@ -2482,7 +2486,7 @@
             </details>
           </div>
           <div class="method-source-code" id="supplier_email_values-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/offline_session_exporter.rb, line 453</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/offline_session_exporter.rb, line 455</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">supplier_email_values</span>
   <span class="ruby-ivar">@supplier_email_values</span> <span class="ruby-operator">||=</span> <span class="ruby-identifier">team</span>.<span class="ruby-identifier">users</span>.<span class="ruby-identifier">show_in_suppliers</span>.<span class="ruby-identifier">pluck</span>(<span class="ruby-value">:email</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -2524,7 +2528,7 @@
             </details>
           </div>
           <div class="method-source-code" id="suppliers_range-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/offline_session_exporter.rb, line 457</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/offline_session_exporter.rb, line 459</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">suppliers_range</span>
   <span class="ruby-identifier">count</span> = <span class="ruby-identifier">supplier_email_values</span>.<span class="ruby-identifier">count</span>
   <span class="ruby-node">&quot;&#39;Suppliers&#39;!$A2:$A#{count + 1}&quot;</span>
@@ -2619,7 +2623,7 @@
             </details>
           </div>
           <div class="method-source-code" id="vaccine_values_for_programme-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/offline_session_exporter.rb, line 417</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/reports/offline_session_exporter.rb, line 419</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccine_values_for_programme</span>(<span class="ruby-identifier">programme</span>)
   <span class="ruby-comment"># We use the variant_type or type strings as the cache key because</span>
   <span class="ruby-comment"># Programme::Variant delegates identity methods (hash, ==) to the base</span>
