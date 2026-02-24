@@ -110,7 +110,6 @@ require "rspec/rails"
 # Add additional requires below this line. Rails is not loaded until this point!
 require "capybara/cuprite"
 require "capybara-screenshot/rspec"
-require "sidekiq/testing"
 require "rack_session_access/capybara"
 
 Faker::Config.locale = "en-GB"
@@ -130,6 +129,7 @@ Capybara.javascript_driver = :cuprite_custom
 Capybara.server = :puma, { Silent: true }
 
 ActiveJob::Base.queue_adapter = :test
+Sidekiq.testing!(:fake)
 
 OmniAuth.config.test_mode = true
 
