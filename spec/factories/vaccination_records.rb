@@ -175,6 +175,10 @@ FactoryBot.define do
       end
     end
 
+    trait :sourced_from_manual_report do
+      source { "manual_report" }
+    end
+
     trait :with_archived_patient do
       after(:create) do |_vaccination_record, evaluator|
         ArchiveReason.create!(

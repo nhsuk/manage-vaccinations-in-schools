@@ -226,6 +226,20 @@ describe Reports::CareplusExporter do
       expect(data_rows.first).to be_nil
     end
 
+    it "excludes vaccination records sourced manually" do
+      patient = create(:patient, session:)
+
+      create(
+        :vaccination_record,
+        :sourced_from_manual_report,
+        programme:,
+        patient:,
+        session:
+      )
+
+      expect(data_rows.first).to be_nil
+    end
+
     it "excludes not administered vaccination records" do
       patient = create(:patient, session:)
 

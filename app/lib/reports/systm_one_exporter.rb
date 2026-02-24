@@ -125,6 +125,7 @@ class Reports::SystmOneExporter
       team
         .vaccination_records
         .administered
+        .sourced_from_service
         .for_programme(programme)
         .for_academic_year(academic_year)
         .includes(
