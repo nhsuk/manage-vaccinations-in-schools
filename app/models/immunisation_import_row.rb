@@ -120,19 +120,12 @@ class ImmunisationImportRow
     return if invalid? || national_reporting_not_administered? || patient.nil?
 
     vaccination_record =
-      if national_reporting?
-        VaccinationRecord.find_or_initialize_by(
-          attributes.merge(
-            attributes_to_stage_if_already_exists,
-            delivery_attributes
-          )
-        )
-      elsif uuid.present?
+      if uuid.present?
         VaccinationRecord
           .find_by!(uuid: uuid.to_s)
           .tap { it.stage_changes(attributes) }
       else
-        VaccinationRecord.find_or_initialize_by(attributes)
+        VaccinationRecord.find_or_initialize_by(deduplication_attributes)
       end
 
     if vaccination_record.persisted?
@@ -251,6 +244,17 @@ class ImmunisationImportRow
       delivery_method: delivery_method_value,
       delivery_site: delivery_site_value
     }
+  end
+
+  def deduplication_attributes
+    if national_reporting?
+      attributes.merge(
+        attributes_to_stage_if_already_exists,
+        delivery_attributes
+      )
+    else
+      attributes
+    end
   end
 
   def batch_expiry = @data[:batch_expiry_date]
