@@ -45,12 +45,12 @@ class StatusGenerator::Programme
       :cannot_vaccinate_contraindicated
     elsif should_be_cannot_vaccinate_absent?
       :cannot_vaccinate_absent
+    elsif should_be_cannot_vaccinate_do_not_vaccinate?
+      :cannot_vaccinate_do_not_vaccinate
     elsif should_be_needs_consent_no_response?
       :needs_consent_no_response
     elsif should_be_cannot_vaccinate_delay_vaccination?
       :cannot_vaccinate_delay_vaccination
-    elsif should_be_cannot_vaccinate_do_not_vaccinate?
-      :cannot_vaccinate_do_not_vaccinate
     elsif should_be_due?
       :due
     elsif should_be_needs_triage?
