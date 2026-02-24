@@ -311,24 +311,28 @@ describe ReportingAPI::TokenAuthenticationConcern do
     it "updates last_request_at for user's warden sessions" do
       old_timestamp = 5.minutes.ago.to_i
 
-      ActiveRecord::SessionStore::Session.create!(
-        session_id: "test_session_#{SecureRandom.hex}",
-        data: {
-          "warden.user.user.key" => [[user.id], "hash"],
-          "warden.user.user.session" => {
-            "last_request_at" => old_timestamp
+      # We create two sessions to ensure that they are both updated.
+      2.times do
+        ActiveRecord::SessionStore::Session.create!(
+          session_id: "test_session_#{SecureRandom.hex}",
+          data: {
+            "warden.user.user.key" => [[user.id], "hash"],
+            "warden.user.user.session" => {
+              "last_request_at" => old_timestamp
+            }
           }
-        }
-      )
+        )
+      end
 
       an_object_which_includes_the_concern.send(:touch_sessions!, user)
 
-      session = ActiveRecord::SessionStore::Session.last
-      new_timestamp =
-        session.data["warden.user.user.session"]["last_request_at"]
+      ActiveRecord::SessionStore::Session.find_each do |session|
+        new_timestamp =
+          session.data["warden.user.user.session"]["last_request_at"]
 
-      expect(new_timestamp).to be > old_timestamp
-      expect(new_timestamp).to be_within(5).of(Time.zone.now.to_i)
+        expect(new_timestamp).to be > old_timestamp
+        expect(new_timestamp).to be_within(5).of(Time.zone.now.to_i)
+      end
     end
   end
 end
