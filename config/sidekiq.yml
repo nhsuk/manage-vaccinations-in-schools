@@ -10,6 +10,7 @@
   - pds
   - immunisations_api_sync
   - immunisations_api_search
+  - third_party_data_imports
   - default
 :scheduler:
   :schedule:

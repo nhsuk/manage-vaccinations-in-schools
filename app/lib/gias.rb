@@ -2,7 +2,9 @@
 
 module GIAS
   class << self
-    def download(output_file:, logger: Rails.logger)
+    DEFAULT_FILE_PATH = "db/data/dfe-schools.zip"
+
+    def download(output_file: DEFAULT_FILE_PATH, logger: Rails.logger)
       # 1. Go to https://get-information-schools.service.gov.uk/Downloads
       # 2. Check "Establishment fields CSV"
       # 3. Check "Establishment links CSV"
@@ -49,7 +51,11 @@ module GIAS
       raise
     end
 
-    def import(input_file:, progress_bar: nil, logger: Rails.logger)
+    def import(
+      input_file: DEFAULT_FILE_PATH,
+      progress_bar: nil,
+      logger: Rails.logger
+    )
       logger.info "Starting import of #{row_count(input_file) - 1} schools."
       open_csv(input_file) do |rows|
         batch_size = 1000
@@ -99,7 +105,7 @@ module GIAS
       raise
     end
 
-    def check_import(input_file:, progress_bar: nil)
+    def check_import(input_file: DEFAULT_FILE_PATH, progress_bar: nil)
       schools_with_future_sessions = {
         existing:
           Set.new(
