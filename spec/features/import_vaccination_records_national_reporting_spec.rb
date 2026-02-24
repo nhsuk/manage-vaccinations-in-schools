@@ -52,15 +52,7 @@ describe("National reporting immunisation imports") do
   end
 
   def given_mavis_logins_are_configured
-    programmes = [Programme.flu, Programme.hpv]
-    @team =
-      create(
-        :team,
-        :national_reporting,
-        :with_one_nurse,
-        ods_code: "R1L",
-        programmes: programmes
-      )
+    @team = create(:team, :national_reporting, :with_one_nurse, ods_code: "R1L")
     create(:school, team: @team, urn: 100_000)
   end
 

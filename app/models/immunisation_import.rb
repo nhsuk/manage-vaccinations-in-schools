@@ -67,7 +67,24 @@ class ImmunisationImport < ApplicationRecord
   private
 
   def check_rows_are_unique
-    # there is no uniqueness check for immunisations
+    rows
+      .map(&:full_row_deduplication_attributes)
+      .tally
+      .each do |full_row_deduplication_attributes, count|
+        next if count <= 1
+
+        matching_rows =
+          rows.select do
+            it.full_row_deduplication_attributes ==
+              full_row_deduplication_attributes
+          end
+        matching_rows.each do |row|
+          row.errors.add(
+            :base,
+            "This record appears more than once in the file. Remove any duplicates."
+          )
+        end
+      end
   end
 
   def parse_row(data)

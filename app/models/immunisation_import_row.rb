@@ -257,6 +257,10 @@ class ImmunisationImportRow
     end
   end
 
+  def full_row_deduplication_attributes
+    deduplication_attributes.merge(new_patient_attributes)
+  end
+
   def batch_expiry = @data[:batch_expiry_date]
 
   def batch_name = @data[:batch_number] || @data[:vaccination_batch_number]
@@ -352,7 +356,7 @@ class ImmunisationImportRow
     end
   end
 
-  def performed_at_date = date_of_vaccination.to_date
+  def performed_at_date = date_of_vaccination&.to_date
 
   def performed_at_time = time_of_vaccination&.to_time
 
@@ -474,7 +478,10 @@ class ImmunisationImportRow
         end
   end
 
-  delegate :default_dose_sequence, :maximum_dose_sequence, to: :programme
+  delegate :default_dose_sequence,
+           :maximum_dose_sequence,
+           to: :programme,
+           allow_nil: true
 
   def offline_recording? = session_id.present?
 
@@ -569,7 +576,7 @@ class ImmunisationImportRow
     end
   end
 
-  def disease_types = vaccine&.disease_types || programme.disease_types
+  def disease_types = vaccine&.disease_types || programme&.disease_types
 
   def dose_sequence_value
     value =

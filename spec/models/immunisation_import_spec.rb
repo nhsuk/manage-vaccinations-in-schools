@@ -42,16 +42,24 @@ describe ImmunisationImport do
     create(:school, urn: "110158", systm_one_code: "TT110158")
     create(:school, urn: "120026")
     create(:school, urn: "144012")
+    create(:school, urn: "100000")
   end
 
   let(:programmes) { [Programme.flu] }
   let(:team) do
-    create(:team, :with_generic_clinic, ods_code: "R1L", programmes:)
+    if type == "national_reporting"
+      create(:team, :national_reporting)
+    else
+      create(:team, :with_generic_clinic, ods_code: "R1L", programmes:)
+    end
   end
+  let(:school) { create(:school, urn: "123456") }
 
   let(:file) { "valid_flu.csv" }
-  let(:csv) { fixture_file_upload("immunisation_import/point_of_care/#{file}") }
+  let(:csv) { fixture_file_upload("immunisation_import/#{type}/#{file}") }
   let(:uploaded_by) { create(:user, team:) }
+
+  let(:type) { "point_of_care" }
 
   it_behaves_like "a CSVImportable model"
 
@@ -100,12 +108,44 @@ describe ImmunisationImport do
         end
       end
     end
+
+    context "with a duplicated row" do
+      let(:file) { "duplicate_row.csv" }
+
+      before { immunisation_import.parse_rows! }
+
+      shared_examples "duplicate row" do
+        it "is invalid" do
+          expect(immunisation_import).to be_invalid
+          expect(immunisation_import.rows.first.errors[:base]).to include(
+            /appears more than once/
+          )
+          expect(immunisation_import.rows.second.errors[:base]).to include(
+            /appears more than once/
+          )
+        end
+      end
+
+      context "with a point of care import" do
+        let(:type) { "point_of_care" }
+
+        it_behaves_like "duplicate row"
+      end
+
+      context "with a national reporting import" do
+        let(:type) { "national_reporting" }
+
+        it_behaves_like "duplicate row"
+      end
+    end
   end
 
   describe "#parse_rows!" do
     before { immunisation_import.parse_rows! }
 
-    around { |example| travel_to(Date.new(2025, 8, 1)) { example.run } }
+    around { |example| travel_to(test_date) { example.run } }
+
+    let(:test_date) { Date.new(2025, 8, 1) }
 
     context "with valid flu rows" do
       let(:programmes) { [Programme.flu] }
@@ -150,6 +190,18 @@ describe ImmunisationImport do
     context "with a SystmOne file" do
       let(:programmes) { [Programme.hpv, Programme.menacwy, Programme.flu] }
       let(:file) { "systm_one.csv" }
+
+      it "populates the rows" do
+        expect(immunisation_import).to be_valid
+        expect(immunisation_import.rows).not_to be_empty
+      end
+    end
+
+    context "with a national reporting upload" do
+      let(:type) { "national_reporting" }
+      let(:file) { "valid_mixed_flu_hpv.csv" }
+
+      let(:test_date) { Date.new(2025, 12, 1) }
 
       it "populates the rows" do
         expect(immunisation_import).to be_valid
@@ -494,7 +546,7 @@ describe ImmunisationImport do
         vaccination_records: [vaccination_record]
       )
     end
-    let(:session) { create(:session, programmes:) }
+    let(:session) { create(:session, location: school, programmes:) }
     let(:vaccination_record) do
       create(:vaccination_record, programme: programmes.first, session:)
     end
@@ -519,7 +571,7 @@ describe ImmunisationImport do
       )
     end
 
-    let(:session) { create(:session, programmes:) }
+    let(:session) { create(:session, location: school, programmes:) }
     let(:vaccination_record) do
       create(:vaccination_record, programme: programmes.first, session:)
     end
