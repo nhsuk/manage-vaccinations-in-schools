@@ -149,7 +149,7 @@ class AppSessionSummaryComponent < ViewComponent::Base
 
   def consent_style_row
     return unless show_consent_style
-    return unless "mmr".in? session.programme_types
+    return unless session.programmes.any?(&:supports_outbreak?)
 
     {
       key: {

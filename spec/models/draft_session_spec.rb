@@ -102,4 +102,20 @@ describe DraftSession do
       end
     end
   end
+
+  describe "#supports_oubreak?" do
+    subject { draft_session.supports_outbreak? }
+
+    context "when the programme supports outbreak" do
+      let(:existing_programmes) { [Programme.mmr] }
+
+      it { should be true }
+    end
+
+    context "when the session isn't part of an outbreak" do
+      let(:existing_programmes) { [Programme.flu] }
+
+      it { should be false }
+    end
+  end
 end

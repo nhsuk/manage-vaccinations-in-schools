@@ -47,7 +47,7 @@ class DraftSession
     steps << :dates
     steps << :dates_check if school?
 
-    steps << :consent_style if "mmr".in? programme_types
+    steps << :consent_style if supports_outbreak?
 
     if include_notification_steps?
       steps += %i[consent_requests consent_reminders] if school?
@@ -259,6 +259,10 @@ class DraftSession
 
   def human_enum_name(attribute)
     Session.human_enum_name(attribute, send(attribute))
+  end
+
+  def supports_outbreak?
+    programmes.any?(&:supports_outbreak?)
   end
 
   private
