@@ -118,6 +118,118 @@ describe ConsentNotification do
         end
       end
 
+      context "with an MMR programme" do
+        let(:programmes) { [Programme.mmr] }
+
+        context "when patient is eligible for MMRV" do
+          before do
+            allow(patient).to receive(:eligible_for_mmrv?).and_return(true)
+          end
+
+          it "enqueues an email per parent" do
+            expect { create_and_send! }.to have_delivered_email(
+              :consent_school_request_mmrv
+            ).with(
+              disease_types:,
+              parent: parents.first,
+              patient: patient,
+              programme_types:,
+              session: session,
+              sent_by: current_user
+            ).and have_delivered_email(:consent_school_request_mmrv).with(
+                    disease_types:,
+                    parent: parents.second,
+                    patient: patient,
+                    programme_types:,
+                    session: session,
+                    sent_by: current_user
+                  )
+          end
+
+          context "when session is set to send outbreak requests" do
+            let(:session) do
+              create(:session, location:, programmes:, team:, outbreak: true)
+            end
+
+            it "enqueues an outbreak email per parent" do
+              expect { create_and_send! }.to have_delivered_email(
+                :consent_school_request_mmrv_outbreak
+              ).with(
+                disease_types:,
+                parent: parents.first,
+                patient: patient,
+                programme_types:,
+                session: session,
+                sent_by: current_user
+              ).and have_delivered_email(
+                      :consent_school_request_mmrv_outbreak
+                    ).with(
+                      disease_types:,
+                      parent: parents.second,
+                      patient: patient,
+                      programme_types:,
+                      session: session,
+                      sent_by: current_user
+                    )
+            end
+          end
+        end
+
+        context "when patient is not eligible for MMRV" do
+          before do
+            allow(patient).to receive(:eligible_for_mmrv?).and_return(false)
+          end
+
+          it "enqueues an email per parent" do
+            expect { create_and_send! }.to have_delivered_email(
+              :consent_school_request_mmr
+            ).with(
+              disease_types:,
+              parent: parents.first,
+              patient:,
+              programme_types:,
+              session:,
+              sent_by: current_user
+            ).and have_delivered_email(:consent_school_request_mmr).with(
+                    disease_types:,
+                    parent: parents.second,
+                    patient:,
+                    programme_types:,
+                    session:,
+                    sent_by: current_user
+                  )
+          end
+
+          context "when session is set to send outbreak requests" do
+            let(:session) do
+              create(:session, location:, programmes:, team:, outbreak: true)
+            end
+
+            it "enqueues an outbreak email per parent" do
+              expect { create_and_send! }.to have_delivered_email(
+                :consent_school_request_mmr_outbreak
+              ).with(
+                disease_types:,
+                parent: parents.first,
+                patient:,
+                programme_types:,
+                session:,
+                sent_by: current_user
+              ).and have_delivered_email(
+                      :consent_school_request_mmr_outbreak
+                    ).with(
+                      disease_types:,
+                      parent: parents.second,
+                      patient:,
+                      programme_types:,
+                      session:,
+                      sent_by: current_user
+                    )
+            end
+          end
+        end
+      end
+
       it "enqueues a text per parent" do
         expect { create_and_send! }.to have_delivered_sms(
           :consent_school_request

@@ -17,7 +17,7 @@ describe AppSessionSummaryComponent do
     )
   end
   let(:team) { create(:team, programmes:) }
-  let(:outbreak) { nil }
+  let(:outbreak) { false }
   let(:session) { create(:session, location:, programmes:, team:, outbreak:) }
 
   it { should have_content("ProgrammesHPV") }
