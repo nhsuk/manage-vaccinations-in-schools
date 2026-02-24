@@ -438,18 +438,20 @@ describe "MMR/MMRV" do
   end
 
   def then_i_see_a_historical_vaccination_log_entry
-    expect(page).to have_content("Historical vaccination record added")
+    expect(page).to have_content("Vaccination record added manually")
   end
 
   def and_it_includes_the_mmr_programme_and_both_reported_and_performed_at_dates
     expect(page).to have_content(
-      "MMR   Record added 1 July 2025 at 12:00am. Vaccination given #{@vaccination_date.strftime("%-d %B %Y")}."
+      "MMR   Record added to Mavis 1 July 2025 at 12:00am. " \
+        "Vaccination given #{@vaccination_date.strftime("%-d %B %Y")}."
     )
   end
 
   def and_it_includes_the_mmrv_programme_and_both_reported_and_performed_at_dates
     expect(page).to have_content(
-      "MMRV   Record added 1 July 2025 at 12:00am. Vaccination given #{@vaccination_date.strftime("%-d %B %Y")}."
+      "MMRV   Record added to Mavis 1 July 2025 at 12:00am. " \
+        "Vaccination given #{@vaccination_date.strftime("%-d %B %Y")}."
     )
   end
 end

@@ -7,7 +7,7 @@ describe AppActivityLogComponent do
 
   let(:today) { Date.new(2026, 1, 1) }
 
-  let(:programmes) { [Programme.hpv, Programme.flu] }
+  let(:programmes) { [Programme.hpv, Programme.flu, Programme.mmr] }
   let(:team) { create(:team, programmes:) }
   let(:user) { create(:user, team:, family_name: "Joy", given_name: "Nurse") }
   let(:location) { create(:school, :secondary, name: "Hogwarts", programmes:) }
@@ -181,6 +181,18 @@ describe AppActivityLogComponent do
       )
 
       create(
+        :vaccination_record,
+        programme: programmes.third,
+        patient:,
+        session: nil,
+        performed_at: Date.new(2025, 1, 24),
+        performed_by: nil,
+        reported_at: Time.zone.local(2025, 2, 15, 14, 33, 23),
+        source: :historical_upload,
+        vaccine: nil
+      )
+
+      create(
         :notify_log_entry,
         :email,
         template_id: GOVUK_NOTIFY_EMAIL_TEMPLATES[:consent_school_request_hpv],
@@ -201,7 +213,7 @@ describe AppActivityLogComponent do
     end
 
     it "has cards" do
-      expect(rendered).to have_css(".nhsuk-card", count: 12)
+      expect(rendered).to have_css(".nhsuk-card", count: 13)
     end
 
     include_examples "card",
@@ -220,10 +232,16 @@ describe AppActivityLogComponent do
                      programme: "HPV"
 
     include_examples "card",
-                     title: "Historical vaccination record added",
+                     title: "Vaccination record added manually",
                      date:
-                       "Record added 15 February 2025 at 2:33pm. Vaccination given 6 January 2025.",
+                       "Record added to Mavis 15 February 2025 at 2:33pm. Vaccination given 6 January 2025.",
                      programme: "Flu"
+
+    include_examples "card",
+                     title: "Vaccination record uploaded",
+                     date:
+                       "Record added to Mavis 15 February 2025 at 2:33pm. Vaccination given 24 January 2025.",
+                     programme: "MMR"
 
     include_examples "card",
                      title: "Triaged decision: Safe to vaccinate",
