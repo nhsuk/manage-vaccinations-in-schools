@@ -116,6 +116,9 @@ RAILS_ENV="$RAILS_ENV" bin/rails db:prepare
 
 # Start Rails server in end_to_end environment
 
+echo "[e2e] Installing foreman"
+gem install --silent foreman
+
 echo "[e2e] Starting end_to_end stack with foreman..."
 if command -v setsid >/dev/null 2>&1; then
   START_FOREMAN=(setsid foreman start -f Procfile.e2e)
