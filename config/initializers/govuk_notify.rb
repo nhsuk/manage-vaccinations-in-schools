@@ -16,6 +16,7 @@ GOVUK_NOTIFY_EMAIL_TEMPLATES = {
   consent_school_initial_reminder_flu: "7f85a5b4-5240-4ae9-94f7-43913852943c",
   consent_school_initial_reminder_hpv: "0d78bff0-9dde-4192-8cf8-10e83486b54f",
   consent_school_initial_reminder_mmr: "fe47875a-a0a6-40d9-bd41-a411ebb31cff",
+  consent_school_initial_reminder_mmrv: "fe47875a-a0a6-40d9-bd41-a411ebb31cff",
   consent_school_request_doubles: "9b1a015d-6caa-47c5-a223-f72377586602",
   consent_school_request_flu: "017853bc-2b35-4aff-99b1-193e514613a0",
   consent_school_request_hpv: "7b9bb010-0742-460a-ae25-1922355b6776",
@@ -28,7 +29,9 @@ GOVUK_NOTIFY_EMAIL_TEMPLATES = {
   consent_school_subsequent_reminder_hpv:
     "5f70d21d-00b6-41e6-bdc9-e64455972b43",
   consent_school_subsequent_reminder_mmr:
-    "5462c441-81c0-4ac0-821f-713b4178f8ba",
+    "fe47875a-a0a6-40d9-bd41-a411ebb31cff",
+  consent_school_subsequent_reminder_mmrv:
+    "fe47875a-a0a6-40d9-bd41-a411ebb31cff",
   consent_unknown_contact_details_warning:
     "6d746839-a20e-4d50-8a1d-6f3900ff69b2",
   session_school_reminder: "8b8a9566-bb03-4b3c-8abc-5bd5a4b8797d",
@@ -75,8 +78,7 @@ GOVUK_NOTIFY_UNUSED_TEMPLATES = {
   "e871e7d5-06be-48d1-81ba-38ddecae46e2" => :consent_confirmation_refused,
   "b9c0c3fb-24f1-4647-a2a1-87389cec9942" => :consent_school_reminder,
   "12f90b2d-33a5-429c-9ed7-0aa2823eb3ac" => :consent_school_request,
-  "5462c441-81c0-4ac0-821f-713b4178f8ba" =>
-    :consent_school_initial_reminder_mmr,
+  "5462c441-81c0-4ac0-821f-713b4178f8ba" => :consent_school_reminder_mmr,
   "07516fbf-6d51-4c17-a046-305f5baa6744" => :vaccination_administered_flu,
   "3179b434-4f44-4d47-a8ba-651b58c235fd" => :consent_confirmation_given,
   "eb34f3ab-0c58-4e56-b6b1-2c179270dfc3" => :consent_confirmation_refused,
