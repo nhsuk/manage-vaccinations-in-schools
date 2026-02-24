@@ -1145,7 +1145,7 @@
             </details>
           </div>
           <div class="method-source-code" id="attendance_events-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/components/app_activity_log_component.rb, line 457</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/components/app_activity_log_component.rb, line 458</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">attendance_events</span>
   <span class="ruby-identifier">attendance_records</span>.<span class="ruby-identifier">map</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">attendance_record</span><span class="ruby-operator">|</span>
     <span class="ruby-identifier">title</span> =
@@ -1498,7 +1498,7 @@
             </details>
           </div>
           <div class="method-source-code" id="historical_vaccination_event-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/components/app_activity_log_component.rb, line 449</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/components/app_activity_log_component.rb, line 450</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">historical_vaccination_event?</span>(<span class="ruby-identifier">vaccination_record</span>)
   <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">reported_at</span>.<span class="ruby-identifier">present?</span> <span class="ruby-operator">&amp;&amp;</span>
     (
@@ -1921,9 +1921,10 @@
       <span class="ruby-keyword">if</span> <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">administered?</span>
         <span class="ruby-keyword">if</span> (<span class="ruby-identifier">vaccine</span> = <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">vaccine</span>)
           <span class="ruby-node">&quot;Vaccinated with #{vaccine.brand}&quot;</span>
-        <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">sourced_from_manual_report?</span> <span class="ruby-operator">||</span>
-              <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">sourced_from_historical_upload?</span>
-          <span class="ruby-string">&quot;Historical vaccination record added&quot;</span>
+        <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">sourced_from_manual_report?</span>
+          <span class="ruby-string">&quot;Vaccination record added manually&quot;</span>
+        <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">sourced_from_historical_upload?</span>
+          <span class="ruby-string">&quot;Vaccination record uploaded&quot;</span>
         <span class="ruby-keyword">else</span>
           <span class="ruby-string">&quot;Vaccinated&quot;</span>
         <span class="ruby-keyword">end</span>
@@ -1933,7 +1934,7 @@
 
     <span class="ruby-identifier">subtitle</span> =
       <span class="ruby-keyword">if</span> <span class="ruby-identifier">historical_vaccination_event?</span>(<span class="ruby-identifier">vaccination_record</span>)
-        <span class="ruby-node">&quot;Record added #{vaccination_record.reported_at.to_fs(:long)}. &quot;</span> \
+        <span class="ruby-node">&quot;Record added to Mavis #{vaccination_record.reported_at.to_fs(:long)}. &quot;</span> \
           <span class="ruby-node">&quot;Vaccination given #{vaccination_record.performed_at.to_date.to_fs(:long)}.&quot;</span>
       <span class="ruby-keyword">end</span>
     <span class="ruby-identifier">at</span> =
