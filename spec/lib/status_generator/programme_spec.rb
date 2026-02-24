@@ -85,6 +85,39 @@ describe StatusGenerator::Programme do
       its(:disease_types) { should be_empty }
       its(:vaccine_methods) { should contain_exactly("injection") }
       its(:without_gelatine) { should be(false) }
+
+      context "with a triage delay" do
+        before do
+          create(
+            :triage,
+            :delay_vaccination,
+            patient:,
+            programme:,
+            delay_vaccination_until: Date.tomorrow
+          )
+        end
+
+        its(:status) { should be(:cannot_vaccinate_delay_vaccination) }
+      end
+    end
+
+    context "without consent for the next dose" do
+      its(:consent_status) { should be(:no_response) }
+      its(:status) { should be(:needs_consent_no_response) }
+
+      context "with a triage delay" do
+        before do
+          create(
+            :triage,
+            :delay_vaccination,
+            patient:,
+            programme:,
+            delay_vaccination_until: Date.tomorrow
+          )
+        end
+
+        its(:status) { should be(:needs_consent_no_response) }
+      end
     end
   end
 
