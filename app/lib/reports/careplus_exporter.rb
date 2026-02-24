@@ -80,6 +80,7 @@ class Reports::CareplusExporter
     scope =
       VaccinationRecord
         .kept
+        .sourced_from_service
         .for_programme(programme)
         .where(team_location: { team_id: team.id })
         .for_academic_year(academic_year)

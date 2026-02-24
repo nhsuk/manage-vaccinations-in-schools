@@ -69,6 +69,21 @@ describe Reports::SystmOneExporter do
     it { should be_blank }
   end
 
+  context "with a vaccination record sourced manually" do
+    let(:vaccination_record) do
+      create(
+        :vaccination_record,
+        :sourced_from_manual_report,
+        programme:,
+        patient:,
+        session:,
+        performed_at: 2.weeks.ago
+      )
+    end
+
+    it { should be_blank }
+  end
+
   context "with vaccination records outside the date range" do
     let(:vaccination_record) do
       create(

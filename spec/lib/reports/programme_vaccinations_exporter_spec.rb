@@ -229,6 +229,24 @@ describe Reports::ProgrammeVaccinationsExporter do
           it { should be_empty }
         end
 
+        context "with a vaccinated patient sourced manually" do
+          let(:patient) { create(:patient_location, session:).patient }
+          let(:start_date) { Date.current }
+
+          before do
+            create(
+              :vaccination_record,
+              :sourced_from_manual_report,
+              patient:,
+              session:,
+              programme: programmes.first,
+              performed_by: user
+            )
+          end
+
+          it { should be_empty }
+        end
+
         context "with a vaccination for a different programme" do
           let(:patient) { create(:patient_location, session:).patient }
 

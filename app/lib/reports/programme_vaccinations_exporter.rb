@@ -91,6 +91,7 @@ class Reports::ProgrammeVaccinationsExporter
     scope =
       team
         .vaccination_records
+        .sourced_from_service
         .for_programme(programme)
         .for_academic_year(academic_year)
         .includes(
