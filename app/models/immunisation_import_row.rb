@@ -174,10 +174,18 @@ class ImmunisationImportRow
       vaccine_id: vaccine&.id
     }
 
+    delivery_attributes = {
+      delivery_method: delivery_method_value,
+      delivery_site: delivery_site_value
+    }
+
     vaccination_record =
       if national_reporting?
         VaccinationRecord.find_or_initialize_by(
-          attributes.merge(attributes_to_stage_if_already_exists)
+          attributes.merge(
+            attributes_to_stage_if_already_exists,
+            delivery_attributes
+          )
         )
       elsif uuid.present?
         VaccinationRecord
@@ -186,11 +194,6 @@ class ImmunisationImportRow
       else
         VaccinationRecord.find_or_initialize_by(attributes)
       end
-
-    delivery_attributes = {
-      delivery_method: delivery_method_value,
-      delivery_site: delivery_site_value
-    }
 
     if vaccination_record.persisted?
       vaccination_record.stage_changes(attributes_to_stage_if_already_exists)
