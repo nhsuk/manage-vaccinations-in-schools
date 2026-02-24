@@ -46,7 +46,7 @@ module ReportingAPI::TokenAuthenticationConcern
           session["user"] = data["user"]
           session["cis2_info"] = data["cis2_info"]
           authenticate_user!
-          touch_sessions(@current_user)
+          touch_sessions!(@current_user)
         else
           session.clear
           client_id_error!(jwt)
@@ -70,7 +70,7 @@ module ReportingAPI::TokenAuthenticationConcern
     end
   end
 
-  def touch_sessions(user)
+  def touch_sessions!(user)
     sessions =
       ActiveRecord::SessionStore::Session.where(
         "(data #>> '{}'::text[])::jsonb -> 'value' -> 'warden.user.user.key' -> 0 @> ?::jsonb",

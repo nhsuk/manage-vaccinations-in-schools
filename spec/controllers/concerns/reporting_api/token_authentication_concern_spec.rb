@@ -305,7 +305,7 @@ describe ReportingAPI::TokenAuthenticationConcern do
     end
   end
 
-  describe "#touch_sessions" do
+  describe "#touch_sessions!" do
     let(:user) { create(:user) }
 
     it "updates last_request_at for user's warden sessions" do
@@ -321,7 +321,7 @@ describe ReportingAPI::TokenAuthenticationConcern do
         }
       )
 
-      an_object_which_includes_the_concern.send(:touch_sessions, user)
+      an_object_which_includes_the_concern.send(:touch_sessions!, user)
 
       session = ActiveRecord::SessionStore::Session.last
       new_timestamp =
