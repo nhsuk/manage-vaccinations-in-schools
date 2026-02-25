@@ -831,6 +831,8 @@ class Patient < ApplicationRecord
     nhs_number.present? && nhs_number == latest_pds_search_result
   end
 
+  def notifier = Notifier::Patient.new(self)
+
   private
 
   def gp_practice_is_correct_type

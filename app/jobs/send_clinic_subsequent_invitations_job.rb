@@ -10,12 +10,11 @@ class SendClinicSubsequentInvitationsJob < ApplicationJob
     raise NoSessionDates if date.nil?
 
     patients(session).each do |patient|
-      ClinicNotification.create_and_send!(
-        patient:,
-        programmes: session.programmes_for(patient:),
+      patient.notifier.send_clinic_invitation(
+        programme_types: session.programmes_for(patient:).map(&:type),
         team: session.team,
         academic_year: session.academic_year,
-        type: :subsequent_invitation
+        sent_by: nil
       )
     end
   end
