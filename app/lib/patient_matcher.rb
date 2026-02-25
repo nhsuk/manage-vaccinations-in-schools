@@ -27,6 +27,18 @@ module PatientMatcher
         family_name_ilike
       ).where(date_of_birth:)
 
+    # Order by name similarity so ambiguous matches (e.g. twins) pick the
+    # closest-name record deterministically instead of relying on DB order.
+    similarity_order =
+      ActiveRecord::Base.sanitize_sql_array(
+        [
+          "(STRICT_WORD_SIMILARITY(given_name, ?) + STRICT_WORD_SIMILARITY(family_name, ?)) DESC",
+          given_name,
+          family_name
+        ]
+      )
+    scope = scope.order(Arel.sql(similarity_order))
+
     if address_postcode.present?
       scope =
         if include_3_out_of_4_matches
