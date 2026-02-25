@@ -28,6 +28,10 @@ describe "Td/IPV vaccination" do
     and_i_select_the_batch
     then_i_see_the_confirmation_page
 
+    when_i_click_change_dose_number
+    and_i_select_the_dose_number
+    then_i_see_the_confirmation_page
+
     when_i_click_change_date
     and_i_select_the_date
     and_i_choose_vaccinated
@@ -146,6 +150,15 @@ describe "Td/IPV vaccination" do
   def and_i_select_the_delivery
     choose "Intramuscular"
     choose "Left arm (upper position)"
+    click_on "Continue"
+  end
+
+  def when_i_click_change_dose_number
+    click_on "Change dose number"
+  end
+
+  def and_i_select_the_dose_number
+    choose "5th"
     click_on "Continue"
   end
 
