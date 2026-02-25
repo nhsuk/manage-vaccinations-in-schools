@@ -455,9 +455,31 @@ describe ImmunisationImport do
 
       it "links both vaccination records to the same patient" do
         process!
-        expect(immunisation_import.vaccination_records.map(&:patient)).to all(
-          eq(Patient.first)
-        )
+        patients =
+          immunisation_import
+            .vaccination_records
+            .includes(:patient)
+            .map(&:patient)
+        expect(patients).to all(eq(Patient.first))
+      end
+    end
+
+    context "with the same patient record within the upload and no NHS number" do
+      let(:programmes) { [Programme.flu, Programme.hpv] }
+      let(:file) { "valid_duplicate_patient_no_nhs_number.csv" }
+
+      it "only creates one patient record" do
+        expect { process! }.to change(Patient, :count).by(1)
+      end
+
+      it "links both vaccination records to the same patient" do
+        process!
+        patients =
+          immunisation_import
+            .vaccination_records
+            .includes(:patient)
+            .map(&:patient)
+        expect(patients).to all(eq(Patient.first))
       end
     end
   end

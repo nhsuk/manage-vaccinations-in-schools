@@ -95,7 +95,7 @@ class ImmunisationImportRow
   SCHOOL_URN_HOME_EDUCATED = "999999"
   SCHOOL_URN_UNKNOWN = "888888"
 
-  attr_reader :team, :type
+  attr_reader :team, :type, :patient
 
   def initialize(data:, team:, type:)
     @data = data
@@ -117,7 +117,7 @@ class ImmunisationImportRow
   end
 
   def to_vaccination_record
-    return if invalid? || national_reporting_not_administered?
+    return if invalid? || national_reporting_not_administered? || patient.nil?
 
     outcome = (administered ? "administered" : reason_not_administered_value)
     source =
@@ -239,6 +239,12 @@ class ImmunisationImportRow
     end
   end
 
+  def set_patient(candidates: nil)
+    @patient =
+      existing_patients(candidates:)&.first ||
+        Patient.new(new_patient_attributes)
+  end
+
   def batch_expiry = @data[:batch_expiry_date]
 
   def batch_name = @data[:batch_number] || @data[:vaccination_batch_number]
@@ -350,11 +356,6 @@ class ImmunisationImportRow
       if (email = supplied_by_email&.to_s)
         User.find_by(email:)
       end
-  end
-
-  def patient
-    @patient ||=
-      (existing_patients.first || Patient.new(new_patient_attributes) if valid?)
   end
 
   def school
@@ -473,11 +474,25 @@ class ImmunisationImportRow
 
   def academic_year = date_of_vaccination.to_date.academic_year
 
-  def existing_patients
+  def existing_patients(candidates: nil)
     if patient_first_name.blank? || patient_last_name.blank? ||
          patient_date_of_birth.nil?
       return
     end
+
+    database_matches =
+      Patient.match_existing(
+        nhs_number: patient_nhs_number_value,
+        given_name: patient_first_name.to_s,
+        family_name: patient_last_name.to_s,
+        date_of_birth: patient_date_of_birth.to_date,
+        address_postcode: patient_postcode&.to_postcode,
+        include_3_out_of_4_matches: false
+      )
+
+    return database_matches if database_matches.present?
+
+    return if candidates.blank?
 
     Patient.match_existing(
       nhs_number: patient_nhs_number_value,
@@ -485,15 +500,16 @@ class ImmunisationImportRow
       family_name: patient_last_name.to_s,
       date_of_birth: patient_date_of_birth.to_date,
       address_postcode: patient_postcode&.to_postcode,
-      include_3_out_of_4_matches: false
+      include_3_out_of_4_matches: false,
+      candidates:
     )
   end
 
   def new_patient_attributes
     {
       address_postcode: patient_postcode&.to_postcode,
-      date_of_birth: patient_date_of_birth.to_date,
-      birth_academic_year: patient_date_of_birth.to_date.academic_year,
+      date_of_birth: patient_date_of_birth&.to_date,
+      birth_academic_year: patient_date_of_birth&.to_date&.academic_year,
       family_name: patient_last_name.to_s,
       given_name: patient_first_name.to_s,
       gender_code: patient_gender_code_value,
