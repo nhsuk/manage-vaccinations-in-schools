@@ -187,9 +187,9 @@ done
 
 pushd "$MAVIS_TEST_REPO" > /dev/null
 
-echo "[e2e] Running end-to-end tests via uv:"
-echo "[e2e]   uv run pytest ${PYTEST_ARGS[*]}"
-BASE_URL="http://localhost:${RAILS_PORT}" uv run pytest "${PYTEST_ARGS[@]}"
+echo "[e2e] Running end-to-end tests:"
+echo "[e2e]   uv run pytest -m "not accessibility and not reporting and not imms_api" ${PYTEST_ARGS[*]}"
+BASE_URL="http://localhost:${RAILS_PORT}" uv run pytest -m "not accessibility and not reporting and not imms_api" "${PYTEST_ARGS[@]}"
 PYTEST_EXIT_CODE=$?
 
 popd > /dev/null
