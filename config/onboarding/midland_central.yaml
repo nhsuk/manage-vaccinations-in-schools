@@ -1,0 +1,247 @@
+organisation:
+  ods_code: RRE
+
+team:
+  workgroup: mpftcentralsais
+  name: MPFT - Central
+  email: school.immunisation@mpft.nhs.uk
+  phone: "0300 124 0366"
+  careplus_venue_code: UNKNOWN
+  privacy_policy_url: https://www.mpft.nhs.uk/about-us/privacy-notice
+  privacy_notice_url: https://www.mpft.nhs.uk/services/school-age-immunisation-service
+  reply_to_id: be085e6d-5194-4ea2-9487-294ed275d82d
+  type: point_of_care
+
+programmes:
+  - menacwy
+  - mmr
+  - td_ipv
+  - hpv
+
+subteams:
+  central:
+    name: MPFT - Central
+    email: school.immunisation@mpft.nhs.uk
+    phone: "0300 124 0366"
+    reply_to_id: be085e6d-5194-4ea2-9487-294ed275d82d
+
+schools:
+  central:
+    - 150923
+    - 124274
+    - 145681
+    - 146807
+    - 147449
+    - 140123
+    - 146863
+    - 148235
+    - 124290
+    - 142981
+    - 150784
+    - 124234
+    - 149420
+    - 124453
+    - 144935
+    - 143351
+    - 141448
+    - 124192
+    - 142192
+    - 142193
+    - 149079
+    - 145176
+    - 124067
+    - 146609
+    - 151649
+    - 124202
+    - 137384
+    - 149989
+    - 148122
+    - 124240
+    - 124068
+    - 124168
+    - 134666
+    - 146272
+    - 144208
+    - 136961
+    - 142421
+    - 147425
+    - 144386
+    - 124400
+    - 142980
+    - 142422
+    - 144207
+    - 124195
+    - 141449
+    - 124464
+    - 147438
+    - 150855
+    - 147424
+    - 141278
+    - 124070
+    - 124205
+    - 146605
+    - 148061
+    - 124085
+    - 141779
+    - 124183
+    - 146806
+    - 149639
+    - 149002
+    - 124110
+    - 141783
+    - 140858
+    - 140490
+    - 146981
+    - 124508
+    - 124291
+    - 124232
+    - 141186
+    - 149328
+    - 142313
+    - 141342
+    - 124174
+    - 148517
+    - 142985
+    - 143898
+    - 145685
+    - 142170
+    - 146918
+    - 145378
+    - 124518
+    - 149001
+    - 142277
+    - 124487
+    - 146526
+    - 124395
+    - 146466
+    - 124130
+    - 142439
+    - 145687
+    - 143355
+    - 144206
+    - 124177
+    - 124437
+    - 143353
+    - 124164
+    - 147082
+    - 145379
+    - 141493
+    - 146814
+    - 149000
+    - 137956
+    - 140996
+    - 151701
+    - 132735
+    - 145375
+    - 144439
+    - 150426
+    - 142014
+    - 142983
+    - 124289
+    - 124141
+    - 142442
+    - 142208
+    - 145682
+    - 142209
+    - 143829
+    - 147426
+    - 124265
+    - 124269
+    - 148318
+    - 142210
+    - 124471
+    - 124476
+    - 140802
+    - 142213
+    - 124309
+    - 124278
+    - 145380
+    - 143348
+    - 151255
+    - 141822
+    - 152007
+    - 152008
+    - 136460
+    - 147423
+    - 124199
+    - 134353
+    - 147279
+    - 140803
+    - 142214
+    - 152005
+    - 124344
+    - 146427
+    - 150077
+    - 124343
+    - 124275
+    - 142986
+    - 142216
+    - 150647
+    - 147422
+    - 145683
+    - 142447
+    - 150469
+    - 140804
+    - 124489
+    - 124467
+    - 137164
+    - 138548
+    - 150631
+    - 137100
+    - 142516
+    - 145098
+    - 138351
+    - 137553
+    - 149585
+    - 144558
+    - 143896
+    - 140381
+    - 140997
+    - 142987
+    - 124426
+    - 124072
+    - 124193
+    - 150526
+    - 144209
+    - 145381
+    - 141343
+    - 141856
+    - 124477
+
+clinics:
+  central:
+    - name: Balance Street Health Centre
+      address_line_1: Balance Street
+      address_town: Uttoxeter
+      address_postcode: ST14 8JG
+      ods_code: S8034
+    - name: Cannock Fire Station
+      address_line_1: Old Hednesford Road
+      address_town: Cannock
+      address_postcode: WS11 6LD
+    - name: Codsall Clinic
+      address_line_1: Elliotts Lane, Codsall
+      address_town: Wolverhampton
+      address_postcode: WV8 1PH
+      ods_code: S8023
+    - name: Rising Brook Fire Station
+      address_line_1: Hesketh Road, Rising Brook
+      address_town: Stafford
+      address_postcode: ST17 9NF
+    - name: Rugeley Fire Station
+      address_line_1: Bryans Lane
+      address_town: Rugeley
+      address_postcode: WS15 2JN
+    - name: Sandy Lane Health Centre
+      address_line_1: Sandy Lane
+      address_town: Rugeley
+      address_postcode: WS15 2LB
+    - name: Uttoxeter Library
+      address_line_1: High Street
+      address_town: Uttoxeter
+      address_postcode: ST14 7JQ
+    - name: Wombourne Clinic
+      address_line_1: Mill Lane,Wombourne
+      address_town: Wolverhampton
+      address_postcode: WV5 0LG
+

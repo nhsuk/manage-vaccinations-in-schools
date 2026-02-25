@@ -1,0 +1,219 @@
+organisation:
+  ods_code: RRE
+
+team:
+  workgroup: mpftsouthsais
+  name: MPFT - South
+  email: school.immunisation@mpft.nhs.uk
+  phone: "0300 124 0366"
+  careplus_venue_code: UNKNOWN
+  privacy_policy_url: https://www.mpft.nhs.uk/about-us/privacy-notice
+  privacy_notice_url: https://www.mpft.nhs.uk/services/school-age-immunisation-service
+  reply_to_id: be085e6d-5194-4ea2-9487-294ed275d82d
+  type: point_of_care
+
+programmes:
+  - menacwy
+  - mmr
+  - td_ipv
+  - hpv
+
+subteams:
+  south:
+    name: MPFT - South
+    email: school.immunisation@mpft.nhs.uk
+    phone: "0300 124 0366"
+    reply_to_id: be085e6d-5194-4ea2-9487-294ed275d82d
+
+schools:
+  south:
+    - urn: 124449
+      site: "A"
+      name: "Abbot Beyne School (Evershed Building)"
+    - urn: 124449
+      site: "B"
+      name: "Abbot Beyne School (Linnell Building)"
+    - 149689
+    - 146295
+    - 124176
+    - 148540
+    - 143483
+    - 149841
+    - 124147
+    - 144989
+    - 146235
+    - 143900
+    - 150788
+    - 147299
+    - 134880
+    - 144498
+    - 145680
+    - 143899
+    - 124207
+    - 132731
+    - 146443
+    - 150922
+    - 124257
+    - 151609
+    - 147826
+    - 145414
+    - 150786
+    - 147569
+    - 136886
+    - 142792
+    - 141203
+    - 140523
+    - 124155
+    - 149081
+    - 124209
+    - 150772
+    - 144604
+    - 141450
+    - 124162
+    - 145377
+    - 144988
+    - 148316
+    - 124165
+    - 124151
+    - 145684
+    - 147571
+    - 143663
+    - 146910
+    - 148718
+    - 149422
+    - 146266
+    - 124294
+    - 142769
+    - 142095
+    - 124175
+    - 145100
+    - 145889
+    - 136323
+    - 133583
+    - 124408
+    - 145686
+    - 139719
+    - 136136
+    - 137146
+    - 124190
+    - 142799
+    - 140522
+    - 124474
+    - 138982
+    - 138728
+    - 138435
+    - 148285
+    - 124104
+    - 149166
+    - 124488
+    - 150422
+    - 150885
+    - 149284
+    - 140995
+    - 135259
+    - 146294
+    - 146493
+    - 140489
+    - 124166
+    - 131004
+    - 145099
+    - 124392
+    - 147574
+    - 146901
+    - 145459
+    - 149128
+    - 151294
+    - 145276
+    - 145218
+    - urn: 124040
+      site: "A"
+      name: "Samuel Allsopp Primary and Nursery School (Site A)"
+    - urn: 124040
+      site: "B"
+      name: "Samuel Allsopp Primary and Nursery School (Site B)"
+    - 142094
+    - 139602
+    - 145538
+    - 145794
+    - 140402
+    - 124375
+    - 150421
+    - 148749
+    - 124369
+    - 124373
+    - 143347
+    - 152006
+    - 124357
+    - 124345
+    - 142097
+    - 148748
+    - 124326
+    - 142982
+    - 124084
+    - 152009
+    - 145834
+    - 147085
+    - 149651
+    - 124054
+    - urn: 136414
+      site: "A"
+      name: "The De Ferrers Academy (Dove Campus)"
+    - urn: 136414
+      site: "B"
+      name: "The De Ferrers Academy (Trent Campus)"
+    - 146070
+    - 146071
+    - 146907
+    - 124171
+    - 138899
+    - 148506
+    - 142096
+    - 136762
+    - 138936
+    - 147228
+    - 124087
+    - 142748
+    - 124150
+    - 141344
+    - 151423
+    - 146513
+    - 146727
+    - 146201
+    - 149421
+    - 146130
+    - 145097
+    - 151286
+    - 147570
+    - 146085
+    - 142809
+
+
+clinics:
+  south:
+    - name: Burton Fire Station
+      address_line_1: Moor Street
+      address_town: Burton-on-Trent
+      address_postcode: DE14 3SU
+      ods_code: S8072
+    - name: Leyfields Family Hub
+      address_line_1: Masefield Drive
+      address_town: Tamworth
+      address_postcode: B79 8JB
+    - name: Lichfield Fire Station
+      address_line_1: Birmingham Road
+      address_town: Lichfield
+      address_postcode: WS13 6HU
+      ods_code: S8079
+    - name: Tamworth Family Hub
+      address_line_1: Hawksworth
+      address_town: Tamworth
+      address_postcode: B77 2ER
+    - name: Tamworth Rugby Club
+      address_line_1: Wigginton Lodge, Solway Cl
+      address_town: Tamworth
+      address_postcode: B79 8ED
+    - name: Wilnecote Health Centre
+      address_line_1: Smithy Lane
+      address_town: Tamworth
+      address_postcode: B77 5LB
+
