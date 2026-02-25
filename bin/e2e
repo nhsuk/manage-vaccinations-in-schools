@@ -10,10 +10,19 @@ E2E_REDIS_URL="redis://localhost:6380/0"
 
 # Argument handling
 
-if [ $# -lt 1 ]; then
+function print_help() {
   echo "Usage: bin/e2e [--main] [pytest args...] <pytest-target>"
-  echo "  Example:"
-  echo "    bin/e2e --main --headed tests/test_start.py::test_start_page_elements_visible"
+  echo ""
+  echo "Options:"
+  echo "  --main    Force sync testing repo to latest main branch. WARNING: this will discard any local changes in the testing repo."
+  echo "  -h, --help  Show this help message and exit."
+  echo ""
+  echo "Example:"
+  echo "  bin/e2e --main --headed tests/test_start.py::test_start_page_elements_visible"
+}
+
+if [ $# -lt 1 ]; then
+  print_help
   exit 1
 fi
 
@@ -38,6 +47,10 @@ for arg in "$@"; do
   case "$arg" in
     --main)
       USE_MAVIS_BRANCH=true
+      ;;
+    -h|--help)
+      print_help
+      exit 0
       ;;
     *)
       PYTEST_ARGS+=("$arg")
