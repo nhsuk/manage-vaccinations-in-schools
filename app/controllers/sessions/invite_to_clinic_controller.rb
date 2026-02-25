@@ -13,17 +13,23 @@ class Sessions::InviteToClinicController < Sessions::BaseController
   end
 
   def update
-    if @session.school?
-      factory.create_patient_locations!
+    factory.create_patient_locations! if @session.school?
 
-      flash[
-        :success
-      ] = "#{I18n.t("children", count: @invitations_to_send)} invited to the clinic"
+    @patients_to_invite.each do |patient|
+      patient.notifier.send_clinic_invitation(
+        programme_types: @session.programmes_for(patient:).map(&:type),
+        team: @session.team,
+        academic_year: @session.academic_year,
+        sent_by: current_user
+      )
+    end
+
+    children_count = I18n.t("children", count: @invitations_to_send)
+
+    flash[:success] = if @session.school?
+      "#{children_count} invited to the clinic"
     else
-      SendClinicSubsequentInvitationsJob.perform_later(@session)
-      flash[
-        :success
-      ] = "Booking reminders sent for #{I18n.t("children", count: @invitations_to_send)}"
+      "Booking reminders sent for #{children_count}"
     end
 
     redirect_to session_path(@session)
@@ -53,7 +59,7 @@ class Sessions::InviteToClinicController < Sessions::BaseController
       if @session.school?
         factory.patient_locations_to_create.map(&:patient)
       else
-        SendClinicSubsequentInvitationsJob.new.patients(@session)
+        @session.patients
       end
   end
 
