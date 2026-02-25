@@ -13,11 +13,13 @@ class AppPatientNavigationComponent < ViewComponent::Base
     render AppSecondaryNavigationComponent.new do |nav|
       nav.with_item(
         href: patient_path(patient),
-        text: "Child record",
+        text: "Child’s details",
         selected: active == :show
       )
-      @programmes.flat_map do |programme|
-        nav.with_item(href: patient_path(@patient), text: programme.name)
+      if Flipper.enabled?(:child_record_redesign)
+        @programmes.flat_map do |programme|
+          nav.with_item(href: patient_programme_path(@patient, programme.type), text: programme.name)
+        end
       end
       nav.with_item(
         href: log_patient_path(patient),

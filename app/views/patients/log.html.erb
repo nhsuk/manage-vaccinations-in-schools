@@ -7,6 +7,6 @@
 
 <%= render "patients/header" %>
 
-<%= render AppPatientNavigationComponent.new(@patient, active: :log) %>
+<%= render AppPatientNavigationComponent.new(@patient, current_user.programmes, active: :log) %>
 
 <%= render AppActivityLogComponent.new(patient: @patient, team: current_team) %>

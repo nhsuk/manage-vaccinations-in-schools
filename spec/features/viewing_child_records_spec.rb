@@ -6,7 +6,8 @@ describe "View children" do
   before { given_my_team_exists }
 
   scenario "Viewing children" do
-    given_patients_exist
+    given_that_the_child_record_redesign_feature_flag_is_enabled
+    and_patients_exist
     and_the_patient_is_vaccinated
 
     when_i_click_on_children
@@ -20,8 +21,12 @@ describe "View children" do
     when_i_click_on_the_flu_tab
     then_i_see_the_childs_flu_information
 
-    when_i_click_on_the_mmr_tab
-    then_i_see_the_childs_mmr_information
+    when_i_click_on_the_hpv_tab
+    then_i_see_the_childs_hpv_information
+  end
+
+  def given_that_the_child_record_redesign_feature_flag_is_enabled
+    Flipper.enable(:child_record_redesign)
   end
 
   def given_my_team_exists
@@ -36,7 +41,7 @@ describe "View children" do
       )
   end
 
-  def given_patients_exist
+  def and_patients_exist
     school = create(:school, team: @team)
 
     @ineligible_school =
@@ -62,7 +67,6 @@ describe "View children" do
         family_name: "Smith",
         school:
       )
-    create(:vaccination_record, patient: @patient)
     create_list(:patient, 9, session: @session)
 
     another_session = create(:session, team: @team, programmes: [@hpv])
@@ -129,14 +133,19 @@ describe "View children" do
   end
 
   def then_i_see_the_childs_flu_information
-    expect(page).to have_content("No vaccinations")
+    expect(page).to have_current_path(patient_programme_path(@patient, "flu"))
+    expect(page).to have_css("h3.nhsuk-card__heading", text: "Vaccinations")
+    expect(page).to have_css(".nhsuk-body", text: "No vaccinations")
   end
 
-  def when_i_click_on_the_mmr_tab
-    click_on "MMR"
+  def when_i_click_on_the_hpv_tab
+    click_on "HPV"
   end
 
-  def then_i_see_the_childs_mmr_information
-    expect(page).to have_content("No vaccinations")
+  def then_i_see_the_childs_hpv_information
+    expect(page).to have_current_path(patient_programme_path(@patient, "hpv"))
+    expect(page).to have_css("h3.nhsuk-card__heading", text: "Vaccinations")
+    expect(page).to have_css(".nhsuk-table__cell", text: "Recorded in Mavis")
+    expect(page).to have_css(".nhsuk-table__cell", text: "Vaccinated")
   end
 end

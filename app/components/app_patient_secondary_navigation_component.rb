@@ -13,12 +13,12 @@ class AppPatientSecondaryNavigationComponent < ViewComponent::Base
 
   def call
     render AppSecondaryNavigationComponent.new do |nav|
+      nav.with_item(
+        href: patient_path(patient),
+        text: "Child’s details",
+        selected: selected_tab.to_s == "child_record"
+      )
       if Flipper.enabled?(:child_record_redesign)
-        nav.with_item(
-          href: patient_path(patient),
-          text: "Child record",
-          selected: selected_tab.to_s == "child_record"
-        )
         current_user.programmes.flat_map do |programme|
           nav.with_item(
             href: patient_programme_path(patient, programme.type),
@@ -26,14 +26,8 @@ class AppPatientSecondaryNavigationComponent < ViewComponent::Base
             selected: programme.type == selected_tab
           )
         end
-      else
-        nav.with_item(
-          href: patient_path(patient),
-          text: "Child’s details",
-          selected: selected_tab.to_s == "child_record"
-        )
-        nav.with_item(href: log_patient_path(patient), text: "Activity log")
       end
+      nav.with_item(href: log_patient_path(patient), text: "Activity log")
     end
   end
 
