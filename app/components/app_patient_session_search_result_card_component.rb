@@ -37,7 +37,7 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
             if show_notes && latest_note
               summary_list.with_row do |row|
                 row.with_key { "Notes" }
-                row.with_value { render note_to_log_event(latest_note) }
+                row.with_value { note_blockquote(latest_note) }
               end
             end
           end %>
@@ -233,8 +233,8 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
       .find { it.session_id == session.id }
   end
 
-  def note_to_log_event(note)
-    truncated_body = note.body.truncate_words(80, omission: "…")
+  def note_blockquote(note)
+    truncated_body = tag.p(note.body.truncate_words(80, omission: "…"))
 
     continue_reading =
       if truncated_body.include?("…")
@@ -249,9 +249,16 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
         end
       end
 
-    body = safe_join([truncated_body, continue_reading])
+    blockquote =
+      tag.blockquote { safe_join([truncated_body, continue_reading]) }
 
-    AppLogEventComponent.new(body:, at: note.created_at, by: note.created_by)
+    subtitle =
+      tag.p(
+        "#{note.created_by.full_name} &middot; #{note.created_at.to_fs(:long)}".html_safe,
+        class: "nhsuk-body-s nhsuk-u-margin-0 nhsuk-u-secondary-text-colour"
+      )
+
+    safe_join([blockquote, subtitle])
   end
 
   def has_patient_specific_direction?
