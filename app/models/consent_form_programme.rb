@@ -36,19 +36,6 @@ class ConsentFormProgramme < ApplicationRecord
 
   delegate :flu?, :hpv?, :menacwy?, :mmr?, :td_ipv?, to: :programme
 
-  def disease_types
-    # Use database column if populated, otherwise fall back to default logic
-    # for records created before disease_types column was added
-    db_value = super
-    return db_value if db_value.present?
-
-    if programme_type == "mmr"
-      Programme::Variant::DISEASE_TYPES["mmr"]
-    else
-      Programme::DISEASE_TYPES.fetch(programme_type)
-    end
-  end
-
   def vaccines
     VaccineCriteria.from_consentable(self).apply(
       Vaccine.active.where(programme_type:, disease_types:)
