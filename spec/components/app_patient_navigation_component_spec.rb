@@ -3,10 +3,11 @@
 describe AppPatientNavigationComponent do
   subject(:rendered) { render_inline(component) }
 
-  let(:component) { described_class.new(patient, active:) }
+  let(:component) { described_class.new(patient, programmes, active:) }
 
   let(:patient) { create(:patient) }
   let(:active) { nil }
+  let(:programmes) { [] }
 
   before do
     stub_authorization(allowed:, klass: PatientPolicy, methods: %i[log?])
@@ -44,6 +45,15 @@ describe AppPatientNavigationComponent do
           ".app-secondary-navigation__current",
           text: "Activity log"
         )
+      end
+    end
+
+    context "with programmes" do
+      let(:programmes) { [Programme.hpv, Programme.flu] }
+
+      it "renders the programme names in the navigation" do
+        expect(rendered).to have_css(".app-secondary-navigation", text: "HPV")
+        expect(rendered).to have_css(".app-secondary-navigation", text: "Flu")
       end
     end
   end

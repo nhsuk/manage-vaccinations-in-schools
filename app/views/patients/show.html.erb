@@ -7,7 +7,7 @@
 
 <%= render "patients/header" %>
 
-<%= render AppPatientNavigationComponent.new(@patient, active: :show) %>
+<%= render AppPatientNavigationComponent.new(@patient, current_user.programmes, active: :show) %>
 
 <% vaccinations_card = capture do %>
   <%= render AppCardComponent.new(section: true) do |card| %>

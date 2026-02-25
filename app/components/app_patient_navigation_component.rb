@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
 class AppPatientNavigationComponent < ViewComponent::Base
-  def initialize(patient, active:)
+  def initialize(patient, programmes, active:)
     @patient = patient
+    @programmes = programmes
     @active = active
   end
 
@@ -15,6 +16,9 @@ class AppPatientNavigationComponent < ViewComponent::Base
         text: "Child record",
         selected: active == :show
       )
+      @programmes.flat_map do |programme|
+        nav.with_item(href: patient_path(@patient), text: programme.name)
+      end
       nav.with_item(
         href: log_patient_path(patient),
         text: "Activity log",
