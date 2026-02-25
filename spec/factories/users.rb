@@ -43,7 +43,7 @@ FactoryBot.define do
     transient do
       team { Team.includes(:organisation).first || create(:team) }
 
-      role_code { CIS2Info::NURSE_ROLE }
+      role_code { CIS2Info::NURSE_ROLES.first }
       role_workgroups { [] }
       activity_codes { [] }
 
@@ -82,7 +82,7 @@ FactoryBot.define do
 
     trait :medical_secretary do
       sequence(:email) { |n| "medical-secretary-#{n}@example.com" }
-      role_code { CIS2Info::MEDICAL_SECRETARY_ROLE }
+      role_code { CIS2Info::MEDICAL_SECRETARY_ROLES.first }
       fallback_role { :medical_secretary }
       show_in_suppliers { false }
     end
@@ -101,7 +101,7 @@ FactoryBot.define do
 
     trait :healthcare_assistant do
       sequence(:email) { |n| "healthcare-assistant-#{n}@example.com" }
-      role_code { CIS2Info::MEDICAL_SECRETARY_ROLE }
+      role_code { CIS2Info::MEDICAL_SECRETARY_ROLES.first }
       activity_codes do
         [CIS2Info::PERSONAL_MEDICATION_ADMINISTRATION_ACTIVITY_CODE]
       end

@@ -57,11 +57,20 @@ describe "MMR/MMRV" do
       and_i_see_that_the_vaccinator_is_unknown
       and_i_see_that_the_location_is_unknown
       and_i_see_that_the_reporter_is_set
+      and_i_see_that_there_are_no_vaccine_batch_details
       expect(page).to have_content("LocationUnknown")
       and_had_been_vaccinated_with_mmr
       and_the_dose_number_is_first
       and_the_consent_requests_are_sent
       then_the_parent_doesnt_receive_a_consent_request
+
+      when_the_status_updater_runs
+      and_i_navigate_to_the_patient_record
+      then_i_see_that_the_vaccination_record_has_outcome_vaccinated
+
+      when_i_open_the_activity_log
+      then_i_see_a_historical_vaccination_log_entry
+      and_it_includes_the_mmr_programme_and_both_reported_and_performed_at_dates
     end
 
     scenario "record a patient as already had their 1st MMR dose and then edit dates" do
@@ -132,10 +141,19 @@ describe "MMR/MMRV" do
       and_i_see_that_the_vaccinator_is_unknown
       and_i_see_that_the_location_is_unknown
       and_i_see_that_the_reporter_is_set
+      and_i_see_that_there_are_no_vaccine_batch_details
       and_had_been_vaccinated_with_mmrv
       and_the_dose_number_is_second
       and_the_consent_requests_are_sent
       then_the_parent_doesnt_receive_a_consent_request
+
+      when_the_status_updater_runs
+      and_i_navigate_to_the_patient_record
+      then_i_see_that_the_vaccination_record_has_outcome_vaccinated
+
+      when_i_open_the_activity_log
+      then_i_see_a_historical_vaccination_log_entry
+      and_it_includes_the_mmrv_programme_and_both_reported_and_performed_at_dates
     end
   end
 
@@ -242,12 +260,12 @@ describe "MMR/MMRV" do
   end
 
   def when_i_choose_mmr_and_continue
-    choose "No"
+    choose "No, they got the MMR vaccine"
     click_on "Continue"
   end
 
   def when_i_choose_mmrv_and_continue
-    choose "Yes"
+    choose "Yes, they got the MMRV vaccine"
     click_on "Continue"
   end
 
@@ -260,7 +278,7 @@ describe "MMR/MMRV" do
   end
 
   def then_i_see_the_mmr_date_instead_of_the_mmr_or_mmrv_page
-    expect(page).to have_content("When was the MMR(V) vaccination given?")
+    expect(page).to have_content("When was the MMR vaccination given?")
   end
 
   def when_i_fill_in_the_date_and_time_and_continue
@@ -315,6 +333,12 @@ describe "MMR/MMRV" do
 
   def and_i_see_that_the_reporter_is_set
     expect(page).to have_content("Reported by#{@nurse.full_name}")
+  end
+
+  def and_i_see_that_there_are_no_vaccine_batch_details
+    expect(page).not_to have_content("Batch number")
+    expect(page).not_to have_content("Batch expiry date")
+    expect(page).not_to have_content("Site")
   end
 
   def and_had_been_vaccinated_with_mmr
@@ -388,6 +412,46 @@ describe "MMR/MMRV" do
   def and_i_see_the_updated_date_in_the_summary
     expect(page).to have_content(
       "Date#{@vaccination_date.strftime("%-d %B %Y")}"
+    )
+  end
+
+  def when_the_status_updater_runs
+    PatientStatusUpdaterJob.perform_inline(@patient.id)
+  end
+
+  def and_i_navigate_to_the_patient_record
+    visit patient_path(@patient)
+  end
+
+  def then_i_see_that_the_vaccination_record_has_outcome_vaccinated
+    expect(page).to have_content(
+      "Vaccination date #{@vaccination_date.strftime("%-d %B %Y")}"
+    )
+    expect(page).to have_content("Location Unknown")
+    expect(page).to have_content("Programme MMR")
+    expect(page).to have_content("Source Manual report")
+    expect(page).to have_content("Outcome Vaccinated")
+  end
+
+  def when_i_open_the_activity_log
+    click_on "Activity log"
+  end
+
+  def then_i_see_a_historical_vaccination_log_entry
+    expect(page).to have_content("Vaccination record added manually")
+  end
+
+  def and_it_includes_the_mmr_programme_and_both_reported_and_performed_at_dates
+    expect(page).to have_content(
+      "MMR   Record added to Mavis 1 July 2025 at 12:00am. " \
+        "Vaccination given #{@vaccination_date.strftime("%-d %B %Y")}."
+    )
+  end
+
+  def and_it_includes_the_mmrv_programme_and_both_reported_and_performed_at_dates
+    expect(page).to have_content(
+      "MMRV   Record added to Mavis 1 July 2025 at 12:00am. " \
+        "Vaccination given #{@vaccination_date.strftime("%-d %B %Y")}."
     )
   end
 end

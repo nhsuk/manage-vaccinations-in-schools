@@ -96,7 +96,7 @@ describe "Child record imports twins" do
   end
 
   def and_i_upload_a_file_with_a_twin
-    attach_file("cohort_import[csv]", "spec/fixtures/cohort_import/valid.csv")
+    attach_file_fixture "cohort_import[csv]", "cohort_import/valid.csv"
     click_on "Continue"
     wait_for_import_to_complete(CohortImport)
   end

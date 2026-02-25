@@ -2,7 +2,8 @@
   <%= govuk_back_link(href: backlink_path) %>
 <% end %>
 
-<% legend = "Do you agree to your child having the MMR vaccination?" %>
+<% programme = @consent_form.consent_form_programmes.sole.programme %>
+<% legend = "Do you agree to your child having the #{programme.name} vaccination?" %>
 <% content_for :page_title, legend %>
 
 <%= form_with model: @consent_form, url: wizard_path, method: :put do |f| %>
@@ -10,7 +11,7 @@
 
   <%= f.govuk_radio_buttons_fieldset :response,
                                      legend: { size: "l", text: legend, tag: "h1" },
-                                     hint: { text: "This is a catch-up vaccination for those who have not yet had 2 doses of the MMR vaccine. Children usually have these when they are 1 and 3 years old." } do %>
+                                     hint: { text: "This is a catch-up vaccination for those who have not yet had 2 doses of the #{programme.name} vaccine. Children usually have these when they are 1 and 3 years old." } do %>
     <%= f.govuk_radio_button :response, "given", label: { text: "Yes, I agree" }, link_errors: true %>
     <%= f.govuk_radio_button :response, "refused" %>
   <% end %>

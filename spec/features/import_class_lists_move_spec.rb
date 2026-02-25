@@ -259,7 +259,7 @@ describe "Import class lists - Moving patients" do
   end
 
   def when_i_upload_a_valid_file(review: false)
-    attach_file("class_import[csv]", "spec/fixtures/class_import/valid.csv")
+    attach_file_fixture "class_import[csv]", "class_import/valid.csv"
     click_on "Continue"
     if review
       wait_for_import_to_complete_until_review(ClassImport)

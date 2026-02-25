@@ -110,7 +110,6 @@ require "rspec/rails"
 # Add additional requires below this line. Rails is not loaded until this point!
 require "capybara/cuprite"
 require "capybara-screenshot/rspec"
-require "sidekiq/testing"
 require "rack_session_access/capybara"
 
 Faker::Config.locale = "en-GB"
@@ -130,6 +129,7 @@ Capybara.javascript_driver = :cuprite_custom
 Capybara.server = :puma, { Silent: true }
 
 ActiveJob::Base.queue_adapter = :test
+Sidekiq.testing!(:fake)
 
 OmniAuth.config.test_mode = true
 
@@ -168,6 +168,7 @@ rescue ActiveRecord::PendingMigrationError => e
 end
 
 RSpec::Matchers.define_negated_matcher :not_change, :change
+
 RSpec.configure do |config|
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
   config.fixture_paths = [Rails.root.join("/spec/fixtures")]

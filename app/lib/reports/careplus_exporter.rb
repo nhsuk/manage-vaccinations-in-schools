@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class Reports::CareplusExporter
+  DOSE_CODES = { "mmr" => { 1 => "1P", 2 => "1B" } }.freeze
+
   def initialize(team:, programme:, academic_year:, start_date:, end_date:)
     @team = team
     @programme = programme
@@ -26,6 +28,13 @@ class Reports::CareplusExporter
 
   private
 
+  GENDER_CODE_MAPPINGS = {
+    female: "F",
+    male: "M",
+    not_known: "U",
+    not_specified: "I"
+  }.with_indifferent_access.freeze
+
   attr_reader :team, :programme, :academic_year, :start_date, :end_date
 
   def headers
@@ -50,7 +59,8 @@ class Reports::CareplusExporter
       *vaccine_columns(2),
       *vaccine_columns(3),
       *vaccine_columns(4),
-      *vaccine_columns(5)
+      *vaccine_columns(5),
+      "Gender"
     ]
   end
 
@@ -70,6 +80,7 @@ class Reports::CareplusExporter
     scope =
       VaccinationRecord
         .kept
+        .sourced_from_service
         .for_programme(programme)
         .where(team_location: { team_id: team.id })
         .for_academic_year(academic_year)
@@ -150,14 +161,15 @@ class Reports::CareplusExporter
               *vaccine_fields(records, 1),
               *vaccine_fields(records, 2),
               *vaccine_fields(records, 3),
-              *vaccine_fields(records, 4)
+              *vaccine_fields(records, 4),
+              GENDER_CODE_MAPPINGS[patient.gender_code]
             ]
           end
       end
   end
 
   def blank_vaccine_fields
-    ["", "", "", "", "", ""]
+    ["", "", "", "", "", "", ""]
   end
 
   def vaccine_fields(vaccination_records, index)
@@ -167,7 +179,7 @@ class Reports::CareplusExporter
     [
       record.vaccine.snomed_product_code, # Vaccine X
       vaccine_code(record), # Code X field
-      record.dose_sequence.present? ? "#{record.dose_sequence}P" : "", # Dose X field
+      dose_sequence_code(record), # Dose X field
       "", # Reason Not Given X
       coded_site(record.delivery_site), # Site X; Coded value
       record.vaccine.manufacturer, # Manufacturer X
@@ -214,6 +226,18 @@ class Reports::CareplusExporter
       nose: "N"
       # We don't implement the other codes currently
     }.fetch(site.to_sym)
+  end
+
+  def dose_sequence_code(record)
+    return "" if record.dose_sequence.blank?
+
+    if (dose_codes = DOSE_CODES[programme.type])
+      dose_codes.fetch(record.dose_sequence) do
+        raise "Unexpected dose sequence: #{record.dose_sequence}"
+      end
+    else
+      "#{record.dose_sequence}P"
+    end
   end
 
   def vaccine_code(vaccination_record)

@@ -51,7 +51,13 @@ class DraftSchoolSitesController < ApplicationController
   end
 
   def set_school_options
-    @school_options = policy_scope(Location).school.order(:urn, :name)
+    @school_options =
+      policy_scope(Location)
+        .school
+        .joins(:team_locations)
+        .where(team_locations: { academic_year: AcademicYear.pending })
+        .distinct
+        .order(:urn, :name)
   end
 
   def set_steps
@@ -99,14 +105,16 @@ class DraftSchoolSitesController < ApplicationController
       @school.save!
       academic_year = AcademicYear.pending
 
-      parent_school.teams.each do |team|
-        @school.attach_to_team!(team, academic_year:)
-        @school.import_year_groups_from_gias!(academic_year:)
-        @school.import_default_programme_year_groups!(
-          team.programmes,
-          academic_year:
-        )
-      end
+      parent_school
+        .teams_for_academic_year(academic_year)
+        .each do |team|
+          @school.attach_to_team!(team, academic_year:)
+          @school.import_year_groups_from_gias!(academic_year:)
+          @school.import_default_programme_year_groups!(
+            team.programmes,
+            academic_year:
+          )
+        end
 
       parent_school.update!(site: "A") if parent_school.site.nil?
     end

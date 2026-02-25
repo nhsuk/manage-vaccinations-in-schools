@@ -146,6 +146,14 @@ FactoryBot.define do
       evaluator.programmes.each do |programme|
         consent_form.consent_form_programmes.build(
           programme:,
+          disease_types:
+            (
+              if programme.mmr?
+                programme.variants.sample.disease_types
+              else
+                Programme::DISEASE_TYPES[programme.type]
+              end
+            ),
           response: evaluator.response
         )
       end

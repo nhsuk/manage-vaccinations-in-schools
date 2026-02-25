@@ -118,14 +118,14 @@ RAILS_ENV="$RAILS_ENV" bin/rails db:prepare
 
 echo "[e2e] Starting end_to_end stack with foreman..."
 if command -v setsid >/dev/null 2>&1; then
-  START_FOREMAN="setsid foreman start -f Procfile.e2e"
+  START_FOREMAN=(setsid foreman start -f Procfile.e2e)
 else
   # macOS does not ship a setsid binary; use Perl to create a new session.
-  START_FOREMAN="perl -MPOSIX -e 'POSIX::setsid() or die \"setsid failed: \$!\"; exec @ARGV' foreman start -f Procfile.e2e"
+  START_FOREMAN=(perl -MPOSIX -e 'POSIX::setsid() or die "setsid failed: $!"; exec @ARGV' foreman start -f Procfile.e2e)
 fi
 
-
-RAILS_ENV="$RAILS_ENV" SIDEKIQ_REDIS_URL="$E2E_REDIS_URL" $START_FOREMAN > /tmp/e2e-foreman.log 2>&1 &
+echo "[e2e] Starting rails server with foreman. Logs will be written to /tmp/e2e-foreman.log"
+RAILS_ENV="$RAILS_ENV" SIDEKIQ_REDIS_URL="$E2E_REDIS_URL" "${START_FOREMAN[@]}" >/tmp/e2e-foreman.log 2>&1 &
 E2E_PGID=$!
 
 
@@ -163,15 +163,19 @@ trap cleanup EXIT INT TERM
 
 # Wait for Rails health
 
-echo "[e2e] Waiting for Rails to become healthy on $HEALTH_CHECK_URL..."
-for i in {1..60}; do
+echo "[e2e] Waiting for Rails to become healthy on $HEALTH_CHECK_URL"
+for i in {1..6}; do
+  printf "."
   if curl -fsS "$HEALTH_CHECK_URL" > /dev/null 2>&1; then
-    echo "[e2e] Rails is up."
+    printf "\n[e2e] Rails is up.\n"
     break
   fi
   sleep 1
-  if [ "$i" -eq 60 ]; then
-    echo "[e2e] ERROR: Rails server did not become ready in time." >&2
+  if [ "$i" -eq 6 ]; then
+    printf "\n[e2e] ERROR: Rails server did not become ready in time.\n" >&2
+    echo "[e2e] Contents of /tmp/e2e-foreman.log:"
+    cat /tmp/e2e-foreman.log
+    echo ""
     exit 1
   fi
 done

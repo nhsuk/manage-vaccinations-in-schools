@@ -85,6 +85,9 @@ class ConsentNotification < ApplicationRecord
     mail_template =
       if is_school
         group = ProgrammeGrouper.call(programmes).first.first
+
+        group = :mmrv if group == :mmr && patient.eligible_for_mmrv?
+
         :"#{template}_#{group}"
       else
         template
@@ -98,10 +101,12 @@ class ConsentNotification < ApplicationRecord
       end
 
     programme_types = programmes.map(&:type)
+    disease_types = programmes.flat_map(&:disease_types).presence
 
     parents.each do |parent|
       EmailDeliveryJob.perform_later(
         mail_template,
+        disease_types:,
         parent:,
         patient:,
         programme_types:,
@@ -111,6 +116,7 @@ class ConsentNotification < ApplicationRecord
 
       SMSDeliveryJob.perform_later(
         text_template,
+        disease_types:,
         parent:,
         patient:,
         programme_types:,

@@ -27,6 +27,8 @@ class Programme::Variant < SimpleDelegator
     @variant_type = variant_type
   end
 
+  def to_param = variant_type
+
   def mmr_variant? = variant_type == "mmr"
 
   def mmrv_variant? = variant_type == "mmrv"

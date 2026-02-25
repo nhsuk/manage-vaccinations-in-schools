@@ -140,6 +140,7 @@ describe "Import child records" do
 
       then_the_changeset_should_belong_to_the_new_patient
       and_the_pds_search_results_should_belong_to_the_new_patient
+      and_the_import_screen_should_link_to_the_new_patient
     end
   end
 
@@ -209,7 +210,7 @@ describe "Import child records" do
   end
 
   def and_i_upload_a_valid_file
-    attach_file("cohort_import[csv]", "spec/fixtures/cohort_import/valid.csv")
+    attach_file_fixture "cohort_import[csv]", "cohort_import/valid.csv"
     click_on "Continue"
     wait_for_import_to_complete(CohortImport)
   end
@@ -303,18 +304,12 @@ describe "Import child records" do
   end
 
   def when_i_upload_a_malformed_csv
-    attach_file(
-      "cohort_import[csv]",
-      "spec/fixtures/cohort_import/malformed.csv"
-    )
+    attach_file_fixture "cohort_import[csv]", "cohort_import/malformed.csv"
     click_on "Continue"
   end
 
   def when_i_upload_a_file_with_invalid_fields
-    attach_file(
-      "cohort_import[csv]",
-      "spec/fixtures/cohort_import/invalid_fields.csv"
-    )
+    attach_file_fixture "cohort_import[csv]", "cohort_import/invalid_fields.csv"
     click_on "Continue"
   end
 
@@ -367,10 +362,8 @@ describe "Import child records" do
   end
 
   def when_i_upload_a_valid_file_with_changes
-    attach_file(
-      "cohort_import[csv]",
-      "spec/fixtures/cohort_import/valid_with_changes.csv"
-    )
+    attach_file_fixture "cohort_import[csv]",
+                        "cohort_import/valid_with_changes.csv"
     click_on "Continue"
     wait_for_import_to_complete(CohortImport)
   end
@@ -401,10 +394,8 @@ describe "Import child records" do
   end
 
   def and_i_upload_a_file_with_duplicate_except_for_postcode
-    attach_file(
-      "cohort_import[csv]",
-      "spec/fixtures/cohort_import/duplicate_except_postcode.csv"
-    )
+    attach_file_fixture "cohort_import[csv]",
+                        "cohort_import/duplicate_except_postcode.csv"
     click_on "Continue"
     wait_for_import_to_complete(CohortImport)
   end
@@ -424,6 +415,12 @@ describe "Import child records" do
 
   def then_i_should_see_a_success_message
     expect(page).to have_content("Record updated")
+  end
+
+  def and_the_import_screen_should_link_to_the_new_patient
+    find(".nhsuk-details__summary", text: /imported record/i).click
+
+    expect(page).to have_link("REED, Taylor", href: patient_path(new_patient))
   end
 
   def then_the_changeset_should_belong_to_the_new_patient

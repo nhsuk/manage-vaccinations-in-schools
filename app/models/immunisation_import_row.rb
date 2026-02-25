@@ -174,10 +174,18 @@ class ImmunisationImportRow
       vaccine_id: vaccine&.id
     }
 
+    delivery_attributes = {
+      delivery_method: delivery_method_value,
+      delivery_site: delivery_site_value
+    }
+
     vaccination_record =
       if national_reporting?
         VaccinationRecord.find_or_initialize_by(
-          attributes.merge(attributes_to_stage_if_already_exists)
+          attributes.merge(
+            attributes_to_stage_if_already_exists,
+            delivery_attributes
+          )
         )
       elsif uuid.present?
         VaccinationRecord
@@ -186,11 +194,6 @@ class ImmunisationImportRow
       else
         VaccinationRecord.find_or_initialize_by(attributes)
       end
-
-    delivery_attributes = {
-      delivery_method: delivery_method_value,
-      delivery_site: delivery_site_value
-    }
 
     if vaccination_record.persisted?
       vaccination_record.stage_changes(attributes_to_stage_if_already_exists)
@@ -461,10 +464,12 @@ class ImmunisationImportRow
 
   def must_be_current_academic_year? = programme&.flu? || national_reporting?
 
+  def dose_sequence_determined_automatically? = programme.doubles?
+
   def dose_sequence_required? =
     administered &&
       (
-        (offline_recording? && default_dose_sequence.present?) ||
+        (offline_recording? && !dose_sequence_determined_automatically?) ||
           national_reporting_hpv?
       )
 
@@ -782,7 +787,7 @@ class ImmunisationImportRow
 
     if dose_sequence.present? ||
          parsed_vaccination_description_string&.dig(:dose_sequence).present?
-      if offline_recording? && default_dose_sequence.nil?
+      if offline_recording? && dose_sequence_determined_automatically?
         errors.add(
           field.header,
           "Do not provide a dose sequence for this programme (leave blank)."

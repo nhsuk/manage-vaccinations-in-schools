@@ -58,10 +58,8 @@ describe "Triage" do
     choose "Vaccination records"
     click_on "Continue"
 
-    attach_file(
-      "immunisation_import[csv]",
-      file_fixture("td_ipv/vaccination_records.csv")
-    )
+    attach_file_fixture "immunisation_import[csv]",
+                        "td_ipv/vaccination_records.csv"
     click_on "Continue"
 
     wait_for_import_to_complete(ImmunisationImport)
@@ -82,7 +80,7 @@ describe "Triage" do
     check "Year 9"
     click_on "Continue"
 
-    attach_file("class_import[csv]", file_fixture("td_ipv/class_list.csv"))
+    attach_file_fixture "class_import[csv]", "td_ipv/class_list.csv"
     click_on "Continue"
 
     wait_for_import_to_complete(ClassImport)

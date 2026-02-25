@@ -46,6 +46,9 @@ describe Reports::OfflineSessionExporter do
     end
 
     let(:academic_year) { session.academic_year }
+    let(:patient) { create(:patient, year_group:) }
+
+    before { PatientStatusUpdater.call(patient:) }
 
     context "a school session" do
       subject(:workbook) { RubyXL::Parser.parse_buffer(call) }
@@ -121,7 +124,6 @@ describe Reports::OfflineSessionExporter do
         let(:batch_number) { batch.number }
         let(:batch_expiry) { batch.expiry }
         let(:patient_location) { create(:patient_location, patient:, session:) }
-        let(:patient) { create(:patient, year_group:) }
 
         it { should be_empty }
 
@@ -549,6 +551,8 @@ describe Reports::OfflineSessionExporter do
               notes: "Some notes.",
               location_name: "Waterloo Road"
             )
+
+            PatientStatusUpdater.call(patient:)
           end
 
           it "adds a row to fill in" do
@@ -1165,7 +1169,7 @@ describe Reports::OfflineSessionExporter do
     let(:year_group) { 11 }
 
     let(:expected_programme) { "MMR" }
-    let(:expected_dose_sequence) { nil }
+    let(:expected_dose_sequence) { 1 }
     let(:expected_consent_status) { "Consent given" }
 
     include_examples "generates a report"
@@ -1176,7 +1180,7 @@ describe Reports::OfflineSessionExporter do
     let(:year_group) { 0 }
 
     let(:expected_programme) { "MMRV" }
-    let(:expected_dose_sequence) { nil }
+    let(:expected_dose_sequence) { 1 }
     let(:expected_consent_status) { "Consent given" }
 
     include_examples "generates a report"

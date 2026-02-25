@@ -153,7 +153,7 @@ describe "Import class lists" do
   def and_i_upload_a_valid_file
     travel 1.minute
 
-    attach_file("class_import[csv]", "spec/fixtures/class_import/valid.csv")
+    attach_file_fixture "class_import[csv]", "class_import/valid.csv"
     click_on "Continue"
 
     wait_for_import_to_complete(ClassImport)
@@ -214,15 +214,12 @@ describe "Import class lists" do
   end
 
   def when_i_upload_a_malformed_csv
-    attach_file("class_import[csv]", "spec/fixtures/class_import/malformed.csv")
+    attach_file_fixture "class_import[csv]", "class_import/malformed.csv"
     click_on "Continue"
   end
 
   def when_i_upload_a_file_with_invalid_fields
-    attach_file(
-      "class_import[csv]",
-      "spec/fixtures/class_import/invalid_fields.csv"
-    )
+    attach_file_fixture "class_import[csv]", "class_import/invalid_fields.csv"
     click_on "Continue"
   end
 

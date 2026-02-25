@@ -19,9 +19,11 @@ class Imports::IssuesController < ApplicationController
 
   def update
     if @form.save
-      redirect_to imports_issues_path, flash: { success: "Record updated" }
+      redirect_target = params[:return_to].presence || imports_issues_path
+
+      redirect_to redirect_target, flash: { success: "Record updated" }
     else
-      render :show, status: :unprocessable_content and return
+      render :show, status: :unprocessable_content
     end
   end
 

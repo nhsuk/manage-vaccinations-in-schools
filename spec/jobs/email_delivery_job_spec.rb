@@ -32,6 +32,7 @@ describe EmailDeliveryJob do
         academic_year:,
         consent:,
         consent_form:,
+        disease_types:,
         parent:,
         patient:,
         programme_types:,
@@ -46,6 +47,7 @@ describe EmailDeliveryJob do
     let(:academic_year) { session.academic_year }
     let(:consent) { nil }
     let(:consent_form) { nil }
+    let(:disease_types) { programmes.flat_map(&:disease_types) }
     let(:parent) { create(:parent, email: "test@example.com") }
     let(:patient) { create(:patient) }
     let(:programme_types) { programmes.map(&:type) }
@@ -66,6 +68,7 @@ describe EmailDeliveryJob do
         academic_year:,
         consent:,
         consent_form:,
+        disease_types:,
         parent:,
         patient:,
         programme_types:,
@@ -115,23 +118,39 @@ describe EmailDeliveryJob do
       expect(notify_log_entry.sent_by).to eq(sent_by)
     end
 
-    it "creates a log entry programme record" do
-      expect { perform_now }.to change(NotifyLogEntry::Programme, :count).by(1)
+    context "with a non-MMR programme" do
+      let(:programmes) { [Programme.find("flu")] }
 
-      notify_log_entry_programme = NotifyLogEntry::Programme.last
+      it "creates a log entry programme record" do
+        expect { perform_now }.to change(NotifyLogEntry::Programme, :count).by(
+          1
+        )
 
-      expect(notify_log_entry_programme.programme_type).to eq(
-        programmes.first.type
-      )
+        notify_log_entry_programme =
+          NotifyLogEntry.last.notify_log_entry_programmes.first
 
-      disease_types =
-        if programmes.first.mmr?
-          Programme::Variant::DISEASE_TYPES.fetch("mmr")
-        else
-          programmes.first.disease_types
-        end
+        expect(notify_log_entry_programme.programme_type).to eq("flu")
+        expect(notify_log_entry_programme.disease_types).to eq(%w[influenza])
+      end
+    end
 
-      expect(notify_log_entry_programme.disease_types).to eq(disease_types)
+    context "with an MMR programme and disease types" do
+      let(:programmes) { [Programme.find("mmr")] }
+      let(:disease_types) { %w[measles mumps rubella] }
+
+      it "creates a log entry programme record with variant disease types" do
+        expect { perform_now }.to change(NotifyLogEntry::Programme, :count).by(
+          1
+        )
+
+        notify_log_entry_programme =
+          NotifyLogEntry.last.notify_log_entry_programmes.first
+
+        expect(notify_log_entry_programme.programme_type).to eq("mmr")
+        expect(notify_log_entry_programme.disease_types).to eq(
+          %w[measles mumps rubella]
+        )
+      end
     end
 
     context "when the parent doesn't have an email address" do
