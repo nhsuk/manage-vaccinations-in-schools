@@ -527,8 +527,8 @@ GEM
       activesupport (>= 5.0.0)
       minitest
       nokogiri (>= 1.6)
-    rails-html-sanitizer (1.6.2)
-      loofah (~> 2.21)
+    rails-html-sanitizer (1.7.0)
+      loofah (~> 2.25)
       nokogiri (>= 1.15.7, != 1.16.7, != 1.16.6, != 1.16.5, != 1.16.4, != 1.16.3, != 1.16.2, != 1.16.1, != 1.16.0.rc1, != 1.16.0)
     rails_semantic_logger (4.19.0)
       rack
@@ -657,15 +657,15 @@ GEM
     securerandom (0.4.1)
     semantic_logger (4.17.0)
       concurrent-ruby (~> 1.0)
-    sentry-rails (6.3.1)
+    sentry-rails (6.4.0)
       railties (>= 5.2.0)
-      sentry-ruby (~> 6.3.1)
-    sentry-ruby (6.3.1)
+      sentry-ruby (~> 6.4.0)
+    sentry-ruby (6.4.0)
       bigdecimal
       concurrent-ruby (~> 1.0, >= 1.0.2)
       logger
-    sentry-sidekiq (6.3.1)
-      sentry-ruby (~> 6.3.1)
+    sentry-sidekiq (6.4.0)
+      sentry-ruby (~> 6.4.0)
       sidekiq (>= 5.0)
     shoulda-matchers (7.0.1)
       activesupport (>= 7.1)
