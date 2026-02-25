@@ -61,6 +61,27 @@ describe "Parental consent create patient" do
     then_the_patient_should_be_safe_to_vaccinate
   end
 
+  scenario "Consent form matches an NHS number and patient with same NHS number exists" do
+    stub_pds_search_to_return_a_patient
+
+    when_i_go_to_the_consent_form
+    when_i_fill_in_my_childs_name_and_birthday
+
+    when_i_give_consent
+    and_i_answer_no_to_all_the_medical_questions
+    and_i_submit_the_consent_form
+    and_i_refuse_to_answer_questions_on_ethnicity
+    then_i_see_the_consent_confirmation_page
+    and_i_wait_for_background_jobs_to_complete
+
+    when_the_nurse_checks_the_unmatched_consent_responses
+    then_they_see_the_consent_form
+
+    given_a_patient_with_the_same_nhs_number_is_now_created
+    when_the_nurse_clicks_on_the_consent_form
+    then_they_are_not_able_to_create_a_new_patient
+  end
+
   def given_the_app_is_setup
     @programme = Programme.hpv
     @team =
@@ -165,8 +186,25 @@ describe "Parental consent create patient" do
     expect(page).to have_link("Archive")
   end
 
+  def given_a_patient_with_the_same_nhs_number_is_now_created
+    @existing_patient =
+      create(
+        :patient,
+        nhs_number: "9449306168",
+        given_name: @child.given_name,
+        family_name: @child.family_name,
+        birth_academic_year: @child.birth_academic_year
+      )
+  end
+
   def when_the_nurse_clicks_on_the_consent_form
     click_link "Jane #{@child.family_name}"
+  end
+
+  def then_they_are_not_able_to_create_a_new_patient
+    expect(page).to have_link("Match")
+    expect(page).to have_link("Archive")
+    expect(page).not_to have_link("Create new record")
   end
 
   def and_the_nurse_clicks_on_create_record
