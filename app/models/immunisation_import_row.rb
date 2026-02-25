@@ -844,7 +844,7 @@ class ImmunisationImportRow
     if existing_patients && existing_patients.length > 1
       errors.add(
         :base,
-        "Two or more possible patients match the patient first name, last name, date of birth or postcode."
+        "Two or more possible patients match the patient first name, last name, date of birth and postcode."
       )
     end
   end

@@ -518,7 +518,7 @@ describe ImmunisationImportRow do
         it "has errors" do
           expect(immunisation_import_row).to be_invalid
           expect(immunisation_import_row.errors[:base]).to include(
-            "Two or more possible patients match the patient first name, last name, date of birth or postcode."
+            "Two or more possible patients match the patient first name, last name, date of birth and postcode."
           )
         end
       end
@@ -954,6 +954,8 @@ describe ImmunisationImportRow do
           it { should be_valid }
 
           it "ignores the performing professional fields" do
+            immunisation_import_row.set_patient
+
             expect(
               immunisation_import_row.to_vaccination_record.performed_by_given_name
             ).to be_nil
@@ -995,6 +997,8 @@ describe ImmunisationImportRow do
         end
 
         it "recognizes MMRV as MMR programme" do
+          immunisation_import_row.set_patient
+
           expect(
             immunisation_import_row.to_vaccination_record&.programme
           ).to eq(Programme.mmr)
