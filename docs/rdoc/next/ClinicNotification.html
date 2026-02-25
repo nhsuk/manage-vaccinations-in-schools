@@ -15,7 +15,7 @@
 
     <meta
       name="description"
-      content="class ClinicNotification: bigint not null Indexes index_clinic_notifications_on_patient_id (patient_id) index_clinic_notifications_on_sent_by_user_id (sent"
+      content="class ClinicNotification: bigint not null Indexes index_clinic_notifications_on_academic_year (academic_year) index_clinic_notifications_on_patient_id (p"
     >
 
 
@@ -28,7 +28,7 @@
 
 
 
-    <meta property="og:description" content="bigint not null Indexes index_clinic_notifications_on_patient_id (patient_id) index_clinic_notifications_on_sent_by_user_id (sent">
+    <meta property="og:description" content="bigint not null Indexes index_clinic_notifications_on_academic_year (academic_year) index_clinic_notifications_on_patient_id (p">
 
 
 
@@ -40,7 +40,7 @@
 
 
 
-    <meta name="twitter:description" content="bigint not null Indexes index_clinic_notifications_on_patient_id (patient_id) index_clinic_notifications_on_sent_by_user_id (sent">
+    <meta name="twitter:description" content="bigint not null Indexes index_clinic_notifications_on_academic_year (academic_year) index_clinic_notifications_on_patient_id (p">
 
 
 
@@ -632,10 +632,11 @@ team_id         :bigint           not null</pre>
 
 <p>Indexes</p>
 
-<pre class="ruby"><span class="ruby-identifier">index_clinic_notifications_on_patient_id</span>       (<span class="ruby-identifier">patient_id</span>)
-<span class="ruby-identifier">index_clinic_notifications_on_sent_by_user_id</span>  (<span class="ruby-identifier">sent_by_user_id</span>)
-<span class="ruby-identifier">index_clinic_notifications_on_team_id</span>          (<span class="ruby-identifier">team_id</span>)
-</pre>
+<pre>index_clinic_notifications_on_academic_year    (academic_year)
+index_clinic_notifications_on_patient_id       (patient_id)
+index_clinic_notifications_on_programme_types  (programme_types) USING gin
+index_clinic_notifications_on_sent_by_user_id  (sent_by_user_id)
+index_clinic_notifications_on_team_id          (team_id)</pre>
 
 <p>Foreign Keys</p>
 
@@ -685,7 +686,7 @@ fk_rails_...  (team_id =&gt; teams.id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="create_and_send-21-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/clinic_notification.rb, line 43</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/clinic_notification.rb, line 45</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">create_and_send!</span>(
   <span class="ruby-value">patient:</span>,
   <span class="ruby-value">programmes:</span>,
