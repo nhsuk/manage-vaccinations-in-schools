@@ -1191,7 +1191,7 @@ describe Reports::OfflineSessionExporter do
     let(:year_group) { 9 }
 
     let(:expected_programme) { "3-in-1" }
-    let(:expected_dose_sequence) { 1 }
+    let(:expected_dose_sequence) { 5 }
     let(:expected_consent_status) { "Consent given" }
 
     include_examples "generates a report"

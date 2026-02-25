@@ -478,6 +478,7 @@ describe "Offline vaccination" do
       "%d/%m/%Y"
     )
     row_for_vaccinated_patient["ANATOMICAL_SITE"] = "Left Upper Arm"
+    row_for_vaccinated_patient["DOSE_SEQUENCE"] = "1"
     row_for_vaccinated_patient["PERFORMING_PROFESSIONAL_EMAIL"] = @team
       .users
       .first

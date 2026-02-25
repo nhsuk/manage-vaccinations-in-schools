@@ -200,7 +200,7 @@ describe "Td/IPV vaccination" do
     click_on Date.current.to_fs(:long)
 
     expect(page).to have_content("Vaccination details")
-    expect(page).to have_content("Dose number1st")
+    expect(page).to have_content("Dose number5th")
   end
 
   def when_vaccination_confirmations_are_sent

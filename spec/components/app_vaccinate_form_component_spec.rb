@@ -148,7 +148,7 @@ describe AppVaccinateFormComponent do
     context "with Td/IPV programme" do
       let(:programme) { Programme.td_ipv }
 
-      it { should eq(1) }
+      it { should eq(5) }
     end
 
     context "with MenACWY programme" do

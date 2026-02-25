@@ -63,6 +63,9 @@ class StatusGenerator::Vaccination
 
     return unless status_should_be_due? || status_should_be_eligible?
 
+    # Patients receive dose 5 of Td/IPV by default, regardless of vaccination history
+    return 5 if programme.td_ipv?
+
     valid_vaccination_records.count + 1
   end
 
