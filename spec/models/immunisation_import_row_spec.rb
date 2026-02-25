@@ -655,12 +655,12 @@ describe ImmunisationImportRow do
         end
       end
 
-      context "vaccination in a Td/IPV session and a dose sequence is provided" do
+      context "vaccination in a Td/IPV session and no dose sequence is provided" do
         let(:data) do
           {
             "SESSION_ID" => session.id.to_s,
             "PROGRAMME" => "3-in-1",
-            "DOSE_SEQUENCE" => "1"
+            "VACCINATED" => "Y"
           }
         end
 
@@ -669,8 +669,8 @@ describe ImmunisationImportRow do
 
         it "has errors" do
           expect(immunisation_import_row).to be_invalid
-          expect(immunisation_import_row.errors["DOSE_SEQUENCE"]).to eq(
-            ["Do not provide a dose sequence for this programme (leave blank)."]
+          expect(immunisation_import_row.errors[:base]).to include(
+            "<code>DOSE_SEQUENCE</code> or <code>Vaccination type</code> is required"
           )
         end
       end

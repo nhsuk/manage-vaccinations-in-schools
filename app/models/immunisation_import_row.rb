@@ -464,7 +464,7 @@ class ImmunisationImportRow
 
   def must_be_current_academic_year? = programme&.flu? || national_reporting?
 
-  def dose_sequence_determined_automatically? = programme.doubles?
+  def dose_sequence_determined_automatically? = programme.menacwy?
 
   def dose_sequence_required? =
     administered &&

@@ -59,7 +59,7 @@ class StatusGenerator::Vaccination
 
   def dose_sequence
     # TODO: Implement this for multi-dose HPV and Td/IPV in a more generic way.
-    return if programme.td_ipv? || programme.menacwy?
+    return if programme.menacwy?
 
     return unless status_should_be_due? || status_should_be_eligible?
 

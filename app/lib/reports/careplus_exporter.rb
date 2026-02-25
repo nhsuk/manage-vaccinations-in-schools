@@ -1,7 +1,19 @@
 # frozen_string_literal: true
 
 class Reports::CareplusExporter
-  DOSE_CODES = { "mmr" => { 1 => "1P", 2 => "1B" } }.freeze
+  DOSE_CODES = {
+    "mmr" => {
+      1 => "1P",
+      2 => "1B"
+    },
+    "td_ipv" => {
+      1 => "1P",
+      2 => "2P",
+      3 => "3P",
+      4 => "1B",
+      5 => "2B"
+    }
+  }.freeze
 
   def initialize(team:, programme:, academic_year:, start_date:, end_date:)
     @team = team
