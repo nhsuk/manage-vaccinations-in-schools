@@ -17,7 +17,9 @@
 #
 # Indexes
 #
+#  index_clinic_notifications_on_academic_year    (academic_year)
 #  index_clinic_notifications_on_patient_id       (patient_id)
+#  index_clinic_notifications_on_programme_types  (programme_types) USING gin
 #  index_clinic_notifications_on_sent_by_user_id  (sent_by_user_id)
 #  index_clinic_notifications_on_team_id          (team_id)
 #

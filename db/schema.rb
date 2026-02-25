@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_18_163043) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_25_094039) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -155,7 +155,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_18_163043) do
     t.bigint "team_id", null: false
     t.integer "type", null: false
     t.datetime "updated_at", null: false
+    t.index ["academic_year"], name: "index_clinic_notifications_on_academic_year"
     t.index ["patient_id"], name: "index_clinic_notifications_on_patient_id"
+    t.index ["programme_types"], name: "index_clinic_notifications_on_programme_types", using: :gin
     t.index ["sent_by_user_id"], name: "index_clinic_notifications_on_sent_by_user_id"
     t.index ["team_id"], name: "index_clinic_notifications_on_team_id"
   end
