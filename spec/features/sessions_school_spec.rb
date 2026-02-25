@@ -421,7 +421,6 @@ describe "School sessions" do
   end
 
   def and_the_parent_receives_an_invitation
-    EnqueueClinicSessionInvitationsJob.perform_now
     perform_enqueued_jobs
 
     expect_email_to @parent.email, :clinic_initial_invitation

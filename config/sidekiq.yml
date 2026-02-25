@@ -13,10 +13,6 @@
   - default
 :scheduler:
   :schedule:
-    clinic_session_invitations:
-      cron: "0 9 * * *"
-      class: EnqueueClinicSessionInvitationsJob
-      description: Send school clinic invitation emails to parents
     enqueue_vaccinations_search_in_nhs_job:
       cron: "0 6 * * *"
       class: EnqueueVaccinationsSearchInNHSJob
