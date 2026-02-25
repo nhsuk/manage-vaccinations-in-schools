@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-namespace :status do
+namespace :patient_status do
   namespace :update do
     desc "Update the statuses of all the patients."
     task all: :environment do |_, _args|

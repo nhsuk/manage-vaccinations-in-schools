@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
-describe "status:update" do
-  context "with all patients" do
-    subject(:invoke) { Rake::Task["status:update:all"].invoke }
+describe "patient_status" do
+  context "updating all patients" do
+    subject(:invoke) { Rake::Task["patient_status:update:all"].invoke }
 
     before { create(:patient_location) }
 
-    after { Rake.application["status:update:all"].reenable }
+    after { Rake.application["patient_status:update:all"].reenable }
 
     it "doesn't raise an error" do
       expect { invoke }.not_to raise_error
@@ -18,10 +18,12 @@ describe "status:update" do
     end
   end
 
-  context "with a patient" do
-    subject(:invoke) { Rake::Task["status:update:patient"].invoke(patient.id) }
+  context "updating a single patient" do
+    subject(:invoke) do
+      Rake::Task["patient_status:update:patient"].invoke(patient.id)
+    end
 
-    after { Rake.application["status:update:patient"].reenable }
+    after { Rake.application["patient_status:update:patient"].reenable }
 
     let(:patient) { create(:patient) }
 
