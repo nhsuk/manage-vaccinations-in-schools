@@ -621,7 +621,8 @@ describe Patient do
         given_name:,
         family_name:,
         date_of_birth:,
-        address_postcode:
+        address_postcode:,
+        include_3_out_of_4_matches:
       )
     end
 
@@ -630,6 +631,7 @@ describe Patient do
     let(:family_name) { "Smith" }
     let(:date_of_birth) { Date.new(1999, 1, 1) }
     let(:address_postcode) { "SW1A 1AA" }
+    let(:include_3_out_of_4_matches) { true }
 
     context "with no matches" do
       let(:patient) { create(:patient) }
@@ -725,6 +727,224 @@ describe Patient do
       end
 
       it { should include(patient) }
+    end
+
+    context "when postcode is provided and there is exactly one exact 4-of-4 match" do
+      let(:nhs_number) { nil }
+
+      let!(:exact_patient) do
+        create(
+          :patient,
+          given_name:,
+          family_name:,
+          date_of_birth:,
+          address_postcode:
+        )
+      end
+
+      before do
+        create(
+          :patient,
+          given_name:,
+          family_name:,
+          date_of_birth:,
+          address_postcode: "SW1A 2AA"
+        )
+
+        create(
+          :patient,
+          given_name:,
+          family_name:,
+          date_of_birth: Date.new(1998, 1, 1),
+          address_postcode:
+        )
+
+        create(
+          :patient,
+          given_name:,
+          family_name: "Jones",
+          date_of_birth:,
+          address_postcode:
+        )
+
+        create(
+          :patient,
+          given_name: "Jack",
+          family_name:,
+          date_of_birth:,
+          address_postcode:
+        )
+      end
+
+      it { should contain_exactly(exact_patient) }
+    end
+
+    context "when postcode is provided and there is more than one exact 4-of-4 match" do
+      let(:nhs_number) { nil }
+
+      let!(:first_exact_patient) do
+        create(
+          :patient,
+          given_name:,
+          family_name:,
+          date_of_birth:,
+          address_postcode:
+        )
+      end
+      let!(:second_exact_patient) do
+        create(
+          :patient,
+          given_name:,
+          family_name:,
+          date_of_birth:,
+          address_postcode:
+        )
+      end
+
+      let!(:same_name_and_dob_different_postcode) do
+        create(
+          :patient,
+          given_name:,
+          family_name:,
+          date_of_birth:,
+          address_postcode: "SW1A 2AA"
+        )
+      end
+
+      it do
+        expect(match_existing).to contain_exactly(
+          first_exact_patient,
+          second_exact_patient,
+          same_name_and_dob_different_postcode
+        )
+      end
+    end
+
+    context "when include_3_out_of_4_matches is false" do
+      let(:nhs_number) { nil }
+      let(:include_3_out_of_4_matches) { false }
+
+      context "when all four datapoints match" do
+        let!(:patient) do
+          create(
+            :patient,
+            given_name:,
+            family_name:,
+            date_of_birth:,
+            address_postcode:
+          )
+        end
+
+        before do
+          create(
+            :patient,
+            given_name:,
+            family_name:,
+            date_of_birth:,
+            address_postcode: "SW1A 2AA"
+          )
+        end
+
+        it { should contain_exactly(patient) }
+      end
+
+      context "when only three datapoints match" do
+        before do
+          create(
+            :patient,
+            given_name:,
+            family_name:,
+            date_of_birth:,
+            address_postcode: "SW1A 2AA"
+          )
+        end
+
+        it { should be_empty }
+      end
+
+      context "when postcode is not provided" do
+        let(:address_postcode) { nil }
+
+        let!(:patient) do
+          create(:patient, given_name:, family_name:, date_of_birth:)
+        end
+
+        it { should contain_exactly(patient) }
+      end
+    end
+
+    context "when postcode is provided in a non-normalised format" do
+      let(:nhs_number) { nil }
+      let(:address_postcode) { " sw1a1aa " }
+
+      let!(:patient) do
+        create(
+          :patient,
+          given_name:,
+          family_name:,
+          date_of_birth: Date.new(2000, 1, 1),
+          address_postcode: "SW1A 1AA"
+        )
+      end
+
+      it { should contain_exactly(patient) }
+    end
+
+    context "when NHS number is provided in a non-normalised format" do
+      let(:nhs_number) { " 012 345 6789 " }
+
+      let!(:patient) do
+        create(
+          :patient,
+          nhs_number: "0123456789",
+          given_name: "Same",
+          family_name: "Person",
+          date_of_birth: Date.new(2000, 1, 1)
+        )
+      end
+
+      it { should contain_exactly(patient) }
+    end
+
+    context "when postcode is invalid" do
+      let(:nhs_number) { nil }
+      let(:address_postcode) { "NOT A POSTCODE" }
+
+      let!(:patient) do
+        create(
+          :patient,
+          given_name:,
+          family_name:,
+          date_of_birth:,
+          address_postcode: "SW1A 1AA"
+        )
+      end
+
+      it { should contain_exactly(patient) }
+    end
+
+    context "when name inputs include SQL LIKE wildcard characters" do
+      let(:nhs_number) { nil }
+      let(:given_name) { "Jo%n" }
+      let(:family_name) { "Sm_th" }
+      let(:address_postcode) { nil }
+
+      let!(:literal_patient) do
+        create(:patient, given_name:, family_name:, date_of_birth:)
+      end
+      let!(:wildcard_patient) do
+        create(
+          :patient,
+          given_name: "John",
+          family_name: "Smith",
+          date_of_birth:
+        )
+      end
+
+      it do
+        expect(match_existing).to contain_exactly(literal_patient)
+        expect(match_existing).not_to include(wildcard_patient)
+      end
     end
 
     context "when matching everything except the NHS number" do

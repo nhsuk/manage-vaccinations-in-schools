@@ -491,6 +491,17 @@ class Patient < ApplicationRecord
     address_postcode:,
     include_3_out_of_4_matches: true
   )
+    nhs_number = nhs_number&.normalise_whitespace&.gsub(/\s/, "")
+
+    given_name_ilike = ActiveRecord::Base.sanitize_sql_like(given_name)
+    family_name_ilike = ActiveRecord::Base.sanitize_sql_like(family_name)
+
+    address_postcode =
+      if address_postcode.present?
+        parsed_postcode = UKPostcode.parse(address_postcode)
+        parsed_postcode.valid? ? parsed_postcode.to_s : nil
+      end
+
     if nhs_number.present? && (patient = Patient.find_by(nhs_number:)).present?
       return [patient]
     end
@@ -498,8 +509,8 @@ class Patient < ApplicationRecord
     scope =
       Patient.where(
         "given_name ILIKE ? AND family_name ILIKE ?",
-        given_name,
-        family_name
+        given_name_ilike,
+        family_name_ilike
       ).where(date_of_birth:)
 
     if address_postcode.present?
@@ -509,18 +520,18 @@ class Patient < ApplicationRecord
             .or(
               Patient.where(
                 "given_name ILIKE ? AND family_name ILIKE ?",
-                given_name,
-                family_name
+                given_name_ilike,
+                family_name_ilike
               ).where(address_postcode:)
             )
             .or(
-              Patient.where("given_name ILIKE ?", given_name).where(
+              Patient.where("given_name ILIKE ?", given_name_ilike).where(
                 date_of_birth:,
                 address_postcode:
               )
             )
             .or(
-              Patient.where("family_name ILIKE ?", family_name).where(
+              Patient.where("family_name ILIKE ?", family_name_ilike).where(
                 date_of_birth:,
                 address_postcode:
               )
@@ -548,7 +559,7 @@ class Patient < ApplicationRecord
           it.given_name.downcase == given_name.downcase &&
             it.family_name.downcase == family_name.downcase &&
             it.date_of_birth == date_of_birth &&
-            it.address_postcode == UKPostcode.parse(address_postcode).to_s
+            it.address_postcode == address_postcode
         end
 
       return exact_results if exact_results.length == 1
