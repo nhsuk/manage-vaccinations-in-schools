@@ -136,11 +136,11 @@ class ImmunisationImportRow
       dose_sequence: dose_sequence_value,
       full_dose: true,
       outcome:,
-      patient_id: patient.id,
+      patient:,
       performed_at_date:,
       performed_by_user:,
       performed_ods_code: performed_ods_code&.to_s,
-      programme_type: programme.type,
+      programme_type: programme&.type,
       protocol:,
       session:,
       supplied_by:
@@ -354,9 +354,7 @@ class ImmunisationImportRow
 
   def patient
     @patient ||=
-      if valid?
-        existing_patients.first || Patient.create!(new_patient_attributes)
-      end
+      (existing_patients.first || Patient.new(new_patient_attributes) if valid?)
   end
 
   def school

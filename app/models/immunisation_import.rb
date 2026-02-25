@@ -124,9 +124,12 @@ class ImmunisationImport < ApplicationRecord
 
     # We need to convert the batch to an array as `import` modifies the
     # objects to add IDs to any new records.
+    patients = @patients_batch.to_a
     vaccination_records = @vaccination_records_batch.to_a
     patient_locations = @patient_locations_batch.to_a
     archive_reasons = @archive_reasons_batch.to_a
+
+    Patient.import!(patients, on_duplicate_key_update: :all)
 
     VaccinationRecord.import!(
       vaccination_records,
@@ -146,7 +149,10 @@ class ImmunisationImport < ApplicationRecord
       collection.clear
     end
 
+    @patients_batch.clear
     @vaccination_records_batch.clear
+    @patient_locations_batch.clear
+    @archive_reasons_batch.clear
   end
 
   def count_columns

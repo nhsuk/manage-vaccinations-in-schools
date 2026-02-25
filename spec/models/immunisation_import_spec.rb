@@ -212,6 +212,17 @@ describe ImmunisationImport do
           .and not_change(PatientLocation, :count)
       end
 
+      it "links the correct objects with each other" do
+        process!
+
+        expect(VaccinationRecord.all.map(&:patient)).to match_array(Patient.all)
+
+        expect(immunisation_import.vaccination_records).to match_array(
+          VaccinationRecord.all
+        )
+        expect(immunisation_import.patients).to match_array(Patient.all)
+      end
+
       it "stores statistics on the import" do
         # stree-ignore
         expect { process! }
@@ -431,6 +442,22 @@ describe ImmunisationImport do
       it "ignores changes in the patient record" do
         expect { process! }.not_to change(Patient, :count)
         expect(existing_patient.reload.pending_changes).to be_empty
+      end
+    end
+
+    context "with the same patient record within the upload" do
+      let(:programmes) { [Programme.flu, Programme.hpv] }
+      let(:file) { "valid_duplicate_patient.csv" }
+
+      it "only creates one patient record" do
+        expect { process! }.to change(Patient, :count).by(1)
+      end
+
+      it "links both vaccination records to the same patient" do
+        process!
+        expect(immunisation_import.vaccination_records.map(&:patient)).to all(
+          eq(Patient.first)
+        )
       end
     end
   end
