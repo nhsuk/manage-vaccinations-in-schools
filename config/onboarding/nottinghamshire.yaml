@@ -10,7 +10,7 @@ team:
   privacy_policy_url: https://www.intrahealth.co.uk/gdpr/
   privacy_notice_url: https://www.intrahealth.co.uk/gdpr/
   reply_to_id: abf2fc9a-afea-4039-863f-f9f813421657
-  type: poc_only
+  type: point_of_care
 
 programmes: [flu, hpv, menacwy, td_ipv]
 

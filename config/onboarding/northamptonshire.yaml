@@ -10,7 +10,7 @@ team:
   privacy_policy_url: www.nhft.nhs.uk/privacy
   privacy_notice_url: www.nhft.nhs.uk/privacy
   reply_to_id: af2cde9d-3de6-48e1-a15f-3c356e204385
-  type: poc_only
+  type: point_of_care
 
 programmes: [flu, hpv, menacwy, mmr, td_ipv]
 
@@ -185,7 +185,6 @@ schools:
     - 121843
     - 146366
     - 121922
-    - 139158 # Open, but proposed to close
     - 121845
     - 136201
     - 140946

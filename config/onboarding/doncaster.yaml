@@ -10,7 +10,7 @@ team:
   privacy_policy_url: https://www.rdash.nhs.uk/policies/information-governance-policy-and-management-framework/
   privacy_notice_url: https://www.rdash.nhs.uk/documents/privacy-notice/
   reply_to_id: 9c733564-4afb-4179-a6cc-142b4d32e719
-  type: poc_only
+  type: point_of_care
 
 programmes: [flu, hpv, menacwy, td_ipv]
 
