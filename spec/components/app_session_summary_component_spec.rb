@@ -17,7 +17,8 @@ describe AppSessionSummaryComponent do
     )
   end
   let(:team) { create(:team, programmes:) }
-  let(:session) { create(:session, location:, programmes:, team:) }
+  let(:outbreak) { false }
+  let(:session) { create(:session, location:, programmes:, team:, outbreak:) }
 
   it { should have_content("ProgrammesHPV") }
   it { should have_content("Year groupsYears 8 to 11") }
@@ -80,6 +81,80 @@ describe AppSessionSummaryComponent do
             href: %r{/consents/#{session.slug}/mmrv/start$}
           )
         end
+      end
+    end
+  end
+
+  describe "consent style row" do
+    context "session programme is MMR" do
+      let(:programmes) { [Programme.mmr] }
+
+      context "by default" do
+        it { should_not have_content("Type of MMR(V) consent request") }
+      end
+
+      context "when showing consent style" do
+        let(:component) do
+          described_class.new(session, show_consent_style: true)
+        end
+
+        it { should have_content("Type of MMR(V) consent request") }
+
+        context "session is set to outbreak = true" do
+          let(:outbreak) { true }
+
+          it { should have_content("Outbreak request") }
+        end
+
+        context "session is set to outbreak = false" do
+          let(:outbreak) { false }
+
+          it { should have_content("Standard request") }
+        end
+      end
+    end
+
+    context "session has multiple programmes including MMR" do
+      let(:programmes) { [Programme.hpv, Programme.mmr] }
+
+      context "by default" do
+        it { should_not have_content("Type of MMR(V) consent request") }
+      end
+
+      context "when showing consent style" do
+        let(:component) do
+          described_class.new(session, show_consent_style: true)
+        end
+
+        it { should have_content("Type of MMR(V) consent request") }
+
+        context "session is set to outbreak = true" do
+          let(:outbreak) { true }
+
+          it { should have_content("Outbreak request") }
+        end
+
+        context "session is set to outbreak = false" do
+          let(:outbreak) { false }
+
+          it { should have_content("Standard request") }
+        end
+      end
+    end
+
+    context "session does not have MMR programme" do
+      let(:programmes) { [Programme.hpv] }
+
+      context "by default" do
+        it { should_not have_content("Type of MMR(V) consent request") }
+      end
+
+      context "when showing consent style" do
+        let(:component) do
+          described_class.new(session, show_consent_style: true)
+        end
+
+        it { should_not have_content("Type of MMR(V) consent request") }
       end
     end
   end

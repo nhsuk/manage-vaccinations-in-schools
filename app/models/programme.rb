@@ -237,6 +237,8 @@ class Programme
 
   delegate :fhir_target_disease_coding, to: :fhir_mapper
 
+  def supports_outbreak? = mmr?
+
   private
 
   def fhir_mapper

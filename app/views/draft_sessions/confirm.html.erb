@@ -92,6 +92,14 @@
           end
         end
       
+        if @draft_session.supports_outbreak?
+          summary_list.with_row do |row|
+            row.with_key { "Type of MMR(V) consent request" }
+            row.with_value { @draft_session.outbreak ? "Outbreak request" : "Standard request" }
+            row.with_action(text: "Change", href: draft_session_path("consent-style"), visually_hidden_text: "type of MMR(V) consent request")
+          end
+        end
+      
         summary_list.with_row do |row|
           row.with_key { "Register attendance" }
           row.with_value { @draft_session.requires_registration ? "Yes" : "No" }

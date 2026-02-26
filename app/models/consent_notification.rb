@@ -80,15 +80,16 @@ class ConsentNotification < ApplicationRecord
 
     is_school = session.location.school?
 
-    template = :"consent_#{(is_school ? :"school_#{type}" : :"clinic_#{type}")}"
+    template = :"consent_#{is_school ? "school" : "clinic"}_#{type}"
 
     mail_template =
       if is_school
         group = ProgrammeGrouper.call(programmes).first.first
-
         group = :mmrv if group == :mmr && patient.eligible_for_mmrv?
 
-        :"#{template}_#{group}"
+        style = "outbreak" if session.outbreak
+
+        [template, group, style].compact.join("_").to_sym
       else
         template
       end

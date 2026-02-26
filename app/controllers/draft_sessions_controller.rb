@@ -281,6 +281,7 @@ class DraftSessionsController < ApplicationController
     permitted_attributes = {
       consent_reminders: %i[weeks_before_consent_reminders],
       consent_requests: %i[send_consent_requests_at],
+      consent_style: %i[outbreak],
       dates: dates_params,
       dates_check: [],
       delegation: %i[psd_enabled national_protocol_enabled],
@@ -332,6 +333,9 @@ class DraftSessionsController < ApplicationController
   end
 
   def go_to_confirm_after_submission?
+    # TODO: Is there any way to make this more readable? Maybe split into
+    #       sections specific to each current step?
+
     # Something earlier has jumped to a specific step.
     return false if @skip_to.present?
 
@@ -353,15 +357,24 @@ class DraftSessionsController < ApplicationController
 
     has_finished_initial_steps =
       @draft_session.dates.present? && @draft_session.programmes.present? &&
-        @draft_session.year_groups.present?
+        @draft_session.year_groups.present? &&
+        (
+          !@draft_session.programme_types.include?("mmr") ||
+            @draft_session.outbreak.present?
+        )
 
     if @draft_session.editing? || has_finished_initial_steps
       return !is_confirm_step?
     end
 
-    # When first creating a session we go straight to the confirmation page
-    # after setting the dates.
+    # For MMR sessions we need to ask about the consent style, which becomes the
+    # last page for the create journey.
+    if @draft_session.programme_types.include?("mmr")
+      return current_step == :consent_style
+    end
 
+    # For non-MMR sessions, the date / date-check step is the last page for the
+    # create journey.
     current_step == :dates_check ||
       (
         current_step == :dates && steps.include?("dates-check") &&

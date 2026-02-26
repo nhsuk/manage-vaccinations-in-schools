@@ -15,6 +15,7 @@ class DraftSession
   attribute :location_id, :integer
   attribute :location_type, :string
   attribute :national_protocol_enabled, :boolean
+  attribute :outbreak, :boolean
   attribute :programme_types, array: true, default: []
   attribute :psd_enabled, :boolean
   attribute :requires_registration, :boolean
@@ -45,6 +46,8 @@ class DraftSession
 
     steps << :dates
     steps << :dates_check if school?
+
+    steps << :consent_style if supports_outbreak?
 
     if include_notification_steps?
       steps += %i[consent_requests consent_reminders] if school?
@@ -95,6 +98,10 @@ class DraftSession
                 greater_than_or_equal_to: 1,
                 less_than_or_equal_to: :maximum_weeks_before_consent_reminders
               }
+  end
+
+  on_wizard_step :consent_style, exact: true do
+    validates :outbreak, inclusion: [true, false]
   end
 
   on_wizard_step :invitations, exact: true do
@@ -252,6 +259,10 @@ class DraftSession
 
   def human_enum_name(attribute)
     Session.human_enum_name(attribute, send(attribute))
+  end
+
+  def supports_outbreak?
+    programmes.any?(&:supports_outbreak?)
   end
 
   private

@@ -77,6 +77,8 @@ en:
               inclusion: Choose the school where this session is taking place
             location_type:
               inclusion: Choose which type of session this is
+            outbreak:
+              inclusion: Choose which type of consent requests to send
             programme_types:
               blank: Choose which programmes you will run in this session
               inclusion: You cannot remove a programme from the session once it has been added

@@ -69,4 +69,8 @@ module SessionsHelper
 
     items.join(" ")
   end
+
+  def session_consent_style(session)
+    session.outbreak ? "Outbreak request" : "Standard request"
+  end
 end

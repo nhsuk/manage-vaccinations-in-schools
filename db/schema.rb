@@ -820,6 +820,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_25_094039) do
     t.date "dates", null: false, array: true
     t.integer "days_before_consent_reminders"
     t.boolean "national_protocol_enabled", default: false, null: false
+    t.boolean "outbreak", default: false, null: false
     t.boolean "psd_enabled", default: false, null: false
     t.boolean "requires_registration", default: true, null: false
     t.date "send_consent_requests_at"
