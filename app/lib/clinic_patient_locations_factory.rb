@@ -41,11 +41,30 @@ class ClinicPatientLocationsFactory
   end
 
   def should_add_to_clinic?(patient)
-    SendClinicInitialInvitationsJob.new.should_send_notification?(
-      patient:,
-      team:,
-      academic_year:,
-      programmes: school_session.programmes_for(patient:)
-    )
+    return false unless patient.send_notifications?(team:)
+
+    eligible_programmes =
+      school_session
+        .programmes_for(patient:)
+        .select do
+          programme_status = patient.programme_status(it, academic_year:)
+          !programme_status.vaccinated? && !programme_status.consent_refused?
+        end
+
+    return false if eligible_programmes.empty?
+
+    programme_types = eligible_programmes.map(&:type)
+
+    already_invited =
+      patient.clinic_notifications.any? do
+        it.initial_invitation? && it.team_id == team.id &&
+          it.academic_year == academic_year &&
+          (programme_types - it.programme_types).empty? # is subset
+      end
+
+    # We only send initial invitations to patients who haven't already
+    # received an invitation.
+
+    !already_invited
   end
 end
