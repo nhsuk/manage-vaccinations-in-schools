@@ -7,12 +7,7 @@
 
 <%= render "patients/header" %>
 
-<% if policy(@patient).log? %>
-  <%= render AppSecondaryNavigationComponent.new do |nav|
-        nav.with_item(href: patient_path(@patient), text: "Child record", selected: true)
-        nav.with_item(href: log_patient_path(@patient), text: "Activity log")
-      end %>
-<% end %>
+<%= render AppPatientNavigationComponent.new(@patient, active: :show) %>
 
 <% vaccinations_card = capture do %>
   <%= render AppCardComponent.new(section: true) do |card| %>
