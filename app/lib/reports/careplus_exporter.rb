@@ -11,7 +11,8 @@ class Reports::CareplusExporter
       2 => "2P",
       3 => "3P",
       4 => "1B",
-      5 => "2B"
+      5 => "2B",
+      6 => "3B"
     }
   }.freeze
 

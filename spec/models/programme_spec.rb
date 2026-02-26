@@ -373,7 +373,7 @@ describe Programme do
     context "with an Td/IPV programme" do
       let(:programme) { described_class.td_ipv }
 
-      it { should eq(5) }
+      it { should eq(6) }
     end
   end
 

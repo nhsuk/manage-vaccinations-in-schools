@@ -31,7 +31,7 @@ class Programme
     "hpv" => 3,
     "menacwy" => 3,
     "mmr" => 2,
-    "td_ipv" => 5
+    "td_ipv" => 6
   }.freeze
 
   IMPORT_NAMES = {
