@@ -16,6 +16,7 @@ describe ClassImportPolicy do
               :cancel?,
               :create?,
               :edit?,
+              :imported_records?,
               :new?,
               :re_review?,
               :show?,
