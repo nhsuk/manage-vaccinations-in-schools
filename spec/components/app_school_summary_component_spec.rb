@@ -43,11 +43,22 @@ describe AppSchoolSummaryComponent do
   it { should have_content("10 Downing Street, Example Way, London, SW1A 1AA") }
 
   context "when there are change links" do
-    let(:change_links) { { name: "/name", address: "/address" } }
+    let(:change_links) do
+      {
+        name: {
+          link: "/name",
+          text: "Change name"
+        },
+        address: {
+          link: "/address",
+          text: "Change address"
+        }
+      }
+    end
     let(:component) { described_class.new(school, change_links:) }
 
-    it { should have_link("Change name") }
-    it { should have_link("Change address") }
+    it { should have_link("Change name", href: "/name") }
+    it { should have_link("Change address", href: "/address") }
   end
 
   context "when schoolable is a DraftSchool (adding a new site)" do
@@ -89,6 +100,12 @@ describe AppSchoolSummaryComponent do
       expect(rendered).to have_content("Year groups")
       expect(rendered).to have_content("Years 7 to 11")
     end
+
+    context "with change links" do
+      let(:change_links) { { urn: { link: "/urn" } } }
+
+      it { should have_link("Change", href: "/urn") }
+    end
   end
 
   context "when schoolable is a DraftSchool (editing an existing school)" do
@@ -129,13 +146,6 @@ describe AppSchoolSummaryComponent do
     it "shows year groups from the underlying location" do
       expect(rendered).to have_content("Year groups")
       expect(rendered).to have_content("Years 7 to 11")
-    end
-
-    context "with change links" do
-      let(:change_links) { { name: "/name", address: "/address" } }
-
-      it { should have_link("Change name") }
-      it { should have_link("Change address") }
     end
   end
 end

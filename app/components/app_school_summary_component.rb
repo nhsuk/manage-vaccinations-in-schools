@@ -32,9 +32,13 @@ class AppSchoolSummaryComponent < ViewComponent::Base
         text: helpers.format_address_single_line(schoolable)
       }
     }
-    if (href = change_links[:address])
+    if change_links[:address]
       row[:actions] = [
-        { text: "Change", href:, visually_hidden_text: "address" }
+        {
+          text: change_links[:address][:text] || "Change",
+          href: change_links[:address][:link],
+          visually_hidden_text: "address"
+        }
       ]
     end
 
@@ -44,8 +48,14 @@ class AppSchoolSummaryComponent < ViewComponent::Base
   def name_row
     row = { key: { text: "Name" }, value: { text: schoolable.name } }
 
-    if (href = change_links[:name])
-      row[:actions] = [{ text: "Change", href:, visually_hidden_text: "name" }]
+    if change_links[:name]
+      row[:actions] = [
+        {
+          text: change_links[:name][:text] || "Change",
+          href: change_links[:name][:link],
+          visually_hidden_text: "name"
+        }
+      ]
     end
 
     row
@@ -83,8 +93,13 @@ class AppSchoolSummaryComponent < ViewComponent::Base
       }
     }
 
-    if (href = change_links[:urn])
-      row[:actions] = [{ text: "Change parent school", href: }]
+    if change_links[:urn]
+      row[:actions] = [
+        {
+          text: change_links[:urn][:text] || "Change",
+          href: change_links[:urn][:link]
+        }
+      ]
     end
 
     row
