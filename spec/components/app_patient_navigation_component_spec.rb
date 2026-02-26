@@ -51,9 +51,28 @@ describe AppPatientNavigationComponent do
     context "with programmes" do
       let(:programmes) { [Programme.hpv, Programme.flu] }
 
-      it "renders the programme names in the navigation" do
-        expect(rendered).to have_css(".app-secondary-navigation", text: "HPV")
-        expect(rendered).to have_css(".app-secondary-navigation", text: "Flu")
+      context "and the child record redesign feature flag is enabled" do
+        before { Flipper.enable(:child_record_redesign) }
+
+        it "renders the programme names in the navigation" do
+          expect(rendered).to have_css(".app-secondary-navigation", text: "HPV")
+          expect(rendered).to have_css(".app-secondary-navigation", text: "Flu")
+        end
+      end
+
+      context "and the child record redesign feature flag is disabled" do
+        before { Flipper.disable(:child_record_redesign) }
+
+        it "renders the programme names in the navigation" do
+          expect(rendered).not_to have_css(
+            ".app-secondary-navigation",
+            text: "HPV"
+          )
+          expect(rendered).not_to have_css(
+            ".app-secondary-navigation",
+            text: "Flu"
+          )
+        end
       end
     end
   end
