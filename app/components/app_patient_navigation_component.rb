@@ -20,7 +20,8 @@ class AppPatientNavigationComponent < ViewComponent::Base
         @programmes.flat_map do |programme|
           nav.with_item(
             href: patient_programme_path(@patient, programme.type),
-            text: programme.name
+            text: programme.name,
+            selected: active == programme.type.to_sym
           )
         end
       end

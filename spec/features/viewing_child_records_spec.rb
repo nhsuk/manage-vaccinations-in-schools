@@ -20,9 +20,11 @@ describe "View children" do
 
     when_i_click_on_the_flu_tab
     then_i_see_the_childs_flu_information
+    and_the_flu_tab_is_selected
 
     when_i_click_on_the_hpv_tab
     then_i_see_the_childs_hpv_information
+    and_the_hpv_tab_is_selected
   end
 
   def given_that_the_child_record_redesign_feature_flag_is_enabled
@@ -138,6 +140,10 @@ describe "View children" do
     expect(page).to have_css(".nhsuk-body", text: "No vaccinations")
   end
 
+  def and_the_flu_tab_is_selected
+    expect(page).to have_css(".app-secondary-navigation__current", text: "Flu")
+  end
+
   def when_i_click_on_the_hpv_tab
     click_on "HPV"
   end
@@ -147,5 +153,9 @@ describe "View children" do
     expect(page).to have_css("h3.nhsuk-card__heading", text: "Vaccinations")
     expect(page).to have_css(".nhsuk-table__cell", text: "Recorded in Mavis")
     expect(page).to have_css(".nhsuk-table__cell", text: "Vaccinated")
+  end
+
+  def and_the_hpv_tab_is_selected
+    expect(page).to have_css(".app-secondary-navigation__current", text: "HPV")
   end
 end
