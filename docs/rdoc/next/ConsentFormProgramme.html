@@ -582,8 +582,6 @@
       </summary>
       <ul class="nav-list" role="directory">
 
-        <li class="calls-super" ><a href="#method-i-disease_types">disease_types</a></li>
-
         <li ><a href="#method-i-human_enum_name">human_enum_name</a></li>
 
         <li ><a href="#method-i-vaccines">vaccines</a></li>
@@ -675,62 +673,6 @@ index_consent_form_programmes_on_consent_form_id  (consent_form_id)</pre>
        </header>
 
 
-      <div id="method-i-disease_types" class="method-detail anchor-link ">
-        <div class="method-header">
-
-            <div class="method-heading">
-              <a href="#method-i-disease_types" title="Link to this method">
-                <span class="method-name">disease_types</span>
-                <span class="method-args">()</span>
-              </a>
-            </div>
-
-        </div>
-
-
-          <div class="method-controls">
-            <details class="method-source-toggle">
-              <summary>Source</summary>
-            </details>
-          </div>
-          <div class="method-source-code" id="disease_types-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_form_programme.rb, line 39</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">disease_types</span>
-  <span class="ruby-comment"># Use database column if populated, otherwise fall back to default logic</span>
-  <span class="ruby-comment"># for records created before disease_types column was added</span>
-  <span class="ruby-identifier">db_value</span> = <span class="ruby-keyword">super</span>
-  <span class="ruby-keyword">return</span> <span class="ruby-identifier">db_value</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">db_value</span>.<span class="ruby-identifier">present?</span>
-
-  <span class="ruby-keyword">if</span> <span class="ruby-identifier">programme_type</span> <span class="ruby-operator">==</span> <span class="ruby-string">&quot;mmr&quot;</span>
-    <span class="ruby-constant">Programme</span><span class="ruby-operator">::</span><span class="ruby-constant">Variant</span><span class="ruby-operator">::</span><span class="ruby-constant">DISEASE_TYPES</span>[<span class="ruby-string">&quot;mmr&quot;</span>]
-  <span class="ruby-keyword">else</span>
-    <span class="ruby-constant">Programme</span><span class="ruby-operator">::</span><span class="ruby-constant">DISEASE_TYPES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">programme_type</span>)
-  <span class="ruby-keyword">end</span>
-<span class="ruby-keyword">end</span></pre>
-          </div>
-
-
-
-        <div class="method-description">
-
-
-          
-
-
-            <div class="method-calls-super">
-              Calls superclass method
-              
-            </div>
-
-        </div>
-
-
-
-
-
-      </div>
-
-
       <div id="method-i-human_enum_name" class="method-detail anchor-link ">
         <div class="method-header">
 
@@ -750,7 +692,7 @@ index_consent_form_programmes_on_consent_form_id  (consent_form_id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="human_enum_name-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_form_programme.rb, line 58</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_form_programme.rb, line 45</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">human_enum_name</span>(<span class="ruby-identifier">attribute</span>)
   <span class="ruby-constant">Consent</span>.<span class="ruby-identifier">human_enum_name</span>(<span class="ruby-identifier">attribute</span>, <span class="ruby-identifier">send</span>(<span class="ruby-identifier">attribute</span>))
 <span class="ruby-keyword">end</span></pre>
@@ -792,7 +734,7 @@ index_consent_form_programmes_on_consent_form_id  (consent_form_id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="vaccines-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_form_programme.rb, line 52</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_form_programme.rb, line 39</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccines</span>
   <span class="ruby-constant">VaccineCriteria</span>.<span class="ruby-identifier">from_consentable</span>(<span class="ruby-keyword">self</span>).<span class="ruby-identifier">apply</span>(
     <span class="ruby-constant">Vaccine</span>.<span class="ruby-identifier">active</span>.<span class="ruby-identifier">where</span>(<span class="ruby-value">programme_type:</span>, <span class="ruby-value">disease_types:</span>)
