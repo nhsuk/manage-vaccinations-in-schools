@@ -12,7 +12,6 @@ jobs:
       id-token: write
     uses: ./.github/workflows/test.yml
   deploy:
-    needs: test
     strategy:
       fail-fast: false
       matrix:
