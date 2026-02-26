@@ -46,7 +46,7 @@ module ReportingAPI::TokenAuthenticationConcern
           session["user"] = data["user"]
           session["cis2_info"] = data["cis2_info"]
           authenticate_user!
-          touch_sessions(@current_user)
+          touch_sessions!(@current_user)
         else
           session.clear
           client_id_error!(jwt)
@@ -70,17 +70,32 @@ module ReportingAPI::TokenAuthenticationConcern
     end
   end
 
-  def touch_sessions(user)
-    sessions =
-      ActiveRecord::SessionStore::Session.where(
-        "(data #>> '{}'::text[])::jsonb -> 'value' -> 'warden.user.user.key' -> 0 @> ?::jsonb",
-        [user.id].to_json
-      )
-
+  def touch_sessions!(user)
     now = Time.zone.now.utc.to_i
-    sessions.each do
-      it.data["warden.user.user.session"]["last_request_at"] = now
-      it.save!
-    end
+
+    sessions =
+      ActiveRecord::SessionStore::Session
+        .where(
+          "(data #>> '{}'::text[])::jsonb -> 'value' -> 'warden.user.user.key' -> 0 @> ?::jsonb",
+          [user.id].to_json
+        )
+        .map do |session|
+          session.data["warden.user.user.session"]["last_request_at"] = now
+
+          # Unfortunately we need to call a private method here to ensure that
+          #  the `data` column on the table is written to. This then allows us
+          #  to apply the changes in bulk using `import!` further down.
+          session.send(:serialize_data!)
+
+          session
+        end
+
+    ActiveRecord::SessionStore::Session.import!(
+      sessions,
+      on_duplicate_key_update: {
+        conflict_target: %i[id],
+        columns: %i[data]
+      }
+    )
   end
 end
