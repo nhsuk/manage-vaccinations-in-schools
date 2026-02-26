@@ -70,8 +70,6 @@ function createSearchInstance(input, result) {
     window.location.href = result.firstChild.firstChild.href;
   }
 
-  search.scrollIntoView = search.scrollInWindow;
-
   return search;
 }
 
@@ -93,6 +91,14 @@ function hookSearch() {
   document.addEventListener('click', (e) => {
     if (!e.target.closest('.navbar-search-desktop')) {
       search.hide();
+    }
+  });
+
+  // Hide search results on Escape key on desktop too
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && input.matches(":focus")) {
+      search.hide();
+      input.blur();
     }
   });
 
