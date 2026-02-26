@@ -96,7 +96,25 @@ describe AppConsentSummaryComponent do
       end
 
       it { should have_content("ResponseConsent given") }
-      it { should have_content("Chosen vaccineNo preference") }
+
+      it do
+        expect(rendered).to have_content(
+          "Chosen vaccineNasal spray or injected vaccine"
+        )
+      end
+    end
+  end
+
+  context "with the MMR programme" do
+    let(:programme) { Programme.mmr }
+    let(:consent) do
+      create(:consent, programme:, vaccine_methods: %w[injection])
+    end
+
+    it do
+      expect(rendered).to have_content(
+        "Gelatine-free injected vaccine or injected vaccine"
+      )
     end
   end
 end
