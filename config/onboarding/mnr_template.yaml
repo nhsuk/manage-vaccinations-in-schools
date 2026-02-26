@@ -4,5 +4,6 @@ organisation:
 team:
   workgroup:
   name:
+  national_reporting_cutoff_date: null
   type: national_reporting
 
