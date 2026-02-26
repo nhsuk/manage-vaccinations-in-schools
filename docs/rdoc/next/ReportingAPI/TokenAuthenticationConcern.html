@@ -567,7 +567,7 @@
 
         <li ><a href="#method-i-decode_jwt-21">decode_jwt!</a></li>
 
-        <li ><a href="#method-i-touch_sessions">touch_sessions</a></li>
+        <li ><a href="#method-i-touch_sessions-21">touch_sessions!</a></li>
 
       </ul>
     </details>
@@ -697,12 +697,12 @@
       </div>
 
 
-      <div id="method-i-touch_sessions" class="method-detail anchor-link ">
+      <div id="method-i-touch_sessions-21" class="method-detail anchor-link ">
         <div class="method-header">
 
             <div class="method-heading">
-              <a href="#method-i-touch_sessions" title="Link to this method">
-                <span class="method-name">touch_sessions</span>
+              <a href="#method-i-touch_sessions-21" title="Link to this method">
+                <span class="method-name">touch_sessions!</span>
                 <span class="method-args">(user)</span>
               </a>
             </div>
@@ -715,20 +715,35 @@
               <summary>Source</summary>
             </details>
           </div>
-          <div class="method-source-code" id="touch_sessions-source">
+          <div class="method-source-code" id="touch_sessions-21-source">
             <pre class="ruby"><span class="ruby-comment"># File app/controllers/concerns/reporting_api/token_authentication_concern.rb, line 73</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">touch_sessions</span>(<span class="ruby-identifier">user</span>)
-  <span class="ruby-identifier">sessions</span> =
-    <span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">SessionStore</span><span class="ruby-operator">::</span><span class="ruby-constant">Session</span>.<span class="ruby-identifier">where</span>(
-      <span class="ruby-string">&quot;(data #&gt;&gt; &#39;{}&#39;::text[])::jsonb -&gt; &#39;value&#39; -&gt; &#39;warden.user.user.key&#39; -&gt; 0 @&gt; ?::jsonb&quot;</span>,
-      [<span class="ruby-identifier">user</span>.<span class="ruby-identifier">id</span>].<span class="ruby-identifier">to_json</span>
-    )
-
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">touch_sessions!</span>(<span class="ruby-identifier">user</span>)
   <span class="ruby-identifier">now</span> = <span class="ruby-constant">Time</span>.<span class="ruby-identifier">zone</span>.<span class="ruby-identifier">now</span>.<span class="ruby-identifier">utc</span>.<span class="ruby-identifier">to_i</span>
-  <span class="ruby-identifier">sessions</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span>
-    <span class="ruby-identifier">it</span>.<span class="ruby-identifier">data</span>[<span class="ruby-string">&quot;warden.user.user.session&quot;</span>][<span class="ruby-string">&quot;last_request_at&quot;</span>] = <span class="ruby-identifier">now</span>
-    <span class="ruby-identifier">it</span>.<span class="ruby-identifier">save!</span>
-  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-identifier">sessions</span> =
+    <span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">SessionStore</span><span class="ruby-operator">::</span><span class="ruby-constant">Session</span>
+      .<span class="ruby-identifier">where</span>(
+        <span class="ruby-string">&quot;(data #&gt;&gt; &#39;{}&#39;::text[])::jsonb -&gt; &#39;value&#39; -&gt; &#39;warden.user.user.key&#39; -&gt; 0 @&gt; ?::jsonb&quot;</span>,
+        [<span class="ruby-identifier">user</span>.<span class="ruby-identifier">id</span>].<span class="ruby-identifier">to_json</span>
+      )
+      .<span class="ruby-identifier">map</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">session</span><span class="ruby-operator">|</span>
+        <span class="ruby-identifier">session</span>.<span class="ruby-identifier">data</span>[<span class="ruby-string">&quot;warden.user.user.session&quot;</span>][<span class="ruby-string">&quot;last_request_at&quot;</span>] = <span class="ruby-identifier">now</span>
+
+        <span class="ruby-comment"># Unfortunately we need to call a private method here to ensure that</span>
+        <span class="ruby-comment">#  the `data` column on the table is written to. This then allows us</span>
+        <span class="ruby-comment">#  to apply the changes in bulk using `import!` further down.</span>
+        <span class="ruby-identifier">session</span>.<span class="ruby-identifier">send</span>(<span class="ruby-value">:serialize_data!</span>)
+
+        <span class="ruby-identifier">session</span>
+      <span class="ruby-keyword">end</span>
+
+  <span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">SessionStore</span><span class="ruby-operator">::</span><span class="ruby-constant">Session</span>.<span class="ruby-identifier">import!</span>(
+    <span class="ruby-identifier">sessions</span>,
+    <span class="ruby-value">on_duplicate_key_update:</span> {
+      <span class="ruby-value">conflict_target:</span> <span class="ruby-node">%i[id]</span>,
+      <span class="ruby-value">columns:</span> <span class="ruby-node">%i[data]</span>
+    }
+  )
 <span class="ruby-keyword">end</span></pre>
           </div>
 
