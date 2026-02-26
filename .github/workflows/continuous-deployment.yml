@@ -22,6 +22,7 @@ jobs:
     with:
       environment: ${{ matrix.environment }}
       server_types: all
+      run_pre_deploy_migrations: false
   slack-notification:
     needs: [deploy, test]
     runs-on: ubuntu-latest
