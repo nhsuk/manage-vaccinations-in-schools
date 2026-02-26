@@ -650,6 +650,8 @@
 
         <li ><a href="#method-c-supports_delegation-3F">supports_delegation?</a></li>
 
+        <li ><a href="#method-c-supports_outbreak-3F">supports_outbreak?</a></li>
+
         <li ><a href="#method-c-to_param">to_param</a></li>
 
         <li ><a href="#method-c-translation_key">translation_key</a></li>
@@ -959,7 +961,9 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">snomed_target_disease_name</span> = <span class="ruby-constant">SNOMED_TARGET_DISEASE_NAMES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
 
-<span class="ruby-identifier">delegate</span> <span class="ruby-value">:fhir_target_disease_coding</span></pre>
+<span class="ruby-identifier">delegate</span> <span class="ruby-value">:fhir_target_disease_coding</span>, <span class="ruby-value">to:</span> <span class="ruby-value">:fhir_mapper</span>
+
+</pre>
           </div>
 
 
@@ -1110,7 +1114,7 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">snomed_target_disease_name</span> = <span class="ruby-constant">SNOMED_TARGET_DISEASE_NAMES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
 
-</pre>
+<span class="ruby-identifier">delegate</span> <span class="ruby-value">:fhir_target_disease_coding</span>, <span class="ruby-value">to:</span> </pre>
           </div>
 
 
@@ -1304,7 +1308,9 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">snomed_target_disease_terms</span> = <span class="ruby-constant">SNOMED_TARGET_DISEASE_TERMS</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
 
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">snomed_target_disease_name</span> = </pre>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">snomed_target_disease_name</span> = <span class="ruby-constant">SNOMED_TARGET_DISEASE_NAMES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
+
+</pre>
           </div>
 
 
@@ -1522,10 +1528,11 @@
 
 <span class="ruby-identifier">delegate</span> <span class="ruby-value">:fhir_target_disease_coding</span>, <span class="ruby-value">to:</span> <span class="ruby-value">:fhir_mapper</span>
 
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">supports_outbreak?</span> = <span class="ruby-identifier">mmr?</span>
+
 <span class="ruby-identifier">private</span>
 
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">fhir_mapper</span>
-</pre>
+<span class="ruby-keyword">def</span> </pre>
           </div>
 
 
@@ -1619,8 +1626,9 @@
 
 <span class="ruby-identifier">delegate</span> <span class="ruby-value">:fhir_target_disease_coding</span>, <span class="ruby-value">to:</span> <span class="ruby-value">:fhir_mapper</span>
 
-<span class="ruby-identifier">private</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">supports_outbreak?</span> = <span class="ruby-identifier">mmr?</span>
 
+<span class="ruby-identifier">private</span>
 </pre>
           </div>
 
@@ -1675,10 +1683,12 @@
 
 <span class="ruby-identifier">delegate</span> <span class="ruby-value">:fhir_target_disease_coding</span>, <span class="ruby-value">to:</span> <span class="ruby-value">:fhir_mapper</span>
 
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">supports_outbreak?</span> = <span class="ruby-identifier">mmr?</span>
+
 <span class="ruby-identifier">private</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">fhir_mapper</span>
-  <span class="ruby-ivar">@fhir_mapper</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">FHIRMapper</span><span class="ruby-operator">::</span><span class="ruby-constant">Programme</span></pre>
+  <span class="ruby-ivar">@fhir_mapper</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">FHIRMapper</span></pre>
           </div>
 
 
@@ -1764,10 +1774,12 @@
 
 <span class="ruby-identifier">delegate</span> <span class="ruby-value">:fhir_target_disease_coding</span>, <span class="ruby-value">to:</span> <span class="ruby-value">:fhir_mapper</span>
 
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">supports_outbreak?</span> = <span class="ruby-identifier">mmr?</span>
+
 <span class="ruby-identifier">private</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">fhir_mapper</span>
-  <span class="ruby-ivar">@fhir_mapper</span> <span class="ruby-operator">||=</span></pre>
+  <span class="ruby-ivar">@fhir_mapper</span></pre>
           </div>
 
 
@@ -1866,7 +1878,8 @@
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">snomed_target_disease_name</span> = <span class="ruby-constant">SNOMED_TARGET_DISEASE_NAMES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
 
 <span class="ruby-identifier">delegate</span> <span class="ruby-value">:fhir_target_disease_coding</span>, <span class="ruby-value">to:</span> <span class="ruby-value">:fhir_mapper</span>
-</pre>
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">supports_outbreak?</span> = </pre>
           </div>
 
 
@@ -1964,6 +1977,7 @@
 
 <span class="ruby-identifier">delegate</span> <span class="ruby-value">:fhir_target_disease_coding</span>, <span class="ruby-value">to:</span> <span class="ruby-value">:fhir_mapper</span>
 
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">supports_outbreak?</span> = <span class="ruby-identifier">mmr?</span>
 </pre>
           </div>
 
@@ -2113,7 +2127,8 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">snomed_target_disease_name</span> = <span class="ruby-constant">SNOMED_TARGET_DISEASE_NAMES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
 
-<span class="ruby-identifier">delegate</span></pre>
+<span class="ruby-identifier">delegate</span> <span class="ruby-value">:fhir_target_disease_coding</span>, <span class="ruby-value">to:</span> <span class="ruby-value">:fhir_mapper</span>
+</pre>
           </div>
 
 
@@ -2281,7 +2296,9 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">snomed_target_disease_terms</span> = <span class="ruby-constant">SNOMED_TARGET_DISEASE_TERMS</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
 
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">snomed_target_disease_name</span> = <span class="ruby-constant">SNOMED_TARGET_DISEASE_NAMES</span>.</pre>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">snomed_target_disease_name</span> = <span class="ruby-constant">SNOMED_TARGET_DISEASE_NAMES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
+
+<span class="ruby-identifier">delegate</span></pre>
           </div>
 
 
@@ -2320,7 +2337,7 @@
             </details>
           </div>
           <div class="method-source-code" id="fhir_mapper-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 242</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 244</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">fhir_mapper</span>
   <span class="ruby-ivar">@fhir_mapper</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">FHIRMapper</span><span class="ruby-operator">::</span><span class="ruby-constant">Programme</span>.<span class="ruby-identifier">new</span>(<span class="ruby-keyword">self</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -2523,10 +2540,12 @@
 
 <span class="ruby-identifier">delegate</span> <span class="ruby-value">:fhir_target_disease_coding</span>, <span class="ruby-value">to:</span> <span class="ruby-value">:fhir_mapper</span>
 
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">supports_outbreak?</span> = <span class="ruby-identifier">mmr?</span>
+
 <span class="ruby-identifier">private</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">fhir_mapper</span>
-  <span class="ruby-ivar">@fhir_mapper</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">FHIRMapper</span></pre>
+  <span class="ruby-ivar">@fhir_mapper</span> <span class="ruby-operator">||=</span></pre>
           </div>
 
 
@@ -2677,7 +2696,9 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">snomed_target_disease_terms</span> = <span class="ruby-constant">SNOMED_TARGET_DISEASE_TERMS</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
 
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">snomed_target_disease_name</span> = <span class="ruby-constant">SNOMED_TARGET_DISEASE_NAMES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)</pre>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">snomed_target_disease_name</span> = <span class="ruby-constant">SNOMED_TARGET_DISEASE_NAMES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
+
+<span class="ruby-identifier">delegate</span> <span class="ruby-value">:fhir_target_disease_coding</span>, </pre>
           </div>
 
 
@@ -2727,10 +2748,12 @@
 
 <span class="ruby-identifier">delegate</span> <span class="ruby-value">:fhir_target_disease_coding</span>, <span class="ruby-value">to:</span> <span class="ruby-value">:fhir_mapper</span>
 
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">supports_outbreak?</span> = <span class="ruby-identifier">mmr?</span>
+
 <span class="ruby-identifier">private</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">fhir_mapper</span>
-  <span class="ruby-ivar">@fhir_mapper</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">FHIRMapper</span><span class="ruby-operator">::</span><span class="ruby-constant">Programme</span>.<span class="ruby-identifier">new</span>(<span class="ruby-keyword">self</span></pre>
+  <span class="ruby-ivar">@fhir_mapper</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">FHIRMapper</span><span class="ruby-operator">::</span><span class="ruby-constant">Programme</span>.<span class="ruby-identifier">new</span></pre>
           </div>
 
 
@@ -2872,10 +2895,12 @@
 
 <span class="ruby-identifier">delegate</span> <span class="ruby-value">:fhir_target_disease_coding</span>, <span class="ruby-value">to:</span> <span class="ruby-value">:fhir_mapper</span>
 
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">supports_outbreak?</span> = <span class="ruby-identifier">mmr?</span>
+
 <span class="ruby-identifier">private</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">fhir_mapper</span>
-  <span class="ruby-ivar">@fhir_mapper</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">FHIRMapper</span><span class="ruby-operator">::</span><span class="ruby-constant">Programme</span>.<span class="ruby-identifier">new</span></pre>
+  <span class="ruby-ivar">@fhir_mapper</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">FHIRMapper</span><span class="ruby-operator">::</span><span class="ruby-constant">Programme</span></pre>
           </div>
 
 
@@ -3073,7 +3098,7 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">snomed_target_disease_terms</span> = <span class="ruby-constant">SNOMED_TARGET_DISEASE_TERMS</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
 
-<span class="ruby-keyword">def</span> </pre>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">snomed_target_disease_name</span> = <span class="ruby-constant">SNOMED_TARGET_DISEASE_NAMES</span>.<span class="ruby-identifier">fetch</span>(</pre>
           </div>
 
 
@@ -3353,7 +3378,7 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">snomed_target_disease_terms</span> = <span class="ruby-constant">SNOMED_TARGET_DISEASE_TERMS</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
 
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">snomed_target_disease_name</span> </pre>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">snomed_target_disease_name</span> = <span class="ruby-constant">SNOMED_TARGET_DISEASE_NAMES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)</pre>
           </div>
 
 
@@ -3496,7 +3521,8 @@
 
 <span class="ruby-identifier">delegate</span> <span class="ruby-value">:fhir_target_disease_coding</span>, <span class="ruby-value">to:</span> <span class="ruby-value">:fhir_mapper</span>
 
-<span class="ruby-identifier">private</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">supports_outbreak?</span> = <span class="ruby-identifier">mmr?</span>
+
 </pre>
           </div>
 
@@ -3545,11 +3571,12 @@
 
 <span class="ruby-identifier">delegate</span> <span class="ruby-value">:fhir_target_disease_coding</span>, <span class="ruby-value">to:</span> <span class="ruby-value">:fhir_mapper</span>
 
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">supports_outbreak?</span> = <span class="ruby-identifier">mmr?</span>
+
 <span class="ruby-identifier">private</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">fhir_mapper</span>
-  <span class="ruby-ivar">@fhir_mapper</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">FHIRMapper</span><span class="ruby-operator">::</span><span class="ruby-constant">Programme</span>.<span class="ruby-identifier">new</span>(<span class="ruby-keyword">self</span>)
-</pre>
+  <span class="ruby-ivar">@fhir_mapper</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">FHIRMapper</span><span class="ruby-operator">::</span><span class="ruby-constant">Programme</span>.<span class="ruby-identifier">new</span>(<span class="ruby-keyword">self</span></pre>
           </div>
 
 
@@ -3589,15 +3616,16 @@
           </div>
           <div class="method-source-code" id="snomed_target_disease_name-source">
             <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 236</span>
-  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">snomed_target_disease_name</span> = <span class="ruby-constant">SNOMED_TARGET_DISEASE_NAMES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">snomed_target_disease_name</span> = <span class="ruby-constant">SNOMED_TARGET_DISEASE_NAMES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
 
-  <span class="ruby-identifier">delegate</span> <span class="ruby-value">:fhir_target_disease_coding</span>, <span class="ruby-value">to:</span> <span class="ruby-value">:fhir_mapper</span>
+<span class="ruby-identifier">delegate</span> <span class="ruby-value">:fhir_target_disease_coding</span>, <span class="ruby-value">to:</span> <span class="ruby-value">:fhir_mapper</span>
 
-  <span class="ruby-identifier">private</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">supports_outbreak?</span> = <span class="ruby-identifier">mmr?</span>
 
-  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">fhir_mapper</span>
-    <span class="ruby-ivar">@fhir_mapper</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">FHIRMapper</span><span class="ruby-operator">::</span><span class="ruby-constant">Programme</span>.<span class="ruby-identifier">new</span>(<span class="ruby-keyword">self</span>)
-  <span class="ruby-keyword">end</span>
+<span class="ruby-identifier">private</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">fhir_mapper</span>
+  <span class="ruby-ivar">@fhir_mapper</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">FHIRMapper</span><span class="ruby-operator">::</span><span class="ruby-constant">Programme</span>.<span class="ruby-identifier">new</span>(<span class="ruby-keyword">self</span>)
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -3644,11 +3672,13 @@
 
 <span class="ruby-identifier">delegate</span> <span class="ruby-value">:fhir_target_disease_coding</span>, <span class="ruby-value">to:</span> <span class="ruby-value">:fhir_mapper</span>
 
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">supports_outbreak?</span> = <span class="ruby-identifier">mmr?</span>
+
 <span class="ruby-identifier">private</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">fhir_mapper</span>
   <span class="ruby-ivar">@fhir_mapper</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">FHIRMapper</span><span class="ruby-operator">::</span><span class="ruby-constant">Programme</span>.<span class="ruby-identifier">new</span>(<span class="ruby-keyword">self</span>)
-<span class="ruby-keyword">end</span></pre>
+</pre>
           </div>
 
 
@@ -3740,9 +3770,58 @@
 
 <span class="ruby-identifier">delegate</span> <span class="ruby-value">:fhir_target_disease_coding</span>, <span class="ruby-value">to:</span> <span class="ruby-value">:fhir_mapper</span>
 
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">supports_outbreak?</span> = <span class="ruby-identifier">mmr?</span>
+
 <span class="ruby-identifier">private</span>
 
-<span class="ruby-keyword">def</span> </pre>
+</pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-c-supports_outbreak-3F" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-c-supports_outbreak-3F" title="Link to this method">
+                <span class="method-name">supports_outbreak?</span>
+                <span class="method-args">(= mmr?)</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="supports_outbreak-3F-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/models/programme.rb, line 240</span>
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">supports_outbreak?</span> = <span class="ruby-identifier">mmr?</span>
+
+  <span class="ruby-identifier">private</span>
+
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">fhir_mapper</span>
+    <span class="ruby-ivar">@fhir_mapper</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">FHIRMapper</span><span class="ruby-operator">::</span><span class="ruby-constant">Programme</span>.<span class="ruby-identifier">new</span>(<span class="ruby-keyword">self</span>)
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
           </div>
 
 
@@ -3895,7 +3974,9 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">snomed_target_disease_terms</span> = <span class="ruby-constant">SNOMED_TARGET_DISEASE_TERMS</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
 
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">snomed_target_disease_name</span> = <span class="ruby-constant">SNOMED_TARGET_DISEASE_NAMES</span>.<span class="ruby-identifier">fetch</span>(</pre>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">snomed_target_disease_name</span> = <span class="ruby-constant">SNOMED_TARGET_DISEASE_NAMES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
+
+<span class="ruby-identifier">delegate</span> <span class="ruby-value">:fhir_target_disease_coding</span></pre>
           </div>
 
 
@@ -4038,7 +4119,9 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">snomed_target_disease_name</span> = <span class="ruby-constant">SNOMED_TARGET_DISEASE_NAMES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
 
-<span class="ruby-identifier">delegate</span> <span class="ruby-value">:fhir_target_disease_coding</span>, <span class="ruby-value">to:</span> </pre>
+<span class="ruby-identifier">delegate</span> <span class="ruby-value">:fhir_target_disease_coding</span>, <span class="ruby-value">to:</span> <span class="ruby-value">:fhir_mapper</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">supports_outbreak?</span> </pre>
           </div>
 
 
@@ -4126,10 +4209,12 @@
 
 <span class="ruby-identifier">delegate</span> <span class="ruby-value">:fhir_target_disease_coding</span>, <span class="ruby-value">to:</span> <span class="ruby-value">:fhir_mapper</span>
 
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">supports_outbreak?</span> = <span class="ruby-identifier">mmr?</span>
+
 <span class="ruby-identifier">private</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">fhir_mapper</span>
-  <span class="ruby-ivar">@fhir_mapper</span></pre>
+</pre>
           </div>
 
 
@@ -4459,7 +4544,9 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">snomed_target_disease_name</span> = <span class="ruby-constant">SNOMED_TARGET_DISEASE_NAMES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">type</span>)
 
-<span class="ruby-identifier">delegate</span> <span class="ruby-value">:fhir_target_disease_coding</span>, </pre>
+<span class="ruby-identifier">delegate</span> <span class="ruby-value">:fhir_target_disease_coding</span>, <span class="ruby-value">to:</span> <span class="ruby-value">:fhir_mapper</span>
+
+<span class="ruby-keyword">def</span> </pre>
           </div>
 
 

@@ -736,15 +736,16 @@ fk_rails_...  (session_id =&gt; sessions.id)</pre>
 
   <span class="ruby-identifier">is_school</span> = <span class="ruby-identifier">session</span>.<span class="ruby-identifier">location</span>.<span class="ruby-identifier">school?</span>
 
-  <span class="ruby-identifier">template</span> = <span class="ruby-value">:&quot;consent_#{(is_school ? :&quot;school_#{type}&quot; : :&quot;clinic_#{type}&quot;)}&quot;</span>
+  <span class="ruby-identifier">template</span> = <span class="ruby-value">:&quot;consent_#{is_school ? &quot;school&quot; : &quot;clinic&quot;}_#{type}&quot;</span>
 
   <span class="ruby-identifier">mail_template</span> =
     <span class="ruby-keyword">if</span> <span class="ruby-identifier">is_school</span>
       <span class="ruby-identifier">group</span> = <span class="ruby-constant">ProgrammeGrouper</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">programmes</span>).<span class="ruby-identifier">first</span>.<span class="ruby-identifier">first</span>
-
       <span class="ruby-identifier">group</span> = <span class="ruby-value">:mmrv</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">group</span> <span class="ruby-operator">==</span> <span class="ruby-value">:mmr</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">eligible_for_mmrv?</span>
 
-      <span class="ruby-value">:&quot;#{template}_#{group}&quot;</span>
+      <span class="ruby-identifier">style</span> = <span class="ruby-string">&quot;outbreak&quot;</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">session</span>.<span class="ruby-identifier">outbreak</span>
+
+      [<span class="ruby-identifier">template</span>, <span class="ruby-identifier">group</span>, <span class="ruby-identifier">style</span>].<span class="ruby-identifier">compact</span>.<span class="ruby-identifier">join</span>(<span class="ruby-string">&quot;_&quot;</span>).<span class="ruby-identifier">to_sym</span>
     <span class="ruby-keyword">else</span>
       <span class="ruby-identifier">template</span>
     <span class="ruby-keyword">end</span>
@@ -864,15 +865,16 @@ fk_rails_...  (session_id =&gt; sessions.id)</pre>
 
   <span class="ruby-identifier">is_school</span> = <span class="ruby-identifier">session</span>.<span class="ruby-identifier">location</span>.<span class="ruby-identifier">school?</span>
 
-  <span class="ruby-identifier">template</span> = <span class="ruby-value">:&quot;consent_#{(is_school ? :&quot;school_#{type}&quot; : :&quot;clinic_#{type}&quot;)}&quot;</span>
+  <span class="ruby-identifier">template</span> = <span class="ruby-value">:&quot;consent_#{is_school ? &quot;school&quot; : &quot;clinic&quot;}_#{type}&quot;</span>
 
   <span class="ruby-identifier">mail_template</span> =
     <span class="ruby-keyword">if</span> <span class="ruby-identifier">is_school</span>
       <span class="ruby-identifier">group</span> = <span class="ruby-constant">ProgrammeGrouper</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">programmes</span>).<span class="ruby-identifier">first</span>.<span class="ruby-identifier">first</span>
-
       <span class="ruby-identifier">group</span> = <span class="ruby-value">:mmrv</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">group</span> <span class="ruby-operator">==</span> <span class="ruby-value">:mmr</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">eligible_for_mmrv?</span>
 
-      <span class="ruby-value">:&quot;#{template}_#{group}&quot;</span>
+      <span class="ruby-identifier">style</span> = <span class="ruby-string">&quot;outbreak&quot;</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">session</span>.<span class="ruby-identifier">outbreak</span>
+
+      [<span class="ruby-identifier">template</span>, <span class="ruby-identifier">group</span>, <span class="ruby-identifier">style</span>].<span class="ruby-identifier">compact</span>.<span class="ruby-identifier">join</span>(<span class="ruby-string">&quot;_&quot;</span>).<span class="ruby-identifier">to_sym</span>
     <span class="ruby-keyword">else</span>
       <span class="ruby-identifier">template</span>
     <span class="ruby-keyword">end</span>
@@ -976,15 +978,16 @@ fk_rails_...  (session_id =&gt; sessions.id)</pre>
 
     <span class="ruby-identifier">is_school</span> = <span class="ruby-identifier">session</span>.<span class="ruby-identifier">location</span>.<span class="ruby-identifier">school?</span>
 
-    <span class="ruby-identifier">template</span> = <span class="ruby-value">:&quot;consent_#{(is_school ? :&quot;school_#{type}&quot; : :&quot;clinic_#{type}&quot;)}&quot;</span>
+    <span class="ruby-identifier">template</span> = <span class="ruby-value">:&quot;consent_#{is_school ? &quot;school&quot; : &quot;clinic&quot;}_#{type}&quot;</span>
 
     <span class="ruby-identifier">mail_template</span> =
       <span class="ruby-keyword">if</span> <span class="ruby-identifier">is_school</span>
         <span class="ruby-identifier">group</span> = <span class="ruby-constant">ProgrammeGrouper</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">programmes</span>).<span class="ruby-identifier">first</span>.<span class="ruby-identifier">first</span>
-
         <span class="ruby-identifier">group</span> = <span class="ruby-value">:mmrv</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">group</span> <span class="ruby-operator">==</span> <span class="ruby-value">:mmr</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">eligible_for_mmrv?</span>
 
-        <span class="ruby-value">:&quot;#{template}_#{group}&quot;</span>
+        <span class="ruby-identifier">style</span> = <span class="ruby-string">&quot;outbreak&quot;</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">session</span>.<span class="ruby-identifier">outbreak</span>
+
+        [<span class="ruby-identifier">template</span>, <span class="ruby-identifier">group</span>, <span class="ruby-identifier">style</span>].<span class="ruby-identifier">compact</span>.<span class="ruby-identifier">join</span>(<span class="ruby-string">&quot;_&quot;</span>).<span class="ruby-identifier">to_sym</span>
       <span class="ruby-keyword">else</span>
         <span class="ruby-identifier">template</span>
       <span class="ruby-keyword">end</span>
@@ -1097,15 +1100,16 @@ fk_rails_...  (session_id =&gt; sessions.id)</pre>
 
   <span class="ruby-identifier">is_school</span> = <span class="ruby-identifier">session</span>.<span class="ruby-identifier">location</span>.<span class="ruby-identifier">school?</span>
 
-  <span class="ruby-identifier">template</span> = <span class="ruby-value">:&quot;consent_#{(is_school ? :&quot;school_#{type}&quot; : :&quot;clinic_#{type}&quot;)}&quot;</span>
+  <span class="ruby-identifier">template</span> = <span class="ruby-value">:&quot;consent_#{is_school ? &quot;school&quot; : &quot;clinic&quot;}_#{type}&quot;</span>
 
   <span class="ruby-identifier">mail_template</span> =
     <span class="ruby-keyword">if</span> <span class="ruby-identifier">is_school</span>
       <span class="ruby-identifier">group</span> = <span class="ruby-constant">ProgrammeGrouper</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">programmes</span>).<span class="ruby-identifier">first</span>.<span class="ruby-identifier">first</span>
-
       <span class="ruby-identifier">group</span> = <span class="ruby-value">:mmrv</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">group</span> <span class="ruby-operator">==</span> <span class="ruby-value">:mmr</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">eligible_for_mmrv?</span>
 
-      <span class="ruby-value">:&quot;#{template}_#{group}&quot;</span>
+      <span class="ruby-identifier">style</span> = <span class="ruby-string">&quot;outbreak&quot;</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">session</span>.<span class="ruby-identifier">outbreak</span>
+
+      [<span class="ruby-identifier">template</span>, <span class="ruby-identifier">group</span>, <span class="ruby-identifier">style</span>].<span class="ruby-identifier">compact</span>.<span class="ruby-identifier">join</span>(<span class="ruby-string">&quot;_&quot;</span>).<span class="ruby-identifier">to_sym</span>
     <span class="ruby-keyword">else</span>
       <span class="ruby-identifier">template</span>
     <span class="ruby-keyword">end</span>
@@ -1211,15 +1215,16 @@ fk_rails_...  (session_id =&gt; sessions.id)</pre>
 
   <span class="ruby-identifier">is_school</span> = <span class="ruby-identifier">session</span>.<span class="ruby-identifier">location</span>.<span class="ruby-identifier">school?</span>
 
-  <span class="ruby-identifier">template</span> = <span class="ruby-value">:&quot;consent_#{(is_school ? :&quot;school_#{type}&quot; : :&quot;clinic_#{type}&quot;)}&quot;</span>
+  <span class="ruby-identifier">template</span> = <span class="ruby-value">:&quot;consent_#{is_school ? &quot;school&quot; : &quot;clinic&quot;}_#{type}&quot;</span>
 
   <span class="ruby-identifier">mail_template</span> =
     <span class="ruby-keyword">if</span> <span class="ruby-identifier">is_school</span>
       <span class="ruby-identifier">group</span> = <span class="ruby-constant">ProgrammeGrouper</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">programmes</span>).<span class="ruby-identifier">first</span>.<span class="ruby-identifier">first</span>
-
       <span class="ruby-identifier">group</span> = <span class="ruby-value">:mmrv</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">group</span> <span class="ruby-operator">==</span> <span class="ruby-value">:mmr</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">eligible_for_mmrv?</span>
 
-      <span class="ruby-value">:&quot;#{template}_#{group}&quot;</span>
+      <span class="ruby-identifier">style</span> = <span class="ruby-string">&quot;outbreak&quot;</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">session</span>.<span class="ruby-identifier">outbreak</span>
+
+      [<span class="ruby-identifier">template</span>, <span class="ruby-identifier">group</span>, <span class="ruby-identifier">style</span>].<span class="ruby-identifier">compact</span>.<span class="ruby-identifier">join</span>(<span class="ruby-string">&quot;_&quot;</span>).<span class="ruby-identifier">to_sym</span>
     <span class="ruby-keyword">else</span>
       <span class="ruby-identifier">template</span>
     <span class="ruby-keyword">end</span>
@@ -1329,15 +1334,16 @@ fk_rails_...  (session_id =&gt; sessions.id)</pre>
 
   <span class="ruby-identifier">is_school</span> = <span class="ruby-identifier">session</span>.<span class="ruby-identifier">location</span>.<span class="ruby-identifier">school?</span>
 
-  <span class="ruby-identifier">template</span> = <span class="ruby-value">:&quot;consent_#{(is_school ? :&quot;school_#{type}&quot; : :&quot;clinic_#{type}&quot;)}&quot;</span>
+  <span class="ruby-identifier">template</span> = <span class="ruby-value">:&quot;consent_#{is_school ? &quot;school&quot; : &quot;clinic&quot;}_#{type}&quot;</span>
 
   <span class="ruby-identifier">mail_template</span> =
     <span class="ruby-keyword">if</span> <span class="ruby-identifier">is_school</span>
       <span class="ruby-identifier">group</span> = <span class="ruby-constant">ProgrammeGrouper</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">programmes</span>).<span class="ruby-identifier">first</span>.<span class="ruby-identifier">first</span>
-
       <span class="ruby-identifier">group</span> = <span class="ruby-value">:mmrv</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">group</span> <span class="ruby-operator">==</span> <span class="ruby-value">:mmr</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">eligible_for_mmrv?</span>
 
-      <span class="ruby-value">:&quot;#{template}_#{group}&quot;</span>
+      <span class="ruby-identifier">style</span> = <span class="ruby-string">&quot;outbreak&quot;</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">session</span>.<span class="ruby-identifier">outbreak</span>
+
+      [<span class="ruby-identifier">template</span>, <span class="ruby-identifier">group</span>, <span class="ruby-identifier">style</span>].<span class="ruby-identifier">compact</span>.<span class="ruby-identifier">join</span>(<span class="ruby-string">&quot;_&quot;</span>).<span class="ruby-identifier">to_sym</span>
     <span class="ruby-keyword">else</span>
       <span class="ruby-identifier">template</span>
     <span class="ruby-keyword">end</span>

@@ -545,6 +545,8 @@
 
         <li ><a href="#method-i-session_consent_period">session_consent_period</a></li>
 
+        <li ><a href="#method-i-session_consent_style">session_consent_style</a></li>
+
         <li ><a href="#method-i-session_dates">session_dates</a></li>
 
         <li ><a href="#method-i-session_status">session_status</a></li>
@@ -647,6 +649,48 @@
   <span class="ruby-keyword">else</span>
     <span class="ruby-node">&quot;Closed #{close_at.to_fs(:short)}&quot;</span>
   <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-i-session_consent_style" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-session_consent_style" title="Link to this method">
+                <span class="method-name">session_consent_style</span>
+                <span class="method-args">(session)</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="session_consent_style-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/helpers/sessions_helper.rb, line 73</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">session_consent_style</span>(<span class="ruby-identifier">session</span>)
+  <span class="ruby-identifier">session</span>.<span class="ruby-identifier">outbreak</span> <span class="ruby-operator">?</span> <span class="ruby-string">&quot;Outbreak request&quot;</span> <span class="ruby-operator">:</span> <span class="ruby-string">&quot;Standard request&quot;</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
 
