@@ -10,6 +10,10 @@ on:
       server_types:
         required: true
         type: string
+      run_pre_deploy_migrations:
+        required: false
+        type: boolean
+        default: true
   workflow_dispatch:
     inputs:
       git_ref_to_deploy:
@@ -42,6 +46,11 @@ on:
           - sidekiq
           - ops
         default: all
+      run_pre_deploy_migrations:
+        description: Run data migrations before service deployment.
+        required: false
+        type: boolean
+        default: true
 
 concurrency:
   group: deploy-${{ inputs.environment }}
@@ -78,16 +87,16 @@ jobs:
         id: get-git-sha
         run: echo "git-sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
   build-and-push-images:
-      permissions:
-        id-token: write
-      needs: validate-and-resolve-sha
-      uses: ./.github/workflows/build-and-push-image.yml
-      with:
-        git_sha: ${{ needs.validate-and-resolve-sha.outputs.git-sha }}
+    permissions:
+      id-token: write
+    needs: validate-and-resolve-sha
+    uses: ./.github/workflows/build-and-push-image.yml
+    with:
+      git_sha: ${{ needs.validate-and-resolve-sha.outputs.git-sha }}
   prepare-deployment:
     name: Prepare deployment
     runs-on: ubuntu-latest
-    needs: [ validate-and-resolve-sha, build-and-push-images ]
+    needs: [validate-and-resolve-sha, build-and-push-images]
     permissions:
       id-token: write
     strategy:
