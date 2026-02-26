@@ -224,8 +224,7 @@ class StatusGenerator::Vaccination
           end
         elsif td_ipv?
           valid_vaccination_records.find do
-            it.dose_sequence == 5 ||
-              (it.dose_sequence.nil? && it.sourced_from_service?)
+            it.dose_sequence == 5 || it.sourced_from_service?
           end
         else
           valid_vaccination_records.first

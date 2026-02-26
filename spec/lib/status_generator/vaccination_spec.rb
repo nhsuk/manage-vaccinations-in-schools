@@ -444,7 +444,7 @@ describe StatusGenerator::Vaccination do
       end
     end
 
-    context "with an Td/IPV programme" do
+    context "with a Td/IPV programme" do
       let(:programme) { Programme.td_ipv }
 
       context "when eligible" do
@@ -562,14 +562,31 @@ describe StatusGenerator::Vaccination do
         it { should be(:not_eligible) }
       end
 
-      context "with an unknown dose administered vaccination record recorded in a session" do
+      context "with a dose 3 administered vaccination record recorded in a session" do
         let(:patient) { create(:patient, programmes: [programme]) }
 
         before do
           create(
             :vaccination_record,
             :administered,
-            dose_sequence: nil,
+            dose_sequence: 3,
+            patient:,
+            programme:,
+            session: create(:session, programmes: [programme])
+          )
+        end
+
+        it { should be(:vaccinated) }
+      end
+
+      context "with a dose 5 administered vaccination record recorded in a session" do
+        let(:patient) { create(:patient, programmes: [programme]) }
+
+        before do
+          create(
+            :vaccination_record,
+            :administered,
+            dose_sequence: 5,
             patient:,
             programme:,
             session: create(:session, programmes: [programme])
