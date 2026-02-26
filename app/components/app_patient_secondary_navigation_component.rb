@@ -15,7 +15,7 @@ class AppPatientSecondaryNavigationComponent < ViewComponent::Base
     render AppSecondaryNavigationComponent.new do |nav|
       nav.with_item(
         href: patient_path(patient),
-        text: "Child’s details",
+        text: "Child record",
         selected: selected_tab.to_s == "child_record"
       )
       if Flipper.enabled?(:child_record_redesign)

@@ -75,7 +75,7 @@ describe AppPatientSecondaryNavigationComponent do
         it "renders the navigation with child record tab selected" do
           expect(rendered).to have_css(
             ".app-secondary-navigation",
-            text: "Child’s details"
+            text: "Child record"
           )
           expect(rendered).to have_css(
             ".app-secondary-navigation",

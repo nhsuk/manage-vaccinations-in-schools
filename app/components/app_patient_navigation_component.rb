@@ -13,7 +13,7 @@ class AppPatientNavigationComponent < ViewComponent::Base
     render AppSecondaryNavigationComponent.new do |nav|
       nav.with_item(
         href: patient_path(patient),
-        text: "Child’s details",
+        text: "Child record",
         selected: active == :show
       )
       if Flipper.enabled?(:child_record_redesign)
