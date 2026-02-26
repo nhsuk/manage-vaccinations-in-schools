@@ -47,7 +47,11 @@ describe "Import class lists" do
     and_a_school_move_for_john_is_created
     and_no_school_move_for_rachel_is_created
 
-    when_i_ignore_changes
+    when_i_click_on_the_imported_tab
+    then_i_should_see_one_patient_imported
+
+    when_i_go_back_to_re_review
+    and_i_ignore_changes
     then_the_re_review_patients_are_not_imported
     and_the_import_is_in_re_review_again
     and_there_is_no_option_to_ignore_changes
@@ -499,6 +503,15 @@ describe "Import class lists" do
     expect(rachel.school_moves.count).to eq(0)
   end
 
+  def when_i_click_on_the_imported_tab
+    click_on "Imported"
+  end
+
+  def then_i_should_see_one_patient_imported
+    find(".nhsuk-details__summary", text: "1 imported record").click
+    expect(page).to have_content("CHANEL, Coco")
+  end
+
   def and_a_school_move_for_rachel_is_created
     rachel = Patient.find_by(given_name: "Rachel", family_name: "Adams")
     expect(rachel.school_moves.count).to eq(1)
@@ -524,7 +537,11 @@ describe "Import class lists" do
     expect(school_move.school_id).to be_nil
   end
 
-  def when_i_ignore_changes
+  def when_i_go_back_to_re_review
+    click_on "Needs further review"
+  end
+
+  def and_i_ignore_changes
     click_on "Ignore changes"
     perform_enqueued_jobs_while_exists(only: ReviewClassImportSchoolMoveJob)
   end

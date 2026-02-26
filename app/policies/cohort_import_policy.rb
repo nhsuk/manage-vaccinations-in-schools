@@ -13,6 +13,8 @@ class CohortImportPolicy < ApplicationPolicy
 
   def re_review? = edit?
 
+  def imported_records? = edit?
+
   def cancel? = edit?
 
   class Scope < ApplicationPolicy::Scope
