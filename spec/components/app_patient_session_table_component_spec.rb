@@ -14,7 +14,7 @@ describe AppPatientSessionTableComponent do
   end
 
   context "with a session" do
-    let(:programmes) { [Programme.hpv] }
+    let(:programmes) { [Programme.hpv, Programme.mmr] }
 
     let(:location) do
       create(:school, name: "Waterloo Road", programmes:, academic_year: 2024)
@@ -42,5 +42,44 @@ describe AppPatientSessionTableComponent do
     it { should have_link("Waterloo Road") }
     it { should have_content("1 January 2025") }
     it { should have_content("HPV") }
+
+    context "with multiple sessions" do
+      let(:other_location) do
+        create(
+          :school,
+          name: "Paddington Road",
+          programmes: other_programmes,
+          academic_year: 2024
+        )
+      end
+      let(:other_session) do
+        create(
+          :session,
+          team:,
+          location: other_location,
+          programmes: other_programmes,
+          date: Date.new(2025, 2, 1)
+        )
+      end
+      let(:other_programmes) { [Programme.hpv, Programme.menacwy] }
+
+      before { create(:patient_location, patient:, session: other_session) }
+
+      it { should have_link("Waterloo Road") }
+      it { should have_link("Paddington Road") }
+
+      context "with a programme type filter that matches only one session" do
+        let(:component) do
+          described_class.new(
+            patient,
+            current_team: team,
+            programme_type: :menacwy
+          )
+        end
+
+        it { should_not have_link("Waterloo Road") }
+        it { should have_link("Paddington Road") }
+      end
+    end
   end
 end
