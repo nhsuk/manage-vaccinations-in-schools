@@ -564,6 +564,8 @@
 
         <li ><a href="#method-i-create-3F">create?</a></li>
 
+        <li ><a href="#method-i-imported_records-3F">imported_records?</a></li>
+
         <li ><a href="#method-i-index-3F">index?</a></li>
 
         <li ><a href="#method-i-re_review-3F">re_review?</a></li>
@@ -659,10 +661,12 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">re_review?</span> = <span class="ruby-identifier">edit?</span>
 
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">imported_records?</span> = <span class="ruby-identifier">edit?</span>
+
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">cancel?</span> = <span class="ruby-identifier">edit?</span>
 
 <span class="ruby-keyword">class</span> <span class="ruby-constant">Scope</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">ApplicationPolicy</span><span class="ruby-operator">::</span><span class="ruby-constant">Scope</span>
-  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">resolve</span> = <span class="ruby-identifier">scope</span>.<span class="ruby-identifier">where</span>(<span class="ruby-value">team:</span></pre>
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">resolve</span> = <span class="ruby-identifier">scope</span>.<span class="ruby-identifier">where</span></pre>
           </div>
 
 
@@ -701,7 +705,7 @@
             </details>
           </div>
           <div class="method-source-code" id="cancel-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/policies/cohort_import_policy.rb, line 16</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/policies/cohort_import_policy.rb, line 18</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">cancel?</span> = <span class="ruby-identifier">edit?</span>
 
 <span class="ruby-keyword">class</span> <span class="ruby-constant">Scope</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">ApplicationPolicy</span><span class="ruby-operator">::</span><span class="ruby-constant">Scope</span>
@@ -756,10 +760,58 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">re_review?</span> = <span class="ruby-identifier">edit?</span>
 
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">imported_records?</span> = <span class="ruby-identifier">edit?</span>
+
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">cancel?</span> = <span class="ruby-identifier">edit?</span>
 
 <span class="ruby-keyword">class</span> <span class="ruby-constant">Scope</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">ApplicationPolicy</span><span class="ruby-operator">::</span><span class="ruby-constant">Scope</span>
-  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">resolve</span> =</pre>
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">resolve</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-i-imported_records-3F" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-imported_records-3F" title="Link to this method">
+                <span class="method-name">imported_records?</span>
+                <span class="method-args">(= edit?)</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="imported_records-3F-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/policies/cohort_import_policy.rb, line 16</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">imported_records?</span> = <span class="ruby-identifier">edit?</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">cancel?</span> = <span class="ruby-identifier">edit?</span>
+
+<span class="ruby-keyword">class</span> <span class="ruby-constant">Scope</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">ApplicationPolicy</span><span class="ruby-operator">::</span><span class="ruby-constant">Scope</span>
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">resolve</span> = <span class="ruby-identifier">scope</span>.<span class="ruby-identifier">where</span>(<span class="ruby-value">team:</span>)
+</pre>
           </div>
 
 
@@ -811,10 +863,12 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">re_review?</span> = <span class="ruby-identifier">edit?</span>
 
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">imported_records?</span> = <span class="ruby-identifier">edit?</span>
+
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">cancel?</span> = <span class="ruby-identifier">edit?</span>
 
 <span class="ruby-keyword">class</span> <span class="ruby-constant">Scope</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">ApplicationPolicy</span><span class="ruby-operator">::</span><span class="ruby-constant">Scope</span>
-  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">resolve</span></pre>
+  <span class="ruby-keyword">def</span></pre>
           </div>
 
 
@@ -856,11 +910,12 @@
             <pre class="ruby"><span class="ruby-comment"># File app/policies/cohort_import_policy.rb, line 14</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">re_review?</span> = <span class="ruby-identifier">edit?</span>
 
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">imported_records?</span> = <span class="ruby-identifier">edit?</span>
+
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">cancel?</span> = <span class="ruby-identifier">edit?</span>
 
 <span class="ruby-keyword">class</span> <span class="ruby-constant">Scope</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">ApplicationPolicy</span><span class="ruby-operator">::</span><span class="ruby-constant">Scope</span>
-  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">resolve</span> = <span class="ruby-identifier">scope</span>.<span class="ruby-identifier">where</span>(<span class="ruby-value">team:</span>)
-</pre>
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">resolve</span> = <span class="ruby-identifier">scope</span>.<span class="ruby-identifier">where</span>(<span class="ruby-value">team:</span></pre>
           </div>
 
 
@@ -908,10 +963,12 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">re_review?</span> = <span class="ruby-identifier">edit?</span>
 
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">imported_records?</span> = <span class="ruby-identifier">edit?</span>
+
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">cancel?</span> = <span class="ruby-identifier">edit?</span>
 
 <span class="ruby-keyword">class</span> <span class="ruby-constant">Scope</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">ApplicationPolicy</span><span class="ruby-operator">::</span><span class="ruby-constant">Scope</span>
-  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">resolve</span> = <span class="ruby-identifier">scope</span></pre>
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">resolve</span> =</pre>
           </div>
 
 
@@ -957,10 +1014,12 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">re_review?</span> = <span class="ruby-identifier">edit?</span>
 
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">imported_records?</span> = <span class="ruby-identifier">edit?</span>
+
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">cancel?</span> = <span class="ruby-identifier">edit?</span>
 
 <span class="ruby-keyword">class</span> <span class="ruby-constant">Scope</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">ApplicationPolicy</span><span class="ruby-operator">::</span><span class="ruby-constant">Scope</span>
-  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">resolve</span> = <span class="ruby-identifier">scope</span>.<span class="ruby-identifier">where</span></pre>
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">resolve</span> = <span class="ruby-identifier">scope</span></pre>
           </div>
 
 
