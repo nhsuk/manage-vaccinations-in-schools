@@ -587,6 +587,8 @@
 
         <li ><a href="#method-i-gelatine_free_vaccine_text">gelatine_free_vaccine_text</a></li>
 
+        <li ><a href="#method-i-no_preference_text">no_preference_text</a></li>
+
         <li ><a href="#method-i-notes_row">notes_row</a></li>
 
         <li ><a href="#method-i-notify_parent_on_refusal_row">notify_parent_on_refusal_row</a></li>
@@ -874,7 +876,7 @@
       <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">consent</span>.<span class="ruby-identifier">without_gelatine</span>
         <span class="ruby-identifier">gelatine_free_vaccine_text</span>
       <span class="ruby-keyword">else</span>
-        <span class="ruby-string">&quot;No preference&quot;</span>
+        <span class="ruby-identifier">no_preference_text</span>
       <span class="ruby-keyword">end</span>
 
     { <span class="ruby-value">key:</span> { <span class="ruby-value">text:</span> <span class="ruby-string">&quot;Chosen vaccine&quot;</span> }, <span class="ruby-value">value:</span> { <span class="ruby-value">text:</span> <span class="ruby-identifier">value</span> } }
@@ -885,6 +887,16 @@
       <span class="ruby-string">&quot;Injected vaccine only&quot;</span>
     <span class="ruby-keyword">else</span>
       <span class="ruby-string">&quot;Gelatine-free injected vaccine only&quot;</span>
+    <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">no_preference_text</span>
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">has_multiple_vaccine_methods?</span>
+      <span class="ruby-string">&quot;Nasal spray or injected vaccine&quot;</span>
+    <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">vaccine_may_contain_gelatine?</span>
+      <span class="ruby-string">&quot;Gelatine-free injected vaccine or injected vaccine&quot;</span>
+    <span class="ruby-keyword">else</span>
+      <span class="ruby-string">&quot;No preference&quot;</span>
     <span class="ruby-keyword">end</span>
   <span class="ruby-keyword">end</span>
 
@@ -995,7 +1007,7 @@
     <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">consent</span>.<span class="ruby-identifier">without_gelatine</span>
       <span class="ruby-identifier">gelatine_free_vaccine_text</span>
     <span class="ruby-keyword">else</span>
-      <span class="ruby-string">&quot;No preference&quot;</span>
+      <span class="ruby-identifier">no_preference_text</span>
     <span class="ruby-keyword">end</span>
 
   { <span class="ruby-value">key:</span> { <span class="ruby-value">text:</span> <span class="ruby-string">&quot;Chosen vaccine&quot;</span> }, <span class="ruby-value">value:</span> { <span class="ruby-value">text:</span> <span class="ruby-identifier">value</span> } }
@@ -1160,6 +1172,54 @@
       </div>
 
 
+      <div id="method-i-no_preference_text" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-no_preference_text" title="Link to this method">
+                <span class="method-name">no_preference_text</span>
+                <span class="method-args">()</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="no_preference_text-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/components/app_consent_summary_component.rb, line 158</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">no_preference_text</span>
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">has_multiple_vaccine_methods?</span>
+    <span class="ruby-string">&quot;Nasal spray or injected vaccine&quot;</span>
+  <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">vaccine_may_contain_gelatine?</span>
+    <span class="ruby-string">&quot;Gelatine-free injected vaccine or injected vaccine&quot;</span>
+  <span class="ruby-keyword">else</span>
+    <span class="ruby-string">&quot;No preference&quot;</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
       <div id="method-i-notes_row" class="method-detail anchor-link ">
         <div class="method-header">
 
@@ -1179,7 +1239,7 @@
             </details>
           </div>
           <div class="method-source-code" id="notes_row-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/components/app_consent_summary_component.rb, line 207</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/components/app_consent_summary_component.rb, line 217</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">notes_row</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">show_notes</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">consent</span>.<span class="ruby-identifier">notes</span>.<span class="ruby-identifier">blank?</span>
@@ -1224,7 +1284,7 @@
             </details>
           </div>
           <div class="method-source-code" id="notify_parent_on_refusal_row-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/components/app_consent_summary_component.rb, line 193</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/components/app_consent_summary_component.rb, line 203</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">notify_parent_on_refusal_row</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">show_notify_parent</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">consent</span>.<span class="ruby-identifier">notify_parent_on_refusal</span>.<span class="ruby-identifier">nil?</span>
@@ -1276,7 +1336,7 @@
             </details>
           </div>
           <div class="method-source-code" id="notify_parents_on_vaccination_row-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/components/app_consent_summary_component.rb, line 171</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/components/app_consent_summary_component.rb, line 181</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">notify_parents_on_vaccination_row</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">show_notify_parent</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">consent</span>.<span class="ruby-identifier">notify_parents_on_vaccination</span>.<span class="ruby-identifier">nil?</span>
@@ -1435,7 +1495,7 @@
             </details>
           </div>
           <div class="method-source-code" id="reason_for_refusal_row-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/components/app_consent_summary_component.rb, line 158</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/components/app_consent_summary_component.rb, line 168</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">reason_for_refusal_row</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">consent</span>.<span class="ruby-identifier">reason_for_refusal</span>.<span class="ruby-identifier">nil?</span>
 
