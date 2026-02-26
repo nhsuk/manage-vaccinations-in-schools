@@ -35,7 +35,11 @@ class AppConsentSummaryComponent < ViewComponent::Base
               :show_route
 
   delegate :programme, to: :consent
-  delegate :consent_response_tag, :govuk_summary_list, to: :helpers
+  delegate :consent_response_tag,
+           :govuk_summary_list,
+           :consent_parent_email,
+           :consent_parent_phone,
+           to: :helpers
 
   def rows
     [
@@ -54,13 +58,13 @@ class AppConsentSummaryComponent < ViewComponent::Base
   end
 
   def phone_number_row
-    if show_phone_number && (phone = consent.parent&.phone).present?
+    if show_phone_number && (phone = consent_parent_phone(consent)).present?
       { key: { text: "Phone number" }, value: { text: phone } }
     end
   end
 
   def email_address_row
-    if show_email_address && (email = consent.parent&.email).present?
+    if show_email_address && (email = consent_parent_email(consent)).present?
       { key: { text: "Email address" }, value: { text: email } }
     end
   end

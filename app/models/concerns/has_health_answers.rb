@@ -18,6 +18,14 @@ module HasHealthAnswers
   def who_responded
     if via_self_consent?
       "Child (Gillick competent)"
+    elsif parent_relationship_type == "other" &&
+          parent_relationship_other_name.present?
+      parent_relationship_other_name.capitalize
+    elsif parent_relationship_type.present?
+      ParentRelationship.human_enum_name(
+        :type,
+        parent_relationship_type
+      ).capitalize
     else
       (parent_relationship || parent).label
     end

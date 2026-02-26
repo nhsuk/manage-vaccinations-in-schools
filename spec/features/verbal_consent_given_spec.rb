@@ -9,6 +9,7 @@ describe "Verbal consent" do
     then_i_see_the_check_and_confirm_page
 
     when_i_confirm_the_consent_response
+    then_the_parent_details_are_saved_to_the_consent
     then_an_email_is_sent_to_the_parent_confirming_their_consent
     and_a_text_is_sent_to_the_parent_confirming_their_consent
     and_i_can_see_the_consent_response_details(number_of_health_questions: 4)
@@ -263,6 +264,23 @@ describe "Verbal consent" do
   def when_i_confirm_the_consent_response
     click_button "Confirm"
     expect(page).to have_content("Consent recorded for #{@patient.full_name}")
+  end
+
+  def then_the_parent_details_are_saved_to_the_consent
+    consent = @patient.consents.last
+    parent_relationship = @patient.parent_relationships.first
+
+    expect(consent).to have_attributes(
+      parent_full_name: @parent.full_name,
+      parent_email: @parent.email,
+      parent_phone: @parent.phone,
+      parent_phone_receive_updates: @parent.phone_receive_updates,
+      parent_relationship_type: parent_relationship.type
+    )
+
+    expect(consent.parent_relationship_other_name.to_s).to eq(
+      parent_relationship.other_name.to_s
+    )
   end
 
   def and_i_can_see_the_consent_response_details(number_of_health_questions:)
