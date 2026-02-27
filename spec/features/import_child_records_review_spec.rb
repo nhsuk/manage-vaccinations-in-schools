@@ -20,6 +20,8 @@ describe "Import child records review" do
     and_i_should_see_the_skipped_school_moves_summary
     and_the_patient_should_remain_at_their_current_school
     and_the_patient_should_not_be_linked_to_my_team
+    and_the_patient_should_not_be_linked_to_the_import
+    and_the_import_changes_should_not_be_processed
   end
 
   def given_i_am_signed_in
@@ -116,5 +118,13 @@ describe "Import child records review" do
   def and_the_patient_should_not_be_linked_to_my_team
     expect(@patient.teams).not_to include(@team)
     expect(@patient.teams).to contain_exactly(@other_team)
+  end
+
+  def and_the_patient_should_not_be_linked_to_the_import
+    expect(@patient.cohort_imports).to be_empty
+  end
+
+  def and_the_import_changes_should_not_be_processed
+    expect(@patient.parents).to be_empty
   end
 end

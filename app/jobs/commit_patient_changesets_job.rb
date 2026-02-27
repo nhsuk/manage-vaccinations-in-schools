@@ -31,6 +31,8 @@ class CommitPatientChangesetsJob
       changesets.update_all(patient_id: nil)
 
       to_process = changesets.select { review_consistent?(it) }
+      to_skip = changesets.select(&:skipped_school_move?)
+      to_process -= to_skip
 
       if to_process.any?
         increment_column_counts!(import, counts, to_process)
@@ -39,6 +41,8 @@ class CommitPatientChangesetsJob
         import_pds_search_results(to_process, import)
         to_process.each(&:processed!)
       end
+
+      to_skip.each(&:processed!)
 
       PatientTeamUpdater.call(patient_scope: import.patients)
     end
