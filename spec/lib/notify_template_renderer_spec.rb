@@ -146,6 +146,12 @@ describe NotifyTemplateRenderer do
     describe "#template_exists?" do
       subject(:template_exists?) { renderer.template_exists?(template) }
 
+      context "when the template file exists" do
+        let(:template) { :consent_confirmation_given }
+
+        it { should be true }
+      end
+
       context "when the template file does not exist" do
         let(:template) { :non_existent_template }
 
@@ -155,6 +161,12 @@ describe NotifyTemplateRenderer do
 
     describe "#template_id_for" do
       subject(:template_id_for) { renderer.template_id_for(template) }
+
+      context "when the local template file exists" do
+        let(:template) { :consent_confirmation_given }
+
+        it { should eq("8eb8d05e-b8d8-4bf9-8a38-c009ae989a4e") }
+      end
 
       context "when the Notify template is configured" do
         let(:template) { :clinic_initial_invitation }
@@ -172,6 +184,12 @@ describe NotifyTemplateRenderer do
     describe "#template_name_for" do
       subject(:template_name_for) { renderer.template_name_for(template_id) }
 
+      context "when the template_id matches a local template" do
+        let(:template_id) { "8eb8d05e-b8d8-4bf9-8a38-c009ae989a4e" }
+
+        it { should eq(:consent_confirmation_given) }
+      end
+
       context "when the template_id matches a Notify template" do
         let(:template_id) do
           GOVUK_NOTIFY_SMS_TEMPLATES[:clinic_initial_invitation]
@@ -188,6 +206,16 @@ describe NotifyTemplateRenderer do
     end
 
     describe "#render" do
+      subject(:rendered) do
+        renderer.render(:consent_confirmation_given, personalisation)
+      end
+
+      it "renders the body with personalisation" do
+        expect(rendered).not_to have_key(:subject)
+        expect(rendered[:body]).to include("You've given consent for Alex")
+        expect(rendered[:body]).to include("01234 567890")
+      end
+
       context "when template is not found" do
         it "raises TemplateNotFound" do
           expect {
@@ -195,6 +223,22 @@ describe NotifyTemplateRenderer do
           }.to raise_error(
             NotifyTemplateRenderer::TemplateNotFound,
             /No template at/
+          )
+        end
+      end
+
+      context "when template references an undefined variable" do
+        let(:incomplete_personalisation) { Object.new }
+
+        it "raises NameError mentioning the template name and path" do
+          expect {
+            renderer.render(
+              :consent_confirmation_given,
+              incomplete_personalisation
+            )
+          }.to raise_error(
+            NameError,
+            /in sms template 'consent_confirmation_given'/
           )
         end
       end
