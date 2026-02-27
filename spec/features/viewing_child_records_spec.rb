@@ -19,11 +19,13 @@ describe "View children" do
     and_i_can_only_see_tabs_for_relevant_programmes
 
     when_i_click_on_the_flu_tab
-    then_i_see_the_childs_flu_information
+    then_i_see_the_childs_flu_vaccinations
+    and_i_see_the_childs_flu_sessions
     and_the_flu_tab_is_selected
 
     when_i_click_on_the_hpv_tab
-    then_i_see_the_childs_hpv_information
+    then_i_see_the_childs_hpv_vaccinations
+    and_i_see_the_childs_hpv_sessions
     and_the_hpv_tab_is_selected
   end
 
@@ -88,6 +90,7 @@ describe "View children" do
   def and_the_patient_is_vaccinated
     create(
       :vaccination_record,
+      outcome: :administered,
       patient: @patient,
       programme: @hpv,
       session: @session
@@ -134,10 +137,9 @@ describe "View children" do
     click_on "Flu"
   end
 
-  def then_i_see_the_childs_flu_information
+  def then_i_see_the_childs_flu_vaccinations
     expect(page).to have_current_path(patient_programme_path(@patient, "flu"))
     expect(page).to have_css("h3.nhsuk-card__heading", text: "Vaccinations")
-    expect(page).to have_css(".nhsuk-body", text: "No vaccinations")
   end
 
   def and_the_flu_tab_is_selected
@@ -148,14 +150,29 @@ describe "View children" do
     click_on "HPV"
   end
 
-  def then_i_see_the_childs_hpv_information
+  def then_i_see_the_childs_hpv_vaccinations
     expect(page).to have_current_path(patient_programme_path(@patient, "hpv"))
     expect(page).to have_css("h3.nhsuk-card__heading", text: "Vaccinations")
-    expect(page).to have_css(".nhsuk-table__cell", text: "Recorded in Mavis")
-    expect(page).to have_css(".nhsuk-table__cell", text: "Vaccinated")
   end
 
   def and_the_hpv_tab_is_selected
     expect(page).to have_css(".app-secondary-navigation__current", text: "HPV")
+  end
+
+  def and_i_see_the_childs_flu_sessions
+    within(".nhsuk-card", text: "Sessions") do
+      expect(page).to have_content("No sessions")
+    end
+  end
+
+  def and_i_see_the_childs_hpv_sessions
+    within(".nhsuk-card", text: "Sessions") do
+      expect(page).to have_link(
+        @session.location.name,
+        href: session_patient_programme_path(@session, @patient, "hpv")
+      )
+      expect(page).to have_content(@session.dates.first.to_fs(:long))
+      expect(page).to have_content("Vaccinated")
+    end
   end
 end
