@@ -12,7 +12,10 @@ class GIASImportJob < ApplicationJob
       Sentry.set_tags(tx_id:, job_id:)
 
       GIAS.download
-      GIAS.check_import
+
+      results = GIAS.check_import
+      GIAS.log_import_check_results(results)
+
       GIAS.import unless dry_run
     end
   end

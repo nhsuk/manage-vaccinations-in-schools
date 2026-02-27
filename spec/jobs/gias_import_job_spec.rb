@@ -6,6 +6,7 @@ describe GIASImportJob do
   before do
     allow(GIAS).to receive(:download)
     allow(GIAS).to receive(:check_import)
+    allow(GIAS).to receive(:log_import_check_results)
     allow(GIAS).to receive(:import)
   end
 
@@ -15,6 +16,7 @@ describe GIASImportJob do
     it "doesn't import" do
       expect(GIAS).to receive(:download)
       expect(GIAS).to receive(:check_import)
+      expect(GIAS).to receive(:log_import_check_results)
       expect(GIAS).not_to receive(:import)
 
       perform_now
@@ -27,6 +29,7 @@ describe GIASImportJob do
     it "does import" do
       expect(GIAS).to receive(:download)
       expect(GIAS).to receive(:check_import)
+      expect(GIAS).to receive(:log_import_check_results)
       expect(GIAS).to receive(:import)
 
       perform_now
