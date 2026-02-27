@@ -6,6 +6,10 @@ class AppActivityLogComponent < ViewComponent::Base
       <% all_events.each do |event| %>
         <%= render AppTimelineItemComponent.new(is_past: true) do |item| %>
           <% item.with_heading do %>
+            <% if (programmes = event[:programmes]) %>
+              <%= render AppProgrammeTagsComponent.new(programmes) %>
+            <% end %>
+
             <%= event[:invalidated] ? tag.s(event[:title]) : event[:title] %>
           <% end %>
 
@@ -20,11 +24,6 @@ class AppActivityLogComponent < ViewComponent::Base
                 &middot;
               <% end %>
               <%= event[:at].to_fs(:long) %>
-            <% end %>
-
-            <% if (programmes = event[:programmes]) %>
-              &middot;
-              <%= programmes.map(&:name).to_sentence %>
             <% end %>
 
             <% if event[:invalidated] %></s><% end %>
