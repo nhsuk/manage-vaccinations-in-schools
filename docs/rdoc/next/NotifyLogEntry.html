@@ -695,7 +695,7 @@ fk_rails_...  (sent_by_user_id =&gt; users.id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="programmes-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/notify_log_entry.rb, line 102</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/notify_log_entry.rb, line 88</span>
   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">programmes</span> = <span class="ruby-identifier">notify_log_entry_programmes</span>.<span class="ruby-identifier">map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:programme</span>)
 
   <span class="ruby-identifier">private</span>
@@ -746,7 +746,7 @@ fk_rails_...  (sent_by_user_id =&gt; users.id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="template_name-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/notify_log_entry.rb, line 106</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/notify_log_entry.rb, line 92</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">template_name</span>
   <span class="ruby-keyword">if</span> <span class="ruby-constant">GOVUK_NOTIFY_UNUSED_TEMPLATES</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">template_id</span>)
     <span class="ruby-constant">GOVUK_NOTIFY_UNUSED_TEMPLATES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">template_id</span>)
@@ -792,7 +792,7 @@ fk_rails_...  (sent_by_user_id =&gt; users.id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="title-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/notify_log_entry.rb, line 97</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/notify_log_entry.rb, line 83</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">title</span>
   <span class="ruby-identifier">template_name</span>&amp;.<span class="ruby-identifier">to_s</span>&amp;.<span class="ruby-identifier">humanize</span>.<span class="ruby-identifier">presence</span> <span class="ruby-operator">||</span>
     <span class="ruby-node">&quot;Unknown #{human_enum_name(:type)}&quot;</span>
