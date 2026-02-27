@@ -215,25 +215,27 @@ describe "Parental consent" do
     programme_name,
     clinic: true
   )
+    title =
+      "Consent #{clinic ? "clinic" : "school"} request#{clinic ? "" : " #{programme_name.downcase}"} sent"
+
     expect(page).to have_content(
-      "Consent #{clinic ? "clinic" : "school"} request#{clinic ? "" : " #{programme_name.downcase}"} sent\n" \
-        "USER, Test · 1 January 2024 at 12:00am · #{programme_name}\n" \
-        "#{@parent.email}"
+      "#{programme_name} #{title}\n" \
+        "USER, Test · 1 January 2024 at 12:00am\n#{@parent.email}"
     )
   end
 
   def then_an_activity_log_entry_is_visible_for_the_email(programme_name)
     expect(page).to have_content(
-      "Consent clinic request sent\n" \
-        "USER, Test · 1 January 2024 at 12:00am · #{programme_name}\n#{@parent.email}"
+      "#{programme_name} Consent clinic request sent\n" \
+        "USER, Test · 1 January 2024 at 12:00am\n#{@parent.email}"
     )
   end
 
   def and_an_activity_log_entry_is_visible_for_the_text(programme_name)
     click_on "Session activity and notes"
     expect(page).to have_content(
-      "Consent clinic request sent\n" \
-        "USER, Test · 1 January 2024 at 12:00am · #{programme_name}\n#{@parent.phone}"
+      "#{programme_name} Consent clinic request sent\n" \
+        "USER, Test · 1 January 2024 at 12:00am\n#{@parent.phone}"
     )
   end
 end

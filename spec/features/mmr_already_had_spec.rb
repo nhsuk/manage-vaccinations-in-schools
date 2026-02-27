@@ -443,17 +443,17 @@ describe "MMR/MMRV" do
 
   def and_it_includes_the_mmr_programme_and_both_reported_and_performed_at_dates
     expect(page).to have_content(
-      "Record added to Mavis 1 July 2025 at 12:00am · " \
-        "Vaccination given #{@vaccination_date.strftime("%-d %B %Y")} · " \
-        "MMR"
+      "MMR Vaccination record added manually\n" \
+        "Record added to Mavis 1 July 2025 at 12:00am · " \
+        "Vaccination given #{@vaccination_date.strftime("%-d %B %Y")}"
     )
   end
 
   def and_it_includes_the_mmrv_programme_and_both_reported_and_performed_at_dates
     expect(page).to have_content(
-      "Record added to Mavis 1 July 2025 at 12:00am · " \
-        "Vaccination given #{@vaccination_date.strftime("%-d %B %Y")} · " \
-        "MMRV"
+      "MMRV Vaccination record added manually\n" \
+        "Record added to Mavis 1 July 2025 at 12:00am · " \
+        "Vaccination given #{@vaccination_date.strftime("%-d %B %Y")}"
     )
   end
 end

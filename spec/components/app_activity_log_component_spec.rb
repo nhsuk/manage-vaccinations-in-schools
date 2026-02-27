@@ -53,20 +53,15 @@ describe AppActivityLogComponent do
       card =
         if index
           page.all(".app-timeline__item")[index]
-        elsif programme
-          page
-            .all(".app-timeline__item")
-            .find do |card_element|
-              card_element.has_css?("h3", text: title) &&
-                card_element.has_css?(
-                  "p.app-timeline__description",
-                  text: programme
-                )
-            end
         else
-          page.find(".app-timeline__header", text: title).ancestor(
-            ".app-timeline__item"
-          )
+          text = (programme ? "#{programme} #{title}" : title)
+
+          page.find(
+            ".app-timeline__header",
+            text:,
+            normalize_ws: true,
+            match: :first
+          ).ancestor(".app-timeline__item")
         end
 
       expect(card).to have_css("p.app-timeline__description", text: date)
@@ -258,7 +253,7 @@ describe AppActivityLogComponent do
                      title: "Vaccination record uploaded",
                      date:
                        "Record added to Mavis 15 February 2025 at 2:33pm · Vaccination given 24 January 2025",
-                     programme: "MMR"
+                     programme: "MMR(V)"
 
     include_examples "card",
                      title: "Triaged decision: Safe to vaccinate",
