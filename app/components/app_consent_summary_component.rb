@@ -179,7 +179,7 @@ class AppConsentSummaryComponent < ViewComponent::Base
         text: "Reason for refusal"
       },
       value: {
-        text: consent.human_enum_name(:reason_for_refusal)
+        text: helpers.refusal_reason_label(consent)
       }
     }
   end

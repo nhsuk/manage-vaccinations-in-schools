@@ -117,6 +117,44 @@ describe AppConsentSummaryComponent do
     end
   end
 
+  context "when refused for flu due to gelatine" do
+    let(:programme) { Programme.flu }
+    let(:consent) do
+      create(
+        :consent,
+        :refused,
+        programme:,
+        reason_for_refusal: "contains_gelatine"
+      )
+    end
+
+    it "shows the flu-specific gelatine copy" do
+      expect(rendered).to have_content(
+        "Reason for refusalNasal vaccine contains gelatine"
+      )
+    end
+  end
+
+  context "when refused for MMR due to gelatine" do
+    let(:programme) do
+      Programme::Variant.new(Programme.mmr, variant_type: "mmr")
+    end
+    let(:consent) do
+      create(
+        :consent,
+        :refused,
+        programme:,
+        reason_for_refusal: "contains_gelatine"
+      )
+    end
+
+    it "shows the MMR-specific gelatine copy" do
+      expect(rendered).to have_content(
+        "Do not want my child to have the MMR vaccine that contains gelatine"
+      )
+    end
+  end
+
   context "with the MMR programme" do
     let(:programme) { Programme.mmr }
     let(:consent) do

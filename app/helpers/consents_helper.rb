@@ -16,6 +16,17 @@ module ConsentsHelper
       reasons.insert(0, "contains_gelatine")
     end
 
+    reasons.map do |value|
+      label = refusal_reason_label(consent, value)
+
+      ConsentRefusalOption.new(value:, label:, divider: value == "other")
+    end
+  end
+
+  def refusal_reason_label(consent, reason_value = nil)
+    value = reason_value || consent&.reason_for_refusal
+    return if value.blank?
+
     programme =
       if consent.respond_to?(:programme)
         consent.programme
@@ -23,24 +34,20 @@ module ConsentsHelper
         consent.programmes.first
       end
 
-    reasons.map do |value|
-      label_key =
-        if value == "contains_gelatine"
-          if programme&.flu?
-            "#{value}_flu"
-          elsif programme&.mmr? && (variant_type = programme.variant_type)
-            "#{value}_#{variant_type}"
-          else
-            value
-          end
+    label_key =
+      if value == "contains_gelatine"
+        if programme&.flu?
+          "contains_gelatine_flu"
+        elsif programme&.mmr? && (variant_type = programme.variant_type)
+          "contains_gelatine_#{variant_type}"
         else
           value
         end
+      else
+        value
+      end
 
-      label = Consent.human_enum_name(:reason_for_refusal, label_key)
-
-      ConsentRefusalOption.new(value:, label:, divider: value == "other")
-    end
+    Consent.human_enum_name(:reason_for_refusal, label_key)
   end
 
   def consent_response_tag(consent)
