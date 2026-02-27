@@ -131,7 +131,7 @@ jobs:
       - name: Rename task definition file
         run: mv ${{ steps.create-task-definition.outputs.task-definition }} ${{ runner.temp }}/data-replication-task-definition.json
       - name: Upload artifact for data-replication task definition
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: ${{ inputs.environment }}-data-replication-task-definition
           path: ${{ runner.temp }}/data-replication-task-definition.json
