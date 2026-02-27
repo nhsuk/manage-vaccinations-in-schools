@@ -13,7 +13,7 @@ namespace :smoke do
       gias_establishment_number: 999_999,
       gias_local_authority_code: 999_999,
       gias_phase: "not_applicable",
-      gias_year_groups: [8, 9, 10, 11]
+      gias_year_groups: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
     )
 
     Location.find_or_create_by!(
