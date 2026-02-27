@@ -103,6 +103,12 @@ describe AppConsentSummaryComponent do
         )
       end
     end
+
+    context "when refused" do
+      let(:consent) { create(:consent, :refused, programme:) }
+
+      it { should_not have_content("Chosen vaccine") }
+    end
   end
 
   context "with the MMR programme" do
