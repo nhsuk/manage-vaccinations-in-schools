@@ -117,6 +117,7 @@ describe "Verbal consent" do
     @patient =
       create(
         :patient,
+        given_name: "Alex",
         session: @session,
         parents: [@parent],
         date_of_birth: Programme::MIN_MMRV_ELIGIBILITY_DATE - 1.year
@@ -322,7 +323,15 @@ describe "Verbal consent" do
   end
 
   def and_a_text_is_sent_to_the_parent_confirming_their_consent
-    expect_sms_to(@parent.phone, :consent_confirmation_given)
+    expect(sms_deliveries).to include(
+      matching_notify_sms(
+        phone_number: @parent.phone,
+        template: :consent_confirmation_given
+      ).with_content_including(
+        "You've given consent for Alex",
+        "Please let them know what to expect"
+      )
+    )
   end
 
   def and_the_psd_is_invalidated

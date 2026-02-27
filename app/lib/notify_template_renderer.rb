@@ -5,7 +5,8 @@ class NotifyTemplateRenderer
   end
 
   PASSTHROUGH_TEMPLATE_IDS = {
-    email: "305a53f8-86eb-485e-85a5-328c9aabba45"
+    email: "305a53f8-86eb-485e-85a5-328c9aabba45",
+    sms: "c242b359-73d6-4b74-bda2-136093550636"
   }.freeze
   TEMPLATE_FRONTMATTER_DELIMITER = "---\n"
   TEMPLATE_BODY_SEPARATOR = "\n---\n"
@@ -73,13 +74,17 @@ class NotifyTemplateRenderer
 
     body = render_erb(body_content, context_binding)
 
-    subject =
-      if frontmatter["subject"]
-        render_erb(frontmatter["subject"].to_s, context_binding)
-      else
-        ""
-      end
-    { subject:, body: }
+    if @channel == :sms
+      { body: }
+    else
+      subject =
+        if frontmatter["subject"]
+          render_erb(frontmatter["subject"].to_s, context_binding)
+        else
+          ""
+        end
+      { subject:, body: }
+    end
   rescue NameError => e
     raise NameError,
           "#{e.message} in #{@channel} template '#{template_name}' (#{path})"
@@ -88,7 +93,12 @@ class NotifyTemplateRenderer
   private
 
   def config_hash
-    GOVUK_NOTIFY_EMAIL_TEMPLATES
+    case @channel
+    when :sms
+      GOVUK_NOTIFY_SMS_TEMPLATES
+    else
+      GOVUK_NOTIFY_EMAIL_TEMPLATES
+    end
   end
 
   def parse_frontmatter(content)
