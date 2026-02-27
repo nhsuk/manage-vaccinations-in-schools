@@ -109,6 +109,12 @@ describe AppConsentSummaryComponent do
 
       it { should_not have_content("Chosen vaccine") }
     end
+
+    context "when no response" do
+      let(:consent) { create(:consent, :not_provided, programme:) }
+
+      it { should_not have_content("Chosen vaccine") }
+    end
   end
 
   context "with the MMR programme" do
