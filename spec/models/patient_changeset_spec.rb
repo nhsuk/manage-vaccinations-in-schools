@@ -138,4 +138,106 @@ describe PatientChangeset do
       end
     end
   end
+
+  describe "#school_move_to_unknown_from_another_team?" do
+    let(:team_a) { create(:team, name: "Team A") }
+    let(:team_b) { create(:team, name: "Team B") }
+    let(:school_in_other_team) do
+      create(:school, name: "School in Team B", team: team_b)
+    end
+
+    context "when new location is a known school" do
+      it "returns false" do
+        expect(changeset.school_move_to_unknown_from_another_team?).to be(false)
+      end
+    end
+
+    context "when new location is home educated" do
+      before do
+        changeset.update!(school: nil)
+        changeset.data["upload"]["home_educated"] = true
+        changeset.save!
+      end
+
+      it "returns false" do
+        expect(changeset.school_move_to_unknown_from_another_team?).to be(false)
+      end
+    end
+
+    context "when new location is unknown school and patient is in a school in another team" do
+      let(:generic_clinic) { create(:generic_clinic, team: team_b) }
+      let!(:existing_patient) do
+        create(:patient, nhs_number: "9990000026", school: school_in_other_team)
+      end
+
+      before do
+        changeset.update!(school: nil, patient: existing_patient)
+        changeset.data["upload"]["home_educated"] = false
+        create(
+          :patient_location,
+          patient: existing_patient,
+          location: generic_clinic,
+          academic_year: AcademicYear.current
+        )
+      end
+
+      it "returns true" do
+        expect(changeset.school_move_to_unknown_from_another_team?).to be(true)
+      end
+    end
+
+    context "when new location is unknown school and patient is in unknown school in another team" do
+      let(:generic_clinic) { create(:generic_clinic, team: team_b) }
+      let!(:existing_patient) do
+        create(
+          :patient,
+          nhs_number: "9990000026",
+          school: nil,
+          home_educated: false
+        )
+      end
+
+      before do
+        changeset.update!(school: nil, patient: existing_patient)
+        changeset.data["upload"]["home_educated"] = false
+        create(
+          :patient_location,
+          patient: existing_patient,
+          location: generic_clinic,
+          academic_year: AcademicYear.current
+        )
+      end
+
+      it "returns false" do
+        expect(changeset.school_move_to_unknown_from_another_team?).to be(false)
+      end
+    end
+
+    context "when new location is unknown school and patient is home educated in another team" do
+      let(:generic_clinic) { create(:generic_clinic, team: team_b) }
+      let!(:existing_patient) do
+        create(
+          :patient,
+          nhs_number: "9990000026",
+          school: nil,
+          home_educated: true
+        )
+      end
+
+      before do
+        create(
+          :patient_location,
+          patient: existing_patient,
+          location: generic_clinic,
+          academic_year: AcademicYear.current
+        )
+        changeset.update!(school: nil, patient: existing_patient)
+        changeset.data["upload"]["home_educated"] = false
+      end
+
+      it "returns true" do
+        expect(changeset.school_move_to_unknown_from_another_team?).to be(true)
+      end
+    end
+  end
 end

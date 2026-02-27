@@ -272,6 +272,10 @@ class PatientChangeset < ApplicationRecord
     @school_move ||=
       begin
         return if patient.deceased?
+        if import_type == "CohortImport" &&
+             school_move_to_unknown_from_another_team?
+          return
+        end
         if patient.new_record? || patient.school != school ||
              patient.home_educated != home_educated ||
              patient.not_in_team?(team:, academic_year:) ||
@@ -285,6 +289,21 @@ class PatientChangeset < ApplicationRecord
           school_move
         end
       end
+  end
+
+  def school_move_to_unknown_from_another_team?
+    return false if school.present? || home_educated == true
+
+    return false unless patient.persisted?
+    return false if patient.school.nil? && !patient.home_educated?
+
+    current_teams = patient.teams_via_patient_locations
+    return false if current_teams.empty?
+
+    import_team = import.team
+    return false if import_team && current_teams.include?(import_team)
+
+    true
   end
 
   def existing_patients
