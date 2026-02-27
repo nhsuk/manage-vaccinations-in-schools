@@ -580,7 +580,11 @@
       </summary>
       <ul class="nav-list" role="directory">
 
+        <li ><a href="#method-i-passthrough_sms_configured-3F">passthrough_sms_configured?</a></li>
+
         <li ><a href="#method-i-perform">perform</a></li>
+
+        <li ><a href="#method-i-use_local_template-3F">use_local_template?</a></li>
 
       </ul>
     </details>
@@ -662,6 +666,48 @@
        </header>
 
 
+      <div id="method-i-passthrough_sms_configured-3F" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-passthrough_sms_configured-3F" title="Link to this method">
+                <span class="method-name">passthrough_sms_configured?</span>
+                <span class="method-args">()</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="passthrough_sms_configured-3F-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/jobs/sms_delivery_job.rb, line 110</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">passthrough_sms_configured?</span>
+  <span class="ruby-constant">NotifyTemplateRenderer</span>.<span class="ruby-identifier">for</span>(<span class="ruby-value">:sms</span>).<span class="ruby-identifier">passthrough_configured?</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
       <div id="method-i-perform" class="method-detail anchor-link ">
         <div class="method-header">
 
@@ -696,9 +742,7 @@
   <span class="ruby-value">team:</span> <span class="ruby-keyword">nil</span>,
   <span class="ruby-value">vaccination_record:</span> <span class="ruby-keyword">nil</span>
 )
-  <span class="ruby-identifier">template_id</span> = <span class="ruby-constant">GOVUK_NOTIFY_SMS_TEMPLATES</span>[<span class="ruby-identifier">template_name</span>.<span class="ruby-identifier">to_sym</span>]
-  <span class="ruby-identifier">raise</span> <span class="ruby-constant">UnknownTemplate</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">template_id</span>.<span class="ruby-identifier">nil?</span>
-
+  <span class="ruby-identifier">template_name_sym</span> = <span class="ruby-identifier">template_name</span>.<span class="ruby-identifier">to_sym</span>
   <span class="ruby-identifier">personalisation</span> =
     <span class="ruby-constant">GovukNotifyPersonalisation</span>.<span class="ruby-identifier">new</span>(
       <span class="ruby-value">academic_year:</span>,
@@ -714,7 +758,7 @@
     )
 
   <span class="ruby-identifier">phone_number</span> =
-    <span class="ruby-keyword">if</span> <span class="ruby-identifier">template_name</span> <span class="ruby-operator">==</span> <span class="ruby-value">:consent_unknown_contact_details_warning</span>
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">template_name_sym</span> <span class="ruby-operator">==</span> <span class="ruby-value">:consent_unknown_contact_details_warning</span>
       <span class="ruby-identifier">personalisation</span>.<span class="ruby-identifier">parent</span>&amp;.<span class="ruby-identifier">phone</span>
     <span class="ruby-keyword">else</span>
       <span class="ruby-identifier">personalisation</span>.<span class="ruby-identifier">consent_form</span>&amp;.<span class="ruby-identifier">parent_phone</span> <span class="ruby-operator">||</span>
@@ -722,8 +766,19 @@
     <span class="ruby-keyword">end</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">phone_number</span>.<span class="ruby-identifier">nil?</span>
 
+  <span class="ruby-identifier">sms_renderer</span> = <span class="ruby-constant">NotifyTemplateRenderer</span>.<span class="ruby-identifier">for</span>(<span class="ruby-value">:sms</span>)
+  <span class="ruby-identifier">template_id</span>, <span class="ruby-identifier">personalisation_hash</span> =
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">use_local_template?</span>(<span class="ruby-identifier">template_name_sym</span>)
+      <span class="ruby-identifier">rendered</span> = <span class="ruby-identifier">sms_renderer</span>.<span class="ruby-identifier">render</span>(<span class="ruby-identifier">template_name_sym</span>, <span class="ruby-identifier">personalisation</span>)
+      [<span class="ruby-identifier">sms_renderer</span>.<span class="ruby-identifier">passthrough_template_id</span>, { <span class="ruby-value">body:</span> <span class="ruby-identifier">rendered</span>[<span class="ruby-value">:body</span>] }]
+    <span class="ruby-keyword">else</span>
+      <span class="ruby-identifier">tid</span> = <span class="ruby-identifier">sms_renderer</span>.<span class="ruby-identifier">template_id_for</span>(<span class="ruby-identifier">template_name_sym</span>)
+      <span class="ruby-identifier">raise</span> <span class="ruby-constant">UnknownTemplate</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">tid</span>.<span class="ruby-identifier">nil?</span>
+      [<span class="ruby-identifier">tid</span>, <span class="ruby-identifier">personalisation</span>.<span class="ruby-identifier">to_h</span>]
+    <span class="ruby-keyword">end</span>
+
   <span class="ruby-identifier">args</span> = {
-    <span class="ruby-value">personalisation:</span> <span class="ruby-identifier">personalisation</span>.<span class="ruby-identifier">to_h</span>,
+    <span class="ruby-value">personalisation:</span> <span class="ruby-identifier">personalisation_hash</span>,
     <span class="ruby-value">phone_number:</span>,
     <span class="ruby-value">template_id:</span>
   }
@@ -767,6 +822,50 @@
         { <span class="ruby-value">programme_type:</span> <span class="ruby-identifier">it</span>.<span class="ruby-identifier">type</span>, <span class="ruby-value">disease_types:</span> <span class="ruby-identifier">it</span>.<span class="ruby-identifier">disease_types</span> }
       <span class="ruby-keyword">end</span>
   )
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-i-use_local_template-3F" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-use_local_template-3F" title="Link to this method">
+                <span class="method-name">use_local_template?</span>
+                <span class="method-args">(template_name_sym)</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="use_local_template-3F-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/jobs/sms_delivery_job.rb, line 104</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">use_local_template?</span>(<span class="ruby-identifier">template_name_sym</span>)
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">passthrough_sms_configured?</span>
+
+  <span class="ruby-constant">NotifyTemplateRenderer</span>.<span class="ruby-identifier">for</span>(<span class="ruby-value">:sms</span>).<span class="ruby-identifier">template_exists?</span>(<span class="ruby-identifier">template_name_sym</span>)
 <span class="ruby-keyword">end</span></pre>
           </div>
 

@@ -703,10 +703,8 @@ fk_rails_...  (sent_by_user_id =&gt; users.id)</pre>
   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">template_name</span>
     <span class="ruby-keyword">if</span> <span class="ruby-constant">GOVUK_NOTIFY_UNUSED_TEMPLATES</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">template_id</span>)
       <span class="ruby-constant">GOVUK_NOTIFY_UNUSED_TEMPLATES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">template_id</span>)
-    <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">email?</span>
-      <span class="ruby-constant">NotifyTemplateRenderer</span>.<span class="ruby-identifier">for</span>(<span class="ruby-value">:email</span>).<span class="ruby-identifier">template_name_for</span>(<span class="ruby-identifier">template_id</span>)
-    <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">sms?</span>
-      <span class="ruby-constant">GOVUK_NOTIFY_SMS_TEMPLATES</span>.<span class="ruby-identifier">key</span>(<span class="ruby-identifier">template_id</span>)
+    <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">email?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">sms?</span>
+      <span class="ruby-constant">NotifyTemplateRenderer</span>.<span class="ruby-identifier">for</span>(<span class="ruby-identifier">type</span>.<span class="ruby-identifier">to_sym</span>).<span class="ruby-identifier">template_name_for</span>(<span class="ruby-identifier">template_id</span>)
     <span class="ruby-keyword">end</span>
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
@@ -752,10 +750,8 @@ fk_rails_...  (sent_by_user_id =&gt; users.id)</pre>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">template_name</span>
   <span class="ruby-keyword">if</span> <span class="ruby-constant">GOVUK_NOTIFY_UNUSED_TEMPLATES</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">template_id</span>)
     <span class="ruby-constant">GOVUK_NOTIFY_UNUSED_TEMPLATES</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">template_id</span>)
-  <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">email?</span>
-    <span class="ruby-constant">NotifyTemplateRenderer</span>.<span class="ruby-identifier">for</span>(<span class="ruby-value">:email</span>).<span class="ruby-identifier">template_name_for</span>(<span class="ruby-identifier">template_id</span>)
-  <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">sms?</span>
-    <span class="ruby-constant">GOVUK_NOTIFY_SMS_TEMPLATES</span>.<span class="ruby-identifier">key</span>(<span class="ruby-identifier">template_id</span>)
+  <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">email?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">sms?</span>
+    <span class="ruby-constant">NotifyTemplateRenderer</span>.<span class="ruby-identifier">for</span>(<span class="ruby-identifier">type</span>.<span class="ruby-identifier">to_sym</span>).<span class="ruby-identifier">template_name_for</span>(<span class="ruby-identifier">template_id</span>)
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
