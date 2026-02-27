@@ -74,6 +74,19 @@
     <% end %>
 <% end %>
 
+<% if @skipped_school_moves.any? %>
+    <h2 class="nhsuk-heading-m">Records not imported - children at schools in other team areas</h2>
+    <p class="nhsuk-u-reading-width">
+        <%= skipped_school_moves_message %>
+    </p>
+    <%= render AppDetailsComponent.new(expander: true, sticky: true) do |c| %>
+        <% c.with_summary do %>
+            <%= pluralize(@skipped_school_moves.count, "record") %> not imported
+        <% end %>
+        <%= render AppImportReviewRecordsSummaryComponent.new(changesets: @skipped_school_moves) %>
+    <% end %>
+<% end %>
+
 <hr class="nhsuk-section-break nhsuk-section-break--visible nhsuk-section-break--l">
 
 <div class="nhsuk-button-group">

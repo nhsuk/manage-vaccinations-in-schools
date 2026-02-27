@@ -10,7 +10,8 @@ describe AppImportReviewComponent do
       new_records:,
       auto_matched_records:,
       import_issues:,
-      school_moves:
+      school_moves:,
+      skipped_school_moves:
     )
   end
 
@@ -37,6 +38,7 @@ describe AppImportReviewComponent do
   let(:import_issues) { [] }
   let(:inter_team) { [] }
   let(:school_moves) { [] }
+  let(:skipped_school_moves) { [] }
 
   shared_examples "section with details" do |title:, summary:, count:|
     it "renders section '#{title}'" do
@@ -252,6 +254,51 @@ describe AppImportReviewComponent do
           "Children present in the class list will be moved into the school"
         )
       end
+    end
+  end
+
+  describe "with skipped school moves" do
+    let(:other_team_school) do
+      create(:school, team: other_team, name: "School in Other Team")
+    end
+    let(:skipped_patient) do
+      create(:patient, school: other_team_school, team: other_team)
+    end
+    let(:skipped_school_moves) do
+      [
+        create(
+          :patient_changeset,
+          import:,
+          patient: skipped_patient,
+          school: nil
+        )
+      ]
+    end
+
+    before do
+      skipped_school_moves.first.data["upload"]["home_educated"] = false
+      skipped_school_moves.first.save!
+
+      create(
+        :patient_location,
+        patient: skipped_patient,
+        location: other_team_school
+      )
+    end
+
+    include_examples "section with details",
+                     title:
+                       "Records not imported - children at schools in other team areas",
+                     summary: "1 record not imported",
+                     count: 1
+
+    it "shows the section description" do
+      expect(rendered).to have_content(
+        "1 child is already registered at a school in another team's area"
+      )
+      expect(rendered).to have_content(
+        "This child remains at their current school."
+      )
     end
   end
 
