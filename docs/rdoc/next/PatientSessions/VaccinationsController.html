@@ -721,6 +721,7 @@
          <span class="ruby-identifier">draft_vaccination_record</span>.<span class="ruby-identifier">batch_expiry</span>.<span class="ruby-identifier">present?</span>
       <span class="ruby-identifier">steps</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-value">:batch</span>)
     <span class="ruby-keyword">end</span>
+    <span class="ruby-identifier">steps</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-value">:dose_sequence</span>)
 
     <span class="ruby-identifier">draft_vaccination_record</span>.<span class="ruby-identifier">update!</span>(<span class="ruby-value">first_active_wizard_step:</span> <span class="ruby-identifier">steps</span>.<span class="ruby-identifier">first</span>)
 

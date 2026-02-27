@@ -811,9 +811,12 @@
             <pre class="ruby"><span class="ruby-comment"># File app/lib/status_generator/vaccination.rb, line 60</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">dose_sequence</span>
   <span class="ruby-comment"># TODO: Implement this for multi-dose HPV and Td/IPV in a more generic way.</span>
-  <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">td_ipv?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">menacwy?</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">menacwy?</span>
 
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">status_should_be_due?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">status_should_be_eligible?</span>
+
+  <span class="ruby-comment"># Patients receive dose 5 of Td/IPV by default, regardless of vaccination history</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-value">5</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">td_ipv?</span>
 
   <span class="ruby-identifier">valid_vaccination_records</span>.<span class="ruby-identifier">count</span> <span class="ruby-operator">+</span> <span class="ruby-value">1</span>
 <span class="ruby-keyword">end</span></pre>
@@ -855,7 +858,7 @@
             </details>
           </div>
           <div class="method-source-code" id="latest_date-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/status_generator/vaccination.rb, line 69</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/status_generator/vaccination.rb, line 72</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">latest_date</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">status_should_be_vaccinated?</span>
     <span class="ruby-identifier">vaccinated_vaccination_record</span>.<span class="ruby-identifier">performed_at_date</span>
@@ -903,7 +906,7 @@
             </details>
           </div>
           <div class="method-source-code" id="latest_location_id-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/status_generator/vaccination.rb, line 79</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/status_generator/vaccination.rb, line 82</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">latest_location_id</span>
   <span class="ruby-identifier">vaccinated_vaccination_record</span>&amp;.<span class="ruby-identifier">location_id</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">status_should_be_vaccinated?</span>
 <span class="ruby-keyword">end</span></pre>
@@ -945,7 +948,7 @@
             </details>
           </div>
           <div class="method-source-code" id="latest_session_status-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/status_generator/vaccination.rb, line 83</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/status_generator/vaccination.rb, line 86</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">latest_session_status</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">status_should_be_vaccinated?</span>
     <span class="ruby-value">:already_had</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">latest_session_status_should_be_already_had?</span>
