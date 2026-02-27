@@ -18,7 +18,7 @@
 
 <%= render AppCardComponent.new(section: true) do |card| %>
   <% card.with_heading { "Sessions" } %>
-  <%= render AppPatientSessionTableComponent.new(@patient, current_team:, programme_type: @programme.type) %>
+  <%= render AppPatientProgrammeSessionTableComponent.new(@patient, current_team:, programme_type: @programme.type) %>
 
   <% unless @in_generic_clinic %>
     <%= govuk_button_to "Invite to community clinic", invite_to_clinic_patient_path(@patient), secondary: true %>

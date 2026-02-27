@@ -8,11 +8,7 @@ class AppPatientSessionTableComponent < ViewComponent::Base
           <% head.with_row do |row| %>
             <% row.with_cell(text: "Location") %>
             <% row.with_cell(text: "Session dates") %>
-            <% if @programme_type.nil? %>
               <% row.with_cell(text: "Programme") %>
-            <% else %>
-              <% row.with_cell(text: "Session outcome") %>
-            <% end %>
           <% end %>
         <% end %>
 
@@ -36,13 +32,8 @@ class AppPatientSessionTableComponent < ViewComponent::Base
                 <% end %>
 
                 <% row.with_cell do %>
-                  <% if @programme_type.nil? %>
-                    <span class="nhsuk-table-responsive__heading">Programme</span>
-                    <%= render AppProgrammeTagsComponent.new([programme]) %>
-                  <% else %>
-                    <span class="nhsuk-table-responsive__heading">Session outcome</span>
-                    <%= '?' %>
-                  <% end %>
+                  <span class="nhsuk-table-responsive__heading">Programme</span>
+                  <%= render AppProgrammeTagsComponent.new([programme]) %>
                 <% end %>
               <% end %>
             <% end %>
@@ -54,15 +45,14 @@ class AppPatientSessionTableComponent < ViewComponent::Base
     <% end %>
   ERB
 
-  def initialize(patient, current_team:, programme_type: nil)
+  def initialize(patient, current_team:)
     @patient = patient
     @current_team = current_team
-    @programme_type = programme_type
   end
 
   private
 
-  attr_reader :patient, :current_team, :programme_type
+  attr_reader :patient, :current_team
 
   delegate :govuk_table, to: :helpers
 
@@ -71,13 +61,6 @@ class AppPatientSessionTableComponent < ViewComponent::Base
       patient
         .sessions
         .for_team(current_team)
-        .then { |sessions|
-          if @programme_type
-            sessions.has_any_programme_types_of(programme_type)
-          else
-            sessions
-          end
-        }
         .includes(:location, :session_programme_year_groups)
   end
 end
