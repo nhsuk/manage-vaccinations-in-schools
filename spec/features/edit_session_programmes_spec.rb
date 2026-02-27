@@ -15,7 +15,6 @@ describe "Edit session programmes" do
 
     when_i_click_continue
     then_i_should_see_the_hpv_and_mmr_programme
-    screenshot_and_save_page
   end
 
   scenario "choosing HPV only programme with a high number of unvaccinated catch up patients" do

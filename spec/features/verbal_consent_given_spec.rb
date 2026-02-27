@@ -214,8 +214,6 @@ describe "Verbal consent" do
     choose "By phone"
     click_button "Continue"
 
-    screenshot_and_save_page
-
     # Do they agree?
     choose consent_option
     if consent_option.include?("nasal")

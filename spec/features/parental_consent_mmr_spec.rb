@@ -39,6 +39,7 @@ describe "Parental consent" do
 
     when_i_refuse_consent
     then_i_see_the_check_and_confirm_page
+    and_i_see_the_refusal_reason_on_the_check_and_confirm_page
 
     when_i_submit_the_consent_form
     and_i_refuse_to_answer_questions_on_ethnicity
@@ -143,8 +144,14 @@ describe "Parental consent" do
     click_button "Continue"
 
     # Resaon for refusal
-    choose "Personal choice"
+    choose "Do not want my child to have the MMR vaccine that contains gelatine"
     click_button "Continue"
+  end
+
+  def and_i_see_the_refusal_reason_on_the_check_and_confirm_page
+    expect(page).to have_content(
+      "Do not want my child to have the MMR vaccine that contains gelatine"
+    )
   end
 
   def then_i_see_the_first_health_question
