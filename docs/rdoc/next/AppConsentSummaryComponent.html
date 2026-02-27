@@ -869,6 +869,8 @@
   <span class="ruby-keyword">end</span>
 
   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">chosen_vaccine_row</span>
+    <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">consent</span>.<span class="ruby-identifier">response_given?</span>
+
     <span class="ruby-keyword">unless</span> <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">has_multiple_vaccine_methods?</span> <span class="ruby-operator">||</span>
              <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">vaccine_may_contain_gelatine?</span>
       <span class="ruby-keyword">return</span>
@@ -1000,6 +1002,8 @@
           <div class="method-source-code" id="chosen_vaccine_row-source">
             <pre class="ruby"><span class="ruby-comment"># File app/components/app_consent_summary_component.rb, line 136</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">chosen_vaccine_row</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">consent</span>.<span class="ruby-identifier">response_given?</span>
+
   <span class="ruby-keyword">unless</span> <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">has_multiple_vaccine_methods?</span> <span class="ruby-operator">||</span>
            <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">vaccine_may_contain_gelatine?</span>
     <span class="ruby-keyword">return</span>
@@ -1149,7 +1153,7 @@
             </details>
           </div>
           <div class="method-source-code" id="gelatine_free_vaccine_text-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/components/app_consent_summary_component.rb, line 154</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/components/app_consent_summary_component.rb, line 156</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">gelatine_free_vaccine_text</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">flu?</span>
     <span class="ruby-string">&quot;Injected vaccine only&quot;</span>
@@ -1195,7 +1199,7 @@
             </details>
           </div>
           <div class="method-source-code" id="no_preference_text-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/components/app_consent_summary_component.rb, line 162</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/components/app_consent_summary_component.rb, line 164</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">no_preference_text</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">has_multiple_vaccine_methods?</span>
     <span class="ruby-string">&quot;Nasal spray or injected vaccine&quot;</span>
@@ -1243,7 +1247,7 @@
             </details>
           </div>
           <div class="method-source-code" id="notes_row-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/components/app_consent_summary_component.rb, line 221</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/components/app_consent_summary_component.rb, line 223</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">notes_row</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">show_notes</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">consent</span>.<span class="ruby-identifier">notes</span>.<span class="ruby-identifier">blank?</span>
@@ -1288,7 +1292,7 @@
             </details>
           </div>
           <div class="method-source-code" id="notify_parent_on_refusal_row-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/components/app_consent_summary_component.rb, line 207</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/components/app_consent_summary_component.rb, line 209</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">notify_parent_on_refusal_row</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">show_notify_parent</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">consent</span>.<span class="ruby-identifier">notify_parent_on_refusal</span>.<span class="ruby-identifier">nil?</span>
@@ -1340,7 +1344,7 @@
             </details>
           </div>
           <div class="method-source-code" id="notify_parents_on_vaccination_row-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/components/app_consent_summary_component.rb, line 185</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/components/app_consent_summary_component.rb, line 187</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">notify_parents_on_vaccination_row</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">show_notify_parent</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">consent</span>.<span class="ruby-identifier">notify_parents_on_vaccination</span>.<span class="ruby-identifier">nil?</span>
@@ -1499,7 +1503,7 @@
             </details>
           </div>
           <div class="method-source-code" id="reason_for_refusal_row-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/components/app_consent_summary_component.rb, line 172</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/components/app_consent_summary_component.rb, line 174</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">reason_for_refusal_row</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">consent</span>.<span class="ruby-identifier">reason_for_refusal</span>.<span class="ruby-identifier">nil?</span>
 
