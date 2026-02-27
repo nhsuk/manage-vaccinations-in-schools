@@ -464,7 +464,7 @@ class ImmunisationImportRow
 
   def must_be_current_academic_year? = programme&.flu? || national_reporting?
 
-  def dose_sequence_determined_automatically? = programme.doubles?
+  def dose_sequence_determined_automatically? = programme.menacwy?
 
   def dose_sequence_required? =
     administered &&
@@ -820,7 +820,7 @@ class ImmunisationImportRow
       else
         errors.add(
           field.header,
-          "Enter a dose sequence number, for example, 1, 2 or 3. The dose sequence number cannot be greater than 3."
+          "Enter a dose sequence number, for example, 1, 2 or 3. The dose sequence number cannot be greater than 6."
         )
       end
     end
