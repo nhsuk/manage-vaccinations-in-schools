@@ -74,21 +74,7 @@ class NotifyLogEntry < ApplicationRecord
         end
 
   scope :for_session,
-        ->(session) do
-          where(
-            NotifyLogEntry::Programme
-              .select("1")
-              .where("notify_log_entry_id = notify_log_entries.id")
-              .where(programme_type: session.programme_types)
-              .group(:notify_log_entry_id)
-              .having(
-                "COUNT(DISTINCT programme_type) = ?",
-                session.programme_types.count
-              )
-              .arel
-              .exists
-          )
-        end
+        ->(session) { for_programme_type(session.programme_types) }
 
   encrypts :recipient, deterministic: true
 

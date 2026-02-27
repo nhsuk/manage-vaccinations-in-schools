@@ -203,7 +203,7 @@ describe AppActivityLogComponent do
         template_id: GOVUK_NOTIFY_EMAIL_TEMPLATES[:consent_school_request_hpv],
         consent_form: nil,
         patient:,
-        programme_types: programmes.map(&:type),
+        programme_types: %w[hpv],
         recipient: "test@example.com",
         created_at: Date.new(2025, 5, 10),
         sent_by: user
