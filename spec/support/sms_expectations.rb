@@ -1,21 +1,17 @@
 # frozen_string_literal: true
 
+require_relative "matchers/notify_sms"
+
 module SMSExpectations
-  def expect_sms_to(phone_number, template_name, nth = :first)
-    template_id = GOVUK_NOTIFY_SMS_TEMPLATES[template_name]
+  def expect_sms_to(phone_number, template, nth = :first)
+    deliveries = sms_deliveries
+    matcher = matching_notify_sms(phone_number:, template:)
 
-    sms =
-      if nth == :any
-        sms_deliveries.find do
-          it[:phone_number] == phone_number && it[:template_id] == template_id
-        end
-      else
-        sms_deliveries.send(nth)
-      end
-
-    expect(sms).not_to be_nil
-    expect(sms[:phone_number]).to eq(phone_number)
-    expect(sms[:template_id]).to eq(template_id)
+    if nth == :any
+      expect(deliveries).to include(matcher)
+    else
+      expect(deliveries.send(nth)).to matcher
+    end
   end
 
   def sms_deliveries
