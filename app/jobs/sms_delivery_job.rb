@@ -19,9 +19,7 @@ class SMSDeliveryJob < NotifyDeliveryJob
     team: nil,
     vaccination_record: nil
   )
-    template_id = GOVUK_NOTIFY_SMS_TEMPLATES[template_name.to_sym]
-    raise UnknownTemplate if template_id.nil?
-
+    template_name_sym = template_name.to_sym
     personalisation =
       GovukNotifyPersonalisation.new(
         academic_year:,
@@ -37,7 +35,7 @@ class SMSDeliveryJob < NotifyDeliveryJob
       )
 
     phone_number =
-      if template_name == :consent_unknown_contact_details_warning
+      if template_name_sym == :consent_unknown_contact_details_warning
         personalisation.parent&.phone
       else
         personalisation.consent_form&.parent_phone ||
@@ -45,8 +43,19 @@ class SMSDeliveryJob < NotifyDeliveryJob
       end
     return if phone_number.nil?
 
+    sms_renderer = NotifyTemplateRenderer.for(:sms)
+    template_id, personalisation_hash =
+      if use_local_template?(template_name_sym)
+        rendered = sms_renderer.render(template_name_sym, personalisation)
+        [sms_renderer.passthrough_template_id, { body: rendered[:body] }]
+      else
+        tid = sms_renderer.template_id_for(template_name_sym)
+        raise UnknownTemplate if tid.nil?
+        [tid, personalisation.to_h]
+      end
+
     args = {
-      personalisation: personalisation.to_h,
+      personalisation: personalisation_hash,
       phone_number:,
       template_id:
     }
@@ -90,5 +99,15 @@ class SMSDeliveryJob < NotifyDeliveryJob
           { programme_type: it.type, disease_types: it.disease_types }
         end
     )
+  end
+
+  def use_local_template?(template_name_sym)
+    return false unless passthrough_sms_configured?
+
+    NotifyTemplateRenderer.for(:sms).template_exists?(template_name_sym)
+  end
+
+  def passthrough_sms_configured?
+    NotifyTemplateRenderer.for(:sms).passthrough_configured?
   end
 end

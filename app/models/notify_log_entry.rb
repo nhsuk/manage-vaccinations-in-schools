@@ -106,10 +106,8 @@ class NotifyLogEntry < ApplicationRecord
   def template_name
     if GOVUK_NOTIFY_UNUSED_TEMPLATES.include?(template_id)
       GOVUK_NOTIFY_UNUSED_TEMPLATES.fetch(template_id)
-    elsif email?
-      NotifyTemplateRenderer.for(:email).template_name_for(template_id)
-    elsif sms?
-      GOVUK_NOTIFY_SMS_TEMPLATES.key(template_id)
+    elsif email? || sms?
+      NotifyTemplateRenderer.for(type.to_sym).template_name_for(template_id)
     end
   end
 end
