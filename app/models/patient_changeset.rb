@@ -76,7 +76,13 @@ class PatientChangeset < ApplicationRecord
        validate: true
 
   enum :record_type,
-       { auto_match: 0, new_patient: 1, import_issue: 2, not_in_file: 3 },
+       {
+         auto_match: 0,
+         new_patient: 1,
+         import_issue: 2,
+         not_in_file: 3,
+         skipped_school_move: 4
+       },
        validate: true
 
   scope :nhs_number_discrepancies,
@@ -462,6 +468,8 @@ class PatientChangeset < ApplicationRecord
   def changeset_type
     if patient.id.nil?
       :new_patient
+    elsif school_move_to_unknown_from_another_team?
+      :skipped_school_move
     elsif patient.pending_changes.any?
       :import_issue
     else
