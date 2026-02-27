@@ -134,6 +134,8 @@ class AppConsentSummaryComponent < ViewComponent::Base
   end
 
   def chosen_vaccine_row
+    return unless consent.response_given?
+
     unless programme.has_multiple_vaccine_methods? ||
              programme.vaccine_may_contain_gelatine?
       return
