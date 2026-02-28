@@ -30,8 +30,6 @@ GOVUK_NOTIFY_EMAIL_TEMPLATES = {
     "5462c441-81c0-4ac0-821f-713b4178f8ba",
   consent_school_subsequent_reminder_mmrv:
     "fe47875a-a0a6-40d9-bd41-a411ebb31cff",
-  consent_unknown_contact_details_warning:
-    "6d746839-a20e-4d50-8a1d-6f3900ff69b2",
   session_school_reminder: "8b8a9566-bb03-4b3c-8abc-5bd5a4b8797d",
   triage_vaccination_at_clinic: "3c7461bd-e3cf-4ff9-9053-b4e87490aa45",
   triage_vaccination_at_clinic_rt5: "5cacefcd-44f2-43ff-8fc0-008890406504",
