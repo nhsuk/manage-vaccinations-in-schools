@@ -138,7 +138,15 @@ describe "Parental consent" do
   end
 
   def and_i_receive_a_text_confirming_that_my_child_wont_be_vaccinated
-    expect_sms_to "07123 456789", :consent_confirmation_refused
+    expect(sms_deliveries).to include(
+      matching_notify_sms(
+        phone_number: "07123 456789",
+        template: :consent_confirmation_refused
+      ).with_content_including(
+        "You have told us you do not want",
+        "give feedback"
+      )
+    )
   end
 
   def when_the_nurse_checks_the_consent_responses
