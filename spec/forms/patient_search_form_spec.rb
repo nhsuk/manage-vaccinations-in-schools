@@ -27,6 +27,7 @@ describe PatientSearchForm do
   let(:date_of_birth_day) { nil }
   let(:date_of_birth_month) { nil }
   let(:date_of_birth_year) { nil }
+  let(:invited_to_clinic) { nil }
   let(:missing_nhs_number) { nil }
   let(:patient_specific_direction_status) { nil }
   let(:programme_statuses) { nil }
@@ -43,6 +44,7 @@ describe PatientSearchForm do
       date_of_birth_day:,
       date_of_birth_month:,
       date_of_birth_year:,
+      invited_to_clinic:,
       missing_nhs_number:,
       patient_specific_direction_status:,
       programme_statuses:,
@@ -173,6 +175,51 @@ describe PatientSearchForm do
 
         it "includes the patient" do
           expect(form.apply(scope)).to include(patient)
+        end
+      end
+    end
+
+    context "filtering on invited_to_clinic" do
+      let!(:patient_with_clinic_notification) do
+        create(:patient, session: session_for_patients)
+      end
+      let!(:patient_without_clinic_notification) do
+        create(:patient, session: session_for_patients)
+      end
+
+      before do
+        create(
+          :clinic_notification,
+          :initial_invitation,
+          patient: patient_with_clinic_notification,
+          team:,
+          academic_year: AcademicYear.pending,
+          programmes:
+        )
+      end
+
+      context "when the value is true" do
+        let(:invited_to_clinic) { true }
+
+        it "includes the patient with clinic notification" do
+          expect(form.apply(scope)).to include(patient_with_clinic_notification)
+        end
+
+        it "doesn't include the patient without clinic notification" do
+          expect(form.apply(scope)).not_to include(
+            patient_without_clinic_notification
+          )
+        end
+      end
+
+      context "when the value is false" do
+        let(:invited_to_clinic) { false }
+
+        it "includes both patients" do
+          expect(form.apply(scope)).to include(patient_with_clinic_notification)
+          expect(form.apply(scope)).to include(
+            patient_without_clinic_notification
+          )
         end
       end
     end

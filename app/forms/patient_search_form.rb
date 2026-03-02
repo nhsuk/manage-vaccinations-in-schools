@@ -8,6 +8,7 @@ class PatientSearchForm < SearchForm
   attribute :date_of_birth_day, :integer
   attribute :date_of_birth_month, :integer
   attribute :date_of_birth_year, :integer
+  attribute :invited_to_clinic, :boolean
   attribute :missing_nhs_number, :boolean
   attribute :patient_specific_direction_status, :string
   attribute :programme_status_group, :string
@@ -53,6 +54,7 @@ class PatientSearchForm < SearchForm
     scope = filter_aged_out_of_programmes(scope)
     scope = filter_archived(scope)
     scope = filter_date_of_birth_year(scope)
+    scope = filter_invited_to_clinic(scope)
     scope = filter_name(scope)
     scope = filter_nhs_number(scope)
     scope = filter_patient_specific_direction_status(scope)
@@ -119,6 +121,14 @@ class PatientSearchForm < SearchForm
     end
 
     scope
+  end
+
+  def filter_invited_to_clinic(scope)
+    if invited_to_clinic
+      scope.has_clinic_notification(team:, academic_year:, programmes:)
+    else
+      scope
+    end
   end
 
   def filter_name(scope)
