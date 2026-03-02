@@ -62,7 +62,7 @@ describe "National reporting team homepage and navigation" do
         programmes: [Programme.flu, Programme.hpv],
         ods_code: "XX99"
       )
-    create(:school, team: @team, urn: 100_000)
+    @school = create(:school, team: @team, urn: 100_000)
     sign_in @team.users.first
   end
 
@@ -79,6 +79,7 @@ describe "National reporting team homepage and navigation" do
       :vaccination_record,
       programme: Programme.flu,
       patient: @child_with_parents,
+      session: create(:session, team: @team, location: @school),
       team: @team
     )
   end
