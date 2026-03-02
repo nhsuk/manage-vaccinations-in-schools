@@ -50,17 +50,17 @@ class PatientSearchForm < SearchForm
   end
 
   def apply(scope)
-    scope = filter_name(scope)
-    scope = filter_year_groups(scope)
     scope = filter_aged_out_of_programmes(scope)
     scope = filter_archived(scope)
     scope = filter_date_of_birth_year(scope)
+    scope = filter_name(scope)
     scope = filter_nhs_number(scope)
+    scope = filter_patient_specific_direction_status(scope)
+    scope = filter_programme_statuses(scope)
     scope = filter_programmes(scope)
     scope = filter_registration_status(scope)
-    scope = filter_programme_statuses(scope)
     scope = filter_vaccine_criteria(scope)
-    scope = filter_patient_specific_direction_status(scope)
+    scope = filter_year_groups(scope)
 
     scope.order_by_name
   end
@@ -78,18 +78,6 @@ class PatientSearchForm < SearchForm
   end
 
   def team = session&.team || current_user.selected_team
-
-  def filter_name(scope)
-    q.present? ? scope.search_by_name_or_nhs_number(q) : scope
-  end
-
-  def filter_year_groups(scope)
-    if year_groups.present?
-      scope.search_by_year_groups(year_groups, academic_year:)
-    else
-      scope
-    end
-  end
 
   def filter_aged_out_of_programmes(scope)
     return scope if team.has_national_reporting_access?
@@ -133,20 +121,12 @@ class PatientSearchForm < SearchForm
     scope
   end
 
-  def filter_nhs_number(scope)
-    missing_nhs_number.present? ? scope.search_by_nhs_number(nil) : scope
+  def filter_name(scope)
+    q.present? ? scope.search_by_name_or_nhs_number(q) : scope
   end
 
-  def filter_programmes(scope)
-    if programme_types.present?
-      if session
-        scope.appear_in_programmes(programmes, session:)
-      else
-        scope.appear_in_programmes(programmes, academic_year:)
-      end
-    else
-      scope
-    end
+  def filter_nhs_number(scope)
+    missing_nhs_number.present? ? scope.search_by_nhs_number(nil) : scope
   end
 
   def filter_patient_specific_direction_status(scope)
@@ -208,6 +188,18 @@ class PatientSearchForm < SearchForm
     or_scope
   end
 
+  def filter_programmes(scope)
+    if programme_types.present?
+      if session
+        scope.appear_in_programmes(programmes, session:)
+      else
+        scope.appear_in_programmes(programmes, academic_year:)
+      end
+    else
+      scope
+    end
+  end
+
   def filter_registration_status(scope)
     if (status = registration_status&.to_sym).present?
       scope.has_registration_status(status, session:)
@@ -245,5 +237,13 @@ class PatientSearchForm < SearchForm
       end
 
     or_scope
+  end
+
+  def filter_year_groups(scope)
+    if year_groups.present?
+      scope.search_by_year_groups(year_groups, academic_year:)
+    else
+      scope
+    end
   end
 end

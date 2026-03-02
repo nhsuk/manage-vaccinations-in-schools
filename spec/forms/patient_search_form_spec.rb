@@ -177,112 +177,7 @@ describe PatientSearchForm do
       end
     end
 
-    context "filtering on programmes" do
-      let(:programme_types) { programmes.map(&:type) }
-
-      let(:programme) { Programme.menacwy }
-      let(:programmes) { [programme] }
-
-      context "with a patient eligible for the programme" do
-        let(:patient) { create(:patient, session: session_for_patients) }
-
-        it "is included" do
-          expect(form.apply(scope)).to include(patient)
-        end
-      end
-
-      context "with a patient not eligible for the programme" do
-        let(:patient) do
-          create(:patient, session: session_for_patients, year_group: 8)
-        end
-
-        it "is not included" do
-          expect(form.apply(scope)).not_to include(patient)
-        end
-      end
-    end
-
-    context "filtering on register status" do
-      let(:registration_status) { "attending" }
-
-      let(:session) { session_for_patients }
-
-      it "filters on register status" do
-        patient = create(:patient, :in_attendance, session:)
-        expect(form.apply(scope)).to include(patient)
-      end
-    end
-
-    context "filtering on patient specific direction status" do
-      let(:session) { session_for_patients }
-
-      let!(:patient_with_psd) { create(:patient, session:) }
-      let!(:patient_without_psd) { create(:patient, session:) }
-
-      before do
-        create(
-          :patient_specific_direction,
-          patient: patient_with_psd,
-          programme: programmes.first,
-          team:
-        )
-      end
-
-      context "when status is 'added'" do
-        let(:patient_specific_direction_status) { "added" }
-
-        it "finds the patient with the PSD" do
-          expect(form.apply(scope)).to contain_exactly(patient_with_psd)
-        end
-      end
-
-      context "when status is 'not_added'" do
-        let(:patient_specific_direction_status) { "not_added" }
-
-        it "finds the patient that has no PSD" do
-          expect(form.apply(scope)).to contain_exactly(patient_without_psd)
-        end
-      end
-    end
-
-    context "filtering on vaccine criteria" do
-      let(:programmes) { [Programme.flu] }
-      let(:programme_types) { programmes.map(&:type) }
-
-      let(:vaccine_criteria) { %w[flu_nasal_injection] }
-
-      let(:session) { session_for_patients }
-
-      it "filters on vaccine method" do
-        nasal_patient =
-          create(:patient, :consent_given_triage_not_needed, session:)
-
-        nasal_patient.programme_statuses.first.update!(
-          vaccine_methods: %w[nasal injection]
-        )
-
-        _nasal_only_different_programme_patient =
-          create(
-            :patient,
-            :consent_given_triage_not_needed,
-            programmes: [Programme.hpv]
-          )
-
-        _injection_only_patient =
-          create(:patient, :consent_given_triage_not_needed, session:)
-
-        injection_primary_patient =
-          create(:patient, :consent_given_triage_not_needed, session:)
-
-        injection_primary_patient.programme_statuses.first.update!(
-          vaccine_methods: %w[injection nasal]
-        )
-
-        expect(form.apply(scope)).to contain_exactly(nasal_patient)
-      end
-    end
-
-    context "searching on name" do
+    context "filtering on name" do
       let(:patient_a) do
         create(
           :patient,
@@ -340,6 +235,111 @@ describe PatientSearchForm do
         it "sorts by similarity" do
           expect(form.apply(scope)).to eq([patient_a, patient_b, patient_c])
         end
+      end
+    end
+
+    context "filtering on patient specific direction status" do
+      let(:session) { session_for_patients }
+
+      let!(:patient_with_psd) { create(:patient, session:) }
+      let!(:patient_without_psd) { create(:patient, session:) }
+
+      before do
+        create(
+          :patient_specific_direction,
+          patient: patient_with_psd,
+          programme: programmes.first,
+          team:
+        )
+      end
+
+      context "when status is 'added'" do
+        let(:patient_specific_direction_status) { "added" }
+
+        it "finds the patient with the PSD" do
+          expect(form.apply(scope)).to contain_exactly(patient_with_psd)
+        end
+      end
+
+      context "when status is 'not_added'" do
+        let(:patient_specific_direction_status) { "not_added" }
+
+        it "finds the patient that has no PSD" do
+          expect(form.apply(scope)).to contain_exactly(patient_without_psd)
+        end
+      end
+    end
+
+    context "filtering on programmes" do
+      let(:programme_types) { programmes.map(&:type) }
+
+      let(:programme) { Programme.menacwy }
+      let(:programmes) { [programme] }
+
+      context "with a patient eligible for the programme" do
+        let(:patient) { create(:patient, session: session_for_patients) }
+
+        it "is included" do
+          expect(form.apply(scope)).to include(patient)
+        end
+      end
+
+      context "with a patient not eligible for the programme" do
+        let(:patient) do
+          create(:patient, session: session_for_patients, year_group: 8)
+        end
+
+        it "is not included" do
+          expect(form.apply(scope)).not_to include(patient)
+        end
+      end
+    end
+
+    context "filtering on register status" do
+      let(:registration_status) { "attending" }
+
+      let(:session) { session_for_patients }
+
+      it "filters on register status" do
+        patient = create(:patient, :in_attendance, session:)
+        expect(form.apply(scope)).to include(patient)
+      end
+    end
+
+    context "filtering on vaccine criteria" do
+      let(:programmes) { [Programme.flu] }
+      let(:programme_types) { programmes.map(&:type) }
+
+      let(:vaccine_criteria) { %w[flu_nasal_injection] }
+
+      let(:session) { session_for_patients }
+
+      it "filters on vaccine method" do
+        nasal_patient =
+          create(:patient, :consent_given_triage_not_needed, session:)
+
+        nasal_patient.programme_statuses.first.update!(
+          vaccine_methods: %w[nasal injection]
+        )
+
+        _nasal_only_different_programme_patient =
+          create(
+            :patient,
+            :consent_given_triage_not_needed,
+            programmes: [Programme.hpv]
+          )
+
+        _injection_only_patient =
+          create(:patient, :consent_given_triage_not_needed, session:)
+
+        injection_primary_patient =
+          create(:patient, :consent_given_triage_not_needed, session:)
+
+        injection_primary_patient.programme_statuses.first.update!(
+          vaccine_methods: %w[injection nasal]
+        )
+
+        expect(form.apply(scope)).to contain_exactly(nasal_patient)
       end
     end
   end
