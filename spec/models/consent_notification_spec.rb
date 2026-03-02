@@ -149,21 +149,7 @@ describe ConsentNotification do
           it "enqueues an sms per parent" do
             expect { create_and_send! }.to have_delivered_sms(
               :consent_school_request_mmr
-            ).with(
-              disease_types:,
-              parent: parents.first,
-              patient: patient,
-              programme_types:,
-              session: session,
-              sent_by: current_user
-            ).and have_delivered_sms(:consent_school_request_mmr).with(
-                    disease_types:,
-                    parent: parents.second,
-                    patient: patient,
-                    programme_types:,
-                    session: session,
-                    sent_by: current_user
-                  )
+            ).twice
           end
 
           context "when session is set to send outbreak requests" do
@@ -191,6 +177,12 @@ describe ConsentNotification do
                       session: session,
                       sent_by: current_user
                     )
+            end
+
+            it "enqueues an sms" do
+              expect { create_and_send! }.to have_delivered_sms(
+                :consent_school_request_mmr
+              ).twice
             end
           end
         end
@@ -220,7 +212,13 @@ describe ConsentNotification do
                   )
           end
 
-          context "when session is set to send outbreak requests" do
+          it "enqueues an sms" do
+            expect { create_and_send! }.to have_delivered_sms(
+              :consent_school_request_mmr
+            ).twice
+          end
+
+          context "when session is set to send outbreak style requests" do
             let(:session) do
               create(:session, location:, programmes:, team:, outbreak: true)
             end
@@ -245,6 +243,12 @@ describe ConsentNotification do
                       session:,
                       sent_by: current_user
                     )
+            end
+
+            it "enqueues an sms" do
+              expect { create_and_send! }.to have_delivered_sms(
+                :consent_school_request_mmr
+              ).twice
             end
           end
         end
@@ -431,6 +435,76 @@ describe ConsentNotification do
         end
       end
 
+      context "with an MMR programme" do
+        let(:programmes) { [Programme.mmr] }
+
+        it "enqueues an email" do
+          expect { create_and_send! }.to have_delivered_email(
+            :consent_school_initial_reminder_mmr
+          ).twice
+        end
+
+        it "enqueues an sms" do
+          expect { create_and_send! }.to have_delivered_sms(
+            :consent_school_reminder
+          ).twice
+        end
+
+        context "with a session that is set to send outbreak style requests" do
+          let(:session) do
+            create(:session, location:, programmes:, team:, outbreak: true)
+          end
+
+          it "enqueues an email" do
+            expect { create_and_send! }.to have_delivered_email(
+              :consent_school_initial_reminder_mmr
+            ).twice
+          end
+
+          it "enqueues an sms" do
+            expect { create_and_send! }.to have_delivered_sms(
+              :consent_school_reminder
+            ).twice
+          end
+        end
+
+        context "and a patient that is eligible for mmrv" do
+          before do
+            allow(patient).to receive(:eligible_for_mmrv?).and_return(true)
+          end
+
+          it "enqueues an email" do
+            expect { create_and_send! }.to have_delivered_email(
+              :consent_school_initial_reminder_mmrv
+            ).twice
+          end
+
+          it "enqueues an sms" do
+            expect { create_and_send! }.to have_delivered_sms(
+              :consent_school_reminder
+            ).twice
+          end
+
+          context "with a session that is set to send outbreak style requests" do
+            let(:session) do
+              create(:session, location:, programmes:, team:, outbreak: true)
+            end
+
+            it "enqueues an email" do
+              expect { create_and_send! }.to have_delivered_email(
+                :consent_school_initial_reminder_mmrv
+              ).twice
+            end
+
+            it "enqueues an sms" do
+              expect { create_and_send! }.to have_delivered_sms(
+                :consent_school_reminder
+              ).twice
+            end
+          end
+        end
+      end
+
       it "enqueues a text per parent" do
         expect { create_and_send! }.to have_delivered_sms(
           :consent_school_reminder
@@ -576,6 +650,76 @@ describe ConsentNotification do
             session:,
             sent_by: current_user
           )
+        end
+      end
+
+      context "with an MMR programme" do
+        let(:programmes) { [Programme.mmr] }
+
+        it "enqueues an email" do
+          expect { create_and_send! }.to have_delivered_email(
+            :consent_school_subsequent_reminder_mmr
+          ).twice
+        end
+
+        it "enqueues an sms" do
+          expect { create_and_send! }.to have_delivered_sms(
+            :consent_school_reminder
+          ).twice
+        end
+
+        context "with a session that is set to send outbreak style requests" do
+          let(:session) do
+            create(:session, location:, programmes:, team:, outbreak: true)
+          end
+
+          it "enqueues an email" do
+            expect { create_and_send! }.to have_delivered_email(
+              :consent_school_subsequent_reminder_mmr
+            ).twice
+          end
+
+          it "enqueues an sms" do
+            expect { create_and_send! }.to have_delivered_sms(
+              :consent_school_reminder
+            ).twice
+          end
+        end
+
+        context "and a patient that is eligible for mmrv" do
+          before do
+            allow(patient).to receive(:eligible_for_mmrv?).and_return(true)
+          end
+
+          it "enqueues an email" do
+            expect { create_and_send! }.to have_delivered_email(
+              :consent_school_subsequent_reminder_mmrv
+            ).twice
+          end
+
+          it "enqueues an sms" do
+            expect { create_and_send! }.to have_delivered_sms(
+              :consent_school_reminder
+            ).twice
+          end
+
+          context "with a session that is set to send outbreak style requests" do
+            let(:session) do
+              create(:session, location:, programmes:, team:, outbreak: true)
+            end
+
+            it "enqueues an email" do
+              expect { create_and_send! }.to have_delivered_email(
+                :consent_school_subsequent_reminder_mmrv
+              ).twice
+            end
+
+            it "enqueues an sms" do
+              expect { create_and_send! }.to have_delivered_sms(
+                :consent_school_reminder
+              ).twice
+            end
+          end
         end
       end
     end
