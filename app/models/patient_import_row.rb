@@ -154,7 +154,8 @@ class PatientImportRow
       return
     end
 
-    Patient.includes(:patient_locations).match_existing(
+    PatientMatcher.from_relation(
+      Patient.includes(:patient_locations),
       nhs_number: nhs_number_value,
       given_name: first_name.to_s,
       family_name: last_name.to_s,

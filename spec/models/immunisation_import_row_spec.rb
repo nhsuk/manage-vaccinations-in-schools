@@ -518,7 +518,7 @@ describe ImmunisationImportRow do
         it "has errors" do
           expect(immunisation_import_row).to be_invalid
           expect(immunisation_import_row.errors[:base]).to include(
-            "Two or more possible patients match the patient first name, last name, date of birth or postcode."
+            "Two or more possible patients match the patient first name, last name, date of birth and postcode."
           )
         end
       end
@@ -954,6 +954,8 @@ describe ImmunisationImportRow do
           it { should be_valid }
 
           it "ignores the performing professional fields" do
+            immunisation_import_row.set_patient
+
             expect(
               immunisation_import_row.to_vaccination_record.performed_by_given_name
             ).to be_nil
@@ -995,6 +997,8 @@ describe ImmunisationImportRow do
         end
 
         it "recognizes MMRV as MMR programme" do
+          immunisation_import_row.set_patient
+
           expect(
             immunisation_import_row.to_vaccination_record&.programme
           ).to eq(Programme.mmr)
@@ -1343,8 +1347,11 @@ describe ImmunisationImportRow do
 
   describe "#to_vaccination_record" do
     subject(:vaccination_record) do
+      immunisation_import_row.set_patient(candidates: patients_batch)
       immunisation_import_row.to_vaccination_record
     end
+
+    let(:patients_batch) { nil }
 
     shared_examples "with pseudo-postcodes" do
       ["ZZ99 3VZ", "ZZ99 3WZ", "ZZ99 3CZ"].each do |pseudo_postcode|
@@ -2086,7 +2093,10 @@ describe ImmunisationImportRow do
       end
 
       describe "#patient" do
-        subject(:patient) { vaccination_record.patient }
+        subject(:patient) do
+          immunisation_import_row.set_patient
+          vaccination_record.patient
+        end
 
         context "with new patient data" do
           let(:data) { valid_data }
@@ -2101,8 +2111,12 @@ describe ImmunisationImportRow do
             its(:date_of_birth) { should eq Date.parse(date_of_birth) }
             its(:address_postcode) { should eq address_postcode }
 
-            it "adds a patient to the database" do
-              expect { patient }.to change(Patient, :count).by(1)
+            it "doesn't add a patient to the database" do
+              expect { patient }.not_to change(Patient, :count)
+            end
+
+            it "creates a new patient in memory" do
+              expect(patient).to be_new_record
             end
           end
 
@@ -2113,8 +2127,8 @@ describe ImmunisationImportRow do
 
             it { should eq(other_patient) }
 
-            it "doesn't add a patient to the database" do
-              expect { patient }.not_to change(Patient, :count)
+            it "returns a record in the database" do
+              expect(patient).not_to be_new_record
             end
           end
 
@@ -2134,8 +2148,8 @@ describe ImmunisationImportRow do
 
             it { should eq(other_patient) }
 
-            it "doesn't add a patient to the database" do
-              expect { patient }.not_to change(Patient, :count)
+            it "returns a record in the database" do
+              expect(patient).not_to be_new_record
             end
           end
 
@@ -2155,8 +2169,9 @@ describe ImmunisationImportRow do
 
               it { should_not eq(other_patient) }
 
-              it "creates a new patient" do
-                expect { patient }.to change(Patient, :count).by(1)
+              it "creates a new patient in memory" do
+                expect(patient).to be_new_record
+                expect(patient).not_to be(other_patient)
               end
             end
 
@@ -2175,8 +2190,8 @@ describe ImmunisationImportRow do
 
               it { should_not eq(other_patient) }
 
-              it "creates a new patient" do
-                expect { patient }.to change(Patient, :count).by(1)
+              it "returns a record in the database" do
+                expect(patient).to be_new_record
               end
             end
 
@@ -2195,8 +2210,8 @@ describe ImmunisationImportRow do
 
               it { should_not eq(other_patient) }
 
-              it "creates a new patient" do
-                expect { patient }.to change(Patient, :count).by(1)
+              it "returns a record in the database" do
+                expect(patient).to be_new_record
               end
             end
 
@@ -2217,8 +2232,8 @@ describe ImmunisationImportRow do
 
               it { should_not eq(other_patient) }
 
-              it "creates a new patient" do
-                expect { patient }.to change(Patient, :count).by(1)
+              it "returns a record in the database" do
+                expect(patient).to be_new_record
               end
             end
 
@@ -2306,6 +2321,27 @@ describe ImmunisationImportRow do
             end
 
             it "still matches to a patient" do
+              expect(patient).to eq(existing_patient)
+            end
+          end
+
+          context "with a patient in the patients_batch" do
+            let(:data) { valid_data }
+
+            let(:existing_patient) do
+              build(
+                :patient,
+                nhs_number:,
+                given_name:,
+                family_name:,
+                address_postcode:,
+                date_of_birth: Date.parse(date_of_birth)
+              )
+            end
+
+            let(:patients_batch) { [existing_patient] }
+
+            it "matches to the patient in the patients_batch" do
               expect(patient).to eq(existing_patient)
             end
           end

@@ -75,12 +75,14 @@ class ImmunisationImport < ApplicationRecord
   end
 
   def process_row(row)
+    patient = row.set_patient(candidates: @patients_batch)
     vaccination_record = row.to_vaccination_record
+
     count_column_to_increment = count_column(vaccination_record)
     return count_column_to_increment unless vaccination_record
 
     @vaccination_records_batch.add(vaccination_record)
-    @patients_batch.add(vaccination_record.patient)
+    @patients_batch.add(patient)
 
     if (patient_location = row.to_patient_location)
       @patient_locations_batch.add(patient_location)
@@ -124,9 +126,12 @@ class ImmunisationImport < ApplicationRecord
 
     # We need to convert the batch to an array as `import` modifies the
     # objects to add IDs to any new records.
+    patients = @patients_batch.to_a
     vaccination_records = @vaccination_records_batch.to_a
     patient_locations = @patient_locations_batch.to_a
     archive_reasons = @archive_reasons_batch.to_a
+
+    Patient.import!(patients, on_duplicate_key_update: :all)
 
     VaccinationRecord.import!(
       vaccination_records,
@@ -146,7 +151,10 @@ class ImmunisationImport < ApplicationRecord
       collection.clear
     end
 
+    @patients_batch.clear
     @vaccination_records_batch.clear
+    @patient_locations_batch.clear
+    @archive_reasons_batch.clear
   end
 
   def count_columns
