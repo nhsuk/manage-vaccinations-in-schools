@@ -664,7 +664,7 @@
             </details>
           </div>
           <div class="method-source-code" id="call-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/mavis_cli/gp_practices/download.rb, line 20</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/mavis_cli/gp_practices/download.rb, line 21</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">call</span>(<span class="ruby-value">output_file:</span>, <span class="ruby-operator">**</span>)
   <span class="ruby-identifier">require</span> <span class="ruby-string">&quot;mechanize&quot;</span>
 
@@ -672,13 +672,11 @@
   <span class="ruby-identifier">agent</span> = <span class="ruby-constant">Mechanize</span>.<span class="ruby-identifier">new</span>
   <span class="ruby-identifier">agent</span>.<span class="ruby-identifier">user_agent_alias</span> = <span class="ruby-string">&quot;Mac Safari&quot;</span>
 
-  <span class="ruby-identifier">puts</span> <span class="ruby-string">&quot;Visiting the downloads page&quot;</span>
-  <span class="ruby-identifier">agent</span>.<span class="ruby-identifier">get</span>(
-    <span class="ruby-string">&quot;https://digital.nhs.uk/services/organisation-data-service/data-search-and-export/csv-downloads/gp-and-gp-practice-related-data&quot;</span>
-  )
-
   <span class="ruby-identifier">puts</span> <span class="ruby-string">&quot;Download the GP practices data&quot;</span>
-  <span class="ruby-identifier">epraccur_file</span> = <span class="ruby-identifier">agent</span>.<span class="ruby-identifier">click</span>(<span class="ruby-string">&quot;epraccur&quot;</span>)
+  <span class="ruby-identifier">epraccur_file</span> =
+    <span class="ruby-identifier">agent</span>.<span class="ruby-identifier">get</span>(
+      <span class="ruby-string">&quot;https://www.odsdatasearchandexport.nhs.uk/api/getReport?report=epraccur&quot;</span>
+    )
   <span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;Writing #{output_file}&quot;</span>
   <span class="ruby-identifier">epraccur_file</span>.<span class="ruby-identifier">save!</span>(<span class="ruby-identifier">output_file</span>)
   <span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;File downloaded successfully to #{output_file}&quot;</span>

@@ -670,12 +670,9 @@
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">call</span>(<span class="ruby-value">input_file:</span>, <span class="ruby-operator">**</span>)
   <span class="ruby-constant">MavisCLI</span>.<span class="ruby-identifier">load_rails</span>
 
-  <span class="ruby-constant">Zip</span><span class="ruby-operator">::</span><span class="ruby-constant">File</span>.<span class="ruby-identifier">open</span>(<span class="ruby-identifier">input_file</span>) <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">zip</span><span class="ruby-operator">|</span>
-    <span class="ruby-identifier">csv_entry</span> = <span class="ruby-identifier">zip</span>.<span class="ruby-identifier">glob</span>(<span class="ruby-string">&quot;*.csv&quot;</span>).<span class="ruby-identifier">first</span>
-    <span class="ruby-identifier">csv_content</span> = <span class="ruby-identifier">csv_entry</span>.<span class="ruby-identifier">get_input_stream</span>.<span class="ruby-identifier">read</span>
-
+  <span class="ruby-constant">File</span>.<span class="ruby-identifier">open</span>(<span class="ruby-identifier">input_file</span>) <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">file</span><span class="ruby-operator">|</span>
     <span class="ruby-identifier">rows</span> =
-      <span class="ruby-constant">CSV</span>.<span class="ruby-identifier">parse</span>(<span class="ruby-identifier">csv_content</span>, <span class="ruby-value">headers:</span> <span class="ruby-keyword">false</span>, <span class="ruby-value">encoding:</span> <span class="ruby-string">&quot;ISO-8859-1:UTF-8&quot;</span>)
+      <span class="ruby-constant">CSV</span>.<span class="ruby-identifier">parse</span>(<span class="ruby-identifier">file</span>.<span class="ruby-identifier">read</span>, <span class="ruby-value">headers:</span> <span class="ruby-keyword">false</span>, <span class="ruby-value">encoding:</span> <span class="ruby-string">&quot;ISO-8859-1:UTF-8&quot;</span>)
 
     <span class="ruby-identifier">batch_size</span> = <span class="ruby-value">1000</span>
     <span class="ruby-identifier">locations</span> = []
@@ -758,7 +755,7 @@
             </details>
           </div>
           <div class="method-source-code" id="import_gp_practices-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/mavis_cli/gp_practices/import.rb, line 67</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/mavis_cli/gp_practices/import.rb, line 64</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">import_gp_practices</span>(<span class="ruby-identifier">gp_practices</span>)
   <span class="ruby-constant">Location</span>.<span class="ruby-identifier">import!</span>(
     <span class="ruby-identifier">gp_practices</span>,
