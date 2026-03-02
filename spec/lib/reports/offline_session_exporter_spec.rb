@@ -1158,7 +1158,7 @@ describe Reports::OfflineSessionExporter do
     let(:year_group) { 9 }
 
     let(:expected_programme) { "ACWYX4" }
-    let(:expected_dose_sequence) { nil }
+    let(:expected_dose_sequence) { 1 }
     let(:expected_consent_status) { "Consent given" }
 
     include_examples "generates a report"

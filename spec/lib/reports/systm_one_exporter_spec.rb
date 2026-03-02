@@ -270,7 +270,7 @@ describe Reports::SystmOneExporter do
 
     context "MenACWY" do
       let(:programme) { Programme.menacwy }
-      let(:dose_sequence) { nil }
+      let(:dose_sequence) { 1 }
 
       context "MenQuadfi" do
         let(:vaccine) { Vaccine.find_by!(brand: "MenQuadfi") }

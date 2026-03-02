@@ -74,7 +74,6 @@ class AppVaccinateFormComponent < ViewComponent::Base
   def healthcare_assistant? = current_user.is_healthcare_assistant?
 
   def dose_sequence
-    return if programme.menacwy?
     patient.programme_status(programme, academic_year:).dose_sequence
   end
 
