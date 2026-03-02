@@ -7,6 +7,7 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
     current_team:,
     programmes: [],
     academic_year: nil,
+    show_clinic_invitations: false,
     show_nhs_number: false,
     show_parents: false,
     show_postcode: false,
@@ -22,6 +23,7 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
     @programmes = programmes
     @academic_year = academic_year || AcademicYear.pending
 
+    @show_clinic_invitations = show_clinic_invitations
     @show_nhs_number = show_nhs_number
     @show_parents = show_parents
     @show_postcode = show_postcode
@@ -47,6 +49,7 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
               :programmes,
               :academic_year,
               :triage_status,
+              :show_clinic_invitations,
               :show_nhs_number,
               :show_parents,
               :show_postcode,
@@ -71,6 +74,7 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
       postcode_row,
       school_row,
       parents_row,
+      clinic_invitations_row,
       programme_status_row
     ].compact
   end
@@ -108,6 +112,28 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
       },
       value: {
         text: patient_year_group(patient, academic_year:)
+      }
+    }
+  end
+
+  def clinic_invitations_row
+    return unless show_clinic_invitations && academic_year
+
+    clinic_notifications =
+      patient.clinic_notifications.select do
+        it.team_id == current_team.id && it.academic_year == academic_year
+      end
+
+    programmes = clinic_notifications.flat_map(&:programmes).uniq.sort
+
+    return if programmes.empty?
+
+    {
+      key: {
+        text: "Clinic invitations"
+      },
+      value: {
+        text: render(AppProgrammeTagsComponent.new(programmes))
       }
     }
   end

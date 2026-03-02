@@ -19,6 +19,7 @@ describe AppPatientSearchResultCardComponent do
   let(:current_team) { create(:team) }
   let(:programmes) { [] }
   let(:academic_year) { nil }
+  let(:show_clinic_invitations) { false }
   let(:show_nhs_number) { false }
   let(:show_postcode) { false }
   let(:show_school) { false }
@@ -30,6 +31,7 @@ describe AppPatientSearchResultCardComponent do
       current_team:,
       programmes:,
       academic_year:,
+      show_clinic_invitations:,
       show_nhs_number:,
       show_postcode:,
       show_school:
@@ -41,6 +43,7 @@ describe AppPatientSearchResultCardComponent do
   it { should_not have_text("900 000 0009") }
   it { should_not have_text("SW11 1AA") }
   it { should_not have_text("Streeling University") }
+  it { should_not have_text("Clinic invitations") }
 
   context "when showing the NHS number" do
     let(:show_nhs_number) { true }
@@ -95,6 +98,113 @@ describe AppPatientSearchResultCardComponent do
       let(:patient) { create(:patient, date_of_birth: Date.new(2020, 1, 1)) }
 
       it { should have_text("Programme statusMMRV") }
+    end
+  end
+
+  context "when showing clinic invitations" do
+    let(:show_clinic_invitations) { true }
+    let(:academic_year) { AcademicYear.current }
+
+    context "with no clinic notifications" do
+      it { should_not have_text("Clinic invitations") }
+    end
+
+    context "with a clinic notification for one programme" do
+      before do
+        create(
+          :clinic_notification,
+          :initial_invitation,
+          patient:,
+          team: current_team,
+          academic_year:,
+          programmes: [Programme.flu]
+        )
+      end
+
+      it { should have_text("Clinic invitations") }
+      it { should have_text("Flu") }
+    end
+
+    context "with clinic notifications for multiple programmes" do
+      before do
+        create(
+          :clinic_notification,
+          :initial_invitation,
+          patient:,
+          team: current_team,
+          academic_year:,
+          programmes: [Programme.flu]
+        )
+        create(
+          :clinic_notification,
+          :subsequent_invitation,
+          patient:,
+          team: current_team,
+          academic_year:,
+          programmes: [Programme.hpv]
+        )
+      end
+
+      it { should have_text("Clinic invitations") }
+      it { should have_text("Flu") }
+      it { should have_text("HPV") }
+    end
+
+    context "with duplicate programme notifications" do
+      before do
+        create(
+          :clinic_notification,
+          :initial_invitation,
+          patient:,
+          team: current_team,
+          academic_year:,
+          programmes: [Programme.flu]
+        )
+        create(
+          :clinic_notification,
+          :subsequent_invitation,
+          patient:,
+          team: current_team,
+          academic_year:,
+          programmes: [Programme.flu]
+        )
+      end
+
+      it { should have_text("Clinic invitations") }
+      it { should have_text("Flu") }
+      it { should have_css(".nhsuk-tag", count: 1) }
+    end
+
+    context "with clinic notifications for a different team" do
+      let(:other_team) { create(:team) }
+
+      before do
+        create(
+          :clinic_notification,
+          :initial_invitation,
+          patient:,
+          team: other_team,
+          academic_year:,
+          programmes: [Programme.flu]
+        )
+      end
+
+      it { should_not have_text("Clinic invitations") }
+    end
+
+    context "with clinic notifications for a different academic year" do
+      before do
+        create(
+          :clinic_notification,
+          :initial_invitation,
+          patient:,
+          team: current_team,
+          academic_year: AcademicYear.previous,
+          programmes: [Programme.flu]
+        )
+      end
+
+      it { should_not have_text("Clinic invitations") }
     end
   end
 end
