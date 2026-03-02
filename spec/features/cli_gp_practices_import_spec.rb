@@ -20,7 +20,7 @@ describe "mavis gp-practices import" do
           gp-practices
           import
           -f
-          spec/fixtures/files/nhs-gp-practices.zip
+          spec/fixtures/files/nhs-gp-practices.csv
         ]
       )
     end
