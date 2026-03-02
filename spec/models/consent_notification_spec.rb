@@ -146,6 +146,26 @@ describe ConsentNotification do
                   )
           end
 
+          it "enqueues an sms per parent" do
+            expect { create_and_send! }.to have_delivered_sms(
+              :consent_school_request_mmr
+            ).with(
+              disease_types:,
+              parent: parents.first,
+              patient: patient,
+              programme_types:,
+              session: session,
+              sent_by: current_user
+            ).and have_delivered_sms(:consent_school_request_mmr).with(
+                    disease_types:,
+                    parent: parents.second,
+                    patient: patient,
+                    programme_types:,
+                    session: session,
+                    sent_by: current_user
+                  )
+          end
+
           context "when session is set to send outbreak requests" do
             let(:session) do
               create(:session, location:, programmes:, team:, outbreak: true)

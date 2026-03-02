@@ -55,8 +55,10 @@ class GovukNotifyPersonalisation
       full_and_preferred_patient_name:,
       has_multiple_dates:,
       invitation_to_clinic_generic_message:,
+      is_outbreak:,
       location_name:,
       invitation_to_clinic_custom_mmr_message:,
+      mmr_or_mmrv_vaccine:,
       mmr_second_dose_message:,
       mmr_second_dose_required:,
       next_or_today_session_date:,
@@ -189,6 +191,12 @@ class GovukNotifyPersonalisation
     end
   end
 
+  def is_outbreak
+    return nil if session.nil?
+
+    session.outbreak? ? "yes" : "no"
+  end
+
   def location_name
     if vaccination_record
       vaccination_record_location(vaccination_record)
@@ -286,6 +294,16 @@ class GovukNotifyPersonalisation
         .dose_sequence
 
     next_dose == mmr_programme.maximum_dose_sequence
+  end
+
+  def mmr_or_mmrv_vaccine
+    if mmr_programme.present?
+      if mmr_programme.variant_type == "mmrv"
+        "MMR or MMRV vaccine"
+      else
+        "MMR vaccine"
+      end
+    end
   end
 
   def mmr_programme

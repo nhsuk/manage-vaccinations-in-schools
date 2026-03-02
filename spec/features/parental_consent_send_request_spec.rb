@@ -51,11 +51,33 @@ describe "Parental consent" do
     when_i_click_send_consent_request
     then_i_see_the_confirmation_banner
     and_the_mmrv_email_template_is_sent_to_the_parent
+    and_the_mmrv_sms_template_is_sent_to_the_parent
 
     when_i_click_on_session_activity_and_notes
     then_an_activity_log_entry_is_visible_for_the_email_tagged_as(
       "MMRV",
       clinic: false
+    )
+  end
+
+  scenario "Send school outbreak request where patient is eligible for MMRV" do
+    given_a_programme_exists(:mmr)
+    and_a_school_session_with_mmrv_eligible_patient_exists(outbreak: true)
+    and_i_am_signed_in
+
+    when_i_go_to_a_patient_without_consent
+    then_i_see_no_requests_sent
+
+    when_i_click_send_consent_request
+    then_i_see_the_confirmation_banner
+    and_the_mmrv_email_template_is_sent_to_the_parent(outbreak: true)
+    and_the_mmrv_sms_template_is_sent_to_the_parent(outbreak: true)
+
+    when_i_click_on_session_activity_and_notes
+    then_an_activity_log_entry_is_visible_for_the_email_tagged_as(
+      "MMRV",
+      clinic: false,
+      outbreak: true
     )
   end
 
@@ -70,6 +92,7 @@ describe "Parental consent" do
     when_i_click_send_consent_request
     then_i_see_the_confirmation_banner
     and_the_mmr_email_template_is_sent_to_the_parent
+    and_the_mmr_sms_templates_is_sent_to_the_parent
 
     when_i_click_on_session_activity_and_notes
     then_an_activity_log_entry_is_visible_for_the_email_tagged_as(
@@ -109,7 +132,7 @@ describe "Parental consent" do
     PatientStatusUpdater.call
   end
 
-  def and_a_school_session_with_mmrv_eligible_patient_exists
+  def and_a_school_session_with_mmrv_eligible_patient_exists(outbreak: false)
     @team = create(:team, :with_one_nurse, programmes: @programmes)
     @user = @team.users.first
 
@@ -121,7 +144,8 @@ describe "Parental consent" do
         team: @team,
         programmes: @programmes,
         location:,
-        date: Date.current + 2.days
+        date: Date.current + 2.days,
+        outbreak:
       )
 
     @parent = create(:parent)
@@ -199,12 +223,49 @@ describe "Parental consent" do
     expect_sms_to(@parent.phone, :consent_clinic_request)
   end
 
-  def and_the_mmrv_email_template_is_sent_to_the_parent
-    expect_email_to(@parent.email, :consent_school_request_mmrv)
+  def and_the_mmrv_email_template_is_sent_to_the_parent(outbreak: false)
+    template = "consent_school_request_mmrv"
+    template += "_outbreak" if outbreak
+    expect_email_to(@parent.email, template)
+  end
+
+  def and_the_mmrv_sms_template_is_sent_to_the_parent(outbreak: false)
+    expect(sms_deliveries).to include(
+      matching_notify_sms(
+        phone_number: @parent.phone,
+        template: :consent_school_request_mmr
+      ).with_content_including(
+        "Has your child had 2 doses of the MMR or MMRV vaccine?"
+      )
+    )
+
+    outbreak_matcher =
+      matching_notify_sms(
+        phone_number: @parent.phone,
+        template: :consent_school_request_mmr
+      ).with_content_including(
+        "Cases of measles in your area are high right now."
+      )
+
+    if outbreak
+      expect(sms_deliveries).to include(outbreak_matcher)
+    else
+      expect(sms_deliveries).not_to include(outbreak_matcher)
+    end
   end
 
   def and_the_mmr_email_template_is_sent_to_the_parent
     expect_email_to(@parent.email, :consent_school_request_mmr)
+  end
+
+  def and_the_mmr_sms_templates_is_sent_to_the_parent
+    expect_sms_to(@parent.phone, :consent_school_request_mmr)
+    expect(sms_deliveries).to include(
+      matching_notify_sms(
+        phone_number: @parent.phone,
+        template: :consent_school_request_mmr
+      ).with_content_including("Has your child had 2 doses of the MMR vaccine?")
+    )
   end
 
   def when_i_click_on_session_activity_and_notes
@@ -213,10 +274,14 @@ describe "Parental consent" do
 
   def then_an_activity_log_entry_is_visible_for_the_email_tagged_as(
     programme_name,
-    clinic: true
+    clinic: true,
+    outbreak: false
   )
+    outbreak_text = outbreak ? " outbreak" : ""
+    location_text = clinic ? "clinic" : "school"
+    programme_text = clinic ? "" : " #{programme_name.downcase}"
     title =
-      "Consent #{clinic ? "clinic" : "school"} request#{clinic ? "" : " #{programme_name.downcase}"} sent"
+      "Consent #{location_text} request#{programme_text}#{outbreak_text} sent"
 
     expect(page).to have_content(
       "#{programme_name} #{title}\n" \
