@@ -58,6 +58,7 @@ class PatientTeam < ApplicationRecord
                patient_location: 0,
                archive_reason: 1,
                vaccination_record_session: 2,
+               vaccination_record_organisation: 3,
                school_move_team: 4,
                school_move_school: 5,
                vaccination_record_import: 6
