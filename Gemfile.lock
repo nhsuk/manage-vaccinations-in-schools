@@ -476,7 +476,7 @@ GEM
       reline (>= 0.6.0)
     pry-rails (0.3.11)
       pry (>= 0.13.0)
-    pstore (0.2.0)
+    pstore (0.2.1)
     psych (5.3.1)
       date
       stringio
