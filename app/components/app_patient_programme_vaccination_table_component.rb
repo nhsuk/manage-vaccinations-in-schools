@@ -22,4 +22,9 @@ class AppPatientProgrammeVaccinationTableComponent < ViewComponent::Base
       .order_by_performed_at
       .select { it.show_in_academic_year?(academic_year) }
   end
+
+  def formatted_age_when(vaccination_record)
+    age = patient.age_years(now: vaccination_record.performed_at)
+    "#{age} #{pluralize(age, "year")}"
+  end
 end

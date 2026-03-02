@@ -22,7 +22,7 @@
 
           <% row.with_cell do %>
             <span class="nhsuk-table-responsive__heading">Age</span>
-            <%= patient.age_years(now: vaccination_record.performed_at) %>
+            <%= formatted_age_when(vaccination_record) %>
           <% end %>
 
           <% row.with_cell do %>

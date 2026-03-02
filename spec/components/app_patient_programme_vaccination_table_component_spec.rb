@@ -49,17 +49,20 @@ describe AppPatientProgrammeVaccinationTableComponent do
     it { should have_css(".nhsuk-table__header", text: "Source") }
 
     it { should have_link("1 January 2024") }
-    it { should have_content(patient.age_years(now: performed_at)) }
-    it { should have_content("Recorded in Mavis") }
+    it { should have_content("#{patient.age_years(now: performed_at)} years") }
     it { should have_content("HPV") }
+    it { should have_content("Recorded in Mavis") }
 
     context "with a vaccination record from a different programme" do
       let(:programme) { Programme.hpv }
       let(:vaccination_record_programme) { Programme.flu }
 
       it { should_not have_link("1 January 2024") }
-      it { should_not have_content("Recorded in Mavis") }
+      it do
+        should_not have_content("#{patient.age_years(now: performed_at)} years")
+      end
       it { should_not have_content("HPV") }
+      it { should_not have_content("Recorded in Mavis") }
     end
 
     context "with a Flu vaccination record from a previous year" do
@@ -68,8 +71,11 @@ describe AppPatientProgrammeVaccinationTableComponent do
       let(:performed_at) { Time.zone.local(2022, 1, 1) }
 
       it { should_not have_link("1 January 2022") }
-      it { should_not have_content("Recorded in Mavis") }
+      it do
+        should_not have_content("#{patient.age_years(now: performed_at)} years")
+      end
       it { should_not have_content("Flu") }
+      it { should_not have_content("Recorded in Mavis") }
     end
   end
 end
