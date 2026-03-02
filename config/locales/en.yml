@@ -215,6 +215,10 @@ en:
               blank: Enter an NHS number
               invalid: Enter a valid NHS number
               wrong_length: Enter a valid NHS number with 10 characters
+        school_invite_to_clinic_form:
+          attributes:
+            programme_types:
+              blank: Choose which programmes you want to send invitations for
         school_move_form:
           attributes:
             action:
