@@ -11,15 +11,7 @@ describe SchoolPolicy do
   end
   let(:location) { create(:school) }
 
-  permissions :index?,
-              :create?,
-              :edit?,
-              :import?,
-              :new?,
-              :patients?,
-              :sessions?,
-              :show?,
-              :update? do
+  permissions :index?, :create?, :edit?, :new?, :show?, :update? do
     it { should permit(point_of_care_user, location) }
     it { should_not permit(national_reporting_user, location) }
   end

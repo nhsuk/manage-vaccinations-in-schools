@@ -5,10 +5,10 @@
                                         ]) %>
 <% end %>
 
-<%= render "header" %>
+<%= render "schools/header" %>
 
 <% if @location.school? %>
-  <%= govuk_button_link_to "Import class lists", school_import_path(@location), secondary: true %>
+  <%= govuk_button_link_to "Import class lists", new_school_import_path(@location), secondary: true %>
 <% end %>
 
 <div class="nhsuk-grid-row">

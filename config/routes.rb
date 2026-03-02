@@ -263,9 +263,9 @@ Rails.application.routes.draw do
   end
 
   resources :schools, only: :index, param: :urn_and_site do
-    get "import"
-    get "patients"
-    get "sessions"
+    resources :import, only: :new, controller: "schools/import"
+    resources :patients, only: :index, controller: "schools/patients"
+    resources :sessions, only: :index, controller: "schools/sessions"
   end
 
   resources :sessions, only: %i[index new show edit], param: :slug do
