@@ -43,10 +43,14 @@ describe AppPatientProgrammeVaccinationTableComponent do
       )
     end
 
+    it { should have_css(".nhsuk-table__header", text: "Vaccination date") }
+    it { should have_css(".nhsuk-table__header", text: "Age") }
+    it { should have_css(".nhsuk-table__header", text: "Programme") }
+    it { should have_css(".nhsuk-table__header", text: "Source") }
+
     it { should have_link("1 January 2024") }
-    it { should have_content("Test School") }
-    it { should have_content("Waterloo Road, London, SE1 8TY") }
-    it { should have_content("Vaccinated") }
+    it { should have_content(patient.age_years(now: performed_at)) }
+    it { should have_content("Recorded in Mavis") }
     it { should have_content("HPV") }
 
     context "with a vaccination record from a different programme" do
@@ -54,9 +58,7 @@ describe AppPatientProgrammeVaccinationTableComponent do
       let(:vaccination_record_programme) { Programme.flu }
 
       it { should_not have_link("1 January 2024") }
-      it { should_not have_content("Test School") }
-      it { should_not have_content("Waterloo Road, London, SE1 8TY") }
-      it { should_not have_content("Vaccinated") }
+      it { should_not have_content("Recorded in Mavis") }
       it { should_not have_content("HPV") }
     end
 
@@ -66,9 +68,7 @@ describe AppPatientProgrammeVaccinationTableComponent do
       let(:performed_at) { Time.zone.local(2022, 1, 1) }
 
       it { should_not have_link("1 January 2022") }
-      it { should_not have_content("Test School") }
-      it { should_not have_content("Waterloo Road, London, SE1 8TY") }
-      it { should_not have_content("Vaccinated") }
+      it { should_not have_content("Recorded in Mavis") }
       it { should_not have_content("Flu") }
     end
   end
