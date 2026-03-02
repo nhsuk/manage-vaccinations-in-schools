@@ -5,17 +5,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>class SchoolMoveExport - Mavis Documentation</title>
+<title>module PatientMatcher - Mavis Documentation</title>
 
 
   <meta
     name="keywords"
-    content="ruby,class,SchoolMoveExport"
+    content="ruby,module,PatientMatcher"
   >
 
     <meta
       name="description"
-      content="Documentation for the SchoolMoveExport class"
+      content="Documentation for the PatientMatcher module"
     >
 
 
@@ -24,13 +24,13 @@
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content="website">
-<meta property="og:title" content="class SchoolMoveExport - Mavis Documentation">
+<meta property="og:title" content="module PatientMatcher - Mavis Documentation">
 
 
 
     <meta
       property="og:description"
-      content="Documentation for SchoolMoveExport class - API reference and code examples"
+      content="Documentation for PatientMatcher module - API reference and code examples"
     >
 
 
@@ -39,13 +39,13 @@
 
 <!-- Twitter -->
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="class SchoolMoveExport - Mavis Documentation">
+<meta name="twitter:title" content="module PatientMatcher - Mavis Documentation">
 
 
 
     <meta
       name="twitter:description"
-      content="Documentation for SchoolMoveExport class - API reference and code examples"
+      content="Documentation for PatientMatcher module - API reference and code examples"
     >
 
 
@@ -102,7 +102,7 @@
 
 
 
-<body role="document" class="class has-toc">
+<body role="document" class="module has-toc">
 <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
   <!-- Chevron (right arrow) - used for expand/collapse -->
   <symbol
@@ -522,49 +522,8 @@
   
 
   
-<div id="parent-class-section" class="nav-section">
-  <details class="nav-section-collapsible" open>
-    <summary class="nav-section-header">
-      <span class="nav-section-icon">
-        <svg><use href="#icon-ancestors"></use></svg>
-      </span>
-      <span class="nav-section-title">Ancestors</span>
-      <span class="nav-section-chevron">
-        <svg><use href="#icon-chevron"></use></svg>
-      </span>
-    </summary>
-    <ul><li>Object</li></ul>
-  </details>
-</div>
-
 
   
-<div id="includes-section" class="nav-section">
-  <details class="nav-section-collapsible" open>
-    <summary class="nav-section-header">
-      <span class="nav-section-icon">
-        <svg><use href="#icon-includes"></use></svg>
-      </span>
-      <span class="nav-section-title">Included Modules</span>
-      <span class="nav-section-chevron">
-        <svg><use href="#icon-chevron"></use></svg>
-      </span>
-    </summary>
-
-    <ul class="nav-list">
-
-
-      <li><a class="include" href="RequestSessionPersistable.html">RequestSessionPersistable</a></li>
-
-
-
-      <li><a class="include" href="WizardStepConcern.html">WizardStepConcern</a></li>
-
-
-    </ul>
-  </details>
-</div>
-
 
   
 
@@ -582,38 +541,15 @@
       </summary>
       <ul class="nav-list" role="directory">
 
-        <li class="calls-super" ><a href="#method-c-new">new</a></li>
+        <li ><a href="#method-c-from_enumerable">from_enumerable</a></li>
+
+        <li ><a href="#method-c-from_relation">from_relation</a></li>
 
       </ul>
     </details>
   </div>
 
 
-
-  <div class="nav-section">
-    <details class="nav-section-collapsible" open>
-      <summary class="nav-section-header">
-        <span class="nav-section-icon">
-          <svg><use href="#icon-instance-methods"></use></svg>
-        </span>
-        <span class="nav-section-title">Instance Methods</span>
-        <span class="nav-section-chevron">
-          <svg><use href="#icon-chevron"></use></svg>
-        </span>
-      </summary>
-      <ul class="nav-list" role="directory">
-
-        <li ><a href="#method-i-csv_filename">csv_filename</a></li>
-
-        <li ><a href="#method-i-date_from_formatted">date_from_formatted</a></li>
-
-        <li ><a href="#method-i-date_to_formatted">date_to_formatted</a></li>
-
-        <li ><a href="#method-i-wizard_steps">wizard_steps</a></li>
-
-      </ul>
-    </details>
-  </div>
 
 
   <div id="classindex-section" class="nav-section">
@@ -634,13 +570,13 @@
 
 </nav>
 
-<main role="main" aria-labelledby="class-schoolmoveexport">
+<main role="main" aria-labelledby="module-patientmatcher">
   
   
 
-  <span id="class-SchoolMoveExport" class="legacy-anchor"></span>
-  <h1 id="class-schoolmoveexport" class="anchor-link class">
-    class SchoolMoveExport
+  <span id="module-PatientMatcher" class="legacy-anchor"></span>
+  <h1 id="module-patientmatcher" class="anchor-link module">
+    module PatientMatcher
   </h1>
 
   <section class="description">
@@ -668,13 +604,13 @@
        </header>
 
 
-      <div id="method-c-new" class="method-detail anchor-link ">
+      <div id="method-c-from_enumerable" class="method-detail anchor-link ">
         <div class="method-header">
 
             <div class="method-heading">
-              <a href="#method-c-new" title="Link to this method">
-                <span class="method-name">new</span>
-                <span class="method-args">(current_user:, **attributes)</span>
+              <a href="#method-c-from_enumerable" title="Link to this method">
+                <span class="method-name">from_enumerable</span>
+                <span class="method-args">( candidates, nhs_number:, given_name:, family_name:, date_of_birth:, address_postcode:, include_3_out_of_4_matches: true )</span>
               </a>
             </div>
 
@@ -686,123 +622,69 @@
               <summary>Source</summary>
             </details>
           </div>
-          <div class="method-source-code" id="new-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/school_move_export.rb, line 10</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-value">current_user:</span>, <span class="ruby-operator">**</span><span class="ruby-identifier">attributes</span>)
-  <span class="ruby-ivar">@current_user</span> = <span class="ruby-identifier">current_user</span>
-  <span class="ruby-keyword">super</span>(<span class="ruby-operator">**</span><span class="ruby-identifier">attributes</span>)
-<span class="ruby-keyword">end</span></pre>
-          </div>
+          <div class="method-source-code" id="from_enumerable-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/patient_matcher.rb, line 77</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">from_enumerable</span>(
+  <span class="ruby-identifier">candidates</span>,
+  <span class="ruby-value">nhs_number:</span>,
+  <span class="ruby-value">given_name:</span>,
+  <span class="ruby-value">family_name:</span>,
+  <span class="ruby-value">date_of_birth:</span>,
+  <span class="ruby-value">address_postcode:</span>,
+  <span class="ruby-value">include_3_out_of_4_matches:</span> <span class="ruby-keyword">true</span>
+)
+  <span class="ruby-identifier">nhs_number</span> = <span class="ruby-identifier">normalise_nhs_number</span>(<span class="ruby-identifier">nhs_number</span>)
+  <span class="ruby-identifier">address_postcode</span> = <span class="ruby-identifier">normalise_postcode</span>(<span class="ruby-identifier">address_postcode</span>)
 
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">nhs_number</span>.<span class="ruby-identifier">present?</span>
+    <span class="ruby-identifier">matched</span> =
+      <span class="ruby-identifier">candidates</span>.<span class="ruby-identifier">find</span> { <span class="ruby-identifier">normalise_nhs_number</span>(<span class="ruby-identifier">it</span>.<span class="ruby-identifier">nhs_number</span>) <span class="ruby-operator">==</span> <span class="ruby-identifier">nhs_number</span> }
 
-
-        <div class="method-description">
-
-
-          
-
-
-            <div class="method-calls-super">
-              Calls superclass method
-              <a href="RequestSessionPersistable.html#method-c-new"><code>RequestSessionPersistable::new</code></a>
-            </div>
-
-        </div>
-
-
-
-
-
-      </div>
-
-
-    </section>
-
-
-
-
-
-
-
-     <section id="public-instance-untitled-method-details" class="method-section anchor-link">
-       <header>
-         <h3 id="public-instance-untitled-methods"><a href="#public-instance-untitled-methods">Public Instance Methods</a></h3>
-       </header>
-
-
-      <div id="method-i-csv_filename" class="method-detail anchor-link ">
-        <div class="method-header">
-
-            <div class="method-heading">
-              <a href="#method-i-csv_filename" title="Link to this method">
-                <span class="method-name">csv_filename</span>
-                <span class="method-args">()</span>
-              </a>
-            </div>
-
-        </div>
-
-
-          <div class="method-controls">
-            <details class="method-source-toggle">
-              <summary>Source</summary>
-            </details>
-          </div>
-          <div class="method-source-code" id="csv_filename-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/school_move_export.rb, line 21</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">csv_filename</span>
-  <span class="ruby-identifier">name_parts</span> = [<span class="ruby-string">&quot;school_moves_export&quot;</span>]
-  <span class="ruby-identifier">name_parts</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">date_from</span>.<span class="ruby-identifier">to_fs</span>(<span class="ruby-value">:govuk</span>) <span class="ruby-keyword">if</span> <span class="ruby-identifier">date_from</span>.<span class="ruby-identifier">present?</span>
-  <span class="ruby-identifier">name_parts</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-string">&quot;to&quot;</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">date_from</span>.<span class="ruby-identifier">present?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">date_to</span>.<span class="ruby-identifier">present?</span>
-  <span class="ruby-identifier">name_parts</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">date_to</span>.<span class="ruby-identifier">to_fs</span>(<span class="ruby-value">:govuk</span>) <span class="ruby-keyword">if</span> <span class="ruby-identifier">date_to</span>.<span class="ruby-identifier">present?</span>
-
-  <span class="ruby-node">&quot;#{name_parts.join(&quot;_&quot;)}.csv&quot;</span>
-<span class="ruby-keyword">end</span></pre>
-          </div>
-
-
-
-        <div class="method-description">
-
-
-          
-
-
-        </div>
-
-
-
-
-
-      </div>
-
-
-      <div id="method-i-date_from_formatted" class="method-detail anchor-link ">
-        <div class="method-header">
-
-            <div class="method-heading">
-              <a href="#method-i-date_from_formatted" title="Link to this method">
-                <span class="method-name">date_from_formatted</span>
-                <span class="method-args">()</span>
-              </a>
-            </div>
-
-        </div>
-
-
-          <div class="method-controls">
-            <details class="method-source-toggle">
-              <summary>Source</summary>
-            </details>
-          </div>
-          <div class="method-source-code" id="date_from_formatted-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/school_move_export.rb, line 30</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">date_from_formatted</span>
-  <span class="ruby-keyword">if</span> <span class="ruby-identifier">date_from</span>.<span class="ruby-identifier">present?</span>
-    <span class="ruby-identifier">date_from</span>.<span class="ruby-identifier">strftime</span>(<span class="ruby-string">&quot;%d %B %Y&quot;</span>)
-  <span class="ruby-keyword">else</span>
-    <span class="ruby-string">&quot;Earliest recorded vaccination&quot;</span>
+    <span class="ruby-keyword">return</span> [<span class="ruby-identifier">matched</span>] <span class="ruby-keyword">if</span> <span class="ruby-identifier">matched</span>.<span class="ruby-identifier">present?</span>
   <span class="ruby-keyword">end</span>
+
+  <span class="ruby-identifier">given_name_downcase</span> = <span class="ruby-identifier">given_name</span>.<span class="ruby-identifier">downcase</span>
+  <span class="ruby-identifier">family_name_downcase</span> = <span class="ruby-identifier">family_name</span>.<span class="ruby-identifier">downcase</span>
+
+  <span class="ruby-identifier">results</span> =
+    <span class="ruby-identifier">candidates</span>.<span class="ruby-identifier">select</span> <span class="ruby-keyword">do</span>
+      <span class="ruby-identifier">patient_nhs_number</span> = <span class="ruby-identifier">normalise_nhs_number</span>(<span class="ruby-identifier">it</span>.<span class="ruby-identifier">nhs_number</span>)
+      <span class="ruby-keyword">next</span> <span class="ruby-keyword">false</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">nhs_number</span>.<span class="ruby-identifier">present?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">patient_nhs_number</span>.<span class="ruby-identifier">present?</span>
+
+      <span class="ruby-identifier">given_name_matches</span> = <span class="ruby-identifier">it</span>.<span class="ruby-identifier">given_name</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">downcase</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">given_name_downcase</span>
+      <span class="ruby-identifier">family_name_matches</span> =
+        <span class="ruby-identifier">it</span>.<span class="ruby-identifier">family_name</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">downcase</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">family_name_downcase</span>
+      <span class="ruby-identifier">date_of_birth_matches</span> = <span class="ruby-identifier">it</span>.<span class="ruby-identifier">date_of_birth</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">date_of_birth</span>
+
+      <span class="ruby-keyword">if</span> <span class="ruby-identifier">address_postcode</span>.<span class="ruby-identifier">present?</span>
+        <span class="ruby-identifier">postcode_matches</span> =
+          <span class="ruby-identifier">normalise_postcode</span>(<span class="ruby-identifier">it</span>.<span class="ruby-identifier">address_postcode</span>) <span class="ruby-operator">==</span> <span class="ruby-identifier">address_postcode</span>
+
+        <span class="ruby-keyword">if</span> <span class="ruby-identifier">include_3_out_of_4_matches</span>
+          (
+            <span class="ruby-identifier">given_name_matches</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">family_name_matches</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">date_of_birth_matches</span>
+          ) <span class="ruby-operator">||</span>
+            (<span class="ruby-identifier">given_name_matches</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">family_name_matches</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">postcode_matches</span>) <span class="ruby-operator">||</span>
+            (
+              <span class="ruby-identifier">given_name_matches</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">date_of_birth_matches</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">postcode_matches</span>
+            ) <span class="ruby-operator">||</span>
+            (<span class="ruby-identifier">family_name_matches</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">date_of_birth_matches</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">postcode_matches</span>)
+        <span class="ruby-keyword">else</span>
+          <span class="ruby-identifier">given_name_matches</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">family_name_matches</span> <span class="ruby-operator">&amp;&amp;</span>
+            <span class="ruby-identifier">date_of_birth_matches</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">postcode_matches</span>
+        <span class="ruby-keyword">end</span>
+      <span class="ruby-keyword">else</span>
+        <span class="ruby-identifier">given_name_matches</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">family_name_matches</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">date_of_birth_matches</span>
+      <span class="ruby-keyword">end</span>
+    <span class="ruby-keyword">end</span>
+
+  <span class="ruby-identifier">narrow_to_single_exact_match_if_possible</span>(
+    <span class="ruby-identifier">results</span>,
+    <span class="ruby-value">given_name:</span>,
+    <span class="ruby-value">family_name:</span>,
+    <span class="ruby-value">date_of_birth:</span>,
+    <span class="ruby-value">address_postcode:</span>
+  )
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -823,13 +705,13 @@
       </div>
 
 
-      <div id="method-i-date_to_formatted" class="method-detail anchor-link ">
+      <div id="method-c-from_relation" class="method-detail anchor-link ">
         <div class="method-header">
 
             <div class="method-heading">
-              <a href="#method-i-date_to_formatted" title="Link to this method">
-                <span class="method-name">date_to_formatted</span>
-                <span class="method-args">()</span>
+              <a href="#method-c-from_relation" title="Link to this method">
+                <span class="method-name">from_relation</span>
+                <span class="method-args">( relation, nhs_number:, given_name:, family_name:, date_of_birth:, address_postcode:, include_3_out_of_4_matches: true )</span>
               </a>
             </div>
 
@@ -841,56 +723,79 @@
               <summary>Source</summary>
             </details>
           </div>
-          <div class="method-source-code" id="date_to_formatted-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/school_move_export.rb, line 38</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">date_to_formatted</span>
-  <span class="ruby-keyword">if</span> <span class="ruby-identifier">date_to</span>.<span class="ruby-identifier">present?</span>
-    <span class="ruby-identifier">date_to</span>.<span class="ruby-identifier">strftime</span>(<span class="ruby-string">&quot;%d %B %Y&quot;</span>)
-  <span class="ruby-keyword">else</span>
-    <span class="ruby-string">&quot;Latest recorded vaccination&quot;</span>
+          <div class="method-source-code" id="from_relation-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/patient_matcher.rb, line 4</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">from_relation</span>(
+  <span class="ruby-identifier">relation</span>,
+  <span class="ruby-value">nhs_number:</span>,
+  <span class="ruby-value">given_name:</span>,
+  <span class="ruby-value">family_name:</span>,
+  <span class="ruby-value">date_of_birth:</span>,
+  <span class="ruby-value">address_postcode:</span>,
+  <span class="ruby-value">include_3_out_of_4_matches:</span> <span class="ruby-keyword">true</span>
+)
+  <span class="ruby-identifier">nhs_number</span> = <span class="ruby-identifier">normalise_nhs_number</span>(<span class="ruby-identifier">nhs_number</span>)
+  <span class="ruby-identifier">address_postcode</span> = <span class="ruby-identifier">normalise_postcode</span>(<span class="ruby-identifier">address_postcode</span>)
+
+  <span class="ruby-identifier">given_name_ilike</span> = <span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span>.<span class="ruby-identifier">sanitize_sql_like</span>(<span class="ruby-identifier">given_name</span>)
+  <span class="ruby-identifier">family_name_ilike</span> = <span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span>.<span class="ruby-identifier">sanitize_sql_like</span>(<span class="ruby-identifier">family_name</span>)
+
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">nhs_number</span>.<span class="ruby-identifier">present?</span> <span class="ruby-operator">&amp;&amp;</span> (<span class="ruby-identifier">patient</span> = <span class="ruby-identifier">relation</span>.<span class="ruby-identifier">find_by</span>(<span class="ruby-value">nhs_number:</span>)).<span class="ruby-identifier">present?</span>
+    <span class="ruby-keyword">return</span> [<span class="ruby-identifier">patient</span>]
   <span class="ruby-keyword">end</span>
-<span class="ruby-keyword">end</span></pre>
-          </div>
 
+  <span class="ruby-identifier">scope</span> =
+    <span class="ruby-identifier">relation</span>.<span class="ruby-identifier">where</span>(
+      <span class="ruby-string">&quot;given_name ILIKE ? AND family_name ILIKE ?&quot;</span>,
+      <span class="ruby-identifier">given_name_ilike</span>,
+      <span class="ruby-identifier">family_name_ilike</span>
+    ).<span class="ruby-identifier">where</span>(<span class="ruby-value">date_of_birth:</span>)
 
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">address_postcode</span>.<span class="ruby-identifier">present?</span>
+    <span class="ruby-identifier">scope</span> =
+      <span class="ruby-keyword">if</span> <span class="ruby-identifier">include_3_out_of_4_matches</span>
+        <span class="ruby-identifier">scope</span>
+          .<span class="ruby-identifier">or</span>(
+            <span class="ruby-identifier">relation</span>.<span class="ruby-identifier">where</span>(
+              <span class="ruby-string">&quot;given_name ILIKE ? AND family_name ILIKE ?&quot;</span>,
+              <span class="ruby-identifier">given_name_ilike</span>,
+              <span class="ruby-identifier">family_name_ilike</span>
+            ).<span class="ruby-identifier">where</span>(<span class="ruby-value">address_postcode:</span>)
+          )
+          .<span class="ruby-identifier">or</span>(
+            <span class="ruby-identifier">relation</span>.<span class="ruby-identifier">where</span>(<span class="ruby-string">&quot;given_name ILIKE ?&quot;</span>, <span class="ruby-identifier">given_name_ilike</span>).<span class="ruby-identifier">where</span>(
+              <span class="ruby-value">date_of_birth:</span>,
+              <span class="ruby-value">address_postcode:</span>
+            )
+          )
+          .<span class="ruby-identifier">or</span>(
+            <span class="ruby-identifier">relation</span>.<span class="ruby-identifier">where</span>(<span class="ruby-string">&quot;family_name ILIKE ?&quot;</span>, <span class="ruby-identifier">family_name_ilike</span>).<span class="ruby-identifier">where</span>(
+              <span class="ruby-value">date_of_birth:</span>,
+              <span class="ruby-value">address_postcode:</span>
+            )
+          )
+      <span class="ruby-keyword">else</span>
+        <span class="ruby-identifier">scope</span>.<span class="ruby-identifier">where</span>(<span class="ruby-value">address_postcode:</span>)
+      <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">end</span>
 
-        <div class="method-description">
+  <span class="ruby-identifier">results</span> =
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">nhs_number</span>.<span class="ruby-identifier">blank?</span>
+      <span class="ruby-identifier">scope</span>.<span class="ruby-identifier">to_a</span>
+    <span class="ruby-keyword">else</span>
+      <span class="ruby-comment"># This prevents us from finding a patient that happens to have at least</span>
+      <span class="ruby-comment"># three of the other fields the same, but with a different NHS number,</span>
+      <span class="ruby-comment"># and therefore cannot be a match.</span>
+      <span class="ruby-identifier">relation</span>.<span class="ruby-identifier">where</span>(<span class="ruby-value">nhs_number:</span> <span class="ruby-keyword">nil</span>).<span class="ruby-identifier">merge</span>(<span class="ruby-identifier">scope</span>).<span class="ruby-identifier">to_a</span>
+    <span class="ruby-keyword">end</span>
 
-
-          
-
-
-        </div>
-
-
-
-
-
-      </div>
-
-
-      <div id="method-i-wizard_steps" class="method-detail anchor-link ">
-        <div class="method-header">
-
-            <div class="method-heading">
-              <a href="#method-i-wizard_steps" title="Link to this method">
-                <span class="method-name">wizard_steps</span>
-                <span class="method-args">()</span>
-              </a>
-            </div>
-
-        </div>
-
-
-          <div class="method-controls">
-            <details class="method-source-toggle">
-              <summary>Source</summary>
-            </details>
-          </div>
-          <div class="method-source-code" id="wizard_steps-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/school_move_export.rb, line 15</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">wizard_steps</span>
-  <span class="ruby-node">%i[dates confirm]</span>
+  <span class="ruby-identifier">narrow_to_single_exact_match_if_possible</span>(
+    <span class="ruby-identifier">results</span>,
+    <span class="ruby-value">given_name:</span>,
+    <span class="ruby-value">family_name:</span>,
+    <span class="ruby-value">date_of_birth:</span>,
+    <span class="ruby-value">address_postcode:</span>
+  )
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -912,6 +817,12 @@
 
 
     </section>
+
+
+
+
+
+
 
 
 
