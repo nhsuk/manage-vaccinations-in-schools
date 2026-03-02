@@ -78,35 +78,15 @@ class ConsentNotification < ApplicationRecord
       sent_by: current_user
     )
 
-    is_school = session.location.school?
-
-    template = :"consent_#{is_school ? "school" : "clinic"}_#{type}"
-
-    mail_template =
-      if is_school
-        group = ProgrammeGrouper.call(programmes).first.first
-        group = :mmrv if group == :mmr && patient.eligible_for_mmrv?
-
-        style = "outbreak" if session.outbreak
-
-        [template, group, style].compact.join("_").to_sym
-      else
-        template
-      end
-
-    text_template =
-      if type == :request
-        template
-      elsif is_school
-        :consent_school_reminder
-      end
+    email_template, sms_template =
+      generate_templates(programmes:, patient:, session:, type:)
 
     programme_types = programmes.map(&:type)
     disease_types = programmes.flat_map(&:disease_types).presence
 
     parents.each do |parent|
       EmailDeliveryJob.perform_later(
-        mail_template,
+        email_template,
         disease_types:,
         parent:,
         patient:,
@@ -116,7 +96,7 @@ class ConsentNotification < ApplicationRecord
       )
 
       SMSDeliveryJob.perform_later(
-        text_template,
+        sms_template,
         disease_types:,
         parent:,
         patient:,
@@ -125,5 +105,78 @@ class ConsentNotification < ApplicationRecord
         sent_by: current_user
       )
     end
+  end
+
+  def self.generate_templates(programmes:, patient:, session:, type:)
+    is_school = session.location.school?
+    base_template = :"consent_#{is_school ? "school" : "clinic"}_#{type}"
+
+    # We can only handle a single programme group or variant in the template.
+    group = ProgrammeGrouper.call(programmes).keys.sole
+    variant =
+      if programmes.count == 1
+        programmes.sole.variant_for(patient:).variant_type
+      end
+
+    email_template =
+      if is_school
+        template =
+          resolve_template(
+            base_template:,
+            group:,
+            variant:,
+            session:,
+            channel: :email
+          )
+        if template.blank?
+          raise(
+            "Missing email template for consent notification: #{base_template} " \
+              "with group=#{group.inspect} variant=#{variant.inspect} " \
+              "outbreak=#{is_outbreak.inspect}"
+          )
+        end
+        template
+      else
+        base_template
+      end
+
+    sms_template =
+      if type == :request
+        template =
+          resolve_template(
+            base_template:,
+            group:,
+            variant:,
+            session:,
+            channel: :sms
+          )
+        template || base_template
+      elsif is_school
+        :consent_school_reminder
+      end
+
+    [email_template, sms_template]
+  end
+
+  def self.resolve_template(
+    base_template:,
+    group:,
+    variant:,
+    session:,
+    channel:
+  )
+    renderer = NotifyTemplateRenderer.for(channel)
+    is_outbreak = session.outbreak
+
+    combinations = [([group, :outbreak] if is_outbreak), [group]]
+    if variant.present? && variant != group
+      combinations.prepend(([variant, :outbreak] if is_outbreak), [variant])
+    end
+    combinations.compact!
+
+    combinations
+      .lazy
+      .map { |parts| :"#{base_template}_#{parts.join("_")}" }
+      .detect { renderer.template_exists?(it, source: :any) }
   end
 end
