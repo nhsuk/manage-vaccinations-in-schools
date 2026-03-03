@@ -189,5 +189,13 @@ FactoryBot.define do
         snomed_product_term { data["snomed_product_term"] }
       end
     end
+
+    before(:create) do |_vaccine, _evaluator|
+      unless Vaccine.enable_factorybot_factories
+        raise "Do not create vaccines in tests. " \
+                "This introduces dependencies between tests as they get cached " \
+                "on the programme and then deleted from the database."
+      end
+    end
   end
 end
