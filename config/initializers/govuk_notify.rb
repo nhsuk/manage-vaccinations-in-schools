@@ -58,8 +58,6 @@ GOVUK_NOTIFY_SMS_TEMPLATES = {
   consent_clinic_request: "03a0d572-ca5b-417e-87c3-838872a9eabc",
   consent_school_reminder: "26029539-60e4-416b-a3a8-40b82c2babc1",
   consent_school_request: "2d3e2370-7faa-4798-b7ae-607692a85059",
-  consent_unknown_contact_details_warning:
-    "1fd4620d-1c96-4af1-b047-ed13a90b0f44",
   session_school_reminder: "cc4a7f89-d260-461c-80f0-7e6e9af75e7a",
   vaccination_administered: "395a3ea1-df07-4dd6-8af1-64cc597ef383",
   vaccination_already_had: "fab1e355-bde1-47d5-835c-103bfd232b93",
