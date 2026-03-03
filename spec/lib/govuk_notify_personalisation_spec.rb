@@ -509,9 +509,9 @@ describe GovukNotifyPersonalisation do
                   "If you’d like to book a clinic appointment, please contact us using " \
                   "the details below.\n\n" \
                   "It’s important to wait at least 28 days after the 1st dose of an MMR " \
-                  "vaccination before getting the 2nd dose. John should not get the 2nd " \
-                  "dose until 29 January 2020. Please keep this in mind when booking " \
-                  "the appointment."
+                  "or MMRV vaccination before getting the 2nd dose. John should not get " \
+                  "the 2nd dose until 29 January 2020. Please keep this in mind when " \
+                  "booking the appointment."
             )
           end
         end
@@ -524,8 +524,8 @@ describe GovukNotifyPersonalisation do
               mmr_second_dose_required: true,
               vaccination: "2nd dose of the MMR vaccination",
               invitation_to_clinic_custom_mmr_message:
-                "It’s important to wait at least 28 days after the 1st dose of an MMR " \
-                  "vaccination before getting the 2nd dose. John should not get the 2nd " \
+                "It’s important to wait at least 28 days after the 1st dose of an MMR or " \
+                  "MMRV vaccination before getting the 2nd dose. John should not get the 2nd " \
                   "dose until 29 January 2020. Please keep this in mind when booking " \
                   "the appointment.\n\n" \
                   "It’s also possible for John to be vaccinated at your local GP surgery. " \
@@ -543,7 +543,7 @@ describe GovukNotifyPersonalisation do
               vaccination: "2nd dose of the MMR vaccination",
               invitation_to_clinic_custom_mmr_message:
                 "It’s important to wait at least 28 days after the 1st dose of an MMR " \
-                  "vaccination before getting the 2nd dose. John should not get the 2nd " \
+                  "or MMRV vaccination before getting the 2nd dose. John should not get the 2nd " \
                   "dose until 29 January 2020. Please keep this in mind when booking " \
                   "the appointment.\n\n" \
                   "## You have 2 options for booking the vaccination\n\n" \
