@@ -308,11 +308,6 @@ def create_team_sessions(user, team)
   )
 end
 
-set_feature_flags
-
-seed_vaccines
-create_gp_practices
-
 def create_nurse_joy_team
   team = create_team(ods_code: "R1L")
   user = create_user(:nurse, team:, email: "nurse.joy@example.com")
@@ -337,24 +332,6 @@ def create_nurse_joy_team
   create_school_moves(team)
 end
 
-def create_national_reporting_team
-  team =
-    FactoryBot.create(
-      :team,
-      :national_reporting,
-      ods_code: "XX99",
-      programmes: [Programme.flu, Programme.hpv],
-      workgroup: "XX99"
-    )
-  user =
-    create_user(:medical_secretary, team:, email: "admin.sarah@example.com")
-  create_user(:superuser, team:, email: "superuser.rob@example.com")
-
-  create_national_reporting_imports(user, team)
-
-  create_upload_patients_and_vaccination_records(user)
-end
-
 def create_upload_patients_and_vaccination_records(user)
   patients =
     FactoryBot.create_list(:patient, 50, :archived, team: user.teams.first)
@@ -373,33 +350,60 @@ def create_upload_patients_and_vaccination_records(user)
   end
 end
 
-unless Settings.cis2.enabled
-  # Don't create Nurse Joy's team on a CIS2 env, because password authentication
-  # is not available and password= fails to run.
-  create_nurse_joy_team
+def create_national_reporting_team
+  team =
+    FactoryBot.create(
+      :team,
+      :national_reporting,
+      ods_code: "XX99",
+      programmes: [Programme.flu, Programme.hpv],
+      workgroup: "XX99"
+    )
+  user =
+    create_user(:medical_secretary, team:, email: "admin.sarah@example.com")
+  create_user(:superuser, team:, email: "superuser.rob@example.com")
 
-  create_national_reporting_team
+  create_national_reporting_imports(user, team)
+
+  create_upload_patients_and_vaccination_records(user)
 end
 
-# CIS2 team - the ODS code and user UID need to match the values in the CIS2 env
-team = create_team(ods_code: "A9A5A")
-user = create_user(:nurse, team:, uid: "555057896106")
+def create_a9a5a_team
+  # CIS2 team - the ODS code and user UID need to match the values in the CIS2 env
+  team = create_team(ods_code: "A9A5A")
+  user = create_user(:nurse, team:, uid: "555057896106")
 
-support_team =
-  create_team(
-    ods_code: CIS2Info::SUPPORT_ORGANISATION,
-    workgroup: CIS2Info::SUPPORT_WORKGROUP
-  )
-create_user(:support, team: support_team, email: "support@example.com")
+  attach_sample_of_schools_to(team)
+  create_community_clinics_for(team)
 
-attach_sample_of_schools_to(team)
-create_community_clinics_for(team)
+  Audited.audit_class.as_user(user) { create_team_sessions(user, team) }
+  setup_clinic(team)
+  create_patients(team)
+  create_imports(user, team)
+  create_school_moves(team)
+end
 
-Audited.audit_class.as_user(user) { create_team_sessions(user, team) }
-setup_clinic(team)
-create_patients(team)
-create_imports(user, team)
-create_school_moves(team)
+def create_support_team
+  support_team =
+    create_team(
+      ods_code: CIS2Info::SUPPORT_ORGANISATION,
+      workgroup: CIS2Info::SUPPORT_WORKGROUP
+    )
+  create_user(:support, team: support_team, email: "support@example.com")
+end
+
+set_feature_flags
+
+seed_vaccines
+create_gp_practices
+
+if Settings.cis2.enabled
+  create_a9a5a_team
+  create_support_team
+else
+  create_nurse_joy_team
+  create_national_reporting_team
+end
 
 PatientTeamUpdater.call
 PatientStatusUpdater.call
