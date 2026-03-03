@@ -261,8 +261,8 @@ class GovukNotifyPersonalisation
   end
 
   def mmr_second_dose_waiting_period_message
-    "It’s important to wait at least 28 days after the 1st dose of an MMR " \
-      "vaccination before getting the 2nd dose. #{short_patient_name} " \
+    "It’s important to wait at least 28 days after the 1st dose of an MMR or " \
+      "MMRV vaccination before getting the 2nd dose. #{short_patient_name} " \
       "should not get the 2nd dose until #{next_mmr_dose_date}. Please keep this in " \
       "mind when booking the appointment."
   end
