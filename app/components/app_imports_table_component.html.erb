@@ -1,6 +1,6 @@
 <%= render AppCardComponent.new(feature: true) do |card| %>
   <% card.with_heading(level: 3) do %>
-    <%= pluralize(imports.count, "upload") %>
+    <%= pluralize(@pagy.count, "upload") %>
   <% end %>
 
   <%= govuk_table(html_attributes: {

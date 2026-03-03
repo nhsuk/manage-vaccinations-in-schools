@@ -1,15 +1,38 @@
 # frozen_string_literal: true
 
 describe AppImportsTableComponent do
+  include Pagy::Backend
+
   subject(:rendered) { render_inline(component) }
 
-  let(:component) { described_class.new(team:, uploaded_files:) }
+  let(:component) do
+    described_class.new(team:, uploaded_files:, mixnmatch_imports:, pagy:)
+  end
 
   let(:programmes) { [Programme.sample] }
   let(:team) { create(:team, programmes:) }
   let(:school) { create(:school, team:, name: "Test School") }
   let(:session) { create(:session, programmes:, location: school) }
   let(:uploaded_files) { false }
+  let(:mixnmatch_imports) do
+    CohortImport
+      .select(:id, :created_at, "'CohortImport' as model_name")
+      .union(
+        ClassImport.select(:id, :created_at, "'ClassImport' as model_name")
+      )
+      .union(
+        ImmunisationImport.select(
+          :id,
+          :created_at,
+          "'ImmunisationImport' as model_name"
+        )
+      )
+  end
+  let(:pagination_result) { pagy_array(all_import_records, page: 1) }
+  let(:all_import_records) do
+    CohortImport.all + ClassImport.all + ImmunisationImport.all
+  end
+  let(:pagy) { pagination_result[0] }
 
   before do
     cohort_imports =
