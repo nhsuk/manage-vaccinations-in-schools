@@ -33,6 +33,13 @@ describe HealthQuestion do
   let(:vaccine) { create(:vaccine) }
   let!(:hqs) { create_list(:health_question, 3, vaccine:) }
 
+  around(:all) do |example|
+    # This is safe because we don't reference a programme at any point.
+    Vaccine.enable_factorybot_factories = true
+    example.run
+    Vaccine.enable_factorybot_factories = false
+  end
+
   describe "#first_health_question" do
     it "returns the first health question" do
       hqs.first.update! next_question: hqs.second

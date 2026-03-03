@@ -4,15 +4,6 @@ describe ConsentsHelper do
   subject(:reasons) { helper.consent_refusal_reasons(consent) }
 
   shared_examples "refusal reason label" do |expected_label|
-    before do
-      create(
-        :vaccine,
-        :contains_gelatine,
-        programme_type: programme.type,
-        disease_types: programme.disease_types
-      )
-    end
-
     it "uses the programme-specific refusal reason label" do
       reason = reasons.find { |reason| reason.value == "contains_gelatine" }
       expect(reason.label).to eq(expected_label) if reason

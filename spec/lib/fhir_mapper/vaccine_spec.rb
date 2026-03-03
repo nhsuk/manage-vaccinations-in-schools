@@ -4,7 +4,7 @@ describe FHIRMapper::Vaccine do
   subject(:fhir_mapper) { described_class.new(vaccine) }
 
   let(:vaccine) do
-    create(
+    build(
       :vaccine,
       :injection,
       snomed_product_code: "183817183",
@@ -58,7 +58,7 @@ describe FHIRMapper::Vaccine do
     end
 
     context "with flu injection vaccine, dose 1" do
-      let(:vaccine) { create(:vaccine, :flu, :injection) }
+      let(:vaccine) { build(:vaccine, :flu, :injection) }
 
       it "pairs the correct code with the correct term" do
         coding =
@@ -72,7 +72,7 @@ describe FHIRMapper::Vaccine do
     end
 
     context "with flu nasal vaccine, dose 2" do
-      let(:vaccine) { create(:vaccine, :flu, :nasal) }
+      let(:vaccine) { build(:vaccine, :flu, :nasal) }
 
       it "pairs the correct code with the correct term" do
         coding =
