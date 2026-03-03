@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class AppPatientProgrammeVaccinationTableComponent < ViewComponent::Base
+class AppPatientProgrammeVaccinationCardComponent < ViewComponent::Base
   def initialize(patient, academic_year:, programme: nil, show_caption: false)
     @patient = patient
     @academic_year = academic_year

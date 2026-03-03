@@ -141,7 +141,7 @@ describe "View children" do
     expect(page).to have_current_path(patient_programme_path(@patient, "flu"))
     expect(page).to have_css(
       "h3.nhsuk-card__heading",
-      text: "Vaccination record"
+      text: "No vaccination record"
     )
   end
 

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-describe AppPatientProgrammeVaccinationTableComponent do
-  subject { render_inline(component) }
+describe AppPatientProgrammeVaccinationCardComponent do
+  subject(:rendered) { render_inline(component) }
 
   let(:component) do
     described_class.new(patient, academic_year:, programme:, show_caption:)
@@ -12,6 +12,7 @@ describe AppPatientProgrammeVaccinationTableComponent do
   let(:programme) { Programme.hpv }
   let(:show_caption) { false }
 
+  it { should have_css(".nhsuk-card__heading", text: "No vaccination record") }
   it { should_not have_css(".nhsuk-table") }
 
   context "with a vaccination record" do
@@ -43,6 +44,8 @@ describe AppPatientProgrammeVaccinationTableComponent do
       )
     end
 
+    it { should have_css(".nhsuk-card__heading", text: "Vaccination record") }
+
     it { should have_css(".nhsuk-tag", text: "Not eligible") }
     it { should have_css(".nhsuk-table__header", text: "Vaccination date") }
     it { should have_css(".nhsuk-table__header", text: "Age") }
@@ -50,12 +53,14 @@ describe AppPatientProgrammeVaccinationTableComponent do
     it { should have_css(".nhsuk-table__header", text: "Source") }
 
     it { should have_link("1 January 2024") }
+
     it do
-      should have_css(
-               ".nhsuk-table",
-               text: "#{patient.age_years(now: performed_at)} years"
-             )
+      expect(rendered).to have_css(
+        ".nhsuk-table",
+        text: "#{patient.age_years(now: performed_at)} years"
+      )
     end
+
     it { should have_css(".nhsuk-table", text: "HPV") }
     it { should have_css(".nhsuk-table", text: "Recorded in Mavis") }
 
@@ -64,12 +69,14 @@ describe AppPatientProgrammeVaccinationTableComponent do
       let(:vaccination_record_programme) { Programme.flu }
 
       it { should_not have_link("1 January 2024") }
+
       it do
-        should_not have_css(
-                     ".nhsuk-table",
-                     text: "#{patient.age_years(now: performed_at)} years"
-                   )
+        expect(rendered).not_to have_css(
+          ".nhsuk-table",
+          text: "#{patient.age_years(now: performed_at)} years"
+        )
       end
+
       it { should_not have_css(".nhsuk-table", text: "HPV") }
       it { should_not have_css(".nhsuk-table", text: "Recorded in Mavis") }
     end
@@ -80,12 +87,14 @@ describe AppPatientProgrammeVaccinationTableComponent do
       let(:performed_at) { Time.zone.local(2022, 1, 1) }
 
       it { should_not have_link("1 January 2022") }
+
       it do
-        should_not have_css(
-                     ".nhsuk-table",
-                     text: "#{patient.age_years(now: performed_at)} years"
-                   )
+        expect(rendered).not_to have_css(
+          ".nhsuk-table",
+          text: "#{patient.age_years(now: performed_at)} years"
+        )
       end
+
       it { should_not have_css(".nhsuk-table", text: "Flu") }
       it { should_not have_css(".nhsuk-table", text: "Recorded in Mavis") }
     end

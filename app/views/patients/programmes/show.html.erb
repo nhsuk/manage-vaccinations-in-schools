@@ -9,12 +9,12 @@
 
 <%= render AppPatientNavigationComponent.new(@patient, current_user.programmes, active: @programme.type.to_sym) %>
 
-<%= render AppCardComponent.new(section: true) do |card| %>
-  <% card.with_heading { "Vaccination record" } %>
-  <%= render AppPatientProgrammeVaccinationTableComponent.new(
-        @patient, academic_year: AcademicYear.current, show_caption: false, programme: @programme,
-      ) %>
-<% end %>
+<%= render AppPatientProgrammeVaccinationCardComponent.new(
+      @patient,
+      academic_year: AcademicYear.current,
+      show_caption: false,
+      programme: @programme,
+    ) %>
 
 <%= render AppCardComponent.new(section: true) do |card| %>
   <% card.with_heading { "Sessions" } %>
