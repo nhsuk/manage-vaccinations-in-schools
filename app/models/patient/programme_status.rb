@@ -65,6 +65,16 @@ class Patient::ProgrammeStatus < ApplicationRecord
 
   has_many :parents, -> { contactable }, through: :patient
 
+  has_many :registration_statuses,
+           class_name: "Patient::RegistrationStatus",
+           through: :patient
+
+  has_many :sessions, through: :registration_statuses, source: :session
+
+  has_many :consent_notifications,
+           -> { request.includes(session: :team_location) },
+           through: :patient
+
   GROUPS = %w[
     not_eligible
     needs_consent
@@ -177,7 +187,9 @@ class Patient::ProgrammeStatus < ApplicationRecord
         triages:,
         attendance_record:,
         vaccination_records:,
-        parents:
+        parents:,
+        sessions:,
+        consent_notifications:
       )
   end
 end
