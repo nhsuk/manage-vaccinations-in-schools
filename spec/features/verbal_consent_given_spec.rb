@@ -13,6 +13,7 @@ describe "Verbal consent" do
     then_an_email_is_sent_to_the_parent_confirming_their_consent
     and_a_text_is_sent_to_the_parent_confirming_their_consent
     and_i_can_see_the_consent_response_details(number_of_health_questions: 4)
+    and_i_can_see_the_log_entries_for_the_email_and_sms
   end
 
   scenario "Given flu injection" do
@@ -334,5 +335,13 @@ describe "Verbal consent" do
 
   def and_the_psd_is_invalidated
     expect(@patient_specific_direction.reload).to be_invalidated
+  end
+
+  def and_i_can_see_the_log_entries_for_the_email_and_sms
+    click_on "Back"
+    click_on "Session activity and notes"
+    expect(page).to have_content("Consent confirmation given", count: 2)
+    expect(page).to have_content(@parent.email)
+    expect(page).to have_content(@parent.phone)
   end
 end
