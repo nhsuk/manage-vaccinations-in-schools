@@ -578,6 +578,10 @@
 
         <li ><a href="#method-c-create_and_send-21">create_and_send!</a></li>
 
+        <li ><a href="#method-c-generate_templates">generate_templates</a></li>
+
+        <li ><a href="#method-c-resolve_template">resolve_template</a></li>
+
       </ul>
     </details>
   </div>
@@ -734,35 +738,15 @@ fk_rails_...  (session_id =&gt; sessions.id)</pre>
     <span class="ruby-value">sent_by:</span> <span class="ruby-identifier">current_user</span>
   )
 
-  <span class="ruby-identifier">is_school</span> = <span class="ruby-identifier">session</span>.<span class="ruby-identifier">location</span>.<span class="ruby-identifier">school?</span>
-
-  <span class="ruby-identifier">template</span> = <span class="ruby-value">:&quot;consent_#{is_school ? &quot;school&quot; : &quot;clinic&quot;}_#{type}&quot;</span>
-
-  <span class="ruby-identifier">mail_template</span> =
-    <span class="ruby-keyword">if</span> <span class="ruby-identifier">is_school</span>
-      <span class="ruby-identifier">group</span> = <span class="ruby-constant">ProgrammeGrouper</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">programmes</span>).<span class="ruby-identifier">first</span>.<span class="ruby-identifier">first</span>
-      <span class="ruby-identifier">group</span> = <span class="ruby-value">:mmrv</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">group</span> <span class="ruby-operator">==</span> <span class="ruby-value">:mmr</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">eligible_for_mmrv?</span>
-
-      <span class="ruby-identifier">style</span> = <span class="ruby-string">&quot;outbreak&quot;</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">session</span>.<span class="ruby-identifier">outbreak</span>
-
-      [<span class="ruby-identifier">template</span>, <span class="ruby-identifier">group</span>, <span class="ruby-identifier">style</span>].<span class="ruby-identifier">compact</span>.<span class="ruby-identifier">join</span>(<span class="ruby-string">&quot;_&quot;</span>).<span class="ruby-identifier">to_sym</span>
-    <span class="ruby-keyword">else</span>
-      <span class="ruby-identifier">template</span>
-    <span class="ruby-keyword">end</span>
-
-  <span class="ruby-identifier">text_template</span> =
-    <span class="ruby-keyword">if</span> <span class="ruby-identifier">type</span> <span class="ruby-operator">==</span> <span class="ruby-value">:request</span>
-      <span class="ruby-identifier">template</span>
-    <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">is_school</span>
-      <span class="ruby-value">:consent_school_reminder</span>
-    <span class="ruby-keyword">end</span>
+  <span class="ruby-identifier">email_template</span>, <span class="ruby-identifier">sms_template</span> =
+    <span class="ruby-identifier">generate_templates</span>(<span class="ruby-value">programmes:</span>, <span class="ruby-value">patient:</span>, <span class="ruby-value">session:</span>, <span class="ruby-value">type:</span>)
 
   <span class="ruby-identifier">programme_types</span> = <span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:type</span>)
   <span class="ruby-identifier">disease_types</span> = <span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">flat_map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:disease_types</span>).<span class="ruby-identifier">presence</span>
 
   <span class="ruby-identifier">parents</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">parent</span><span class="ruby-operator">|</span>
     <span class="ruby-constant">EmailDeliveryJob</span>.<span class="ruby-identifier">perform_later</span>(
-      <span class="ruby-identifier">mail_template</span>,
+      <span class="ruby-identifier">email_template</span>,
       <span class="ruby-value">disease_types:</span>,
       <span class="ruby-value">parent:</span>,
       <span class="ruby-value">patient:</span>,
@@ -772,7 +756,7 @@ fk_rails_...  (session_id =&gt; sessions.id)</pre>
     )
 
     <span class="ruby-constant">SMSDeliveryJob</span>.<span class="ruby-identifier">perform_later</span>(
-      <span class="ruby-identifier">text_template</span>,
+      <span class="ruby-identifier">sms_template</span>,
       <span class="ruby-value">disease_types:</span>,
       <span class="ruby-value">parent:</span>,
       <span class="ruby-value">patient:</span>,
@@ -781,6 +765,155 @@ fk_rails_...  (session_id =&gt; sessions.id)</pre>
       <span class="ruby-value">sent_by:</span> <span class="ruby-identifier">current_user</span>
     )
   <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-c-generate_templates" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-c-generate_templates" title="Link to this method">
+                <span class="method-name">generate_templates</span>
+                <span class="method-args">(programmes:, patient:, session:, type:)</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="generate_templates-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_notification.rb, line 110</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">generate_templates</span>(<span class="ruby-value">programmes:</span>, <span class="ruby-value">patient:</span>, <span class="ruby-value">session:</span>, <span class="ruby-value">type:</span>)
+  <span class="ruby-identifier">is_school</span> = <span class="ruby-identifier">session</span>.<span class="ruby-identifier">location</span>.<span class="ruby-identifier">school?</span>
+  <span class="ruby-identifier">base_template</span> = <span class="ruby-value">:&quot;consent_#{is_school ? &quot;school&quot; : &quot;clinic&quot;}_#{type}&quot;</span>
+
+  <span class="ruby-comment"># We can only handle a single programme group or variant in the template.</span>
+  <span class="ruby-identifier">group</span> = <span class="ruby-constant">ProgrammeGrouper</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">programmes</span>).<span class="ruby-identifier">keys</span>.<span class="ruby-identifier">sole</span>
+  <span class="ruby-identifier">variant</span> =
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">count</span> <span class="ruby-operator">==</span> <span class="ruby-value">1</span>
+      <span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">sole</span>.<span class="ruby-identifier">variant_for</span>(<span class="ruby-value">patient:</span>).<span class="ruby-identifier">variant_type</span>
+    <span class="ruby-keyword">end</span>
+
+  <span class="ruby-identifier">email_template</span> =
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">is_school</span>
+      <span class="ruby-identifier">template</span> =
+        <span class="ruby-identifier">resolve_template</span>(
+          <span class="ruby-value">base_template:</span>,
+          <span class="ruby-value">group:</span>,
+          <span class="ruby-value">variant:</span>,
+          <span class="ruby-value">session:</span>,
+          <span class="ruby-value">channel:</span> <span class="ruby-value">:email</span>
+        )
+      <span class="ruby-keyword">if</span> <span class="ruby-identifier">template</span>.<span class="ruby-identifier">blank?</span>
+        <span class="ruby-identifier">raise</span>(
+          <span class="ruby-node">&quot;Missing email template for consent notification: #{base_template} &quot;</span> \
+            <span class="ruby-node">&quot;with group=#{group.inspect} variant=#{variant.inspect} &quot;</span> \
+            <span class="ruby-node">&quot;outbreak=#{is_outbreak.inspect}&quot;</span>
+        )
+      <span class="ruby-keyword">end</span>
+      <span class="ruby-identifier">template</span>
+    <span class="ruby-keyword">else</span>
+      <span class="ruby-identifier">base_template</span>
+    <span class="ruby-keyword">end</span>
+
+  <span class="ruby-identifier">sms_template</span> =
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">type</span> <span class="ruby-operator">==</span> <span class="ruby-value">:request</span>
+      <span class="ruby-identifier">template</span> =
+        <span class="ruby-identifier">resolve_template</span>(
+          <span class="ruby-value">base_template:</span>,
+          <span class="ruby-value">group:</span>,
+          <span class="ruby-value">variant:</span>,
+          <span class="ruby-value">session:</span>,
+          <span class="ruby-value">channel:</span> <span class="ruby-value">:sms</span>
+        )
+      <span class="ruby-identifier">template</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">base_template</span>
+    <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">is_school</span>
+      <span class="ruby-value">:consent_school_reminder</span>
+    <span class="ruby-keyword">end</span>
+
+  [<span class="ruby-identifier">email_template</span>, <span class="ruby-identifier">sms_template</span>]
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-c-resolve_template" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-c-resolve_template" title="Link to this method">
+                <span class="method-name">resolve_template</span>
+                <span class="method-args">( base_template:, group:, variant:, session:, channel: )</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="resolve_template-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/models/consent_notification.rb, line 161</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">resolve_template</span>(
+  <span class="ruby-value">base_template:</span>,
+  <span class="ruby-value">group:</span>,
+  <span class="ruby-value">variant:</span>,
+  <span class="ruby-value">session:</span>,
+  <span class="ruby-value">channel:</span>
+)
+  <span class="ruby-identifier">renderer</span> = <span class="ruby-constant">NotifyTemplateRenderer</span>.<span class="ruby-identifier">for</span>(<span class="ruby-identifier">channel</span>)
+  <span class="ruby-identifier">is_outbreak</span> = <span class="ruby-identifier">session</span>.<span class="ruby-identifier">outbreak</span>
+
+  <span class="ruby-identifier">combinations</span> = [([<span class="ruby-identifier">group</span>, <span class="ruby-value">:outbreak</span>] <span class="ruby-keyword">if</span> <span class="ruby-identifier">is_outbreak</span>), [<span class="ruby-identifier">group</span>]]
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">variant</span>.<span class="ruby-identifier">present?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">variant</span> <span class="ruby-operator">!=</span> <span class="ruby-identifier">group</span>
+    <span class="ruby-identifier">combinations</span>.<span class="ruby-identifier">prepend</span>(([<span class="ruby-identifier">variant</span>, <span class="ruby-value">:outbreak</span>] <span class="ruby-keyword">if</span> <span class="ruby-identifier">is_outbreak</span>), [<span class="ruby-identifier">variant</span>])
+  <span class="ruby-keyword">end</span>
+  <span class="ruby-identifier">combinations</span>.<span class="ruby-identifier">compact!</span>
+
+  <span class="ruby-identifier">combinations</span>
+    .<span class="ruby-identifier">lazy</span>
+    .<span class="ruby-identifier">map</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">parts</span><span class="ruby-operator">|</span> <span class="ruby-value">:&quot;#{base_template}_#{parts.join(&quot;_&quot;)}&quot;</span> }
+    .<span class="ruby-identifier">detect</span> { <span class="ruby-identifier">renderer</span>.<span class="ruby-identifier">template_exists?</span>(<span class="ruby-identifier">it</span>, <span class="ruby-value">source:</span> <span class="ruby-value">:any</span>) }
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -863,35 +996,15 @@ fk_rails_...  (session_id =&gt; sessions.id)</pre>
     <span class="ruby-value">sent_by:</span> <span class="ruby-identifier">current_user</span>
   )
 
-  <span class="ruby-identifier">is_school</span> = <span class="ruby-identifier">session</span>.<span class="ruby-identifier">location</span>.<span class="ruby-identifier">school?</span>
-
-  <span class="ruby-identifier">template</span> = <span class="ruby-value">:&quot;consent_#{is_school ? &quot;school&quot; : &quot;clinic&quot;}_#{type}&quot;</span>
-
-  <span class="ruby-identifier">mail_template</span> =
-    <span class="ruby-keyword">if</span> <span class="ruby-identifier">is_school</span>
-      <span class="ruby-identifier">group</span> = <span class="ruby-constant">ProgrammeGrouper</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">programmes</span>).<span class="ruby-identifier">first</span>.<span class="ruby-identifier">first</span>
-      <span class="ruby-identifier">group</span> = <span class="ruby-value">:mmrv</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">group</span> <span class="ruby-operator">==</span> <span class="ruby-value">:mmr</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">eligible_for_mmrv?</span>
-
-      <span class="ruby-identifier">style</span> = <span class="ruby-string">&quot;outbreak&quot;</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">session</span>.<span class="ruby-identifier">outbreak</span>
-
-      [<span class="ruby-identifier">template</span>, <span class="ruby-identifier">group</span>, <span class="ruby-identifier">style</span>].<span class="ruby-identifier">compact</span>.<span class="ruby-identifier">join</span>(<span class="ruby-string">&quot;_&quot;</span>).<span class="ruby-identifier">to_sym</span>
-    <span class="ruby-keyword">else</span>
-      <span class="ruby-identifier">template</span>
-    <span class="ruby-keyword">end</span>
-
-  <span class="ruby-identifier">text_template</span> =
-    <span class="ruby-keyword">if</span> <span class="ruby-identifier">type</span> <span class="ruby-operator">==</span> <span class="ruby-value">:request</span>
-      <span class="ruby-identifier">template</span>
-    <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">is_school</span>
-      <span class="ruby-value">:consent_school_reminder</span>
-    <span class="ruby-keyword">end</span>
+  <span class="ruby-identifier">email_template</span>, <span class="ruby-identifier">sms_template</span> =
+    <span class="ruby-identifier">generate_templates</span>(<span class="ruby-value">programmes:</span>, <span class="ruby-value">patient:</span>, <span class="ruby-value">session:</span>, <span class="ruby-value">type:</span>)
 
   <span class="ruby-identifier">programme_types</span> = <span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:type</span>)
   <span class="ruby-identifier">disease_types</span> = <span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">flat_map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:disease_types</span>).<span class="ruby-identifier">presence</span>
 
   <span class="ruby-identifier">parents</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">parent</span><span class="ruby-operator">|</span>
     <span class="ruby-constant">EmailDeliveryJob</span>.<span class="ruby-identifier">perform_later</span>(
-      <span class="ruby-identifier">mail_template</span>,
+      <span class="ruby-identifier">email_template</span>,
       <span class="ruby-value">disease_types:</span>,
       <span class="ruby-value">parent:</span>,
       <span class="ruby-value">patient:</span>,
@@ -901,7 +1014,7 @@ fk_rails_...  (session_id =&gt; sessions.id)</pre>
     )
 
     <span class="ruby-constant">SMSDeliveryJob</span>.<span class="ruby-identifier">perform_later</span>(
-      <span class="ruby-identifier">text_template</span>,
+      <span class="ruby-identifier">sms_template</span>,
       <span class="ruby-value">disease_types:</span>,
       <span class="ruby-value">parent:</span>,
       <span class="ruby-value">patient:</span>,
@@ -910,6 +1023,79 @@ fk_rails_...  (session_id =&gt; sessions.id)</pre>
       <span class="ruby-value">sent_by:</span> <span class="ruby-identifier">current_user</span>
     )
   <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">generate_templates</span>(<span class="ruby-value">programmes:</span>, <span class="ruby-value">patient:</span>, <span class="ruby-value">session:</span>, <span class="ruby-value">type:</span>)
+  <span class="ruby-identifier">is_school</span> = <span class="ruby-identifier">session</span>.<span class="ruby-identifier">location</span>.<span class="ruby-identifier">school?</span>
+  <span class="ruby-identifier">base_template</span> = <span class="ruby-value">:&quot;consent_#{is_school ? &quot;school&quot; : &quot;clinic&quot;}_#{type}&quot;</span>
+
+  <span class="ruby-comment"># We can only handle a single programme group or variant in the template.</span>
+  <span class="ruby-identifier">group</span> = <span class="ruby-constant">ProgrammeGrouper</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">programmes</span>).<span class="ruby-identifier">keys</span>.<span class="ruby-identifier">sole</span>
+  <span class="ruby-identifier">variant</span> =
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">count</span> <span class="ruby-operator">==</span> <span class="ruby-value">1</span>
+      <span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">sole</span>.<span class="ruby-identifier">variant_for</span>(<span class="ruby-value">patient:</span>).<span class="ruby-identifier">variant_type</span>
+    <span class="ruby-keyword">end</span>
+
+  <span class="ruby-identifier">email_template</span> =
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">is_school</span>
+      <span class="ruby-identifier">template</span> =
+        <span class="ruby-identifier">resolve_template</span>(
+          <span class="ruby-value">base_template:</span>,
+          <span class="ruby-value">group:</span>,
+          <span class="ruby-value">variant:</span>,
+          <span class="ruby-value">session:</span>,
+          <span class="ruby-value">channel:</span> <span class="ruby-value">:email</span>
+        )
+      <span class="ruby-keyword">if</span> <span class="ruby-identifier">template</span>.<span class="ruby-identifier">blank?</span>
+        <span class="ruby-identifier">raise</span>(
+          <span class="ruby-node">&quot;Missing email template for consent notification: #{base_template} &quot;</span> \
+            <span class="ruby-node">&quot;with group=#{group.inspect} variant=#{variant.inspect} &quot;</span> \
+            <span class="ruby-node">&quot;outbreak=#{is_outbreak.inspect}&quot;</span>
+        )
+      <span class="ruby-keyword">end</span>
+      <span class="ruby-identifier">template</span>
+    <span class="ruby-keyword">else</span>
+      <span class="ruby-identifier">base_template</span>
+    <span class="ruby-keyword">end</span>
+
+  <span class="ruby-identifier">sms_template</span> =
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">type</span> <span class="ruby-operator">==</span> <span class="ruby-value">:request</span>
+      <span class="ruby-identifier">template</span> =
+        <span class="ruby-identifier">resolve_template</span>(
+          <span class="ruby-value">base_template:</span>,
+          <span class="ruby-value">group:</span>,
+          <span class="ruby-value">variant:</span>,
+          <span class="ruby-value">session:</span>,
+          <span class="ruby-value">channel:</span> <span class="ruby-value">:sms</span>
+        )
+      <span class="ruby-identifier">template</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">base_template</span>
+    <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">is_school</span>
+      <span class="ruby-value">:consent_school_reminder</span>
+    <span class="ruby-keyword">end</span>
+
+  [<span class="ruby-identifier">email_template</span>, <span class="ruby-identifier">sms_template</span>]
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">resolve_template</span>(
+  <span class="ruby-value">base_template:</span>,
+  <span class="ruby-value">group:</span>,
+  <span class="ruby-value">variant:</span>,
+  <span class="ruby-value">session:</span>,
+  <span class="ruby-value">channel:</span>
+)
+  <span class="ruby-identifier">renderer</span> = <span class="ruby-constant">NotifyTemplateRenderer</span>.<span class="ruby-identifier">for</span>(<span class="ruby-identifier">channel</span>)
+  <span class="ruby-identifier">is_outbreak</span> = <span class="ruby-identifier">session</span>.<span class="ruby-identifier">outbreak</span>
+
+  <span class="ruby-identifier">combinations</span> = [([<span class="ruby-identifier">group</span>, <span class="ruby-value">:outbreak</span>] <span class="ruby-keyword">if</span> <span class="ruby-identifier">is_outbreak</span>), [<span class="ruby-identifier">group</span>]]
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">variant</span>.<span class="ruby-identifier">present?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">variant</span> <span class="ruby-operator">!=</span> <span class="ruby-identifier">group</span>
+    <span class="ruby-identifier">combinations</span>.<span class="ruby-identifier">prepend</span>(([<span class="ruby-identifier">variant</span>, <span class="ruby-value">:outbreak</span>] <span class="ruby-keyword">if</span> <span class="ruby-identifier">is_outbreak</span>), [<span class="ruby-identifier">variant</span>])
+  <span class="ruby-keyword">end</span>
+  <span class="ruby-identifier">combinations</span>.<span class="ruby-identifier">compact!</span>
+
+  <span class="ruby-identifier">combinations</span>
+    .<span class="ruby-identifier">lazy</span>
+    .<span class="ruby-identifier">map</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">parts</span><span class="ruby-operator">|</span> <span class="ruby-value">:&quot;#{base_template}_#{parts.join(&quot;_&quot;)}&quot;</span> }
+    .<span class="ruby-identifier">detect</span> { <span class="ruby-identifier">renderer</span>.<span class="ruby-identifier">template_exists?</span>(<span class="ruby-identifier">it</span>, <span class="ruby-value">source:</span> <span class="ruby-value">:any</span>) }
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -976,35 +1162,15 @@ fk_rails_...  (session_id =&gt; sessions.id)</pre>
       <span class="ruby-value">sent_by:</span> <span class="ruby-identifier">current_user</span>
     )
 
-    <span class="ruby-identifier">is_school</span> = <span class="ruby-identifier">session</span>.<span class="ruby-identifier">location</span>.<span class="ruby-identifier">school?</span>
-
-    <span class="ruby-identifier">template</span> = <span class="ruby-value">:&quot;consent_#{is_school ? &quot;school&quot; : &quot;clinic&quot;}_#{type}&quot;</span>
-
-    <span class="ruby-identifier">mail_template</span> =
-      <span class="ruby-keyword">if</span> <span class="ruby-identifier">is_school</span>
-        <span class="ruby-identifier">group</span> = <span class="ruby-constant">ProgrammeGrouper</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">programmes</span>).<span class="ruby-identifier">first</span>.<span class="ruby-identifier">first</span>
-        <span class="ruby-identifier">group</span> = <span class="ruby-value">:mmrv</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">group</span> <span class="ruby-operator">==</span> <span class="ruby-value">:mmr</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">eligible_for_mmrv?</span>
-
-        <span class="ruby-identifier">style</span> = <span class="ruby-string">&quot;outbreak&quot;</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">session</span>.<span class="ruby-identifier">outbreak</span>
-
-        [<span class="ruby-identifier">template</span>, <span class="ruby-identifier">group</span>, <span class="ruby-identifier">style</span>].<span class="ruby-identifier">compact</span>.<span class="ruby-identifier">join</span>(<span class="ruby-string">&quot;_&quot;</span>).<span class="ruby-identifier">to_sym</span>
-      <span class="ruby-keyword">else</span>
-        <span class="ruby-identifier">template</span>
-      <span class="ruby-keyword">end</span>
-
-    <span class="ruby-identifier">text_template</span> =
-      <span class="ruby-keyword">if</span> <span class="ruby-identifier">type</span> <span class="ruby-operator">==</span> <span class="ruby-value">:request</span>
-        <span class="ruby-identifier">template</span>
-      <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">is_school</span>
-        <span class="ruby-value">:consent_school_reminder</span>
-      <span class="ruby-keyword">end</span>
+    <span class="ruby-identifier">email_template</span>, <span class="ruby-identifier">sms_template</span> =
+      <span class="ruby-identifier">generate_templates</span>(<span class="ruby-value">programmes:</span>, <span class="ruby-value">patient:</span>, <span class="ruby-value">session:</span>, <span class="ruby-value">type:</span>)
 
     <span class="ruby-identifier">programme_types</span> = <span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:type</span>)
     <span class="ruby-identifier">disease_types</span> = <span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">flat_map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:disease_types</span>).<span class="ruby-identifier">presence</span>
 
     <span class="ruby-identifier">parents</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">parent</span><span class="ruby-operator">|</span>
       <span class="ruby-constant">EmailDeliveryJob</span>.<span class="ruby-identifier">perform_later</span>(
-        <span class="ruby-identifier">mail_template</span>,
+        <span class="ruby-identifier">email_template</span>,
         <span class="ruby-value">disease_types:</span>,
         <span class="ruby-value">parent:</span>,
         <span class="ruby-value">patient:</span>,
@@ -1014,7 +1180,7 @@ fk_rails_...  (session_id =&gt; sessions.id)</pre>
       )
 
       <span class="ruby-constant">SMSDeliveryJob</span>.<span class="ruby-identifier">perform_later</span>(
-        <span class="ruby-identifier">text_template</span>,
+        <span class="ruby-identifier">sms_template</span>,
         <span class="ruby-value">disease_types:</span>,
         <span class="ruby-value">parent:</span>,
         <span class="ruby-value">patient:</span>,
@@ -1023,6 +1189,79 @@ fk_rails_...  (session_id =&gt; sessions.id)</pre>
         <span class="ruby-value">sent_by:</span> <span class="ruby-identifier">current_user</span>
       )
     <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">generate_templates</span>(<span class="ruby-value">programmes:</span>, <span class="ruby-value">patient:</span>, <span class="ruby-value">session:</span>, <span class="ruby-value">type:</span>)
+    <span class="ruby-identifier">is_school</span> = <span class="ruby-identifier">session</span>.<span class="ruby-identifier">location</span>.<span class="ruby-identifier">school?</span>
+    <span class="ruby-identifier">base_template</span> = <span class="ruby-value">:&quot;consent_#{is_school ? &quot;school&quot; : &quot;clinic&quot;}_#{type}&quot;</span>
+
+    <span class="ruby-comment"># We can only handle a single programme group or variant in the template.</span>
+    <span class="ruby-identifier">group</span> = <span class="ruby-constant">ProgrammeGrouper</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">programmes</span>).<span class="ruby-identifier">keys</span>.<span class="ruby-identifier">sole</span>
+    <span class="ruby-identifier">variant</span> =
+      <span class="ruby-keyword">if</span> <span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">count</span> <span class="ruby-operator">==</span> <span class="ruby-value">1</span>
+        <span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">sole</span>.<span class="ruby-identifier">variant_for</span>(<span class="ruby-value">patient:</span>).<span class="ruby-identifier">variant_type</span>
+      <span class="ruby-keyword">end</span>
+
+    <span class="ruby-identifier">email_template</span> =
+      <span class="ruby-keyword">if</span> <span class="ruby-identifier">is_school</span>
+        <span class="ruby-identifier">template</span> =
+          <span class="ruby-identifier">resolve_template</span>(
+            <span class="ruby-value">base_template:</span>,
+            <span class="ruby-value">group:</span>,
+            <span class="ruby-value">variant:</span>,
+            <span class="ruby-value">session:</span>,
+            <span class="ruby-value">channel:</span> <span class="ruby-value">:email</span>
+          )
+        <span class="ruby-keyword">if</span> <span class="ruby-identifier">template</span>.<span class="ruby-identifier">blank?</span>
+          <span class="ruby-identifier">raise</span>(
+            <span class="ruby-node">&quot;Missing email template for consent notification: #{base_template} &quot;</span> \
+              <span class="ruby-node">&quot;with group=#{group.inspect} variant=#{variant.inspect} &quot;</span> \
+              <span class="ruby-node">&quot;outbreak=#{is_outbreak.inspect}&quot;</span>
+          )
+        <span class="ruby-keyword">end</span>
+        <span class="ruby-identifier">template</span>
+      <span class="ruby-keyword">else</span>
+        <span class="ruby-identifier">base_template</span>
+      <span class="ruby-keyword">end</span>
+
+    <span class="ruby-identifier">sms_template</span> =
+      <span class="ruby-keyword">if</span> <span class="ruby-identifier">type</span> <span class="ruby-operator">==</span> <span class="ruby-value">:request</span>
+        <span class="ruby-identifier">template</span> =
+          <span class="ruby-identifier">resolve_template</span>(
+            <span class="ruby-value">base_template:</span>,
+            <span class="ruby-value">group:</span>,
+            <span class="ruby-value">variant:</span>,
+            <span class="ruby-value">session:</span>,
+            <span class="ruby-value">channel:</span> <span class="ruby-value">:sms</span>
+          )
+        <span class="ruby-identifier">template</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">base_template</span>
+      <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">is_school</span>
+        <span class="ruby-value">:consent_school_reminder</span>
+      <span class="ruby-keyword">end</span>
+
+    [<span class="ruby-identifier">email_template</span>, <span class="ruby-identifier">sms_template</span>]
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">resolve_template</span>(
+    <span class="ruby-value">base_template:</span>,
+    <span class="ruby-value">group:</span>,
+    <span class="ruby-value">variant:</span>,
+    <span class="ruby-value">session:</span>,
+    <span class="ruby-value">channel:</span>
+  )
+    <span class="ruby-identifier">renderer</span> = <span class="ruby-constant">NotifyTemplateRenderer</span>.<span class="ruby-identifier">for</span>(<span class="ruby-identifier">channel</span>)
+    <span class="ruby-identifier">is_outbreak</span> = <span class="ruby-identifier">session</span>.<span class="ruby-identifier">outbreak</span>
+
+    <span class="ruby-identifier">combinations</span> = [([<span class="ruby-identifier">group</span>, <span class="ruby-value">:outbreak</span>] <span class="ruby-keyword">if</span> <span class="ruby-identifier">is_outbreak</span>), [<span class="ruby-identifier">group</span>]]
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">variant</span>.<span class="ruby-identifier">present?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">variant</span> <span class="ruby-operator">!=</span> <span class="ruby-identifier">group</span>
+      <span class="ruby-identifier">combinations</span>.<span class="ruby-identifier">prepend</span>(([<span class="ruby-identifier">variant</span>, <span class="ruby-value">:outbreak</span>] <span class="ruby-keyword">if</span> <span class="ruby-identifier">is_outbreak</span>), [<span class="ruby-identifier">variant</span>])
+    <span class="ruby-keyword">end</span>
+    <span class="ruby-identifier">combinations</span>.<span class="ruby-identifier">compact!</span>
+
+    <span class="ruby-identifier">combinations</span>
+      .<span class="ruby-identifier">lazy</span>
+      .<span class="ruby-identifier">map</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">parts</span><span class="ruby-operator">|</span> <span class="ruby-value">:&quot;#{base_template}_#{parts.join(&quot;_&quot;)}&quot;</span> }
+      .<span class="ruby-identifier">detect</span> { <span class="ruby-identifier">renderer</span>.<span class="ruby-identifier">template_exists?</span>(<span class="ruby-identifier">it</span>, <span class="ruby-value">source:</span> <span class="ruby-value">:any</span>) }
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
@@ -1098,35 +1337,15 @@ fk_rails_...  (session_id =&gt; sessions.id)</pre>
     <span class="ruby-value">sent_by:</span> <span class="ruby-identifier">current_user</span>
   )
 
-  <span class="ruby-identifier">is_school</span> = <span class="ruby-identifier">session</span>.<span class="ruby-identifier">location</span>.<span class="ruby-identifier">school?</span>
-
-  <span class="ruby-identifier">template</span> = <span class="ruby-value">:&quot;consent_#{is_school ? &quot;school&quot; : &quot;clinic&quot;}_#{type}&quot;</span>
-
-  <span class="ruby-identifier">mail_template</span> =
-    <span class="ruby-keyword">if</span> <span class="ruby-identifier">is_school</span>
-      <span class="ruby-identifier">group</span> = <span class="ruby-constant">ProgrammeGrouper</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">programmes</span>).<span class="ruby-identifier">first</span>.<span class="ruby-identifier">first</span>
-      <span class="ruby-identifier">group</span> = <span class="ruby-value">:mmrv</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">group</span> <span class="ruby-operator">==</span> <span class="ruby-value">:mmr</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">eligible_for_mmrv?</span>
-
-      <span class="ruby-identifier">style</span> = <span class="ruby-string">&quot;outbreak&quot;</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">session</span>.<span class="ruby-identifier">outbreak</span>
-
-      [<span class="ruby-identifier">template</span>, <span class="ruby-identifier">group</span>, <span class="ruby-identifier">style</span>].<span class="ruby-identifier">compact</span>.<span class="ruby-identifier">join</span>(<span class="ruby-string">&quot;_&quot;</span>).<span class="ruby-identifier">to_sym</span>
-    <span class="ruby-keyword">else</span>
-      <span class="ruby-identifier">template</span>
-    <span class="ruby-keyword">end</span>
-
-  <span class="ruby-identifier">text_template</span> =
-    <span class="ruby-keyword">if</span> <span class="ruby-identifier">type</span> <span class="ruby-operator">==</span> <span class="ruby-value">:request</span>
-      <span class="ruby-identifier">template</span>
-    <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">is_school</span>
-      <span class="ruby-value">:consent_school_reminder</span>
-    <span class="ruby-keyword">end</span>
+  <span class="ruby-identifier">email_template</span>, <span class="ruby-identifier">sms_template</span> =
+    <span class="ruby-identifier">generate_templates</span>(<span class="ruby-value">programmes:</span>, <span class="ruby-value">patient:</span>, <span class="ruby-value">session:</span>, <span class="ruby-value">type:</span>)
 
   <span class="ruby-identifier">programme_types</span> = <span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:type</span>)
   <span class="ruby-identifier">disease_types</span> = <span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">flat_map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:disease_types</span>).<span class="ruby-identifier">presence</span>
 
   <span class="ruby-identifier">parents</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">parent</span><span class="ruby-operator">|</span>
     <span class="ruby-constant">EmailDeliveryJob</span>.<span class="ruby-identifier">perform_later</span>(
-      <span class="ruby-identifier">mail_template</span>,
+      <span class="ruby-identifier">email_template</span>,
       <span class="ruby-value">disease_types:</span>,
       <span class="ruby-value">parent:</span>,
       <span class="ruby-value">patient:</span>,
@@ -1136,14 +1355,88 @@ fk_rails_...  (session_id =&gt; sessions.id)</pre>
     )
 
     <span class="ruby-constant">SMSDeliveryJob</span>.<span class="ruby-identifier">perform_later</span>(
-      <span class="ruby-identifier">text_template</span>,
+      <span class="ruby-identifier">sms_template</span>,
       <span class="ruby-value">disease_types:</span>,
       <span class="ruby-value">parent:</span>,
       <span class="ruby-value">patient:</span>,
       <span class="ruby-value">programme_types:</span>,
       <span class="ruby-value">session:</span>,
       <span class="ruby-value">sent_by:</span> <span class="ruby-identifier">current_user</span>
-    )</pre>
+    )
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">generate_templates</span>(<span class="ruby-value">programmes:</span>, <span class="ruby-value">patient:</span>, <span class="ruby-value">session:</span>, <span class="ruby-value">type:</span>)
+  <span class="ruby-identifier">is_school</span> = <span class="ruby-identifier">session</span>.<span class="ruby-identifier">location</span>.<span class="ruby-identifier">school?</span>
+  <span class="ruby-identifier">base_template</span> = <span class="ruby-value">:&quot;consent_#{is_school ? &quot;school&quot; : &quot;clinic&quot;}_#{type}&quot;</span>
+
+  <span class="ruby-comment"># We can only handle a single programme group or variant in the template.</span>
+  <span class="ruby-identifier">group</span> = <span class="ruby-constant">ProgrammeGrouper</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">programmes</span>).<span class="ruby-identifier">keys</span>.<span class="ruby-identifier">sole</span>
+  <span class="ruby-identifier">variant</span> =
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">count</span> <span class="ruby-operator">==</span> <span class="ruby-value">1</span>
+      <span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">sole</span>.<span class="ruby-identifier">variant_for</span>(<span class="ruby-value">patient:</span>).<span class="ruby-identifier">variant_type</span>
+    <span class="ruby-keyword">end</span>
+
+  <span class="ruby-identifier">email_template</span> =
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">is_school</span>
+      <span class="ruby-identifier">template</span> =
+        <span class="ruby-identifier">resolve_template</span>(
+          <span class="ruby-value">base_template:</span>,
+          <span class="ruby-value">group:</span>,
+          <span class="ruby-value">variant:</span>,
+          <span class="ruby-value">session:</span>,
+          <span class="ruby-value">channel:</span> <span class="ruby-value">:email</span>
+        )
+      <span class="ruby-keyword">if</span> <span class="ruby-identifier">template</span>.<span class="ruby-identifier">blank?</span>
+        <span class="ruby-identifier">raise</span>(
+          <span class="ruby-node">&quot;Missing email template for consent notification: #{base_template} &quot;</span> \
+            <span class="ruby-node">&quot;with group=#{group.inspect} variant=#{variant.inspect} &quot;</span> \
+            <span class="ruby-node">&quot;outbreak=#{is_outbreak.inspect}&quot;</span>
+        )
+      <span class="ruby-keyword">end</span>
+      <span class="ruby-identifier">template</span>
+    <span class="ruby-keyword">else</span>
+      <span class="ruby-identifier">base_template</span>
+    <span class="ruby-keyword">end</span>
+
+  <span class="ruby-identifier">sms_template</span> =
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">type</span> <span class="ruby-operator">==</span> <span class="ruby-value">:request</span>
+      <span class="ruby-identifier">template</span> =
+        <span class="ruby-identifier">resolve_template</span>(
+          <span class="ruby-value">base_template:</span>,
+          <span class="ruby-value">group:</span>,
+          <span class="ruby-value">variant:</span>,
+          <span class="ruby-value">session:</span>,
+          <span class="ruby-value">channel:</span> <span class="ruby-value">:sms</span>
+        )
+      <span class="ruby-identifier">template</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">base_template</span>
+    <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">is_school</span>
+      <span class="ruby-value">:consent_school_reminder</span>
+    <span class="ruby-keyword">end</span>
+
+  [<span class="ruby-identifier">email_template</span>, <span class="ruby-identifier">sms_template</span>]
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">resolve_template</span>(
+  <span class="ruby-value">base_template:</span>,
+  <span class="ruby-value">group:</span>,
+  <span class="ruby-value">variant:</span>,
+  <span class="ruby-value">session:</span>,
+  <span class="ruby-value">channel:</span>
+)
+  <span class="ruby-identifier">renderer</span> = <span class="ruby-constant">NotifyTemplateRenderer</span>.<span class="ruby-identifier">for</span>(<span class="ruby-identifier">channel</span>)
+  <span class="ruby-identifier">is_outbreak</span> = <span class="ruby-identifier">session</span>.<span class="ruby-identifier">outbreak</span>
+
+  <span class="ruby-identifier">combinations</span> = [([<span class="ruby-identifier">group</span>, <span class="ruby-value">:outbreak</span>] <span class="ruby-keyword">if</span> <span class="ruby-identifier">is_outbreak</span>), [<span class="ruby-identifier">group</span>]]
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">variant</span>.<span class="ruby-identifier">present?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">variant</span> <span class="ruby-operator">!=</span> <span class="ruby-identifier">group</span>
+    <span class="ruby-identifier">combinations</span>.<span class="ruby-identifier">prepend</span>(([<span class="ruby-identifier">variant</span>, <span class="ruby-value">:outbreak</span>] <span class="ruby-keyword">if</span> <span class="ruby-identifier">is_outbreak</span>), [<span class="ruby-identifier">variant</span>])
+  <span class="ruby-keyword">end</span>
+  <span class="ruby-identifier">combinations</span>.<span class="ruby-identifier">compact!</span>
+
+  <span class="ruby-identifier">combinations</span>
+    .<span class="ruby-identifier">lazy</span>
+    .<span class="ruby-identifier">map</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">parts</span><span class="ruby-operator">|</span> <span class="ruby-value">:&quot;#{base_template}_#{parts.join(&quot;_&quot;)}&quot;</span> }
+    .<span class="ruby-identifier">detect</span> { <span class="ruby-identifier">renderer</span>.<span class="ruby-identifier">template_exists?</span>(<span class="ruby-identifier">it</span>, <span class="ruby-value">source:</span> <span class="ruby-value">:any</span></pre>
           </div>
 
 
@@ -1213,35 +1506,15 @@ fk_rails_...  (session_id =&gt; sessions.id)</pre>
     <span class="ruby-value">sent_by:</span> <span class="ruby-identifier">current_user</span>
   )
 
-  <span class="ruby-identifier">is_school</span> = <span class="ruby-identifier">session</span>.<span class="ruby-identifier">location</span>.<span class="ruby-identifier">school?</span>
-
-  <span class="ruby-identifier">template</span> = <span class="ruby-value">:&quot;consent_#{is_school ? &quot;school&quot; : &quot;clinic&quot;}_#{type}&quot;</span>
-
-  <span class="ruby-identifier">mail_template</span> =
-    <span class="ruby-keyword">if</span> <span class="ruby-identifier">is_school</span>
-      <span class="ruby-identifier">group</span> = <span class="ruby-constant">ProgrammeGrouper</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">programmes</span>).<span class="ruby-identifier">first</span>.<span class="ruby-identifier">first</span>
-      <span class="ruby-identifier">group</span> = <span class="ruby-value">:mmrv</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">group</span> <span class="ruby-operator">==</span> <span class="ruby-value">:mmr</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">eligible_for_mmrv?</span>
-
-      <span class="ruby-identifier">style</span> = <span class="ruby-string">&quot;outbreak&quot;</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">session</span>.<span class="ruby-identifier">outbreak</span>
-
-      [<span class="ruby-identifier">template</span>, <span class="ruby-identifier">group</span>, <span class="ruby-identifier">style</span>].<span class="ruby-identifier">compact</span>.<span class="ruby-identifier">join</span>(<span class="ruby-string">&quot;_&quot;</span>).<span class="ruby-identifier">to_sym</span>
-    <span class="ruby-keyword">else</span>
-      <span class="ruby-identifier">template</span>
-    <span class="ruby-keyword">end</span>
-
-  <span class="ruby-identifier">text_template</span> =
-    <span class="ruby-keyword">if</span> <span class="ruby-identifier">type</span> <span class="ruby-operator">==</span> <span class="ruby-value">:request</span>
-      <span class="ruby-identifier">template</span>
-    <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">is_school</span>
-      <span class="ruby-value">:consent_school_reminder</span>
-    <span class="ruby-keyword">end</span>
+  <span class="ruby-identifier">email_template</span>, <span class="ruby-identifier">sms_template</span> =
+    <span class="ruby-identifier">generate_templates</span>(<span class="ruby-value">programmes:</span>, <span class="ruby-value">patient:</span>, <span class="ruby-value">session:</span>, <span class="ruby-value">type:</span>)
 
   <span class="ruby-identifier">programme_types</span> = <span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:type</span>)
   <span class="ruby-identifier">disease_types</span> = <span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">flat_map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:disease_types</span>).<span class="ruby-identifier">presence</span>
 
   <span class="ruby-identifier">parents</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">parent</span><span class="ruby-operator">|</span>
     <span class="ruby-constant">EmailDeliveryJob</span>.<span class="ruby-identifier">perform_later</span>(
-      <span class="ruby-identifier">mail_template</span>,
+      <span class="ruby-identifier">email_template</span>,
       <span class="ruby-value">disease_types:</span>,
       <span class="ruby-value">parent:</span>,
       <span class="ruby-value">patient:</span>,
@@ -1251,7 +1524,7 @@ fk_rails_...  (session_id =&gt; sessions.id)</pre>
     )
 
     <span class="ruby-constant">SMSDeliveryJob</span>.<span class="ruby-identifier">perform_later</span>(
-      <span class="ruby-identifier">text_template</span>,
+      <span class="ruby-identifier">sms_template</span>,
       <span class="ruby-value">disease_types:</span>,
       <span class="ruby-value">parent:</span>,
       <span class="ruby-value">patient:</span>,
@@ -1260,6 +1533,79 @@ fk_rails_...  (session_id =&gt; sessions.id)</pre>
       <span class="ruby-value">sent_by:</span> <span class="ruby-identifier">current_user</span>
     )
   <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">generate_templates</span>(<span class="ruby-value">programmes:</span>, <span class="ruby-value">patient:</span>, <span class="ruby-value">session:</span>, <span class="ruby-value">type:</span>)
+  <span class="ruby-identifier">is_school</span> = <span class="ruby-identifier">session</span>.<span class="ruby-identifier">location</span>.<span class="ruby-identifier">school?</span>
+  <span class="ruby-identifier">base_template</span> = <span class="ruby-value">:&quot;consent_#{is_school ? &quot;school&quot; : &quot;clinic&quot;}_#{type}&quot;</span>
+
+  <span class="ruby-comment"># We can only handle a single programme group or variant in the template.</span>
+  <span class="ruby-identifier">group</span> = <span class="ruby-constant">ProgrammeGrouper</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">programmes</span>).<span class="ruby-identifier">keys</span>.<span class="ruby-identifier">sole</span>
+  <span class="ruby-identifier">variant</span> =
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">count</span> <span class="ruby-operator">==</span> <span class="ruby-value">1</span>
+      <span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">sole</span>.<span class="ruby-identifier">variant_for</span>(<span class="ruby-value">patient:</span>).<span class="ruby-identifier">variant_type</span>
+    <span class="ruby-keyword">end</span>
+
+  <span class="ruby-identifier">email_template</span> =
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">is_school</span>
+      <span class="ruby-identifier">template</span> =
+        <span class="ruby-identifier">resolve_template</span>(
+          <span class="ruby-value">base_template:</span>,
+          <span class="ruby-value">group:</span>,
+          <span class="ruby-value">variant:</span>,
+          <span class="ruby-value">session:</span>,
+          <span class="ruby-value">channel:</span> <span class="ruby-value">:email</span>
+        )
+      <span class="ruby-keyword">if</span> <span class="ruby-identifier">template</span>.<span class="ruby-identifier">blank?</span>
+        <span class="ruby-identifier">raise</span>(
+          <span class="ruby-node">&quot;Missing email template for consent notification: #{base_template} &quot;</span> \
+            <span class="ruby-node">&quot;with group=#{group.inspect} variant=#{variant.inspect} &quot;</span> \
+            <span class="ruby-node">&quot;outbreak=#{is_outbreak.inspect}&quot;</span>
+        )
+      <span class="ruby-keyword">end</span>
+      <span class="ruby-identifier">template</span>
+    <span class="ruby-keyword">else</span>
+      <span class="ruby-identifier">base_template</span>
+    <span class="ruby-keyword">end</span>
+
+  <span class="ruby-identifier">sms_template</span> =
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">type</span> <span class="ruby-operator">==</span> <span class="ruby-value">:request</span>
+      <span class="ruby-identifier">template</span> =
+        <span class="ruby-identifier">resolve_template</span>(
+          <span class="ruby-value">base_template:</span>,
+          <span class="ruby-value">group:</span>,
+          <span class="ruby-value">variant:</span>,
+          <span class="ruby-value">session:</span>,
+          <span class="ruby-value">channel:</span> <span class="ruby-value">:sms</span>
+        )
+      <span class="ruby-identifier">template</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">base_template</span>
+    <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">is_school</span>
+      <span class="ruby-value">:consent_school_reminder</span>
+    <span class="ruby-keyword">end</span>
+
+  [<span class="ruby-identifier">email_template</span>, <span class="ruby-identifier">sms_template</span>]
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">resolve_template</span>(
+  <span class="ruby-value">base_template:</span>,
+  <span class="ruby-value">group:</span>,
+  <span class="ruby-value">variant:</span>,
+  <span class="ruby-value">session:</span>,
+  <span class="ruby-value">channel:</span>
+)
+  <span class="ruby-identifier">renderer</span> = <span class="ruby-constant">NotifyTemplateRenderer</span>.<span class="ruby-identifier">for</span>(<span class="ruby-identifier">channel</span>)
+  <span class="ruby-identifier">is_outbreak</span> = <span class="ruby-identifier">session</span>.<span class="ruby-identifier">outbreak</span>
+
+  <span class="ruby-identifier">combinations</span> = [([<span class="ruby-identifier">group</span>, <span class="ruby-value">:outbreak</span>] <span class="ruby-keyword">if</span> <span class="ruby-identifier">is_outbreak</span>), [<span class="ruby-identifier">group</span>]]
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">variant</span>.<span class="ruby-identifier">present?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">variant</span> <span class="ruby-operator">!=</span> <span class="ruby-identifier">group</span>
+    <span class="ruby-identifier">combinations</span>.<span class="ruby-identifier">prepend</span>(([<span class="ruby-identifier">variant</span>, <span class="ruby-value">:outbreak</span>] <span class="ruby-keyword">if</span> <span class="ruby-identifier">is_outbreak</span>), [<span class="ruby-identifier">variant</span>])
+  <span class="ruby-keyword">end</span>
+  <span class="ruby-identifier">combinations</span>.<span class="ruby-identifier">compact!</span>
+
+  <span class="ruby-identifier">combinations</span>
+    .<span class="ruby-identifier">lazy</span>
+    .<span class="ruby-identifier">map</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">parts</span><span class="ruby-operator">|</span> <span class="ruby-value">:&quot;#{base_template}_#{parts.join(&quot;_&quot;)}&quot;</span> }
+    .<span class="ruby-identifier">detect</span> { <span class="ruby-identifier">renderer</span>.<span class="ruby-identifier">template_exists?</span>(<span class="ruby-identifier">it</span>, <span class="ruby-value">source:</span> <span class="ruby-value">:any</span>) }
 </pre>
           </div>
 
@@ -1332,35 +1678,15 @@ fk_rails_...  (session_id =&gt; sessions.id)</pre>
     <span class="ruby-value">sent_by:</span> <span class="ruby-identifier">current_user</span>
   )
 
-  <span class="ruby-identifier">is_school</span> = <span class="ruby-identifier">session</span>.<span class="ruby-identifier">location</span>.<span class="ruby-identifier">school?</span>
-
-  <span class="ruby-identifier">template</span> = <span class="ruby-value">:&quot;consent_#{is_school ? &quot;school&quot; : &quot;clinic&quot;}_#{type}&quot;</span>
-
-  <span class="ruby-identifier">mail_template</span> =
-    <span class="ruby-keyword">if</span> <span class="ruby-identifier">is_school</span>
-      <span class="ruby-identifier">group</span> = <span class="ruby-constant">ProgrammeGrouper</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">programmes</span>).<span class="ruby-identifier">first</span>.<span class="ruby-identifier">first</span>
-      <span class="ruby-identifier">group</span> = <span class="ruby-value">:mmrv</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">group</span> <span class="ruby-operator">==</span> <span class="ruby-value">:mmr</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">eligible_for_mmrv?</span>
-
-      <span class="ruby-identifier">style</span> = <span class="ruby-string">&quot;outbreak&quot;</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">session</span>.<span class="ruby-identifier">outbreak</span>
-
-      [<span class="ruby-identifier">template</span>, <span class="ruby-identifier">group</span>, <span class="ruby-identifier">style</span>].<span class="ruby-identifier">compact</span>.<span class="ruby-identifier">join</span>(<span class="ruby-string">&quot;_&quot;</span>).<span class="ruby-identifier">to_sym</span>
-    <span class="ruby-keyword">else</span>
-      <span class="ruby-identifier">template</span>
-    <span class="ruby-keyword">end</span>
-
-  <span class="ruby-identifier">text_template</span> =
-    <span class="ruby-keyword">if</span> <span class="ruby-identifier">type</span> <span class="ruby-operator">==</span> <span class="ruby-value">:request</span>
-      <span class="ruby-identifier">template</span>
-    <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">is_school</span>
-      <span class="ruby-value">:consent_school_reminder</span>
-    <span class="ruby-keyword">end</span>
+  <span class="ruby-identifier">email_template</span>, <span class="ruby-identifier">sms_template</span> =
+    <span class="ruby-identifier">generate_templates</span>(<span class="ruby-value">programmes:</span>, <span class="ruby-value">patient:</span>, <span class="ruby-value">session:</span>, <span class="ruby-value">type:</span>)
 
   <span class="ruby-identifier">programme_types</span> = <span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:type</span>)
   <span class="ruby-identifier">disease_types</span> = <span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">flat_map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:disease_types</span>).<span class="ruby-identifier">presence</span>
 
   <span class="ruby-identifier">parents</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">parent</span><span class="ruby-operator">|</span>
     <span class="ruby-constant">EmailDeliveryJob</span>.<span class="ruby-identifier">perform_later</span>(
-      <span class="ruby-identifier">mail_template</span>,
+      <span class="ruby-identifier">email_template</span>,
       <span class="ruby-value">disease_types:</span>,
       <span class="ruby-value">parent:</span>,
       <span class="ruby-value">patient:</span>,
@@ -1370,7 +1696,7 @@ fk_rails_...  (session_id =&gt; sessions.id)</pre>
     )
 
     <span class="ruby-constant">SMSDeliveryJob</span>.<span class="ruby-identifier">perform_later</span>(
-      <span class="ruby-identifier">text_template</span>,
+      <span class="ruby-identifier">sms_template</span>,
       <span class="ruby-value">disease_types:</span>,
       <span class="ruby-value">parent:</span>,
       <span class="ruby-value">patient:</span>,
@@ -1378,7 +1704,80 @@ fk_rails_...  (session_id =&gt; sessions.id)</pre>
       <span class="ruby-value">session:</span>,
       <span class="ruby-value">sent_by:</span> <span class="ruby-identifier">current_user</span>
     )
-  </pre>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">generate_templates</span>(<span class="ruby-value">programmes:</span>, <span class="ruby-value">patient:</span>, <span class="ruby-value">session:</span>, <span class="ruby-value">type:</span>)
+  <span class="ruby-identifier">is_school</span> = <span class="ruby-identifier">session</span>.<span class="ruby-identifier">location</span>.<span class="ruby-identifier">school?</span>
+  <span class="ruby-identifier">base_template</span> = <span class="ruby-value">:&quot;consent_#{is_school ? &quot;school&quot; : &quot;clinic&quot;}_#{type}&quot;</span>
+
+  <span class="ruby-comment"># We can only handle a single programme group or variant in the template.</span>
+  <span class="ruby-identifier">group</span> = <span class="ruby-constant">ProgrammeGrouper</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">programmes</span>).<span class="ruby-identifier">keys</span>.<span class="ruby-identifier">sole</span>
+  <span class="ruby-identifier">variant</span> =
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">count</span> <span class="ruby-operator">==</span> <span class="ruby-value">1</span>
+      <span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">sole</span>.<span class="ruby-identifier">variant_for</span>(<span class="ruby-value">patient:</span>).<span class="ruby-identifier">variant_type</span>
+    <span class="ruby-keyword">end</span>
+
+  <span class="ruby-identifier">email_template</span> =
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">is_school</span>
+      <span class="ruby-identifier">template</span> =
+        <span class="ruby-identifier">resolve_template</span>(
+          <span class="ruby-value">base_template:</span>,
+          <span class="ruby-value">group:</span>,
+          <span class="ruby-value">variant:</span>,
+          <span class="ruby-value">session:</span>,
+          <span class="ruby-value">channel:</span> <span class="ruby-value">:email</span>
+        )
+      <span class="ruby-keyword">if</span> <span class="ruby-identifier">template</span>.<span class="ruby-identifier">blank?</span>
+        <span class="ruby-identifier">raise</span>(
+          <span class="ruby-node">&quot;Missing email template for consent notification: #{base_template} &quot;</span> \
+            <span class="ruby-node">&quot;with group=#{group.inspect} variant=#{variant.inspect} &quot;</span> \
+            <span class="ruby-node">&quot;outbreak=#{is_outbreak.inspect}&quot;</span>
+        )
+      <span class="ruby-keyword">end</span>
+      <span class="ruby-identifier">template</span>
+    <span class="ruby-keyword">else</span>
+      <span class="ruby-identifier">base_template</span>
+    <span class="ruby-keyword">end</span>
+
+  <span class="ruby-identifier">sms_template</span> =
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">type</span> <span class="ruby-operator">==</span> <span class="ruby-value">:request</span>
+      <span class="ruby-identifier">template</span> =
+        <span class="ruby-identifier">resolve_template</span>(
+          <span class="ruby-value">base_template:</span>,
+          <span class="ruby-value">group:</span>,
+          <span class="ruby-value">variant:</span>,
+          <span class="ruby-value">session:</span>,
+          <span class="ruby-value">channel:</span> <span class="ruby-value">:sms</span>
+        )
+      <span class="ruby-identifier">template</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">base_template</span>
+    <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">is_school</span>
+      <span class="ruby-value">:consent_school_reminder</span>
+    <span class="ruby-keyword">end</span>
+
+  [<span class="ruby-identifier">email_template</span>, <span class="ruby-identifier">sms_template</span>]
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">resolve_template</span>(
+  <span class="ruby-value">base_template:</span>,
+  <span class="ruby-value">group:</span>,
+  <span class="ruby-value">variant:</span>,
+  <span class="ruby-value">session:</span>,
+  <span class="ruby-value">channel:</span>
+)
+  <span class="ruby-identifier">renderer</span> = <span class="ruby-constant">NotifyTemplateRenderer</span>.<span class="ruby-identifier">for</span>(<span class="ruby-identifier">channel</span>)
+  <span class="ruby-identifier">is_outbreak</span> = <span class="ruby-identifier">session</span>.<span class="ruby-identifier">outbreak</span>
+
+  <span class="ruby-identifier">combinations</span> = [([<span class="ruby-identifier">group</span>, <span class="ruby-value">:outbreak</span>] <span class="ruby-keyword">if</span> <span class="ruby-identifier">is_outbreak</span>), [<span class="ruby-identifier">group</span>]]
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">variant</span>.<span class="ruby-identifier">present?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">variant</span> <span class="ruby-operator">!=</span> <span class="ruby-identifier">group</span>
+    <span class="ruby-identifier">combinations</span>.<span class="ruby-identifier">prepend</span>(([<span class="ruby-identifier">variant</span>, <span class="ruby-value">:outbreak</span>] <span class="ruby-keyword">if</span> <span class="ruby-identifier">is_outbreak</span>), [<span class="ruby-identifier">variant</span>])
+  <span class="ruby-keyword">end</span>
+  <span class="ruby-identifier">combinations</span>.<span class="ruby-identifier">compact!</span>
+
+  <span class="ruby-identifier">combinations</span>
+    .<span class="ruby-identifier">lazy</span>
+    .<span class="ruby-identifier">map</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">parts</span><span class="ruby-operator">|</span> <span class="ruby-value">:&quot;#{base_template}_#{parts.join(&quot;_&quot;)}&quot;</span> }
+    .<span class="ruby-identifier">detect</span> { <span class="ruby-identifier">renderer</span>.<span class="ruby-identifier">template_exists?</span>(<span class="ruby-identifier">it</span>, <span class="ruby-value">source:</span> <span class="ruby-value">:any</span>) </pre>
           </div>
 
 

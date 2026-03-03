@@ -727,8 +727,18 @@
   )
 <span class="ruby-keyword">end</span>
 
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">template_exists?</span>(<span class="ruby-identifier">template_name</span>)
-  <span class="ruby-identifier">template_path</span>(<span class="ruby-identifier">template_name</span>).<span class="ruby-identifier">exist?</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">template_exists?</span>(<span class="ruby-identifier">template_name</span>, <span class="ruby-value">source:</span> <span class="ruby-value">:local</span>)
+  <span class="ruby-keyword">case</span> <span class="ruby-identifier">source</span>
+  <span class="ruby-keyword">when</span> <span class="ruby-value">:local</span>
+    <span class="ruby-identifier">template_path</span>(<span class="ruby-identifier">template_name</span>).<span class="ruby-identifier">exist?</span>
+  <span class="ruby-keyword">when</span> <span class="ruby-value">:govuk_notify</span>
+    <span class="ruby-identifier">config_hash</span>[<span class="ruby-identifier">template_name</span>.<span class="ruby-identifier">to_sym</span>].<span class="ruby-identifier">present?</span>
+  <span class="ruby-keyword">when</span> <span class="ruby-value">:any</span>
+    <span class="ruby-identifier">template_exists?</span>(<span class="ruby-identifier">template_name</span>, <span class="ruby-value">source:</span> <span class="ruby-value">:local</span>) <span class="ruby-operator">||</span>
+      <span class="ruby-identifier">template_exists?</span>(<span class="ruby-identifier">template_name</span>, <span class="ruby-value">source:</span> <span class="ruby-value">:govuk_notify</span>)
+  <span class="ruby-keyword">else</span>
+    <span class="ruby-identifier">raise</span> <span class="ruby-constant">ArgumentError</span>, <span class="ruby-node">&quot;Unknown template_exists? source: #{source}&quot;</span>
+  <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span>
 
 <span class="ruby-comment"># Resolve template UUID: from frontmatter when local file exists, else from config hash.</span>
@@ -911,7 +921,7 @@
             </details>
           </div>
           <div class="method-source-code" id="config_hash-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/notify_template_renderer.rb, line 95</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/notify_template_renderer.rb, line 105</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">config_hash</span>
   <span class="ruby-keyword">case</span> <span class="ruby-ivar">@channel</span>
   <span class="ruby-keyword">when</span> <span class="ruby-value">:sms</span>
@@ -958,7 +968,7 @@
             </details>
           </div>
           <div class="method-source-code" id="parse_frontmatter-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/notify_template_renderer.rb, line 104</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/notify_template_renderer.rb, line 114</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">parse_frontmatter</span>(<span class="ruby-identifier">content</span>)
   <span class="ruby-keyword">unless</span> <span class="ruby-identifier">content</span>.<span class="ruby-identifier">start_with?</span>(<span class="ruby-constant">TEMPLATE_FRONTMATTER_DELIMITER</span>)
     <span class="ruby-keyword">return</span> {}, <span class="ruby-identifier">content</span>
@@ -1022,8 +1032,18 @@
     )
   <span class="ruby-keyword">end</span>
 
-  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">template_exists?</span>(<span class="ruby-identifier">template_name</span>)
-    <span class="ruby-identifier">template_path</span>(<span class="ruby-identifier">template_name</span>).<span class="ruby-identifier">exist?</span>
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">template_exists?</span>(<span class="ruby-identifier">template_name</span>, <span class="ruby-value">source:</span> <span class="ruby-value">:local</span>)
+    <span class="ruby-keyword">case</span> <span class="ruby-identifier">source</span>
+    <span class="ruby-keyword">when</span> <span class="ruby-value">:local</span>
+      <span class="ruby-identifier">template_path</span>(<span class="ruby-identifier">template_name</span>).<span class="ruby-identifier">exist?</span>
+    <span class="ruby-keyword">when</span> <span class="ruby-value">:govuk_notify</span>
+      <span class="ruby-identifier">config_hash</span>[<span class="ruby-identifier">template_name</span>.<span class="ruby-identifier">to_sym</span>].<span class="ruby-identifier">present?</span>
+    <span class="ruby-keyword">when</span> <span class="ruby-value">:any</span>
+      <span class="ruby-identifier">template_exists?</span>(<span class="ruby-identifier">template_name</span>, <span class="ruby-value">source:</span> <span class="ruby-value">:local</span>) <span class="ruby-operator">||</span>
+        <span class="ruby-identifier">template_exists?</span>(<span class="ruby-identifier">template_name</span>, <span class="ruby-value">source:</span> <span class="ruby-value">:govuk_notify</span>)
+    <span class="ruby-keyword">else</span>
+      <span class="ruby-identifier">raise</span> <span class="ruby-constant">ArgumentError</span>, <span class="ruby-node">&quot;Unknown template_exists? source: #{source}&quot;</span>
+    <span class="ruby-keyword">end</span>
   <span class="ruby-keyword">end</span>
 
   <span class="ruby-comment"># Resolve template UUID: from frontmatter when local file exists, else from config hash.</span>
@@ -1164,8 +1184,18 @@
   )
 <span class="ruby-keyword">end</span>
 
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">template_exists?</span>(<span class="ruby-identifier">template_name</span>)
-  <span class="ruby-identifier">template_path</span>(<span class="ruby-identifier">template_name</span>).<span class="ruby-identifier">exist?</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">template_exists?</span>(<span class="ruby-identifier">template_name</span>, <span class="ruby-value">source:</span> <span class="ruby-value">:local</span>)
+  <span class="ruby-keyword">case</span> <span class="ruby-identifier">source</span>
+  <span class="ruby-keyword">when</span> <span class="ruby-value">:local</span>
+    <span class="ruby-identifier">template_path</span>(<span class="ruby-identifier">template_name</span>).<span class="ruby-identifier">exist?</span>
+  <span class="ruby-keyword">when</span> <span class="ruby-value">:govuk_notify</span>
+    <span class="ruby-identifier">config_hash</span>[<span class="ruby-identifier">template_name</span>.<span class="ruby-identifier">to_sym</span>].<span class="ruby-identifier">present?</span>
+  <span class="ruby-keyword">when</span> <span class="ruby-value">:any</span>
+    <span class="ruby-identifier">template_exists?</span>(<span class="ruby-identifier">template_name</span>, <span class="ruby-value">source:</span> <span class="ruby-value">:local</span>) <span class="ruby-operator">||</span>
+      <span class="ruby-identifier">template_exists?</span>(<span class="ruby-identifier">template_name</span>, <span class="ruby-value">source:</span> <span class="ruby-value">:govuk_notify</span>)
+  <span class="ruby-keyword">else</span>
+    <span class="ruby-identifier">raise</span> <span class="ruby-constant">ArgumentError</span>, <span class="ruby-node">&quot;Unknown template_exists? source: #{source}&quot;</span>
+  <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span>
 
 <span class="ruby-comment"># Resolve template UUID: from frontmatter when local file exists, else from config hash.</span>
@@ -1292,7 +1322,7 @@
             </details>
           </div>
           <div class="method-source-code" id="render-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/notify_template_renderer.rb, line 67</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/notify_template_renderer.rb, line 77</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">render</span>(<span class="ruby-identifier">template_name</span>, <span class="ruby-identifier">personalisation</span>)
   <span class="ruby-identifier">path</span> = <span class="ruby-identifier">template_path</span>(<span class="ruby-identifier">template_name</span>)
   <span class="ruby-identifier">raise</span> <span class="ruby-constant">TemplateNotFound</span>, <span class="ruby-node">&quot;No template at #{path}&quot;</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">path</span>.<span class="ruby-identifier">exist?</span>
@@ -1356,7 +1386,7 @@
             </details>
           </div>
           <div class="method-source-code" id="render_erb-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/notify_template_renderer.rb, line 119</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/notify_template_renderer.rb, line 129</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">render_erb</span>(<span class="ruby-identifier">template_string</span>, <span class="ruby-identifier">context_binding</span>)
   <span class="ruby-constant">ERB</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">template_string</span>, <span class="ruby-value">trim_mode:</span> <span class="ruby-keyword">nil</span>).<span class="ruby-identifier">result</span>(<span class="ruby-identifier">context_binding</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -1385,7 +1415,7 @@
             <div class="method-heading">
               <a href="#method-i-template_exists-3F" title="Link to this method">
                 <span class="method-name">template_exists?</span>
-                <span class="method-args">(template_name)</span>
+                <span class="method-args">(template_name, source: :local)</span>
               </a>
             </div>
 
@@ -1399,8 +1429,18 @@
           </div>
           <div class="method-source-code" id="template_exists-3F-source">
             <pre class="ruby"><span class="ruby-comment"># File app/lib/notify_template_renderer.rb, line 32</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">template_exists?</span>(<span class="ruby-identifier">template_name</span>)
-  <span class="ruby-identifier">template_path</span>(<span class="ruby-identifier">template_name</span>).<span class="ruby-identifier">exist?</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">template_exists?</span>(<span class="ruby-identifier">template_name</span>, <span class="ruby-value">source:</span> <span class="ruby-value">:local</span>)
+  <span class="ruby-keyword">case</span> <span class="ruby-identifier">source</span>
+  <span class="ruby-keyword">when</span> <span class="ruby-value">:local</span>
+    <span class="ruby-identifier">template_path</span>(<span class="ruby-identifier">template_name</span>).<span class="ruby-identifier">exist?</span>
+  <span class="ruby-keyword">when</span> <span class="ruby-value">:govuk_notify</span>
+    <span class="ruby-identifier">config_hash</span>[<span class="ruby-identifier">template_name</span>.<span class="ruby-identifier">to_sym</span>].<span class="ruby-identifier">present?</span>
+  <span class="ruby-keyword">when</span> <span class="ruby-value">:any</span>
+    <span class="ruby-identifier">template_exists?</span>(<span class="ruby-identifier">template_name</span>, <span class="ruby-value">source:</span> <span class="ruby-value">:local</span>) <span class="ruby-operator">||</span>
+      <span class="ruby-identifier">template_exists?</span>(<span class="ruby-identifier">template_name</span>, <span class="ruby-value">source:</span> <span class="ruby-value">:govuk_notify</span>)
+  <span class="ruby-keyword">else</span>
+    <span class="ruby-identifier">raise</span> <span class="ruby-constant">ArgumentError</span>, <span class="ruby-node">&quot;Unknown template_exists? source: #{source}&quot;</span>
+  <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -1440,7 +1480,7 @@
             </details>
           </div>
           <div class="method-source-code" id="template_id_for-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/notify_template_renderer.rb, line 37</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/notify_template_renderer.rb, line 47</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">template_id_for</span>(<span class="ruby-identifier">template_name</span>)
   <span class="ruby-identifier">path</span> = <span class="ruby-identifier">template_path</span>(<span class="ruby-identifier">template_name</span>)
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">path</span>.<span class="ruby-identifier">exist?</span>
@@ -1490,7 +1530,7 @@
             </details>
           </div>
           <div class="method-source-code" id="template_name_for-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/notify_template_renderer.rb, line 50</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/notify_template_renderer.rb, line 60</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">template_name_for</span>(<span class="ruby-identifier">template_id</span>)
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">template_id</span>.<span class="ruby-identifier">blank?</span>
 
