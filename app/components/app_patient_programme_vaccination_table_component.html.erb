@@ -1,3 +1,5 @@
+<%= render programme_status_tag %>
+
 <% if vaccination_records.present? %>
   <%= govuk_table(html_attributes: { class: "nhsuk-table-responsive" }) do |table| %>
     <% table.with_caption(text: "Vaccination records", size: "s") if show_caption %>
@@ -38,6 +40,4 @@
       <% end %>
     <% end %>
   <% end %>
-<% else %>
-  <p class="nhsuk-body">No vaccinations</p>
 <% end %>

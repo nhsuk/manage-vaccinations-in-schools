@@ -12,7 +12,7 @@ describe AppPatientProgrammeVaccinationTableComponent do
   let(:programme) { Programme.hpv }
   let(:show_caption) { false }
 
-  it { should have_content("No vaccinations") }
+  it { should_not have_css(".nhsuk-table") }
 
   context "with a vaccination record" do
     let(:location) do
@@ -43,15 +43,21 @@ describe AppPatientProgrammeVaccinationTableComponent do
       )
     end
 
+    it { should have_css(".nhsuk-tag", text: "Not eligible") }
     it { should have_css(".nhsuk-table__header", text: "Vaccination date") }
     it { should have_css(".nhsuk-table__header", text: "Age") }
     it { should have_css(".nhsuk-table__header", text: "Programme") }
     it { should have_css(".nhsuk-table__header", text: "Source") }
 
     it { should have_link("1 January 2024") }
-    it { should have_content("#{patient.age_years(now: performed_at)} years") }
-    it { should have_content("HPV") }
-    it { should have_content("Recorded in Mavis") }
+    it do
+      should have_css(
+               ".nhsuk-table",
+               text: "#{patient.age_years(now: performed_at)} years"
+             )
+    end
+    it { should have_css(".nhsuk-table", text: "HPV") }
+    it { should have_css(".nhsuk-table", text: "Recorded in Mavis") }
 
     context "with a vaccination record from a different programme" do
       let(:programme) { Programme.hpv }
@@ -59,10 +65,13 @@ describe AppPatientProgrammeVaccinationTableComponent do
 
       it { should_not have_link("1 January 2024") }
       it do
-        should_not have_content("#{patient.age_years(now: performed_at)} years")
+        should_not have_css(
+                     ".nhsuk-table",
+                     text: "#{patient.age_years(now: performed_at)} years"
+                   )
       end
-      it { should_not have_content("HPV") }
-      it { should_not have_content("Recorded in Mavis") }
+      it { should_not have_css(".nhsuk-table", text: "HPV") }
+      it { should_not have_css(".nhsuk-table", text: "Recorded in Mavis") }
     end
 
     context "with a Flu vaccination record from a previous year" do
@@ -72,10 +81,13 @@ describe AppPatientProgrammeVaccinationTableComponent do
 
       it { should_not have_link("1 January 2022") }
       it do
-        should_not have_content("#{patient.age_years(now: performed_at)} years")
+        should_not have_css(
+                     ".nhsuk-table",
+                     text: "#{patient.age_years(now: performed_at)} years"
+                   )
       end
-      it { should_not have_content("Flu") }
-      it { should_not have_content("Recorded in Mavis") }
+      it { should_not have_css(".nhsuk-table", text: "Flu") }
+      it { should_not have_css(".nhsuk-table", text: "Recorded in Mavis") }
     end
   end
 end

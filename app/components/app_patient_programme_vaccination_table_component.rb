@@ -25,6 +25,19 @@ class AppPatientProgrammeVaccinationTableComponent < ViewComponent::Base
 
   def formatted_age_when(vaccination_record)
     age = patient.age_years(now: vaccination_record.performed_at)
-    "#{age} #{pluralize(age, "year")}"
+    pluralize(age, "year")
+  end
+
+  def programme_status_tag
+    resolved_status =
+      PatientProgrammeStatusResolver.call(
+        patient,
+        programme_type: programme.type,
+        academic_year: AcademicYear.current
+      )
+
+    AppAttachedTagsComponent.new(
+      resolved_status.fetch(:prefix) => resolved_status
+    )
   end
 end
