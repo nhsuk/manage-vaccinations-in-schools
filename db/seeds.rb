@@ -373,10 +373,6 @@ def create_upload_patients_and_vaccination_records(user)
   end
 end
 
-# TODO: Once `PatientTeam` has been refactored to avoid callbacks we can
-#  remove this line.
-PatientTeam.skip_generate_important_notices = true
-
 unless Settings.cis2.enabled
   # Don't create Nurse Joy's team on a CIS2 env, because password authentication
   # is not available and password= fails to run.

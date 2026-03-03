@@ -23,8 +23,6 @@
 class PatientTeam < ApplicationRecord
   extend ArrayEnum
 
-  cattr_accessor :skip_generate_important_notices
-
   self.primary_key = %i[team_id patient_id]
 
   belongs_to :patient
@@ -66,9 +64,6 @@ class PatientTeam < ApplicationRecord
                vaccination_record_import: 6
              }
 
-  after_create_commit :generate_important_notices,
-                      unless: :skip_generate_important_notices
-
   def add_source!(source)
     update!(sources: Array(sources) | [source.to_s])
   end
@@ -76,11 +71,5 @@ class PatientTeam < ApplicationRecord
   def remove_source!(source)
     self.sources = sources.reject { it == source.to_s }
     sources.empty? ? delete : save!
-  end
-
-  private
-
-  def generate_important_notices
-    ImportantNoticeGeneratorJob.perform_later([patient_id])
   end
 end
