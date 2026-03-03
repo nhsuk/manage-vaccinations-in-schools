@@ -33,6 +33,9 @@ class PatientsController < ApplicationController
   end
 
   def log
+    # This action and the corresponding view can be deleted when the
+    # `child_record_redesign` feature flag is removed.
+    render status: :not_found if Flipper.enabled?(:child_record_redesign)
   end
 
   def edit

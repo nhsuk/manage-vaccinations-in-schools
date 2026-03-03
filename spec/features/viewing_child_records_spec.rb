@@ -22,11 +22,13 @@ describe "View children" do
     then_i_see_the_childs_flu_vaccinations
     and_i_see_the_childs_flu_sessions
     and_the_flu_tab_is_selected
+    and_i_see_the_activity_log_for_flu
 
     when_i_click_on_the_hpv_tab
     then_i_see_the_childs_hpv_vaccinations
     and_i_see_the_childs_hpv_sessions
     and_the_hpv_tab_is_selected
+    and_i_see_the_activity_log_for_hpv
   end
 
   def given_that_the_child_record_redesign_feature_flag_is_enabled
@@ -88,13 +90,14 @@ describe "View children" do
   end
 
   def and_the_patient_is_vaccinated
-    create(
-      :vaccination_record,
-      outcome: :administered,
-      patient: @patient,
-      programme: @hpv,
-      session: @session
-    )
+    @vaccination_record =
+      create(
+        :vaccination_record,
+        outcome: :administered,
+        patient: @patient,
+        programme: @hpv,
+        session: @session
+      )
   end
 
   def when_i_click_on_children
@@ -179,6 +182,22 @@ describe "View children" do
       )
       expect(page).to have_content(@session.dates.first.to_fs(:long))
       expect(page).to have_content("Vaccinated")
+    end
+  end
+
+  def and_i_see_the_activity_log_for_flu
+    within(".nhsuk-card", text: "Programme activity") do
+      expect(page).to have_content(
+        "Added to the session at #{@session.location.name}"
+      )
+    end
+  end
+
+  def and_i_see_the_activity_log_for_hpv
+    within(".nhsuk-card", text: "Programme activity") do
+      expect(page).to have_content(
+        "Vaccinated with #{@vaccination_record.vaccine.brand}"
+      )
     end
   end
 end

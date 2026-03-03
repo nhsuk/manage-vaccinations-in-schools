@@ -16,6 +16,7 @@ class AppPatientNavigationComponent < ViewComponent::Base
         text: "Child record",
         selected: active == :show
       )
+
       if Flipper.enabled?(:child_record_redesign)
         @programmes.flat_map do |programme|
           nav.with_item(
@@ -25,11 +26,14 @@ class AppPatientNavigationComponent < ViewComponent::Base
           )
         end
       end
-      nav.with_item(
-        href: log_patient_path(patient),
-        text: "Activity log",
-        selected: active == :log
-      )
+
+      unless Flipper.enabled?(:child_record_redesign)
+        nav.with_item(
+          href: log_patient_path(patient),
+          text: "Activity log",
+          selected: active == :log
+        )
+      end
     end
   end
 
