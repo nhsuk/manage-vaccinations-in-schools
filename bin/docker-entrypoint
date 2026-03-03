@@ -16,6 +16,12 @@ done
 if [ "$1" == "./bin/docker-start" ]; then
   ./bin/rails db:prepare:ignore_concurrent_migration_exceptions
   ./bin/rails feature_flags:seed
+
+  # To support running end to end tests on PRs that require feature flags to
+  #  be enabled that aren't currently enabled in the base branch.
+  if [ "$RAILS_ENV" == "development" ]; then
+    ./bin/rails feature_flags:enable_for_development
+  fi
 fi
 
 exec "${@}"
