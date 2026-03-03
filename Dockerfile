@@ -16,6 +16,8 @@ RUN apt-get update -qq && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
 # Set production environment
+ARG RAILS_ENV
+ARG BUNDLE_WITHOUT
 ENV RAILS_ENV="$RAILS_ENV" \
     NODE_ENV="production" \
     BUNDLE_WITHOUT="$BUNDLE_WITHOUT" \
