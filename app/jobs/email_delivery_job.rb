@@ -43,23 +43,24 @@ class EmailDeliveryJob < NotifyDeliveryJob
     return if email_address.nil?
 
     email_renderer = NotifyTemplateRenderer.for(:email)
-    template_id, personalisation_hash =
+    api_template_id, personalisation_hash, log_template_id =
       if use_local_template?(template_name_sym)
         rendered = email_renderer.render(template_name_sym, personalisation)
         [
           email_renderer.passthrough_template_id,
-          { subject: rendered[:subject], body: rendered[:body] }
+          { subject: rendered[:subject], body: rendered[:body] },
+          email_renderer.template_id_for(template_name_sym)
         ]
       else
         tid = email_renderer.template_id_for(template_name_sym)
         raise UnknownTemplate if tid.nil?
-        [tid, personalisation.to_h]
+        [tid, personalisation.to_h, tid]
       end
 
     args = {
       email_address:,
       personalisation: personalisation_hash,
-      template_id:
+      template_id: api_template_id
     }
 
     if (
@@ -87,7 +88,7 @@ class EmailDeliveryJob < NotifyDeliveryJob
         self.class.deliveries << args
         SecureRandom.uuid
       else
-        Rails.logger.info "Sending email to #{email_address} with template #{template_id}"
+        Rails.logger.info "Sending email to #{email_address} with template #{api_template_id}"
         nil
       end
 
@@ -98,7 +99,7 @@ class EmailDeliveryJob < NotifyDeliveryJob
       patient: personalisation.patient,
       recipient: email_address,
       sent_by:,
-      template_id:,
+      template_id: log_template_id,
       type: :email,
       notify_log_entry_programmes_attributes:
         personalisation.programmes.map do

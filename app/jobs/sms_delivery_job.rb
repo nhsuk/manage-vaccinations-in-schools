@@ -44,20 +44,24 @@ class SMSDeliveryJob < NotifyDeliveryJob
     return if phone_number.nil?
 
     sms_renderer = NotifyTemplateRenderer.for(:sms)
-    template_id, personalisation_hash =
+    api_template_id, personalisation_hash, log_template_id =
       if use_local_template?(template_name_sym)
         rendered = sms_renderer.render(template_name_sym, personalisation)
-        [sms_renderer.passthrough_template_id, { body: rendered[:body] }]
+        [
+          sms_renderer.passthrough_template_id,
+          { body: rendered[:body] },
+          sms_renderer.template_id_for(template_name_sym)
+        ]
       else
         tid = sms_renderer.template_id_for(template_name_sym)
         raise UnknownTemplate if tid.nil?
-        [tid, personalisation.to_h]
+        [tid, personalisation.to_h, tid]
       end
 
     args = {
       personalisation: personalisation_hash,
       phone_number:,
-      template_id:
+      template_id: api_template_id
     }
 
     delivery_id, delivery_status =
@@ -80,7 +84,7 @@ class SMSDeliveryJob < NotifyDeliveryJob
         self.class.deliveries << args
         [SecureRandom.uuid, "delivered"]
       else
-        Rails.logger.info "Sending SMS to #{phone_number} with template #{template_id}"
+        Rails.logger.info "Sending SMS to #{phone_number} with template #{api_template_id}"
         [nil, "delivered"]
       end
 
@@ -92,7 +96,7 @@ class SMSDeliveryJob < NotifyDeliveryJob
       patient: personalisation.patient,
       recipient: phone_number,
       sent_by:,
-      template_id:,
+      template_id: log_template_id,
       type: :sms,
       notify_log_entry_programmes_attributes:
         personalisation.programmes.map do
