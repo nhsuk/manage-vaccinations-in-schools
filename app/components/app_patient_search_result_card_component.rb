@@ -35,50 +35,7 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
   def call
     render AppCardComponent.new(link_to:, compact: true) do |card|
       card.with_heading(level: 4) { patient.full_name_with_known_as }
-
-      govuk_summary_list(actions: false) do |summary_list|
-        if show_nhs_number
-          summary_list.with_row do |row|
-            row.with_key { "NHS number" }
-            row.with_value { patient_nhs_number(patient) }
-          end
-        end
-        summary_list.with_row do |row|
-          row.with_key { "Date of birth" }
-          row.with_value { patient_date_of_birth(patient) }
-        end
-        if show_year_group
-          summary_list.with_row do |row|
-            row.with_key { "Year group" }
-            row.with_value { patient_year_group(patient, academic_year:) }
-          end
-        end
-        if show_postcode && !patient.restricted?
-          summary_list.with_row do |row|
-            row.with_key { "Postcode" }
-            row.with_value { patient.address_postcode }
-          end
-        end
-        if show_school
-          summary_list.with_row do |row|
-            row.with_key { "School" }
-            row.with_value { patient_school(patient) }
-          end
-        end
-        if show_parents && patient.parent_relationships.any?
-          summary_list.with_row do |row|
-            row.with_key { "Parents or guardians" }
-            row.with_value { patient_parents(patient) }
-          end
-        end
-        if show_programme_status && academic_year &&
-             (value = programme_status_tag)
-          summary_list.with_row do |row|
-            row.with_key { "Programme status" }
-            row.with_value { value }
-          end
-        end
-      end
+      govuk_summary_list(rows:)
     end
   end
 
@@ -106,7 +63,83 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
            :patient_year_group,
            to: :helpers
 
-  def programme_status_tag
+  def rows
+    [
+      nhs_number_row,
+      date_of_birth_row,
+      year_group_row,
+      postcode_row,
+      school_row,
+      parents_row,
+      programme_status_row
+    ].compact
+  end
+
+  def nhs_number_row
+    return unless show_nhs_number
+
+    {
+      key: {
+        text: "NHS number"
+      },
+      value: {
+        text: patient_nhs_number(patient)
+      }
+    }
+  end
+
+  def date_of_birth_row
+    {
+      key: {
+        text: "Date of birth"
+      },
+      value: {
+        text: patient_date_of_birth(patient)
+      }
+    }
+  end
+
+  def year_group_row
+    return unless show_year_group
+
+    {
+      key: {
+        text: "Year group"
+      },
+      value: {
+        text: patient_year_group(patient, academic_year:)
+      }
+    }
+  end
+
+  def postcode_row
+    return unless show_postcode && !patient.restricted?
+
+    { key: { text: "Postcode" }, value: { text: patient.address_postcode } }
+  end
+
+  def school_row
+    return unless show_school
+
+    { key: { text: "School" }, value: { text: patient_school(patient) } }
+  end
+
+  def parents_row
+    return unless show_parents && patient.parent_relationships.any?
+
+    {
+      key: {
+        text: "Parents or guardians"
+      },
+      value: {
+        text: patient_parents(patient)
+      }
+    }
+  end
+
+  def programme_status_row
+    return unless show_programme_status && academic_year
+
     status_by_programme =
       programmes.each_with_object({}) do |programme, hash|
         resolved_status =
@@ -124,6 +157,13 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
 
     return if status_by_programme.empty?
 
-    render AppAttachedTagsComponent.new(status_by_programme)
+    {
+      key: {
+        text: "Programme status"
+      },
+      value: {
+        text: render(AppAttachedTagsComponent.new(status_by_programme))
+      }
+    }
   end
 end
