@@ -51,6 +51,8 @@ class DraftVaccinationRecordsController < ApplicationController
       handle_location
     when :batch
       handle_batch
+    when :dose_sequence
+      handle_dose_sequence
     when :mmr_or_mmrv
       handle_mmr_or_mmrv
     when :confirm
@@ -134,6 +136,10 @@ class DraftVaccinationRecordsController < ApplicationController
          )
       self.todays_batch = policy_scope(Batch).find(update_params[:batch_id])
     end
+  end
+
+  def handle_dose_sequence
+    jump_to("confirm")
   end
 
   def handle_mmr_or_mmrv

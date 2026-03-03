@@ -95,7 +95,7 @@ class ImmunisationImportRow
   SCHOOL_URN_HOME_EDUCATED = "999999"
   SCHOOL_URN_UNKNOWN = "888888"
 
-  attr_reader :team, :type
+  attr_reader :team, :type, :patient
 
   def initialize(data:, team:, type:)
     @data = data
@@ -117,7 +117,7 @@ class ImmunisationImportRow
   end
 
   def to_vaccination_record
-    return if invalid? || national_reporting_not_administered?
+    return if invalid? || national_reporting_not_administered? || patient.nil?
 
     outcome = (administered ? "administered" : reason_not_administered_value)
     source =
@@ -136,11 +136,11 @@ class ImmunisationImportRow
       dose_sequence: dose_sequence_value,
       full_dose: true,
       outcome:,
-      patient_id: patient.id,
+      patient:,
       performed_at_date:,
       performed_by_user:,
       performed_ods_code: performed_ods_code&.to_s,
-      programme_type: programme.type,
+      programme_type: programme&.type,
       protocol:,
       session:,
       supplied_by:
@@ -237,6 +237,12 @@ class ImmunisationImportRow
     unless patient&.teams&.include?(team)
       ArchiveReason.new(patient:, team:, type: :immunisation_import)
     end
+  end
+
+  def set_patient(candidates: nil)
+    @patient =
+      existing_patients(candidates:)&.first ||
+        Patient.new(new_patient_attributes)
   end
 
   def batch_expiry = @data[:batch_expiry_date]
@@ -352,13 +358,6 @@ class ImmunisationImportRow
       end
   end
 
-  def patient
-    @patient ||=
-      if valid?
-        existing_patients.first || Patient.create!(new_patient_attributes)
-      end
-  end
-
   def school
     @school ||=
       if school_urn.present? && school_urn.to_s != SCHOOL_URN_HOME_EDUCATED &&
@@ -464,7 +463,7 @@ class ImmunisationImportRow
 
   def must_be_current_academic_year? = programme&.flu? || national_reporting?
 
-  def dose_sequence_determined_automatically? = programme.doubles?
+  def dose_sequence_determined_automatically? = programme.menacwy?
 
   def dose_sequence_required? =
     administered &&
@@ -475,13 +474,29 @@ class ImmunisationImportRow
 
   def academic_year = date_of_vaccination.to_date.academic_year
 
-  def existing_patients
+  def existing_patients(candidates: nil)
     if patient_first_name.blank? || patient_last_name.blank? ||
          patient_date_of_birth.nil?
       return
     end
 
-    Patient.match_existing(
+    database_matches =
+      PatientMatcher.from_relation(
+        Patient,
+        nhs_number: patient_nhs_number_value,
+        given_name: patient_first_name.to_s,
+        family_name: patient_last_name.to_s,
+        date_of_birth: patient_date_of_birth.to_date,
+        address_postcode: patient_postcode&.to_postcode,
+        include_3_out_of_4_matches: false
+      )
+
+    return database_matches if database_matches.present?
+
+    return if candidates.blank?
+
+    PatientMatcher.from_enumerable(
+      candidates,
       nhs_number: patient_nhs_number_value,
       given_name: patient_first_name.to_s,
       family_name: patient_last_name.to_s,
@@ -494,8 +509,8 @@ class ImmunisationImportRow
   def new_patient_attributes
     {
       address_postcode: patient_postcode&.to_postcode,
-      date_of_birth: patient_date_of_birth.to_date,
-      birth_academic_year: patient_date_of_birth.to_date.academic_year,
+      date_of_birth: patient_date_of_birth&.to_date,
+      birth_academic_year: patient_date_of_birth&.to_date&.academic_year,
       family_name: patient_last_name.to_s,
       given_name: patient_first_name.to_s,
       gender_code: patient_gender_code_value,
@@ -820,7 +835,7 @@ class ImmunisationImportRow
       else
         errors.add(
           field.header,
-          "Enter a dose sequence number, for example, 1, 2 or 3. The dose sequence number cannot be greater than 3."
+          "Enter a dose sequence number, for example, 1, 2 or 3. The dose sequence number cannot be greater than 6."
         )
       end
     end
@@ -830,7 +845,7 @@ class ImmunisationImportRow
     if existing_patients && existing_patients.length > 1
       errors.add(
         :base,
-        "Two or more possible patients match the patient first name, last name, date of birth or postcode."
+        "Two or more possible patients match the patient first name, last name, date of birth and postcode."
       )
     end
   end

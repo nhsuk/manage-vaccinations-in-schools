@@ -322,6 +322,12 @@ class DraftConsent
     super(consent)
 
     consent.parent = parent
+    consent.parent_full_name = parent_full_name
+    consent.parent_email = parent_email
+    consent.parent_phone = parent_phone
+    consent.parent_phone_receive_updates = parent_phone_receive_updates
+    consent.parent_relationship_type = parent_relationship_type
+    consent.parent_relationship_other_name = parent_relationship_other_name
     consent.submitted_at ||= Time.current
     consent.academic_year = academic_year if academic_year.present?
 

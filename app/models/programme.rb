@@ -31,7 +31,7 @@ class Programme
     "hpv" => 3,
     "menacwy" => 3,
     "mmr" => 2,
-    "td_ipv" => 5
+    "td_ipv" => 6
   }.freeze
 
   IMPORT_NAMES = {
@@ -236,6 +236,8 @@ class Programme
   def snomed_target_disease_name = SNOMED_TARGET_DISEASE_NAMES.fetch(type)
 
   delegate :fhir_target_disease_coding, to: :fhir_mapper
+
+  def supports_outbreak? = mmr?
 
   private
 

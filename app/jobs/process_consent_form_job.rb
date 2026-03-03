@@ -94,21 +94,26 @@ class ProcessConsentFormJob < ApplicationJob
 
   def location_patients
     @location_patients ||=
-      Patient
-        .joins(:patient_locations)
-        .where(
-          patient_locations: {
-            location: @consent_form.location,
-            academic_year: @consent_form.academic_year
-          }
-        )
-        .includes(:school, :parents)
-        .match_existing(nhs_number: nil, **query)
+      begin
+        scope =
+          Patient
+            .joins(:patient_locations)
+            .where(
+              patient_locations: {
+                location: @consent_form.location,
+                academic_year: @consent_form.academic_year
+              }
+            )
+            .includes(:school, :parents)
+
+        PatientMatcher.from_relation(scope, nhs_number: nil, **query)
+      end
   end
 
   def matching_patients
     @matching_patients ||=
-      Patient.includes(:school, :parents).match_existing(
+      PatientMatcher.from_relation(
+        Patient.includes(:school, :parents),
         nhs_number: nil,
         **query
       )

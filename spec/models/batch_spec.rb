@@ -24,11 +24,13 @@
 #  fk_rails_...  (vaccine_id => vaccines.id)
 #
 describe Batch do
-  subject(:batch) { build(:batch) }
+  subject(:batch) { build(:batch, vaccine:) }
+
+  let(:vaccine) { Vaccine.all.sample }
 
   describe "scopes" do
-    let(:archived_batch) { create(:batch, :archived) }
-    let(:not_archived_batch) { create(:batch) }
+    let(:archived_batch) { create(:batch, :archived, vaccine:) }
+    let(:not_archived_batch) { create(:batch, vaccine:) }
 
     describe "#archived" do
       subject(:scope) { described_class.archived }
@@ -79,7 +81,7 @@ describe Batch do
     end
 
     context "when already archived" do
-      let(:batch) { create(:batch, :archived) }
+      let(:batch) { create(:batch, :archived, vaccine:) }
 
       it "doesn't change archived_at" do
         expect { archive! }.not_to change(batch, :archived_at)

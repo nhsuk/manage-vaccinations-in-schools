@@ -96,7 +96,124 @@ describe AppConsentSummaryComponent do
       end
 
       it { should have_content("ResponseConsent given") }
-      it { should have_content("Chosen vaccineNo preference") }
+
+      it do
+        expect(rendered).to have_content(
+          "Chosen vaccineNasal spray or injected vaccine"
+        )
+      end
+    end
+
+    context "when refused" do
+      let(:consent) { create(:consent, :refused, programme:) }
+
+      it { should_not have_content("Chosen vaccine") }
+    end
+
+    context "when no response" do
+      let(:consent) { create(:consent, :not_provided, programme:) }
+
+      it { should_not have_content("Chosen vaccine") }
+    end
+  end
+
+  context "when refused for flu due to gelatine" do
+    let(:programme) { Programme.flu }
+    let(:consent) do
+      create(
+        :consent,
+        :refused,
+        programme:,
+        reason_for_refusal: "contains_gelatine"
+      )
+    end
+
+    it "shows the flu-specific gelatine copy" do
+      expect(rendered).to have_content(
+        "Reason for refusalNasal vaccine contains gelatine"
+      )
+    end
+  end
+
+  context "when refused for MMR due to gelatine" do
+    let(:programme) do
+      Programme::Variant.new(Programme.mmr, variant_type: "mmr")
+    end
+    let(:consent) do
+      create(
+        :consent,
+        :refused,
+        programme:,
+        reason_for_refusal: "contains_gelatine"
+      )
+    end
+
+    it "shows the MMR-specific gelatine copy" do
+      expect(rendered).to have_content(
+        "Do not want my child to have the MMR vaccine that contains gelatine"
+      )
+    end
+  end
+
+  context "with the MMR programme" do
+    let(:programme) { Programme.mmr }
+    let(:consent) do
+      create(:consent, programme:, vaccine_methods: %w[injection])
+    end
+
+    it do
+      expect(rendered).to have_content(
+        "Gelatine-free injected vaccine or injected vaccine"
+      )
+    end
+  end
+
+  context "when showing email and phone" do
+    let(:parent) do
+      create(:parent, email: "parent@example.com", phone: "07700900123")
+    end
+    let(:consent) do
+      create(
+        :consent,
+        parent:,
+        parent_email: "stored@example.com",
+        parent_phone: "07700900456"
+      )
+    end
+    let(:component) do
+      described_class.new(
+        consent,
+        show_email_address: true,
+        show_phone_number: true
+      )
+    end
+
+    it "uses stored parent details" do
+      expect(rendered).to have_content("stored@example.com")
+      expect(rendered).to have_content("07700 900456")
+      expect(rendered).not_to have_content("parent@example.com")
+      expect(rendered).not_to have_content("07700 900123")
+    end
+  end
+
+  context "when showing email and phone without stored details (legacy consent)" do
+    let(:parent) do
+      create(:parent, email: "parent@example.com", phone: "07700900123")
+    end
+    let(:consent) do
+      create(:consent, parent:, parent_email: nil, parent_phone: nil)
+    end
+    let(:component) do
+      described_class.new(
+        consent,
+        show_email_address: true,
+        show_phone_number: true
+      )
+    end
+
+    it "falls back to parent object details" do
+      expect(rendered).to have_content("parent@example.com")
+      expect(rendered).to have_content("07700 900123")
     end
   end
 end

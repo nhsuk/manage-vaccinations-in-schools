@@ -8,7 +8,6 @@ GOVUK_NOTIFY_EMAIL_TEMPLATES = {
   clinic_subsequent_invitation_ryg: "eee59c1b-3af4-4ccd-8653-940887066390",
   consent_clinic_request: "14e88a09-4281-4257-9574-6afeaeb42715",
   consent_confirmation_clinic: "1d050527-9a6c-4513-86d4-6955b98ac7d9",
-  consent_confirmation_given: "c6c8dbfc-b429-4468-bd0b-176e771b5a8e",
   consent_confirmation_refused: "5a676dac-3385-49e4-98c2-fc6b45b5a851",
   consent_confirmation_triage: "35d621db-957b-4afb-9143-3e32398d2b87",
   consent_school_initial_reminder_doubles:
@@ -21,7 +20,9 @@ GOVUK_NOTIFY_EMAIL_TEMPLATES = {
   consent_school_request_flu: "017853bc-2b35-4aff-99b1-193e514613a0",
   consent_school_request_hpv: "7b9bb010-0742-460a-ae25-1922355b6776",
   consent_school_request_mmr: "7e86e688-ceca-4dcc-a1cf-19cb559d38a8",
+  consent_school_request_mmr_outbreak: "517b02ee-2b1c-493e-bec2-1ee39f73dbae",
   consent_school_request_mmrv: "fe194b88-5692-49a2-ab14-648e8ce2af63",
+  consent_school_request_mmrv_outbreak: "abe274c2-cd29-4099-b3ff-0e5ed710e532",
   consent_school_subsequent_reminder_doubles:
     "ea03aada-0912-4373-91e1-80082071a7aa",
   consent_school_subsequent_reminder_flu:
@@ -60,7 +61,6 @@ GOVUK_NOTIFY_SMS_TEMPLATES = {
   clinic_subsequent_invitation: "ce7a6a1b-465e-4be4-b9e0-47ddb64f3adb",
   clinic_subsequent_invitation_ryg: "018f146d-e7b7-4b63-ae26-bb07ca6fe2f9",
   consent_clinic_request: "03a0d572-ca5b-417e-87c3-838872a9eabc",
-  consent_confirmation_given: "8eb8d05e-b8d8-4bf9-8a38-c009ae989a4e",
   consent_confirmation_refused: "234b7479-1968-4f57-a6bf-20e402c8da39",
   consent_school_reminder: "26029539-60e4-416b-a3a8-40b82c2babc1",
   consent_school_request: "2d3e2370-7faa-4798-b7ae-607692a85059",

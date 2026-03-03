@@ -15,7 +15,6 @@ describe "Edit session programmes" do
 
     when_i_click_continue
     then_i_should_see_the_hpv_and_mmr_programme
-    screenshot_and_save_page
   end
 
   scenario "choosing HPV only programme with a high number of unvaccinated catch up patients" do
@@ -45,6 +44,7 @@ describe "Edit session programmes" do
     then_i_see_the_warning_panel_about_unvaccinated_patients_for_mmr
 
     when_i_click_keep_session_dates
+    and_i_select_standard_consent_requests
     then_i_should_see_the_mmr_programme
   end
 
@@ -60,6 +60,7 @@ describe "Edit session programmes" do
     then_i_see_the_warning_panel_about_unvaccinated_patients_for_hpv_and_mmr
 
     when_i_click_keep_session_dates
+    and_i_select_standard_consent_requests
     then_i_should_see_the_hpv_and_mmr_programme
   end
 
@@ -199,6 +200,11 @@ describe "Edit session programmes" do
 
   def when_i_click_keep_session_dates
     click_on "Keep session dates"
+  end
+
+  def and_i_select_standard_consent_requests
+    choose "Standard request"
+    click_on "Continue"
   end
 
   def then_i_should_see_the_hpv_programme

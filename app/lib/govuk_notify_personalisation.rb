@@ -55,8 +55,10 @@ class GovukNotifyPersonalisation
       full_and_preferred_patient_name:,
       has_multiple_dates:,
       invitation_to_clinic_generic_message:,
+      is_outbreak:,
       location_name:,
       invitation_to_clinic_custom_mmr_message:,
+      mmr_or_mmrv_vaccine:,
       mmr_second_dose_message:,
       mmr_second_dose_required:,
       next_or_today_session_date:,
@@ -189,6 +191,12 @@ class GovukNotifyPersonalisation
     end
   end
 
+  def is_outbreak
+    return nil if session.nil?
+
+    session.outbreak? ? "yes" : "no"
+  end
+
   def location_name
     if vaccination_record
       vaccination_record_location(vaccination_record)
@@ -253,8 +261,8 @@ class GovukNotifyPersonalisation
   end
 
   def mmr_second_dose_waiting_period_message
-    "It’s important to wait at least 28 days after the 1st dose of an MMR " \
-      "vaccination before getting the 2nd dose. #{short_patient_name} " \
+    "It’s important to wait at least 28 days after the 1st dose of an MMR or " \
+      "MMRV vaccination before getting the 2nd dose. #{short_patient_name} " \
       "should not get the 2nd dose until #{next_mmr_dose_date}. Please keep this in " \
       "mind when booking the appointment."
   end
@@ -286,6 +294,16 @@ class GovukNotifyPersonalisation
         .dose_sequence
 
     next_dose == mmr_programme.maximum_dose_sequence
+  end
+
+  def mmr_or_mmrv_vaccine
+    if mmr_programme.present?
+      if mmr_programme.variant_type == "mmrv"
+        "MMR or MMRV vaccine"
+      else
+        "MMR vaccine"
+      end
+    end
   end
 
   def mmr_programme

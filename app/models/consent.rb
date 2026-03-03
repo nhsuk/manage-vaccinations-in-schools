@@ -12,6 +12,12 @@
 #  notes                                           :text             default(""), not null
 #  notify_parent_on_refusal                        :boolean
 #  notify_parents_on_vaccination                   :boolean
+#  parent_email                                    :string
+#  parent_full_name                                :string
+#  parent_phone                                    :string
+#  parent_phone_receive_updates                    :boolean
+#  parent_relationship_other_name                  :string
+#  parent_relationship_type                        :string
 #  patient_already_vaccinated_notification_sent_at :datetime
 #  programme_type                                  :enum             not null
 #  reason_for_refusal                              :integer
@@ -69,6 +75,12 @@ class Consent < ApplicationRecord
              optional: true,
              foreign_key: :recorded_by_user_id
 
+  normalizes :parent_email, with: EmailAddressNormaliser.new
+  normalizes :parent_phone, with: PhoneNumberNormaliser.new
+
+  scope :for_session,
+        ->(session) { where(programme_type: session.programme_types) }
+
   scope :withdrawn, -> { where.not(withdrawn_at: nil) }
   scope :not_withdrawn, -> { where(withdrawn_at: nil) }
 
@@ -96,7 +108,11 @@ class Consent < ApplicationRecord
   def self.verbal_routes = routes.except("website", "self_consent")
 
   def name
-    via_self_consent? ? patient.full_name : parent.label
+    if via_self_consent?
+      patient.full_name
+    else
+      parent_full_name.presence || parent.label
+    end
   end
 
   delegate :vaccines, to: :programme
@@ -188,6 +204,14 @@ class Consent < ApplicationRecord
             health_answers: consent_form.health_answers,
             notes: consent_form_programme.notes,
             parent:,
+            parent_full_name: consent_form.parent_full_name,
+            parent_email: consent_form.parent_email,
+            parent_phone: consent_form.parent_phone,
+            parent_phone_receive_updates:
+              consent_form.parent_phone_receive_updates,
+            parent_relationship_type: consent_form.parent_relationship_type,
+            parent_relationship_other_name:
+              consent_form.parent_relationship_other_name,
             programme_type: consent_form_programme.programme_type,
             reason_for_refusal: consent_form_programme.reason_for_refusal,
             recorded_by: current_user,

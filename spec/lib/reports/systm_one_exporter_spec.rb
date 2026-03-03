@@ -318,12 +318,18 @@ describe Reports::SystmOneExporter do
         it { should eq("x05ub") }
       end
 
-      # Mavis doesn't set dose sequence for Td/IPV currently but this could theoretically change in future
       context "Revaxis with dose sequence 1" do
         let(:vaccine) { Vaccine.find_by!(brand: "Revaxis") }
         let(:dose_sequence) { 1 }
 
         it { should eq("Y3417") }
+      end
+
+      context "Revaxis with dose sequence 6" do
+        let(:vaccine) { Vaccine.find_by!(brand: "Revaxis") }
+        let(:dose_sequence) { 6 }
+
+        it { should eq("x05ub") }
       end
     end
 

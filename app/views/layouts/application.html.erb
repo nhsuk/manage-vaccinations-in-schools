@@ -80,6 +80,11 @@
               <code><%= app_version %></code>
             </p>
           <% end %>
+          <% if current_user.present? %>
+            <p class="nhsuk-body-s app-u-no-js-visible">
+              <strong>JavaScript is not available.</strong>
+            </p>
+          <% end %>
           <p class="nhsuk-body-s">&copy; NHS England</p>
         </div>
       </div>

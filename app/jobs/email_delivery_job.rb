@@ -17,9 +17,7 @@ class EmailDeliveryJob < NotifyDeliveryJob
     team: nil,
     vaccination_record: nil
   )
-    template_id = GOVUK_NOTIFY_EMAIL_TEMPLATES[template_name.to_sym]
-    raise UnknownTemplate if template_id.nil?
-
+    template_name_sym = template_name.to_sym
     personalisation =
       GovukNotifyPersonalisation.new(
         academic_year:,
@@ -35,7 +33,7 @@ class EmailDeliveryJob < NotifyDeliveryJob
       )
 
     email_address =
-      if template_name == :consent_unknown_contact_details_warning
+      if template_name_sym == :consent_unknown_contact_details_warning
         personalisation.parent&.email
       else
         personalisation.consent_form&.parent_email ||
@@ -44,10 +42,25 @@ class EmailDeliveryJob < NotifyDeliveryJob
 
     return if email_address.nil?
 
+    email_renderer = NotifyTemplateRenderer.for(:email)
+    api_template_id, personalisation_hash, log_template_id =
+      if use_local_template?(template_name_sym)
+        rendered = email_renderer.render(template_name_sym, personalisation)
+        [
+          email_renderer.passthrough_template_id,
+          { subject: rendered[:subject], body: rendered[:body] },
+          email_renderer.template_id_for(template_name_sym)
+        ]
+      else
+        tid = email_renderer.template_id_for(template_name_sym)
+        raise UnknownTemplate if tid.nil?
+        [tid, personalisation.to_h, tid]
+      end
+
     args = {
       email_address:,
-      personalisation: personalisation.to_h,
-      template_id:
+      personalisation: personalisation_hash,
+      template_id: api_template_id
     }
 
     if (
@@ -75,7 +88,7 @@ class EmailDeliveryJob < NotifyDeliveryJob
         self.class.deliveries << args
         SecureRandom.uuid
       else
-        Rails.logger.info "Sending email to #{email_address} with template #{template_id}"
+        Rails.logger.info "Sending email to #{email_address} with template #{api_template_id}"
         nil
       end
 
@@ -86,12 +99,22 @@ class EmailDeliveryJob < NotifyDeliveryJob
       patient: personalisation.patient,
       recipient: email_address,
       sent_by:,
-      template_id:,
+      template_id: log_template_id,
       type: :email,
       notify_log_entry_programmes_attributes:
         personalisation.programmes.map do
           { programme_type: it.type, disease_types: it.disease_types }
         end
     )
+  end
+
+  def use_local_template?(template_name_sym)
+    return false unless passthrough_email_configured?
+
+    NotifyTemplateRenderer.for(:email).template_exists?(template_name_sym)
+  end
+
+  def passthrough_email_configured?
+    NotifyTemplateRenderer.for(:email).passthrough_configured?
   end
 end

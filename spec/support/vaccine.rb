@@ -1,7 +1,11 @@
 # frozen_string_literal: true
 
-class ProgrammeHelper
-  def self.create_vaccines!
+class Vaccine
+  cattr_accessor :enable_factorybot_factories
+
+  def self.factorybot_create_all!
+    Vaccine.enable_factorybot_factories = true
+
     FactoryBot.create(:vaccine, :cervarix, programme: Programme.hpv)
     FactoryBot.create(:vaccine, :gardasil, programme: Programme.hpv)
     FactoryBot.create(:vaccine, :gardasil_9, programme: Programme.hpv)
@@ -22,5 +26,7 @@ class ProgrammeHelper
     FactoryBot.create(:vaccine, :priorix_tetra, programme: Programme.mmr)
 
     FactoryBot.create(:vaccine, :revaxis, programme: Programme.td_ipv)
+
+    Vaccine.enable_factorybot_factories = false
   end
 end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_18_163043) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_25_094039) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -155,7 +155,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_18_163043) do
     t.bigint "team_id", null: false
     t.integer "type", null: false
     t.datetime "updated_at", null: false
+    t.index ["academic_year"], name: "index_clinic_notifications_on_academic_year"
     t.index ["patient_id"], name: "index_clinic_notifications_on_patient_id"
+    t.index ["programme_types"], name: "index_clinic_notifications_on_programme_types", using: :gin
     t.index ["sent_by_user_id"], name: "index_clinic_notifications_on_sent_by_user_id"
     t.index ["team_id"], name: "index_clinic_notifications_on_team_id"
   end
@@ -279,7 +281,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_18_163043) do
     t.text "notes", default: "", null: false
     t.boolean "notify_parent_on_refusal"
     t.boolean "notify_parents_on_vaccination"
+    t.string "parent_email"
+    t.string "parent_full_name"
     t.bigint "parent_id"
+    t.string "parent_phone"
+    t.boolean "parent_phone_receive_updates"
+    t.string "parent_relationship_other_name"
+    t.string "parent_relationship_type"
     t.datetime "patient_already_vaccinated_notification_sent_at"
     t.bigint "patient_id", null: false
     t.enum "programme_type", null: false, enum_type: "programme_type"
@@ -818,6 +826,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_18_163043) do
     t.date "dates", null: false, array: true
     t.integer "days_before_consent_reminders"
     t.boolean "national_protocol_enabled", default: false, null: false
+    t.boolean "outbreak", default: false, null: false
     t.boolean "psd_enabled", default: false, null: false
     t.boolean "requires_registration", default: true, null: false
     t.date "send_consent_requests_at"
@@ -962,7 +971,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_18_163043) do
     t.integer "outcome", null: false
     t.bigint "patient_id", null: false
     t.jsonb "pending_changes", default: {}, null: false
-    t.datetime "performed_at"
     t.date "performed_at_date", null: false
     t.time "performed_at_time"
     t.string "performed_by_family_name"

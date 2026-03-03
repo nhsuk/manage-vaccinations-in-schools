@@ -85,6 +85,7 @@ describe GovukNotifyPersonalisation do
             "http://localhost:4000/consents/#{session.slug}/hpv/start",
           full_and_preferred_patient_name: "John Smith",
           has_multiple_dates: "no",
+          is_outbreak: "no",
           location_name: "Hogwarts",
           invitation_to_clinic_custom_mmr_message: "",
           mmr_second_dose_required: false,
@@ -135,9 +136,17 @@ describe GovukNotifyPersonalisation do
 
       it { should include(vaccination: "MMRV vaccination") }
       it { should include(vaccination_and_dates_sms: "MMRV vaccination") }
+      it { should include(mmr_or_mmrv_vaccine: "MMR or MMRV vaccine") }
+      it { should include(is_outbreak: "no") }
 
       it "generates consent link with mmrv variant" do
         expect(to_h[:consent_link]).to end_with("/mmrv/start")
+      end
+
+      context "when session is setup for outbreak communications" do
+        before { allow(session).to receive(:outbreak).and_return(true) }
+
+        it { should include(is_outbreak: "yes") }
       end
     end
 
@@ -145,8 +154,16 @@ describe GovukNotifyPersonalisation do
       let(:programmes) { [Programme.mmr] }
       let(:date_of_birth) { Programme::MIN_MMRV_ELIGIBILITY_DATE - 1.month }
 
+      it { should include(mmr_or_mmrv_vaccine: "MMR vaccine") }
+
       it "generates consent link with mmr variant" do
         expect(to_h[:consent_link]).to end_with("/mmr/start")
+      end
+
+      context "when session is setup for outbreak communications" do
+        before { allow(session).to receive(:outbreak).and_return(true) }
+
+        it { should include(is_outbreak: "yes") }
       end
     end
   end
@@ -492,9 +509,9 @@ describe GovukNotifyPersonalisation do
                   "If you’d like to book a clinic appointment, please contact us using " \
                   "the details below.\n\n" \
                   "It’s important to wait at least 28 days after the 1st dose of an MMR " \
-                  "vaccination before getting the 2nd dose. John should not get the 2nd " \
-                  "dose until 29 January 2020. Please keep this in mind when booking " \
-                  "the appointment."
+                  "or MMRV vaccination before getting the 2nd dose. John should not get " \
+                  "the 2nd dose until 29 January 2020. Please keep this in mind when " \
+                  "booking the appointment."
             )
           end
         end
@@ -507,8 +524,8 @@ describe GovukNotifyPersonalisation do
               mmr_second_dose_required: true,
               vaccination: "2nd dose of the MMR vaccination",
               invitation_to_clinic_custom_mmr_message:
-                "It’s important to wait at least 28 days after the 1st dose of an MMR " \
-                  "vaccination before getting the 2nd dose. John should not get the 2nd " \
+                "It’s important to wait at least 28 days after the 1st dose of an MMR or " \
+                  "MMRV vaccination before getting the 2nd dose. John should not get the 2nd " \
                   "dose until 29 January 2020. Please keep this in mind when booking " \
                   "the appointment.\n\n" \
                   "It’s also possible for John to be vaccinated at your local GP surgery. " \
@@ -526,7 +543,7 @@ describe GovukNotifyPersonalisation do
               vaccination: "2nd dose of the MMR vaccination",
               invitation_to_clinic_custom_mmr_message:
                 "It’s important to wait at least 28 days after the 1st dose of an MMR " \
-                  "vaccination before getting the 2nd dose. John should not get the 2nd " \
+                  "or MMRV vaccination before getting the 2nd dose. John should not get the 2nd " \
                   "dose until 29 January 2020. Please keep this in mind when booking " \
                   "the appointment.\n\n" \
                   "## You have 2 options for booking the vaccination\n\n" \

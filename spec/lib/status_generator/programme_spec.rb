@@ -297,7 +297,7 @@ describe StatusGenerator::Programme do
     its(:consent_vaccine_methods) { should contain_exactly("injection") }
     its(:date) { should be_nil }
     its(:disease_types) { should eq(programme.disease_types) }
-    its(:dose_sequence) { should be_nil }
+    its(:dose_sequence) { should eq(5) }
     its(:location_id) { should be_nil }
     its(:status) { should be(:cannot_vaccinate_do_not_vaccinate) }
     its(:vaccine_methods) { should be_nil }

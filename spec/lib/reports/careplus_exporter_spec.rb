@@ -419,6 +419,22 @@ describe Reports::CareplusExporter do
     let(:expected_vaccine_code) { "3IN1" }
 
     include_examples "generates a report"
+
+    context "with a fifth dose vaccination record" do
+      it "outputs 2B for the Td/IPV dose sequence field" do
+        patient = create(:patient, session:)
+        create(
+          :vaccination_record,
+          programme:,
+          vaccine:,
+          patient:,
+          session:,
+          dose_sequence: 5
+        )
+
+        expect(data_rows.first[headers.index("Dose 1")]).to eq("2B")
+      end
+    end
   end
 
   context "gender mapping" do

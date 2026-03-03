@@ -9,9 +9,11 @@ describe "Verbal consent" do
     then_i_see_the_check_and_confirm_page
 
     when_i_confirm_the_consent_response
+    then_the_parent_details_are_saved_to_the_consent
     then_an_email_is_sent_to_the_parent_confirming_their_consent
     and_a_text_is_sent_to_the_parent_confirming_their_consent
     and_i_can_see_the_consent_response_details(number_of_health_questions: 4)
+    and_i_can_see_the_log_entries_for_the_email_and_sms
   end
 
   scenario "Given flu injection" do
@@ -116,6 +118,7 @@ describe "Verbal consent" do
     @patient =
       create(
         :patient,
+        given_name: "Alex",
         session: @session,
         parents: [@parent],
         date_of_birth: Programme::MIN_MMRV_ELIGIBILITY_DATE - 1.year
@@ -212,8 +215,6 @@ describe "Verbal consent" do
     choose "By phone"
     click_button "Continue"
 
-    screenshot_and_save_page
-
     # Do they agree?
     choose consent_option
     if consent_option.include?("nasal")
@@ -255,12 +256,31 @@ describe "Verbal consent" do
 
   def and_i_see_the_flu_nasal_and_injection_consent_given
     expect(page).to have_content("ResponseConsent given")
-    expect(page).to have_content("Chosen vaccineNo preference")
+    expect(page).to have_content(
+      "Chosen vaccineNasal spray or injected vaccine"
+    )
   end
 
   def when_i_confirm_the_consent_response
     click_button "Confirm"
     expect(page).to have_content("Consent recorded for #{@patient.full_name}")
+  end
+
+  def then_the_parent_details_are_saved_to_the_consent
+    consent = @patient.consents.last
+    parent_relationship = @patient.parent_relationships.first
+
+    expect(consent).to have_attributes(
+      parent_full_name: @parent.full_name,
+      parent_email: @parent.email,
+      parent_phone: @parent.phone,
+      parent_phone_receive_updates: @parent.phone_receive_updates,
+      parent_relationship_type: parent_relationship.type
+    )
+
+    expect(consent.parent_relationship_other_name.to_s).to eq(
+      parent_relationship.other_name.to_s
+    )
   end
 
   def and_i_can_see_the_consent_response_details(number_of_health_questions:)
@@ -293,14 +313,35 @@ describe "Verbal consent" do
   end
 
   def then_an_email_is_sent_to_the_parent_confirming_their_consent
-    expect_email_to(@parent.email, :consent_confirmation_given)
+    expect(email_deliveries).to include(
+      matching_notify_email(
+        to: @parent.email,
+        template: :consent_confirmation_given
+      ).with_content_including("You’ve given consent", "withdraw your consent")
+    )
   end
 
   def and_a_text_is_sent_to_the_parent_confirming_their_consent
-    expect_sms_to(@parent.phone, :consent_confirmation_given)
+    expect(sms_deliveries).to include(
+      matching_notify_sms(
+        phone_number: @parent.phone,
+        template: :consent_confirmation_given
+      ).with_content_including(
+        "You've given consent for Alex",
+        "Please let them know what to expect"
+      )
+    )
   end
 
   def and_the_psd_is_invalidated
     expect(@patient_specific_direction.reload).to be_invalidated
+  end
+
+  def and_i_can_see_the_log_entries_for_the_email_and_sms
+    click_on "Back"
+    click_on "Session activity and notes"
+    expect(page).to have_content("Consent confirmation given", count: 2)
+    expect(page).to have_content(@parent.email)
+    expect(page).to have_content(@parent.phone)
   end
 end

@@ -59,9 +59,12 @@ class StatusGenerator::Vaccination
 
   def dose_sequence
     # TODO: Implement this for multi-dose HPV and Td/IPV in a more generic way.
-    return if programme.td_ipv? || programme.menacwy?
+    return if programme.menacwy?
 
     return unless status_should_be_due? || status_should_be_eligible?
+
+    # Patients receive dose 5 of Td/IPV by default, regardless of vaccination history
+    return 5 if programme.td_ipv?
 
     valid_vaccination_records.count + 1
   end
@@ -221,8 +224,7 @@ class StatusGenerator::Vaccination
           end
         elsif td_ipv?
           valid_vaccination_records.find do
-            it.dose_sequence == 5 ||
-              (it.dose_sequence.nil? && it.sourced_from_service?)
+            it.dose_sequence == 5 || it.sourced_from_service?
           end
         else
           valid_vaccination_records.first

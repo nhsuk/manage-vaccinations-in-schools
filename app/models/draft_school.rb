@@ -1,17 +1,16 @@
 # frozen_string_literal: true
 
-class DraftSchoolSite
+class DraftSchool
   include RequestSessionPersistable
+  include EditableWrapper
   include WizardStepConcern
 
-  attribute :urn, :string
+  attribute :urn_and_site, :string
   attribute :name, :string
   attribute :address_line_1, :string
   attribute :address_line_2, :string
   attribute :address_town, :string
   attribute :address_postcode, :string
-
-  attribute :wizard_step, :string
 
   def initialize(request_session:, current_user:, **attributes)
     @current_user = current_user
@@ -39,7 +38,7 @@ class DraftSchoolSite
   end
 
   on_wizard_step :school, exact: true do
-    validates :urn, presence: true
+    validates :urn_and_site, presence: true
   end
 
   on_wizard_step :details, exact: true do
@@ -57,10 +56,17 @@ class DraftSchoolSite
   end
 
   def parent_school
-    return nil if urn.nil?
+    return nil if urn_and_site.blank?
 
     @parent_school ||=
-      LocationPolicy::Scope.new(@current_user, Location).resolve.find_by(urn:)
+      LocationPolicy::Scope
+        .new(@current_user, Location)
+        .resolve
+        .find_by_urn_and_site(urn_and_site)
+  end
+
+  def urn
+    parent_school&.urn
   end
 
   def existing_names

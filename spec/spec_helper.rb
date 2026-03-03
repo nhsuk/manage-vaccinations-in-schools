@@ -220,7 +220,7 @@ RSpec.configure do |config|
 
   config.before(:suite) do
     DatabaseCleaner.clean_with(:truncation)
-    ProgrammeHelper.create_vaccines!
+    Vaccine.factorybot_create_all!
     DatabaseCleaner.strategy = :transaction
   end
 

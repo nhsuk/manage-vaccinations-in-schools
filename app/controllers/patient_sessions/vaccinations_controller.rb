@@ -45,6 +45,7 @@ class PatientSessions::VaccinationsController < PatientSessions::BaseController
            draft_vaccination_record.batch_expiry.present?
         steps.delete(:batch)
       end
+      steps.delete(:dose_sequence)
 
       draft_vaccination_record.update!(first_active_wizard_step: steps.first)
 

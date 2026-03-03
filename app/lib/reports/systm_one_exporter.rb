@@ -44,6 +44,7 @@ class Reports::SystmOneExporter
       3 => "Y3400",
       4 => "Y06d3",
       5 => "Y06d4",
+      6 => "x05ub",
       nil => "x05ub"
     },
     "Vaxigrip" => {

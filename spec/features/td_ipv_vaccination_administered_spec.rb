@@ -28,6 +28,10 @@ describe "Td/IPV vaccination" do
     and_i_select_the_batch
     then_i_see_the_confirmation_page
 
+    when_i_click_change_dose_number
+    and_i_select_the_dose_number
+    then_i_see_the_confirmation_page
+
     when_i_click_change_date
     and_i_select_the_date
     and_i_choose_vaccinated
@@ -74,8 +78,10 @@ describe "Td/IPV vaccination" do
         :patient,
         :consent_given_triage_not_needed,
         :in_attendance,
+        programmes: [programme],
         session: @session
       )
+    PatientStatusUpdater.call(patient: @patient)
 
     sign_in team.users.first
   end
@@ -147,6 +153,15 @@ describe "Td/IPV vaccination" do
     click_on "Continue"
   end
 
+  def when_i_click_change_dose_number
+    click_on "Change dose number"
+  end
+
+  def and_i_select_the_dose_number
+    choose "5th"
+    click_on "Continue"
+  end
+
   def when_i_click_change_date
     click_on "Change date"
   end
@@ -185,7 +200,7 @@ describe "Td/IPV vaccination" do
     click_on Date.current.to_fs(:long)
 
     expect(page).to have_content("Vaccination details")
-    expect(page).not_to have_content("Dose number")
+    expect(page).to have_content("Dose number5th")
   end
 
   def when_vaccination_confirmations_are_sent

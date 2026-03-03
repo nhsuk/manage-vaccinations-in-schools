@@ -233,7 +233,7 @@ RSpec.feature "Parental consent change answers" do
   end
 
   def and_say_the_reason_is_that_the_vaccine_contains_gelatine
-    choose "Vaccine contains gelatine from pigs"
+    choose "Nasal vaccine contains gelatine"
     click_button "Continue"
   end
 

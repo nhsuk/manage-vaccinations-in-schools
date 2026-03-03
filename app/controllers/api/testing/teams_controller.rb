@@ -68,6 +68,7 @@ class API::Testing::TeamsController < API::Testing::BaseController
     log_destroy(NotifyLogEntry.where(patient_id: patient_ids))
     log_destroy(PatientChangeset.where(patient_id: patient_ids))
     log_destroy(PatientLocation.where(patient_id: patient_ids))
+    log_destroy(PatientMergeLogEntry.where(patient_id: patient_ids))
     log_destroy(PatientSpecificDirection.where(patient_id: patient_ids))
     log_destroy(PDSSearchResult.where(patient_id: patient_ids))
     log_destroy(PreScreening.where(patient_id: patient_ids))

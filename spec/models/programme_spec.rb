@@ -373,7 +373,7 @@ describe Programme do
     context "with an Td/IPV programme" do
       let(:programme) { described_class.td_ipv }
 
-      it { should eq(5) }
+      it { should eq(6) }
     end
   end
 
@@ -424,6 +424,40 @@ describe Programme do
       end
 
       it { should eq("ProgrammeVariant:mmr") }
+    end
+  end
+
+  describe "#supports_outbreak?" do
+    subject { programme.supports_outbreak? }
+
+    context "with a flu programme" do
+      let(:programme) { described_class.flu }
+
+      it { should be false }
+    end
+
+    context "with an HPV programme" do
+      let(:programme) { described_class.hpv }
+
+      it { should be false }
+    end
+
+    context "with an MenACWY programme" do
+      let(:programme) { described_class.menacwy }
+
+      it { should be false }
+    end
+
+    context "with an Td/IPV programme" do
+      let(:programme) { described_class.td_ipv }
+
+      it { should be false }
+    end
+
+    context "with an MMR programme" do
+      let(:programme) { described_class.mmr }
+
+      it { should be true }
     end
   end
 end

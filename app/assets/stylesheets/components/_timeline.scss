@@ -107,7 +107,7 @@ $_timeline-border-width: 2px;
   }
 
   &__header {
-    margin-bottom: 0;
+    margin-bottom: nhsuk-spacing(1);
     font-weight: normal;
 
     @include nhsuk-font-size(19);

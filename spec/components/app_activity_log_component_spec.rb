@@ -48,25 +48,25 @@ describe AppActivityLogComponent do
 
   shared_examples "card" do |title:, date:, notes: nil, by: nil, index: nil, programme: nil|
     it "renders card '#{title}'" do
-      expect(rendered).to have_css(".nhsuk-card__heading", text: title)
+      expect(rendered).to have_css(".app-timeline__header", text: title)
 
       card =
         if index
-          page.all(".nhsuk-card")[index]
-        elsif programme
-          page
-            .all(".nhsuk-card")
-            .find do |card_element|
-              card_element.has_css?("h4", text: title) &&
-                card_element.has_css?("strong", text: programme)
-            end
+          page.all(".app-timeline__item")[index]
         else
-          page.find(".nhsuk-card__heading", text: title).ancestor(".nhsuk-card")
+          text = (programme ? "#{programme} #{title}" : title)
+
+          page.find(
+            ".app-timeline__header",
+            text:,
+            normalize_ws: true,
+            match: :first
+          ).ancestor(".app-timeline__item")
         end
 
-      expect(card).to have_css("p", text: date)
+      expect(card).to have_css("p.app-timeline__description", text: date)
+      expect(card).to have_css("p.app-timeline__description", text: by) if by
       expect(card).to have_css("blockquote", text: notes) if notes
-      expect(card).to have_css("p", text: by) if by
     end
   end
 
@@ -198,7 +198,7 @@ describe AppActivityLogComponent do
         template_id: GOVUK_NOTIFY_EMAIL_TEMPLATES[:consent_school_request_hpv],
         consent_form: nil,
         patient:,
-        programme_types: programmes.map(&:type),
+        programme_types: %w[hpv],
         recipient: "test@example.com",
         created_at: Date.new(2025, 5, 10),
         sent_by: user
@@ -206,14 +206,26 @@ describe AppActivityLogComponent do
     end
 
     it "renders headings in correct order" do
-      expect(rendered).to have_css("h3:nth-of-type(1)", text: "31 August 2025")
-      expect(rendered).to have_css("h3:nth-of-type(2)", text: "31 May 2025")
-      expect(rendered).to have_css("h3:nth-of-type(3)", text: "30 May 2025")
-      expect(rendered).to have_css("h3:nth-of-type(4)", text: "29 May 2025")
+      expect(rendered).to have_css(
+        "li.app-timeline__item:nth-of-type(1)",
+        text: /31 August 2025/
+      )
+      expect(rendered).to have_css(
+        "li.app-timeline__item:nth-of-type(2)",
+        text: /31 May 2025/
+      )
+      expect(rendered).to have_css(
+        "li.app-timeline__item:nth-of-type(3)",
+        text: /31 May 2025/
+      )
+      expect(rendered).to have_css(
+        "li.app-timeline__item:nth-of-type(4)",
+        text: /30 May 2025/
+      )
     end
 
-    it "has cards" do
-      expect(rendered).to have_css(".nhsuk-card", count: 13)
+    it "has the expected number of timeline items" do
+      expect(rendered).to have_css(".app-timeline__item", count: 13)
     end
 
     include_examples "card",
@@ -234,14 +246,14 @@ describe AppActivityLogComponent do
     include_examples "card",
                      title: "Vaccination record added manually",
                      date:
-                       "Record added to Mavis 15 February 2025 at 2:33pm. Vaccination given 6 January 2025.",
+                       "Record added to Mavis 15 February 2025 at 2:33pm · Vaccination given 6 January 2025",
                      programme: "Flu"
 
     include_examples "card",
                      title: "Vaccination record uploaded",
                      date:
-                       "Record added to Mavis 15 February 2025 at 2:33pm. Vaccination given 24 January 2025.",
-                     programme: "MMR"
+                       "Record added to Mavis 15 February 2025 at 2:33pm · Vaccination given 24 January 2025",
+                     programme: "MMR(V)"
 
     include_examples "card",
                      title: "Triaged decision: Safe to vaccinate",
@@ -285,6 +297,16 @@ describe AppActivityLogComponent do
                      notes: "test@example.com",
                      by: "JOY, Nurse",
                      programme: "HPV"
+
+    context "when filtering by programme" do
+      let(:component) do
+        described_class.new(patient:, team:, programme_type: "hpv", session:)
+      end
+
+      it "has the expected number of timeline items" do
+        expect(rendered).to have_css(".app-timeline__item", count: 9)
+      end
+    end
   end
 
   describe "patient specific directions" do

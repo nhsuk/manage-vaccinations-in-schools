@@ -2,8 +2,9 @@
   <%= govuk_back_link(href: backlink_path) %>
 <% end %>
 
+<% programmes = @consent_form.refused_consent_form_programmes.map(&:programme) %>
 <% title = "Please tell us why you do not agree to your child having the " \
-   "#{@consent_form.refused_consent_form_programmes.map { it.programme.name }.to_sentence} " \
+   "#{programmes.map(&:name_in_sentence).to_sentence} " \
    "#{"vaccination".pluralize(@consent_form.refused_consent_form_programmes.count)} in school" %>
 <% content_for :page_title, title %>
 

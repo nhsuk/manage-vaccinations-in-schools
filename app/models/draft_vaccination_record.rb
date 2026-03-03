@@ -59,6 +59,8 @@ class DraftVaccinationRecord
 
   def wizard_steps
     [
+      # dose sequence should only be reachable by editing or changing fields
+      (:dose_sequence if dose_sequence_can_be_modified?),
       :identity,
       (:notes unless national_reporting_user_and_record?),
       (
@@ -84,7 +86,6 @@ class DraftVaccinationRecord
           :location
         end
       ),
-      (:dose_sequence if national_reporting_user_and_record?),
       (:vaccinator if national_reporting_user_and_record?),
       :confirm
     ].compact
@@ -393,6 +394,11 @@ class DraftVaccinationRecord
   def national_reporting_user_and_record?
     @current_user.selected_team.has_national_reporting_access? &&
       sourced_from_national_reporting?
+  end
+
+  def dose_sequence_can_be_modified?
+    !reported_as_already_vaccinated? &&
+      (national_reporting_user_and_record? || programme&.td_ipv?)
   end
 
   private

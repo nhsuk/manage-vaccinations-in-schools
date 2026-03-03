@@ -61,22 +61,20 @@ class NotifyLogEntry < ApplicationRecord
   validates :recipient, presence: true
   validates :template_id, presence: true
 
-  scope :for_session,
-        ->(session) do
+  scope :for_programme_type,
+        ->(programme_type) do
           where(
             NotifyLogEntry::Programme
               .select("1")
               .where("notify_log_entry_id = notify_log_entries.id")
-              .where(programme_type: session.programme_types)
-              .group(:notify_log_entry_id)
-              .having(
-                "COUNT(DISTINCT programme_type) = ?",
-                session.programme_types.count
-              )
+              .where(programme_type:)
               .arel
               .exists
           )
         end
+
+  scope :for_session,
+        ->(session) { for_programme_type(session.programme_types) }
 
   encrypts :recipient, deterministic: true
 
@@ -94,10 +92,8 @@ class NotifyLogEntry < ApplicationRecord
   def template_name
     if GOVUK_NOTIFY_UNUSED_TEMPLATES.include?(template_id)
       GOVUK_NOTIFY_UNUSED_TEMPLATES.fetch(template_id)
-    elsif email?
-      GOVUK_NOTIFY_EMAIL_TEMPLATES.key(template_id)
-    elsif sms?
-      GOVUK_NOTIFY_SMS_TEMPLATES.key(template_id)
+    elsif email? || sms?
+      NotifyTemplateRenderer.for(type.to_sym).template_name_for(template_id)
     end
   end
 end

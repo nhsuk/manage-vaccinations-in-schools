@@ -35,7 +35,11 @@ class AppConsentSummaryComponent < ViewComponent::Base
               :show_route
 
   delegate :programme, to: :consent
-  delegate :consent_response_tag, :govuk_summary_list, to: :helpers
+  delegate :consent_response_tag,
+           :govuk_summary_list,
+           :consent_parent_email,
+           :consent_parent_phone,
+           to: :helpers
 
   def rows
     [
@@ -54,13 +58,13 @@ class AppConsentSummaryComponent < ViewComponent::Base
   end
 
   def phone_number_row
-    if show_phone_number && (phone = consent.parent&.phone).present?
+    if show_phone_number && (phone = consent_parent_phone(consent)).present?
       { key: { text: "Phone number" }, value: { text: phone } }
     end
   end
 
   def email_address_row
-    if show_email_address && (email = consent.parent&.email).present?
+    if show_email_address && (email = consent_parent_email(consent)).present?
       { key: { text: "Email address" }, value: { text: email } }
     end
   end
@@ -130,6 +134,8 @@ class AppConsentSummaryComponent < ViewComponent::Base
   end
 
   def chosen_vaccine_row
+    return unless consent.response_given?
+
     unless programme.has_multiple_vaccine_methods? ||
              programme.vaccine_may_contain_gelatine?
       return
@@ -141,7 +147,7 @@ class AppConsentSummaryComponent < ViewComponent::Base
       elsif consent.without_gelatine
         gelatine_free_vaccine_text
       else
-        "No preference"
+        no_preference_text
       end
 
     { key: { text: "Chosen vaccine" }, value: { text: value } }
@@ -155,6 +161,16 @@ class AppConsentSummaryComponent < ViewComponent::Base
     end
   end
 
+  def no_preference_text
+    if programme.has_multiple_vaccine_methods?
+      "Nasal spray or injected vaccine"
+    elsif programme.vaccine_may_contain_gelatine?
+      "Gelatine-free injected vaccine or injected vaccine"
+    else
+      "No preference"
+    end
+  end
+
   def reason_for_refusal_row
     return if consent.reason_for_refusal.nil?
 
@@ -163,7 +179,7 @@ class AppConsentSummaryComponent < ViewComponent::Base
         text: "Reason for refusal"
       },
       value: {
-        text: consent.human_enum_name(:reason_for_refusal)
+        text: helpers.refusal_reason_label(consent)
       }
     }
   end

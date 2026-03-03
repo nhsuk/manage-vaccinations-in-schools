@@ -12,6 +12,12 @@
 #  notes                                           :text             default(""), not null
 #  notify_parent_on_refusal                        :boolean
 #  notify_parents_on_vaccination                   :boolean
+#  parent_email                                    :string
+#  parent_full_name                                :string
+#  parent_phone                                    :string
+#  parent_phone_receive_updates                    :boolean
+#  parent_relationship_other_name                  :string
+#  parent_relationship_type                        :string
 #  patient_already_vaccinated_notification_sent_at :datetime
 #  programme_type                                  :enum             not null
 #  reason_for_refusal                              :integer
@@ -146,6 +152,19 @@ describe Consent do
             route: "website",
             disease_types: consent_form_programme.programme.disease_types
           )
+        )
+      end
+
+      it "saves parent details to the consent" do
+        expect(consent).to have_attributes(
+          parent_full_name: consent_form.parent_full_name,
+          parent_email: consent_form.parent_email,
+          parent_phone: consent_form.parent_phone,
+          parent_phone_receive_updates:
+            consent_form.parent_phone_receive_updates,
+          parent_relationship_type: consent_form.parent_relationship_type,
+          parent_relationship_other_name:
+            consent_form.parent_relationship_other_name
         )
       end
 

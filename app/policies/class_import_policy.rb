@@ -13,6 +13,8 @@ class ClassImportPolicy < ApplicationPolicy
 
   def re_review? = update?
 
+  def imported_records? = edit?
+
   def cancel? = update?
 
   class Scope < ApplicationPolicy::Scope

@@ -23,4 +23,18 @@ describe AppConsentFormCardComponent do
   it { should have_text("1 March 2024 at 2:23pm") }
   it { should have_text("Vaccine already received") }
   it { should have_text("Vaccinated at the GP") }
+
+  context "when the consent form refusal reason is gelatine for flu" do
+    let(:consent_form) do
+      create(
+        :consent_form,
+        :recorded,
+        :refused,
+        programmes: [Programme.flu],
+        reason_for_refusal: :contains_gelatine
+      )
+    end
+
+    it { should have_text("Refusal reasonNasal vaccine contains gelatine") }
+  end
 end

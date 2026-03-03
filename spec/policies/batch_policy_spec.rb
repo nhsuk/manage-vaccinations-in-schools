@@ -7,9 +7,11 @@ describe BatchPolicy do
     let(:team) { create(:team) }
     let(:user) { create(:user, team:) }
 
-    let(:batch) { create(:batch, team:) }
-    let(:archived_batch) { create(:batch, :archived, team:) }
-    let(:non_team_batch) { create(:batch) }
+    let(:vaccine) { Vaccine.all.sample }
+
+    let(:batch) { create(:batch, team:, vaccine:) }
+    let(:archived_batch) { create(:batch, :archived, team:, vaccine:) }
+    let(:non_team_batch) { create(:batch, vaccine:) }
 
     it { should include(batch) }
     it { should include(archived_batch) }

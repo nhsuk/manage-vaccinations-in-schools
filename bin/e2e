@@ -10,10 +10,19 @@ E2E_REDIS_URL="redis://localhost:6380/0"
 
 # Argument handling
 
-if [ $# -lt 1 ]; then
+function print_help() {
   echo "Usage: bin/e2e [--main] [pytest args...] <pytest-target>"
-  echo "  Example:"
-  echo "    bin/e2e --main --headed tests/test_start.py::test_start_page_elements_visible"
+  echo ""
+  echo "Options:"
+  echo "  --main    Force sync testing repo to latest main branch. WARNING: this will discard any local changes in the testing repo."
+  echo "  -h, --help  Show this help message and exit."
+  echo ""
+  echo "Example:"
+  echo "  bin/e2e --main --headed tests/test_start.py::test_start_page_elements_visible"
+}
+
+if [ $# -lt 1 ]; then
+  print_help
   exit 1
 fi
 
@@ -38,6 +47,10 @@ for arg in "$@"; do
   case "$arg" in
     --main)
       USE_MAVIS_BRANCH=true
+      ;;
+    -h|--help)
+      print_help
+      exit 0
       ;;
     *)
       PYTEST_ARGS+=("$arg")
@@ -116,6 +129,9 @@ RAILS_ENV="$RAILS_ENV" bin/rails db:prepare
 
 # Start Rails server in end_to_end environment
 
+echo "[e2e] Installing foreman"
+gem install --silent foreman
+
 echo "[e2e] Starting end_to_end stack with foreman..."
 if command -v setsid >/dev/null 2>&1; then
   START_FOREMAN=(setsid foreman start -f Procfile.e2e)
@@ -184,9 +200,9 @@ done
 
 pushd "$MAVIS_TEST_REPO" > /dev/null
 
-echo "[e2e] Running end-to-end tests via uv:"
-echo "[e2e]   uv run pytest ${PYTEST_ARGS[*]}"
-BASE_URL="http://localhost:${RAILS_PORT}" uv run pytest "${PYTEST_ARGS[@]}"
+echo "[e2e] Running end-to-end tests:"
+echo "[e2e]   uv run pytest -m "not accessibility and not reporting and not imms_api" ${PYTEST_ARGS[*]}"
+BASE_URL="http://localhost:${RAILS_PORT}" uv run pytest -m "not accessibility and not reporting and not imms_api" "${PYTEST_ARGS[@]}"
 PYTEST_EXIT_CODE=$?
 
 popd > /dev/null

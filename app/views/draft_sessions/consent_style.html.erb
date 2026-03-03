@@ -1,0 +1,25 @@
+<% content_for :before_main do %>
+  <%= govuk_back_link(href: @back_link_path) %>
+<% end %>
+
+<% legend = "What type of MMR(V) consent request do you want to send to parents?" %>
+<% content_for :page_title, legend %>
+
+<%= form_with model: @draft_session, url: wizard_path, method: :put do |f| %>
+  <% content_for(:before_content) { f.govuk_error_summary } %>
+
+  <%= f.govuk_radio_buttons_fieldset :outbreak,
+                                     legend: { text: legend, size: "l", tag: "h1" },
+                                     link_errors: true do %>
+    <%= f.govuk_radio_button :outbreak,
+                             "false",
+                             label: { text: "Standard request" },
+                             hint: { text: "This is for standard catch-up sessions" } %>
+    <%= f.govuk_radio_button :outbreak,
+                             "true",
+                             label: { text: "Outbreak request" },
+                             hint: { text: "This is urgent in tone, and should be used in an outbreak scenario" } %>
+  <% end %>
+
+  <%= f.govuk_submit "Continue" %>
+<% end %>

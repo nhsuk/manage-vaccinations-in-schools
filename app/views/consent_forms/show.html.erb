@@ -12,7 +12,7 @@
 
 <%= render AppConsentFormCardComponent.new(@consent_form) %>
 
-<%= render AppParentCardComponent.new(parent_relationship: @consent_form.parent_relationship) %>
+<%= render AppParentCardComponent.new(@consent_form) %>
 
 <%= render AppCardComponent.new do |card| %>
   <% card.with_heading(level: 2) { "Child" } %>
