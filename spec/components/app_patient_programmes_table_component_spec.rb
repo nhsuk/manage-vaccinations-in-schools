@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 describe AppPatientProgrammesTableComponent do
+  include Rails.application.routes.url_helpers
+
   subject(:rendered) { render_inline(component) }
 
   let(:component) do
@@ -20,8 +22,19 @@ describe AppPatientProgrammesTableComponent do
     let(:patient) { create(:patient, session:) }
     let(:programmes) { [Programme.flu] }
 
+    it "has the correct column headings" do
+      expect(rendered).to have_css(".nhsuk-table__header", text: "Programme")
+      expect(rendered).to have_css(".nhsuk-table__header", text: "Status")
+      expect(rendered).to have_css(".nhsuk-table__header", text: "Notes")
+    end
+
     it { should have_content("Vaccination programmes") }
-    it { should have_content("Flu (winter 2025)") }
+    it do
+      should have_link(
+               "Flu (winter 2025)",
+               href: patient_programme_path(patient, "flu")
+             )
+    end
     it { should_not have_content("Vaccinated") }
 
     context "when vaccinated" do
@@ -135,9 +148,19 @@ describe AppPatientProgrammesTableComponent do
     let(:programmes) { [Programme.hpv, Programme.menacwy, Programme.td_ipv] }
 
     it { should have_content("Vaccination programmes") }
-    it { should have_content("HPV") }
-    it { should have_content("Td/IPV") }
-    it { should have_content("MenACWY") }
+    it { should have_link("HPV", href: patient_programme_path(patient, "hpv")) }
+    it do
+      should have_link(
+               "Td/IPV",
+               href: patient_programme_path(patient, "td_ipv")
+             )
+    end
+    it do
+      should have_link(
+               "MenACWY",
+               href: patient_programme_path(patient, "menacwy")
+             )
+    end
 
     context "when vaccinated last year" do
       let(:patient) { create(:patient, session:) }
