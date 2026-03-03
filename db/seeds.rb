@@ -79,13 +79,6 @@ def create_community_clinics_for(team)
   FactoryBot.create_list(:community_clinic, 5, team:)
 end
 
-def attach_specific_school_to_team_if_present(team:, urn:)
-  Location.find_by(urn:)&.attach_to_team!(
-    team,
-    academic_year: AcademicYear.current
-  )
-end
-
 def create_session(user, team, programmes:, completed: false, year_groups: nil)
   year_groups ||= programmes.flat_map(&:default_year_groups).uniq
 
@@ -318,12 +311,6 @@ def create_nurse_joy_team
 
   attach_sample_of_schools_to(team)
   create_community_clinics_for(team)
-
-  # Bohunt School Wokingham - used by automated tests
-  attach_specific_school_to_team_if_present(team:, urn: "142181")
-
-  # Barn End Centre - used by automated tests
-  attach_specific_school_to_team_if_present(team:, urn: "118239")
 
   Audited.audit_class.as_user(user) { create_team_sessions(user, team) }
   setup_clinic(team)
