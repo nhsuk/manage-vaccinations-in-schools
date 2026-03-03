@@ -28,6 +28,10 @@ module MavisCLI
       false
     end
   end
+
+  def self.terminal_lines
+    `tput lines`.to_i
+  end
 end
 
 require_relative "mavis_cli_helpers"
@@ -43,6 +47,7 @@ require_relative "mavis_cli/gias/download"
 require_relative "mavis_cli/gias/import"
 require_relative "mavis_cli/gp_practices/download"
 require_relative "mavis_cli/gp_practices/import"
+require_relative "mavis_cli/imports/recent"
 require_relative "mavis_cli/local_authorities/download"
 require_relative "mavis_cli/local_authorities/download_gias_codes"
 require_relative "mavis_cli/local_authorities/download_postcode_mappings"
