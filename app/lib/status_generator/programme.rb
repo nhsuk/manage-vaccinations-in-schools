@@ -16,7 +16,8 @@ class StatusGenerator::Programme
     consents:,
     triages:,
     attendance_record:,
-    vaccination_records:
+    vaccination_records:,
+    parents:
   )
     @programme_type = programme_type
     @academic_year = academic_year
@@ -26,6 +27,7 @@ class StatusGenerator::Programme
     @triages = triages
     @attendance_record = attendance_record
     @vaccination_records = vaccination_records
+    @parents = parents
   end
 
   def programme
@@ -47,6 +49,8 @@ class StatusGenerator::Programme
       :cannot_vaccinate_absent
     elsif should_be_cannot_vaccinate_do_not_vaccinate?
       :cannot_vaccinate_do_not_vaccinate
+    elsif should_be_needs_consent_no_contact_details?
+      :needs_consent_no_contact_details
     elsif should_be_needs_consent_no_response?
       :needs_consent_no_response
     elsif should_be_cannot_vaccinate_delay_vaccination?
@@ -136,7 +140,8 @@ class StatusGenerator::Programme
               :consents,
               :triages,
               :attendance_record,
-              :vaccination_records
+              :vaccination_records,
+              :parents
 
   def should_be_vaccinated_already?
     vaccination_generator.status == :vaccinated &&
@@ -202,7 +207,7 @@ class StatusGenerator::Programme
   end
 
   def should_be_needs_consent_no_response?
-    vaccination_generator.status == :eligible && consent_status == :no_response
+    needs_consent? && consent_status == :no_response
   end
 
   def should_be_needs_consent_request_failed?
@@ -216,6 +221,16 @@ class StatusGenerator::Programme
   def should_be_needs_consent_request_not_scheduled?
     false # TODO: Implement this status.
   end
+
+  def should_be_needs_consent_no_contact_details?
+    needs_consent? && !parents_contactable?
+  end
+
+  def needs_consent?
+    vaccination_generator.status == :eligible
+  end
+
+  def parents_contactable? = parents.any?
 
   def consent_generator
     @consent_generator ||=
