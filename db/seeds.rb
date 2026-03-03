@@ -17,7 +17,7 @@ def seed_vaccines
 end
 
 def create_gp_practices
-  FactoryBot.create_list(:gp_practice, 30)
+  Location.import!(FactoryBot.build_list(:gp_practice, 30))
 end
 
 def create_team(ods_code:, workgroup: nil, type: :point_of_care)
@@ -82,10 +82,13 @@ end
 def create_session(user, team, programmes:, completed: false, year_groups: nil)
   year_groups ||= programmes.flat_map(&:default_year_groups).uniq
 
-  Vaccine
-    .active
-    .for_programmes(programmes)
-    .find_each { |vaccine| FactoryBot.create(:batch, team:, vaccine:) }
+  Batch.import!(
+    Vaccine
+      .active
+      .for_programmes(programmes)
+      .find_each
+      .map { |vaccine| FactoryBot.build(:batch, team:, vaccine:) }
+  )
 
   location = FactoryBot.create(:school, team:, gias_year_groups: year_groups)
   date = completed ? 1.week.ago.to_date : Date.current
@@ -154,9 +157,8 @@ def create_session(user, team, programmes:, completed: false, year_groups: nil)
       traits << :partially_vaccinated_triage_needed if programme.td_ipv?
 
       traits.each do |trait|
-        FactoryBot.create_list(
+        FactoryBot.create(
           :patient,
-          1,
           trait,
           programmes: [programme],
           session:,
