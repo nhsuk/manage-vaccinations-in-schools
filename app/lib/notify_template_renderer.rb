@@ -29,8 +29,18 @@ class NotifyTemplateRenderer
     )
   end
 
-  def template_exists?(template_name)
-    template_path(template_name).exist?
+  def template_exists?(template_name, source: :local)
+    case source
+    when :local
+      template_path(template_name).exist?
+    when :govuk_notify
+      config_hash[template_name.to_sym].present?
+    when :any
+      template_exists?(template_name, source: :local) ||
+        template_exists?(template_name, source: :govuk_notify)
+    else
+      raise ArgumentError, "Unknown template_exists? source: #{source}"
+    end
   end
 
   # Resolve template UUID: from frontmatter when local file exists, else from config hash.
