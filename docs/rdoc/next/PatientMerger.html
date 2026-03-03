@@ -657,7 +657,7 @@
             </details>
           </div>
           <div class="method-source-code" id="call-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/patient_merger.rb, line 192</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/patient_merger.rb, line 196</span>
   <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">call</span>(<span class="ruby-operator">...</span>) = <span class="ruby-identifier">new</span>(<span class="ruby-operator">...</span>).<span class="ruby-identifier">call</span>
 
   <span class="ruby-identifier">private_class_method</span> <span class="ruby-value">:new</span>
@@ -808,6 +808,10 @@
     )
 
     <span class="ruby-identifier">patient_to_destroy</span>.<span class="ruby-identifier">gillick_assessments</span>.<span class="ruby-identifier">update_all</span>(
+      <span class="ruby-value">patient_id:</span> <span class="ruby-identifier">patient_to_keep</span>.<span class="ruby-identifier">id</span>
+    )
+
+    <span class="ruby-identifier">patient_to_destroy</span>.<span class="ruby-identifier">patient_merge_log_entries</span>.<span class="ruby-identifier">update_all</span>(
       <span class="ruby-value">patient_id:</span> <span class="ruby-identifier">patient_to_keep</span>.<span class="ruby-identifier">id</span>
     )
 
