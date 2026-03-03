@@ -53,6 +53,8 @@ class StatusGenerator::Programme
       :cannot_vaccinate_absent
     elsif should_be_cannot_vaccinate_do_not_vaccinate?
       :cannot_vaccinate_do_not_vaccinate
+    elsif should_be_needs_consent_request_not_scheduled?
+      :needs_consent_request_not_scheduled
     elsif should_be_needs_consent_no_contact_details?
       :needs_consent_no_contact_details
     elsif should_be_needs_consent_request_scheduled?
@@ -73,8 +75,6 @@ class StatusGenerator::Programme
       :needs_consent_follow_up_requested
     elsif should_be_needs_consent_request_failed?
       :needs_consent_request_failed
-    elsif should_be_needs_consent_request_not_scheduled?
-      :needs_consent_request_not_scheduled
     else
       :not_eligible
     end
@@ -227,7 +227,9 @@ class StatusGenerator::Programme
   end
 
   def should_be_needs_consent_request_not_scheduled?
-    false # TODO: Implement this status.
+    needs_consent? && parents_contactable? &&
+      !consent_notifications_requested? &&
+      sessions.where(send_consent_requests_at: nil).exists?
   end
 
   def should_be_needs_consent_no_contact_details?

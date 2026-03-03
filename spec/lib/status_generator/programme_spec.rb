@@ -400,6 +400,33 @@ describe StatusGenerator::Programme do
       end
     end
 
+    context "when a consent requests are not scheduled to go out in the future" do
+      before do
+        create(
+          :session,
+          programmes: [programme],
+          team_location: session.team_location,
+          send_consent_requests_at: nil
+        )
+      end
+
+      its(:status) { should be(:needs_consent_request_not_scheduled) }
+
+      context "when a consent request notification already exists" do
+        before do
+          create(
+            :consent_notification,
+            :request,
+            patient:,
+            session:,
+            programmes: [programme]
+          )
+        end
+
+        its(:status) { should be(:needs_consent_no_response) }
+      end
+    end
+
     context "when there are no contact details for parents and no consent request has been sent" do
       let(:parents) { [create(:parent, :non_contactable)] }
 
