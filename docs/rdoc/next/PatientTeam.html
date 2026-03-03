@@ -681,7 +681,7 @@ fk_rails_...  (team_id =&gt; teams.id) ON DELETE =&gt; cascade</pre>
             </details>
           </div>
           <div class="method-source-code" id="add_source-21-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/patient_team.rb, line 72</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/patient_team.rb, line 67</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">add_source!</span>(<span class="ruby-identifier">source</span>)
   <span class="ruby-identifier">update!</span>(<span class="ruby-value">sources:</span> <span class="ruby-constant">Array</span>(<span class="ruby-identifier">sources</span>) <span class="ruby-operator">|</span> [<span class="ruby-identifier">source</span>.<span class="ruby-identifier">to_s</span>])
 <span class="ruby-keyword">end</span></pre>
@@ -723,7 +723,7 @@ fk_rails_...  (team_id =&gt; teams.id) ON DELETE =&gt; cascade</pre>
             </details>
           </div>
           <div class="method-source-code" id="remove_source-21-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/patient_team.rb, line 76</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/patient_team.rb, line 71</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">remove_source!</span>(<span class="ruby-identifier">source</span>)
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">sources</span> = <span class="ruby-identifier">sources</span>.<span class="ruby-identifier">reject</span> { <span class="ruby-identifier">it</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">source</span>.<span class="ruby-identifier">to_s</span> }
   <span class="ruby-identifier">sources</span>.<span class="ruby-identifier">empty?</span> <span class="ruby-operator">?</span> <span class="ruby-identifier">delete</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">save!</span>

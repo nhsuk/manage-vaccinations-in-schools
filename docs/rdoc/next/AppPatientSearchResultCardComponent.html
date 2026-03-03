@@ -742,50 +742,7 @@
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">call</span>
   <span class="ruby-identifier">render</span> <span class="ruby-constant">AppCardComponent</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value">link_to:</span>, <span class="ruby-value">compact:</span> <span class="ruby-keyword">true</span>) <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">card</span><span class="ruby-operator">|</span>
     <span class="ruby-identifier">card</span>.<span class="ruby-identifier">with_heading</span>(<span class="ruby-value">level:</span> <span class="ruby-value">4</span>) { <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">full_name_with_known_as</span> }
-
-    <span class="ruby-identifier">govuk_summary_list</span>(<span class="ruby-value">actions:</span> <span class="ruby-keyword">false</span>) <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">summary_list</span><span class="ruby-operator">|</span>
-      <span class="ruby-keyword">if</span> <span class="ruby-identifier">show_nhs_number</span>
-        <span class="ruby-identifier">summary_list</span>.<span class="ruby-identifier">with_row</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">row</span><span class="ruby-operator">|</span>
-          <span class="ruby-identifier">row</span>.<span class="ruby-identifier">with_key</span> { <span class="ruby-string">&quot;NHS number&quot;</span> }
-          <span class="ruby-identifier">row</span>.<span class="ruby-identifier">with_value</span> { <span class="ruby-identifier">patient_nhs_number</span>(<span class="ruby-identifier">patient</span>) }
-        <span class="ruby-keyword">end</span>
-      <span class="ruby-keyword">end</span>
-      <span class="ruby-identifier">summary_list</span>.<span class="ruby-identifier">with_row</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">row</span><span class="ruby-operator">|</span>
-        <span class="ruby-identifier">row</span>.<span class="ruby-identifier">with_key</span> { <span class="ruby-string">&quot;Date of birth&quot;</span> }
-        <span class="ruby-identifier">row</span>.<span class="ruby-identifier">with_value</span> { <span class="ruby-identifier">patient_date_of_birth</span>(<span class="ruby-identifier">patient</span>) }
-      <span class="ruby-keyword">end</span>
-      <span class="ruby-keyword">if</span> <span class="ruby-identifier">show_year_group</span>
-        <span class="ruby-identifier">summary_list</span>.<span class="ruby-identifier">with_row</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">row</span><span class="ruby-operator">|</span>
-          <span class="ruby-identifier">row</span>.<span class="ruby-identifier">with_key</span> { <span class="ruby-string">&quot;Year group&quot;</span> }
-          <span class="ruby-identifier">row</span>.<span class="ruby-identifier">with_value</span> { <span class="ruby-identifier">patient_year_group</span>(<span class="ruby-identifier">patient</span>, <span class="ruby-value">academic_year:</span>) }
-        <span class="ruby-keyword">end</span>
-      <span class="ruby-keyword">end</span>
-      <span class="ruby-keyword">if</span> <span class="ruby-identifier">show_postcode</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">patient</span>.<span class="ruby-identifier">restricted?</span>
-        <span class="ruby-identifier">summary_list</span>.<span class="ruby-identifier">with_row</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">row</span><span class="ruby-operator">|</span>
-          <span class="ruby-identifier">row</span>.<span class="ruby-identifier">with_key</span> { <span class="ruby-string">&quot;Postcode&quot;</span> }
-          <span class="ruby-identifier">row</span>.<span class="ruby-identifier">with_value</span> { <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">address_postcode</span> }
-        <span class="ruby-keyword">end</span>
-      <span class="ruby-keyword">end</span>
-      <span class="ruby-keyword">if</span> <span class="ruby-identifier">show_school</span>
-        <span class="ruby-identifier">summary_list</span>.<span class="ruby-identifier">with_row</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">row</span><span class="ruby-operator">|</span>
-          <span class="ruby-identifier">row</span>.<span class="ruby-identifier">with_key</span> { <span class="ruby-string">&quot;School&quot;</span> }
-          <span class="ruby-identifier">row</span>.<span class="ruby-identifier">with_value</span> { <span class="ruby-identifier">patient_school</span>(<span class="ruby-identifier">patient</span>) }
-        <span class="ruby-keyword">end</span>
-      <span class="ruby-keyword">end</span>
-      <span class="ruby-keyword">if</span> <span class="ruby-identifier">show_parents</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">parent_relationships</span>.<span class="ruby-identifier">any?</span>
-        <span class="ruby-identifier">summary_list</span>.<span class="ruby-identifier">with_row</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">row</span><span class="ruby-operator">|</span>
-          <span class="ruby-identifier">row</span>.<span class="ruby-identifier">with_key</span> { <span class="ruby-string">&quot;Parents or guardians&quot;</span> }
-          <span class="ruby-identifier">row</span>.<span class="ruby-identifier">with_value</span> { <span class="ruby-identifier">patient_parents</span>(<span class="ruby-identifier">patient</span>) }
-        <span class="ruby-keyword">end</span>
-      <span class="ruby-keyword">end</span>
-      <span class="ruby-keyword">if</span> <span class="ruby-identifier">show_programme_status</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">academic_year</span> <span class="ruby-operator">&amp;&amp;</span>
-           (<span class="ruby-identifier">value</span> = <span class="ruby-identifier">programme_status_tag</span>)
-        <span class="ruby-identifier">summary_list</span>.<span class="ruby-identifier">with_row</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">row</span><span class="ruby-operator">|</span>
-          <span class="ruby-identifier">row</span>.<span class="ruby-identifier">with_key</span> { <span class="ruby-string">&quot;Programme status&quot;</span> }
-          <span class="ruby-identifier">row</span>.<span class="ruby-identifier">with_value</span> { <span class="ruby-identifier">value</span> }
-        <span class="ruby-keyword">end</span>
-      <span class="ruby-keyword">end</span>
-    <span class="ruby-keyword">end</span>
+    <span class="ruby-identifier">govuk_summary_list</span>(<span class="ruby-value">rows:</span>)
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
