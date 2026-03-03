@@ -685,7 +685,7 @@
             </details>
           </div>
           <div class="method-source-code" id="passthrough_sms_configured-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/jobs/sms_delivery_job.rb, line 110</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/jobs/sms_delivery_job.rb, line 114</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">passthrough_sms_configured?</span>
   <span class="ruby-constant">NotifyTemplateRenderer</span>.<span class="ruby-identifier">for</span>(<span class="ruby-value">:sms</span>).<span class="ruby-identifier">passthrough_configured?</span>
 <span class="ruby-keyword">end</span></pre>
@@ -767,20 +767,24 @@
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">phone_number</span>.<span class="ruby-identifier">nil?</span>
 
   <span class="ruby-identifier">sms_renderer</span> = <span class="ruby-constant">NotifyTemplateRenderer</span>.<span class="ruby-identifier">for</span>(<span class="ruby-value">:sms</span>)
-  <span class="ruby-identifier">template_id</span>, <span class="ruby-identifier">personalisation_hash</span> =
+  <span class="ruby-identifier">api_template_id</span>, <span class="ruby-identifier">personalisation_hash</span>, <span class="ruby-identifier">log_template_id</span> =
     <span class="ruby-keyword">if</span> <span class="ruby-identifier">use_local_template?</span>(<span class="ruby-identifier">template_name_sym</span>)
       <span class="ruby-identifier">rendered</span> = <span class="ruby-identifier">sms_renderer</span>.<span class="ruby-identifier">render</span>(<span class="ruby-identifier">template_name_sym</span>, <span class="ruby-identifier">personalisation</span>)
-      [<span class="ruby-identifier">sms_renderer</span>.<span class="ruby-identifier">passthrough_template_id</span>, { <span class="ruby-value">body:</span> <span class="ruby-identifier">rendered</span>[<span class="ruby-value">:body</span>] }]
+      [
+        <span class="ruby-identifier">sms_renderer</span>.<span class="ruby-identifier">passthrough_template_id</span>,
+        { <span class="ruby-value">body:</span> <span class="ruby-identifier">rendered</span>[<span class="ruby-value">:body</span>] },
+        <span class="ruby-identifier">sms_renderer</span>.<span class="ruby-identifier">template_id_for</span>(<span class="ruby-identifier">template_name_sym</span>)
+      ]
     <span class="ruby-keyword">else</span>
       <span class="ruby-identifier">tid</span> = <span class="ruby-identifier">sms_renderer</span>.<span class="ruby-identifier">template_id_for</span>(<span class="ruby-identifier">template_name_sym</span>)
       <span class="ruby-identifier">raise</span> <span class="ruby-constant">UnknownTemplate</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">tid</span>.<span class="ruby-identifier">nil?</span>
-      [<span class="ruby-identifier">tid</span>, <span class="ruby-identifier">personalisation</span>.<span class="ruby-identifier">to_h</span>]
+      [<span class="ruby-identifier">tid</span>, <span class="ruby-identifier">personalisation</span>.<span class="ruby-identifier">to_h</span>, <span class="ruby-identifier">tid</span>]
     <span class="ruby-keyword">end</span>
 
   <span class="ruby-identifier">args</span> = {
     <span class="ruby-value">personalisation:</span> <span class="ruby-identifier">personalisation_hash</span>,
     <span class="ruby-value">phone_number:</span>,
-    <span class="ruby-value">template_id:</span>
+    <span class="ruby-value">template_id:</span> <span class="ruby-identifier">api_template_id</span>
   }
 
   <span class="ruby-identifier">delivery_id</span>, <span class="ruby-identifier">delivery_status</span> =
@@ -803,7 +807,7 @@
       <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">deliveries</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">args</span>
       [<span class="ruby-constant">SecureRandom</span>.<span class="ruby-identifier">uuid</span>, <span class="ruby-string">&quot;delivered&quot;</span>]
     <span class="ruby-keyword">else</span>
-      <span class="ruby-constant">Rails</span>.<span class="ruby-identifier">logger</span>.<span class="ruby-identifier">info</span> <span class="ruby-node">&quot;Sending SMS to #{phone_number} with template #{template_id}&quot;</span>
+      <span class="ruby-constant">Rails</span>.<span class="ruby-identifier">logger</span>.<span class="ruby-identifier">info</span> <span class="ruby-node">&quot;Sending SMS to #{phone_number} with template #{api_template_id}&quot;</span>
       [<span class="ruby-keyword">nil</span>, <span class="ruby-string">&quot;delivered&quot;</span>]
     <span class="ruby-keyword">end</span>
 
@@ -815,7 +819,7 @@
     <span class="ruby-value">patient:</span> <span class="ruby-identifier">personalisation</span>.<span class="ruby-identifier">patient</span>,
     <span class="ruby-value">recipient:</span> <span class="ruby-identifier">phone_number</span>,
     <span class="ruby-value">sent_by:</span>,
-    <span class="ruby-value">template_id:</span>,
+    <span class="ruby-value">template_id:</span> <span class="ruby-identifier">log_template_id</span>,
     <span class="ruby-value">type:</span> <span class="ruby-value">:sms</span>,
     <span class="ruby-value">notify_log_entry_programmes_attributes:</span>
       <span class="ruby-identifier">personalisation</span>.<span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">map</span> <span class="ruby-keyword">do</span>
@@ -861,7 +865,7 @@
             </details>
           </div>
           <div class="method-source-code" id="use_local_template-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/jobs/sms_delivery_job.rb, line 104</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/jobs/sms_delivery_job.rb, line 108</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">use_local_template?</span>(<span class="ruby-identifier">template_name_sym</span>)
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">passthrough_sms_configured?</span>
 
