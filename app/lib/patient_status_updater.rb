@@ -49,7 +49,9 @@ class PatientStatusUpdater < PatientScopedUpdater
         :patient_locations,
         :triages,
         :vaccination_records,
-        :parents
+        :parents,
+        :sessions,
+        :consent_notifications
       )
       .find_in_batches(batch_size: 10_000) do |batch|
         batch.each(&:assign)

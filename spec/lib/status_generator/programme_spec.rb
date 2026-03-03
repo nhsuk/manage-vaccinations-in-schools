@@ -14,7 +14,10 @@ describe StatusGenerator::Programme do
       triages: patient.triages,
       attendance_record: patient.attendance_records.first,
       vaccination_records: patient.vaccination_records.order_by_performed_at,
-      parents: patient.parents.contactable
+      parents: patient.parents.contactable,
+      sessions: patient.sessions,
+      consent_notifications:
+        patient.consent_notifications.includes(session: :team_location)
     )
   end
 
@@ -369,6 +372,33 @@ describe StatusGenerator::Programme do
     its(:status) { should be(:needs_consent_no_response) }
     its(:vaccine_methods) { should be_nil }
     its(:without_gelatine) { should be_nil }
+
+    context "when a consent request is scheduled for a future session" do
+      before do
+        create(
+          :session,
+          programmes: [programme],
+          team_location: session.team_location,
+          send_consent_requests_at: Date.tomorrow
+        )
+      end
+
+      its(:status) { should be(:needs_consent_request_scheduled) }
+
+      context "when a consent request notification already exists" do
+        before do
+          create(
+            :consent_notification,
+            :request,
+            patient:,
+            session:,
+            programmes: [programme]
+          )
+        end
+
+        its(:status) { should be(:needs_consent_no_response) }
+      end
+    end
 
     context "when there are no contact details for parents and no consent request has been sent" do
       let(:parents) { [create(:parent, :non_contactable)] }

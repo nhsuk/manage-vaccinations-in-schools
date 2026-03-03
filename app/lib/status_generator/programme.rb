@@ -17,7 +17,9 @@ class StatusGenerator::Programme
     triages:,
     attendance_record:,
     vaccination_records:,
-    parents:
+    parents:,
+    sessions:,
+    consent_notifications:
   )
     @programme_type = programme_type
     @academic_year = academic_year
@@ -28,6 +30,8 @@ class StatusGenerator::Programme
     @attendance_record = attendance_record
     @vaccination_records = vaccination_records
     @parents = parents
+    @sessions = sessions
+    @consent_notifications = consent_notifications
   end
 
   def programme
@@ -51,6 +55,8 @@ class StatusGenerator::Programme
       :cannot_vaccinate_do_not_vaccinate
     elsif should_be_needs_consent_no_contact_details?
       :needs_consent_no_contact_details
+    elsif should_be_needs_consent_request_scheduled?
+      :needs_consent_request_scheduled
     elsif should_be_needs_consent_no_response?
       :needs_consent_no_response
     elsif should_be_cannot_vaccinate_delay_vaccination?
@@ -67,8 +73,6 @@ class StatusGenerator::Programme
       :needs_consent_follow_up_requested
     elsif should_be_needs_consent_request_failed?
       :needs_consent_request_failed
-    elsif should_be_needs_consent_request_scheduled?
-      :needs_consent_request_scheduled
     elsif should_be_needs_consent_request_not_scheduled?
       :needs_consent_request_not_scheduled
     else
@@ -141,7 +145,9 @@ class StatusGenerator::Programme
               :triages,
               :attendance_record,
               :vaccination_records,
-              :parents
+              :parents,
+              :sessions,
+              :consent_notifications
 
   def should_be_vaccinated_already?
     vaccination_generator.status == :vaccinated &&
@@ -215,7 +221,9 @@ class StatusGenerator::Programme
   end
 
   def should_be_needs_consent_request_scheduled?
-    false # TODO: Implement this status.
+    needs_consent? && parents_contactable? &&
+      !consent_notifications_requested? &&
+      sessions.where("send_consent_requests_at > ?", Date.current).exists?
   end
 
   def should_be_needs_consent_request_not_scheduled?
@@ -231,6 +239,14 @@ class StatusGenerator::Programme
   end
 
   def parents_contactable? = parents.any?
+
+  def consent_notifications_requested?
+    @consent_notifications_requested ||=
+      consent_notifications.any? do |notification|
+        notification.programme_types.include?(programme.type) &&
+          notification.session&.team_location&.academic_year == academic_year
+      end
+  end
 
   def consent_generator
     @consent_generator ||=
