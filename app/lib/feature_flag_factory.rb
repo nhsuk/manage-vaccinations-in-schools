@@ -15,6 +15,7 @@ class FeatureFlagFactory
   end
 
   FEATURES_FOR_DEVELOPMENT = %i[
+    already_vaccinated
     dev_tools
     import_review_screen
     reporting_api
