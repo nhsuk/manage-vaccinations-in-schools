@@ -70,6 +70,9 @@ describe PatientMerger do
     let(:patient_location) do
       create(:patient_location, session:, patient: patient_to_destroy)
     end
+    let(:patient_merge_log_entry) do
+      create(:patient_merge_log_entry, patient: patient_to_destroy)
+    end
     let(:patient_specific_direction) do
       create(
         :patient_specific_direction,
@@ -187,7 +190,13 @@ describe PatientMerger do
       )
     end
 
-    it "moves patient sessions" do
+    it "moves patient merge log entries" do
+      expect { call }.to change { patient_merge_log_entry.reload.patient }.to(
+        patient_to_keep
+      )
+    end
+
+    it "moves patient locations" do
       expect { call }.to change { patient_location.reload.patient }.to(
         patient_to_keep
       )
