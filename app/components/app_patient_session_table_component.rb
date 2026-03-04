@@ -8,7 +8,7 @@ class AppPatientSessionTableComponent < ViewComponent::Base
           <% head.with_row do |row| %>
             <% row.with_cell(text: "Location") %>
             <% row.with_cell(text: "Session dates") %>
-              <% row.with_cell(text: "Programme") %>
+            <% row.with_cell(text: "Programme") %>
           <% end %>
         <% end %>
 
