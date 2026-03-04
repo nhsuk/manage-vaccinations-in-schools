@@ -35,10 +35,14 @@ describe PatientChangeset do
   subject(:changeset) do
     described_class.from_import_row(
       row: import_row,
-      import: create(:class_import),
+      import: create(:class_import, team:),
       row_number: 1
     )
   end
+
+  let(:team) { create(:team) }
+  let(:school) { create(:school, urn: "123456", team:) }
+  let(:home_educated) { false }
 
   let(:valid_data) do
     {
@@ -57,23 +61,17 @@ describe PatientChangeset do
   let(:import_row) do
     instance_double(
       CohortImportRow,
-      school: create(:school, urn: "123456"),
-      import_attributes: patient_import_attributes,
-      parent_1_import_attributes: {
-        full_name: "John Smith",
-        relationship: "Father",
-        email: "john@example.com",
-        phone: "07412345678"
-      },
-      parent_2_import_attributes: {
-      },
+      school:,
+      import_attributes:,
+      parent_1_import_attributes:,
+      parent_2_import_attributes:,
       academic_year: AcademicYear.current,
       school_move_source: "import",
-      home_educated: false
+      home_educated:
     )
   end
 
-  let(:patient_import_attributes) do
+  let(:import_attributes) do
     {
       address_line_1: valid_data[:child_address_line_1],
       address_postcode: valid_data[:child_postcode],
@@ -84,9 +82,21 @@ describe PatientChangeset do
     }.compact
   end
 
+  let(:parent_1_import_attributes) do
+    {
+      full_name: "John Smith",
+      relationship: "Father",
+      email: "john@example.com",
+      phone: "07412345678"
+    }
+  end
+
+  let(:parent_2_import_attributes) { {} }
+
   describe "#patient" do
-    it "builds patient with normalized attributes" do
-      patient = changeset.patient
+    subject(:patient) { changeset.patient }
+
+    it do
       expect(patient).to have_attributes(
         given_name: "Jimmy",
         family_name: "Smith",
@@ -102,151 +112,118 @@ describe PatientChangeset do
         create(:patient, nhs_number: "9990000026", given_name: "James")
       end
 
-      it "updates existing patient" do
-        patient = changeset.patient
-        expect(patient).to eq(existing_patient)
-        expect(patient.given_name).to eq("James")
-      end
+      it { should eq(existing_patient) }
+      it { should have_attributes(given_name: "James") }
     end
   end
 
   describe "#parents" do
-    it "builds parent with relationship" do
-      parents = changeset.parents
-      relationships = changeset.parent_relationships
+    subject(:parents) { changeset.parents }
 
-      expect(parents.size).to eq(1)
-      expect(parents.first).to have_attributes(
+    it "builds parent" do
+      expect(parents.sole).to have_attributes(
         full_name: "John Smith",
         email: "john@example.com"
       )
+    end
+  end
 
-      expect(relationships.first).to have_attributes(type: "father")
+  describe "#parent_relationships" do
+    subject(:parent_relationships) { changeset.parent_relationships }
+
+    it "creates a relationship for the parent" do
+      expect(parent_relationships.sole).to have_attributes(type: "father")
+      expect(parent_relationships.sole.parent).to eq changeset.parents.sole
+      expect(parent_relationships.sole.patient).to eq changeset.patient
     end
   end
 
   describe "#school_move" do
+    subject(:school_move) { changeset.school_move }
+
     context "with school change" do
       before do
-        @existing_patient =
-          create(:patient, nhs_number: "9990000026", school: create(:school))
+        create(:patient, nhs_number: "9990000026", school: create(:school))
       end
 
       it "creates school move record" do
-        move = changeset.school_move
-        expect(move.school.urn).to eq("123456")
+        expect(school_move.school.urn).to eq("123456")
       end
     end
   end
 
-  describe "#school_move_to_unknown_from_another_team?" do
-    let(:team_a) { create(:team, name: "Team A") }
-    let(:team_b) { create(:team, name: "Team B") }
+  describe "#school_move_to_unknown_school_from_another_team?" do
+    subject(:is_school_move_to_unknown_school_from_another_team?) do
+      changeset.school_move_to_unknown_school_from_another_team?
+    end
+
+    let(:another_team) { create(:team, name: "Another Team") }
     let(:school_in_other_team) do
-      create(:school, name: "School in Team B", team: team_b)
+      create(:school, name: "School in another team", team: another_team)
     end
 
     context "when new location is a known school" do
-      it "returns false" do
-        expect(
-          changeset.school_move_to_unknown_school_from_another_team?
-        ).to be(false)
-      end
-    end
+      let(:school) { create(:school) }
+      let(:home_educated) { false }
 
-    context "when new location is home educated" do
       before do
-        changeset.update!(school: nil)
-        changeset.data["upload"]["home_educated"] = true
-        changeset.save!
-      end
-
-      it "returns false" do
-        expect(
-          changeset.school_move_to_unknown_school_from_another_team?
-        ).to be(false)
-      end
-    end
-
-    context "when new location is unknown school and patient is in a school in another team" do
-      let(:generic_clinic) { create(:generic_clinic, team: team_b) }
-      let!(:existing_patient) do
         create(:patient, nhs_number: "9990000026", school: school_in_other_team)
       end
 
-      before do
-        changeset.update!(school: nil, patient: existing_patient)
-        changeset.data["upload"]["home_educated"] = false
-        create(
-          :patient_location,
-          patient: existing_patient,
-          location: generic_clinic,
-          academic_year: AcademicYear.current
-        )
-      end
-
-      it "returns true" do
-        expect(
-          changeset.school_move_to_unknown_school_from_another_team?
-        ).to be(true)
-      end
+      it { should be false }
     end
 
-    context "when new location is unknown school and patient is in unknown school in another team" do
-      let(:generic_clinic) { create(:generic_clinic, team: team_b) }
-      let!(:existing_patient) do
-        create(
-          :patient,
-          nhs_number: "9990000026",
-          school: nil,
-          home_educated: false
-        )
-      end
+    context "when new location is home educated" do
+      let(:school) { nil }
+      let(:home_educated) { true }
 
       before do
-        changeset.update!(school: nil, patient: existing_patient)
-        changeset.data["upload"]["home_educated"] = false
-        create(
-          :patient_location,
-          patient: existing_patient,
-          location: generic_clinic,
-          academic_year: AcademicYear.current
-        )
+        create(:patient, nhs_number: "9990000026", school: school_in_other_team)
       end
 
-      it "returns false" do
-        expect(
-          changeset.school_move_to_unknown_school_from_another_team?
-        ).to be(false)
-      end
+      it { should be false }
     end
 
-    context "when new location is unknown school and patient is home educated in another team" do
-      let(:generic_clinic) { create(:generic_clinic, team: team_b) }
-      let!(:existing_patient) do
-        create(
-          :patient,
-          nhs_number: "9990000026",
-          school: nil,
-          home_educated: true
-        )
+    context "when new location is unknown school" do
+      let(:school) { nil }
+      let(:home_educated) { false }
+
+      context "patient is in a school in another team" do
+        before do
+          create(
+            :patient,
+            nhs_number: "9990000026",
+            school: school_in_other_team
+          )
+        end
+
+        it { should be true }
       end
 
-      before do
-        create(
-          :patient_location,
-          patient: existing_patient,
-          location: generic_clinic,
-          academic_year: AcademicYear.current
-        )
-        changeset.update!(school: nil, patient: existing_patient)
-        changeset.data["upload"]["home_educated"] = false
+      context "patient is in unknown school in another team" do
+        before do
+          create(
+            :patient,
+            nhs_number: "9990000026",
+            school: nil,
+            home_educated: false
+          )
+        end
+
+        it { should be false }
       end
 
-      it "returns true" do
-        expect(
-          changeset.school_move_to_unknown_school_from_another_team?
-        ).to be(true)
+      context "patient is home educated in another team" do
+        before do
+          create(
+            :patient,
+            nhs_number: "9990000026",
+            school: nil,
+            home_educated: true
+          )
+        end
+
+        it { should be true }
       end
     end
   end
