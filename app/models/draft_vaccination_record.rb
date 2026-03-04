@@ -152,6 +152,7 @@ class DraftVaccinationRecord
     validates :outcome, presence: true
     validates :notes, length: { maximum: 1000 }
     validate :validate_patient_attendance
+    validate :validate_batch_presence
   end
 
   on_wizard_step :vaccinator, exact: true do
@@ -534,6 +535,12 @@ class DraftVaccinationRecord
     unless VaccinationRecord.delivery_sites.keys.include?(delivery_site)
       errors.add(:delivery_site, :inclusion)
     end
+  end
+
+  def validate_batch_presence
+    return unless administered? && sourced_from_service?
+
+    errors.add(:batch_number, :blank) if batch_number.blank?
   end
 
   def validate_patient_attendance
