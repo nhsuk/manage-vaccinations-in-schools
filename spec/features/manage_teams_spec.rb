@@ -17,6 +17,46 @@ describe "Manage teams" do
     then_i_see_the_team_sessions
   end
 
+  scenario "Adding a school" do
+    given_my_team_exists
+    and_other_schools_exist
+
+    when_i_click_on_team_settings
+    when_i_click_on_schools
+    then_i_see_the_team_schools
+
+    when_i_click_on_add_a_new_school
+    then_i_see_the_enter_urn_form
+
+    when_i_enter_a_closed_school_urn
+    and_i_continue
+    then_i_see_a_closed_school_error
+
+    when_i_enter_a_school_assigned_to_another_team
+    and_i_continue
+    then_i_see_a_different_team_error
+
+    when_i_enter_a_valid_school_urn
+    and_i_continue
+    then_i_see_the_confirm_school_screen
+
+    when_i_choose_to_search_again
+    and_i_continue
+    then_i_see_the_enter_urn_form
+
+    when_i_enter_the_same_school_urn
+    and_i_continue
+    then_i_see_the_confirm_school_screen
+
+    when_i_confirm_the_school
+    and_i_continue
+    then_i_see_the_check_and_confirm_screen_for_school
+
+    when_i_confirm_add_school
+    then_i_see_the_school_confirmation_banner
+    and_the_school_is_added_to_my_team
+  end
+
   scenario "Adding a school site" do
     given_my_team_exists
 
@@ -277,5 +317,90 @@ describe "Manage teams" do
 
   def when_i_go_back
     visit draft_school_path("confirm")
+  end
+
+  def and_other_schools_exist
+    @closed_school = create(:school, :closed, urn: "99999")
+    @other_team = create(:team)
+    @other_team_school =
+      create(
+        :school,
+        urn: "88888",
+        team: @other_team,
+        name: "Other Team School"
+      )
+    @available_school = create(:school, urn: "77777", name: "Available School")
+  end
+
+  def when_i_click_on_add_a_new_school
+    click_on "Add a new school"
+  end
+
+  def then_i_see_the_enter_urn_form
+    expect(page).to have_content("Find a school to add to your team")
+    expect(page).to have_field("School URN")
+  end
+
+  def when_i_enter_a_closed_school_urn
+    fill_in "School URN", with: @closed_school.urn
+  end
+
+  def then_i_see_a_closed_school_error
+    expect(page).to have_content(
+      "This school is closed and cannot be added to your team."
+    )
+  end
+
+  def when_i_enter_a_school_assigned_to_another_team
+    fill_in "School URN", with: @other_team_school.urn
+  end
+
+  def then_i_see_a_different_team_error
+    expect(page).to have_content(
+      "This school is already assigned to another team"
+    )
+  end
+
+  def when_i_enter_a_valid_school_urn
+    fill_in "School URN", with: @available_school.urn
+  end
+
+  alias_method :when_i_enter_the_same_school_urn,
+               :when_i_enter_a_valid_school_urn
+
+  def then_i_see_the_confirm_school_screen
+    expect(page).to have_content("Confirm school")
+    expect(page).to have_content(@available_school.name)
+    expect(page).to have_content("Is this the correct school?")
+  end
+
+  def when_i_choose_to_search_again
+    choose "No, search again"
+  end
+
+  def when_i_confirm_the_school
+    choose "Yes, add this school"
+  end
+
+  def then_i_see_the_check_and_confirm_screen_for_school
+    expect(page).to have_content("Check and confirm")
+    expect(page).to have_content("School details")
+    expect(page).to have_content(@available_school.name)
+    expect(page).to have_content(@available_school.urn)
+  end
+
+  def when_i_confirm_add_school
+    click_on "Add school"
+  end
+
+  def then_i_see_the_school_confirmation_banner
+    expect(page).to have_content(
+      "#{@available_school.name} has been added to your team."
+    )
+  end
+
+  def and_the_school_is_added_to_my_team
+    @available_school.reload
+    expect(@available_school.teams).to include(@team)
   end
 end

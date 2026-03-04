@@ -2,7 +2,12 @@
 
 describe DraftSchool do
   subject(:draft_school) do
-    described_class.new(request_session:, current_user:, **attributes)
+    described_class.new(
+      request_session:,
+      current_user:,
+      current_team: team,
+      **attributes
+    )
   end
 
   let(:team) { create(:team, :with_one_nurse) }
@@ -13,6 +18,7 @@ describe DraftSchool do
 
   let(:valid_attributes) do
     {
+      context: "add_site",
       parent_urn_and_site: school.urn_and_site,
       name: "New Site Name",
       address_line_1: "123 Main Street",
@@ -24,13 +30,17 @@ describe DraftSchool do
 
   describe "validations" do
     context "on the school step" do
-      let(:attributes) { { wizard_step: :school } }
+      let(:attributes) { { wizard_step: :school, context: "add_site" } }
 
       it { should validate_presence_of(:parent_urn_and_site).on(:update) }
 
       context "with valid urn_and_site" do
         let(:attributes) do
-          { wizard_step: :school, parent_urn_and_site: school.urn_and_site }
+          {
+            wizard_step: :school,
+            context: "add_site",
+            parent_urn_and_site: school.urn_and_site
+          }
         end
 
         it { should be_valid(:update) }
@@ -121,15 +131,23 @@ describe DraftSchool do
 
   describe "#wizard_steps" do
     context "when creating a new site" do
-      let(:attributes) { {} }
+      let(:attributes) { { context: "add_site" } }
 
       it "returns all steps including school selection" do
         expect(draft_school.wizard_steps).to eq(%i[school details confirm])
       end
     end
 
+    context "when adding a school" do
+      let(:attributes) { { context: "add_school" } }
+
+      it "returns URN flow steps" do
+        expect(draft_school.wizard_steps).to eq(%i[urn confirm_urn confirm])
+      end
+    end
+
     context "when editing an existing site" do
-      let(:attributes) { { editing_id: school.id } }
+      let(:attributes) { { editing_id: school.id, context: "add_site" } }
 
       it "skips the school selection step" do
         expect(draft_school.wizard_steps).to eq(%i[details confirm])
@@ -174,6 +192,20 @@ describe DraftSchool do
 
       it "returns the location being edited" do
         expect(draft_school.source_location).to eq(existing_site)
+      end
+    end
+
+    context "when adding a new school" do
+      context "when urn is nil" do
+        let(:attributes) { { context: "add_school", urn: nil } }
+
+        it { expect(draft_school.source_location).to be_nil }
+      end
+
+      context "when urn is set" do
+        let(:attributes) { { context: "add_school", urn: school.urn } }
+
+        it { expect(draft_school.source_location).to eq(school) }
       end
     end
   end
@@ -322,9 +354,12 @@ describe DraftSchool do
           "address_line_2" => "Floor 2",
           "address_postcode" => "SW1A 1AA",
           "address_town" => "London",
+          "confirm_school" => nil,
+          "context" => "add_site",
           "editing_id" => nil,
           "name" => "New Site Name",
-          "parent_urn_and_site" => school.urn_and_site
+          "parent_urn_and_site" => school.urn_and_site,
+          "urn" => nil
         }
       )
     end
@@ -338,9 +373,12 @@ describe DraftSchool do
           "address_line_2" => nil,
           "address_postcode" => nil,
           "address_town" => nil,
+          "confirm_school" => nil,
+          "context" => nil,
           "editing_id" => nil,
           "name" => nil,
-          "parent_urn_and_site" => nil
+          "parent_urn_and_site" => nil,
+          "urn" => nil
         }
       )
     end
@@ -378,12 +416,12 @@ describe DraftSchool do
     end
   end
 
-  describe "#urn" do
+  describe "#resolved_urn" do
     context "when creating a new site" do
-      let(:attributes) { valid_attributes }
+      let(:attributes) { valid_attributes.merge(context: "add_site") }
 
       it "returns the parent school's URN" do
-        expect(draft_school.urn).to eq(school.urn)
+        expect(draft_school.resolved_urn).to eq(school.urn)
       end
     end
 
@@ -391,10 +429,10 @@ describe DraftSchool do
       let(:existing_site) do
         create(:school, urn: "654321", site: "A", name: "Site A")
       end
-      let(:attributes) { { editing_id: existing_site.id } }
+      let(:attributes) { { editing_id: existing_site.id, context: "add_site" } }
 
       it "returns the location's URN" do
-        expect(draft_school.urn).to eq("654321")
+        expect(draft_school.resolved_urn).to eq("654321")
       end
     end
   end

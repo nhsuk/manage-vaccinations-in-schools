@@ -9,16 +9,33 @@
 <% end %>
 
 <%= render AppCardComponent.new do |card| %>
-  <% card.with_heading { "Site details" } %>
+  <% if @draft_school.add_school_context? %>
+    <% card.with_heading { "School details" } %>
+  <% else %>
+    <% card.with_heading { "Site details" } %>
+  <% end %>
 
-  <% change_links = @draft_school.editing? ? {
-       name: wizard_path(:details),
-       address: wizard_path(:details),
-     } : { urn: wizard_path(:school) } %>
+  <% change_links = if @draft_school.editing?
+         {
+           name: { link: wizard_path(:details) },
+           address: { link: wizard_path(:details) },
+         }
+       elsif @draft_school.add_site_context?
+         { urn: { link: wizard_path(:school), text: "Change parent school" } }
+       else
+         { urn: { link: wizard_path(:urn), text: "Change" } }
+       end %>
 
   <%= render AppSchoolSummaryComponent.new(@draft_school, change_links:) %>
 <% end %>
 
 <%= form_with(model: @draft_school, url: wizard_path, method: :put) do |form| %>
-  <%= form.govuk_submit @draft_school.editing? ? "Save changes" : "Add site" %>
+  <% submit_text = if @draft_school.editing?
+         "Save changes"
+       elsif @draft_school.add_school_context?
+         "Add school"
+       else
+         "Add site"
+       end %>
+  <%= form.govuk_submit submit_text %>
 <% end %>
