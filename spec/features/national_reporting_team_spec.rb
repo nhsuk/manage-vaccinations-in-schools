@@ -35,7 +35,7 @@ describe "National reporting team homepage and navigation" do
     and_i_search_for_a_child(search_term: "Harry")
     and_i_click_on_the_childs_card(given_name: "Harry", family_name: "Potter")
     then_i_should_see_vaccinations_then_child_details
-    and_child_cannot_be_archived
+    and_child_can_be_edited_but_not_be_archived
     and_child_does_not_look_archived
   end
 
@@ -190,9 +190,13 @@ describe "National reporting team homepage and navigation" do
     expect(app_cards[1]).to have_content("Child record")
   end
 
-  def and_child_cannot_be_archived
-    app_card_buttons = page.all(".app-card .nhsuk-button")
+  def and_child_can_be_edited_but_not_be_archived
+    app_card_buttons = page.all(".nhsuk-card .nhsuk-card__action")
     expect(app_card_buttons.count).to eq(1)
+    expect(page).to have_css(
+      ".nhsuk-card .nhsuk-card__action",
+      text: "Edit child record"
+    )
     expect(page).not_to have_content("Archive child record")
   end
 
