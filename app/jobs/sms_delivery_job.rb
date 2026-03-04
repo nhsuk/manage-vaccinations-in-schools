@@ -98,6 +98,7 @@ class SMSDeliveryJob < NotifyDeliveryJob
       sent_by:,
       template_id: log_template_id,
       type: :sms,
+      purpose: NotifyLogEntry.purpose_for_template_name(template_name_sym),
       notify_log_entry_programmes_attributes:
         personalisation.programmes.map do
           { programme_type: it.type, disease_types: it.disease_types }

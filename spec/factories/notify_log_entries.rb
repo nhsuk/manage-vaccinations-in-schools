@@ -6,6 +6,7 @@
 #
 #  id              :bigint           not null, primary key
 #  delivery_status :integer          default("sending"), not null
+#  purpose         :integer
 #  recipient       :string           not null
 #  type            :integer          not null
 #  created_at      :datetime         not null
@@ -51,6 +52,7 @@ FactoryBot.define do
 
     delivery_id { SecureRandom.uuid }
     traits_for_enum :delivery_status
+    traits_for_enum :purpose
 
     after(:build) do |notify_log_entry, evaluator|
       if notify_log_entry.notify_log_entry_programmes.empty?
