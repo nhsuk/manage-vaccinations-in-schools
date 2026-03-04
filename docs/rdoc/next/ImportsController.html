@@ -811,7 +811,7 @@
       .<span class="ruby-identifier">union</span>(<span class="ruby-identifier">immunisation_imports</span>)
       .<span class="ruby-identifier">order</span>(<span class="ruby-string">&quot;created_at DESC&quot;</span>)
 
-  <span class="ruby-ivar">@pagy</span>, <span class="ruby-ivar">@mixnmatch_imports</span> = <span class="ruby-identifier">pagy</span>(<span class="ruby-identifier">mixnmatch_imports</span>)
+  <span class="ruby-ivar">@pagy</span>, <span class="ruby-ivar">@mixnmatch_imports</span> = <span class="ruby-identifier">pagy</span>(<span class="ruby-identifier">mixnmatch_imports</span>, <span class="ruby-value">limit:</span> <span class="ruby-value">20</span>)
 
   <span class="ruby-ivar">@active</span> = <span class="ruby-value">:imported</span>
   <span class="ruby-identifier">render</span> <span class="ruby-value">:index</span>
