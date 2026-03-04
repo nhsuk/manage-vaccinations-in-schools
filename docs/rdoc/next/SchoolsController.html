@@ -800,6 +800,7 @@
       .<span class="ruby-identifier">where</span>(<span class="ruby-value">patient_locations:</span> { <span class="ruby-value">location:</span> <span class="ruby-ivar">@location</span>, <span class="ruby-value">academic_year:</span> })
       .<span class="ruby-identifier">where</span>(<span class="ruby-value">school_id:</span> <span class="ruby-ivar">@location</span>.<span class="ruby-identifier">school_id</span>)
       .<span class="ruby-identifier">includes_statuses</span>
+      .<span class="ruby-identifier">includes</span>(<span class="ruby-value">:clinic_notifications</span>)
 
   <span class="ruby-identifier">patients</span> = <span class="ruby-ivar">@form</span>.<span class="ruby-identifier">apply</span>(<span class="ruby-identifier">scope</span>)
 
@@ -843,7 +844,7 @@
             </details>
           </div>
           <div class="method-source-code" id="sessions-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/controllers/schools_controller.rb, line 70</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/controllers/schools_controller.rb, line 71</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">sessions</span>
   <span class="ruby-identifier">sessions</span> =
     <span class="ruby-identifier">policy_scope</span>(<span class="ruby-constant">Session</span>).<span class="ruby-identifier">for_academic_year</span>(<span class="ruby-identifier">academic_year</span>).<span class="ruby-identifier">for_location</span>(
