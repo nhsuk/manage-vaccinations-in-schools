@@ -101,11 +101,23 @@ class Notifier::Patient
     @parents ||= patient.parents.select(&:contactable?).uniq
   end
 
+  def filter_programmes_notify_parents(programmes)
+    programmes.select do |programme|
+      patient.vaccination_records.none? do
+        it.notify_parents == false && it.programme == programme
+      end
+    end
+  end
+
   def send_consent_notification(programmes, type:, session:, sent_by:)
     return unless send_notification?(team: session.team)
 
+    programmes_to_send_for = filter_programmes_notify_parents(programmes)
+
+    return if programmes_to_send_for.empty?
+
     ConsentNotification.create!(
-      programmes:,
+      programmes: programmes_to_send_for,
       patient:,
       session:,
       type:,
@@ -114,10 +126,15 @@ class Notifier::Patient
     )
 
     email_template, sms_template =
-      generate_consent_templates(programmes:, patient:, session:, type:)
+      generate_consent_templates(
+        programmes: programmes_to_send_for,
+        patient:,
+        session:,
+        type:
+      )
 
-    programme_types = programmes.map(&:type)
-    disease_types = programmes.flat_map(&:disease_types).presence
+    programme_types = programmes_to_send_for.map(&:type)
+    disease_types = programmes_to_send_for.flat_map(&:disease_types).presence
 
     parents.each do |parent|
       EmailDeliveryJob.perform_later(
@@ -223,7 +240,7 @@ class Notifier::Patient
     include_already_invited_programmes: true
   )
     programmes_to_send_for =
-      programmes.select do |programme|
+      filter_programmes_notify_parents(programmes).select do |programme|
         unless include_vaccinated_programmes
           is_vaccinated =
             patient.programme_status(programme, academic_year:).vaccinated?

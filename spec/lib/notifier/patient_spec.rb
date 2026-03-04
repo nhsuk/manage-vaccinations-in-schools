@@ -97,7 +97,7 @@ describe Notifier::Patient do
         end
       end
 
-      context "with Td/IPV and MenACWY programmes" do
+      context "for Td/IPV and MenACWY programmes" do
         let(:programmes) { [Programme.menacwy, Programme.td_ipv] }
 
         it "enqueues an email per parent" do
@@ -113,7 +113,7 @@ describe Notifier::Patient do
         end
       end
 
-      context "with the flu programme" do
+      context "for the flu programme" do
         let(:programmes) { [Programme.flu] }
 
         it "enqueues an email per parent" do
@@ -129,8 +129,31 @@ describe Notifier::Patient do
         end
       end
 
-      context "with an MMR programme" do
+      context "for the MMR(V) programme" do
         let(:programmes) { [Programme.mmr] }
+
+        context "if the child received their first dose under self-consent and doesn't want parents notified" do
+          before do
+            create(
+              :vaccination_record,
+              programme: Programme.mmr,
+              patient:,
+              notify_parents: false
+            )
+          end
+
+          it "does not enqueue an email" do
+            expect { send_consent_request }.not_to have_enqueued_job(
+              EmailDeliveryJob
+            )
+          end
+
+          it "does not enqueue an SMS" do
+            expect { send_consent_request }.not_to have_enqueued_job(
+              SMSDeliveryJob
+            )
+          end
+        end
 
         context "when patient is eligible for MMRV" do
           before do
@@ -406,7 +429,7 @@ describe Notifier::Patient do
         end
       end
 
-      context "with an MMR programme" do
+      context "for the MMR(V) programme" do
         let(:programmes) { [Programme.mmr] }
 
         it "enqueues an email" do
@@ -472,6 +495,29 @@ describe Notifier::Patient do
                 :consent_school_reminder
               ).twice
             end
+          end
+        end
+
+        context "if the child received their first dose under self-consent and doesn't want parents notified" do
+          before do
+            create(
+              :vaccination_record,
+              programme: Programme.mmr,
+              patient:,
+              notify_parents: false
+            )
+          end
+
+          it "does not enqueue an email" do
+            expect { send_consent_reminder }.not_to have_enqueued_job(
+              EmailDeliveryJob
+            )
+          end
+
+          it "does not enqueue an SMS" do
+            expect { send_consent_reminder }.not_to have_enqueued_job(
+              SMSDeliveryJob
+            )
           end
         end
       end
@@ -744,6 +790,31 @@ describe Notifier::Patient do
                 academic_year:,
                 sent_by:
               )
+      end
+
+      context "if the child received their first dose under self-consent and doesn't want parents notified" do
+        let(:programmes) { [Programme.mmr] }
+
+        before do
+          create(
+            :vaccination_record,
+            programme: Programme.mmr,
+            patient:,
+            notify_parents: false
+          )
+        end
+
+        it "does not enqueue an email" do
+          expect { send_clinic_invitation }.not_to have_enqueued_job(
+            EmailDeliveryJob
+          )
+        end
+
+        it "does not enqueue an SMS" do
+          expect { send_clinic_invitation }.not_to have_enqueued_job(
+            SMSDeliveryJob
+          )
+        end
       end
 
       context "when the session administers two programmes but the patient only needs one" do
