@@ -43,7 +43,7 @@ describe SMSDeliveryJob do
       )
     end
 
-    let(:template_name) { GOVUK_NOTIFY_SMS_TEMPLATES.keys.first }
+    let(:template_name) { :consent_school_request }
     let(:academic_year) { session.academic_year }
     let(:consent) { nil }
     let(:consent_form) { nil }
@@ -92,6 +92,7 @@ describe SMSDeliveryJob do
       expect(notify_log_entry.template_id).to eq(
         GOVUK_NOTIFY_SMS_TEMPLATES[template_name]
       )
+      expect(notify_log_entry.purpose).to eq("consent_request")
       expect(notify_log_entry.parent).to eq(parent)
       expect(notify_log_entry.patient).to eq(patient)
       expect(notify_log_entry.programmes.map(&:type)).to eq(programme_types)
@@ -130,6 +131,7 @@ describe SMSDeliveryJob do
         expect(notify_log_entry.template_id).to eq(
           GOVUK_NOTIFY_SMS_TEMPLATES[template_name]
         )
+        expect(notify_log_entry.purpose).to eq("consent_request")
         expect(notify_log_entry.parent).to eq(parent)
         expect(notify_log_entry.patient).to eq(patient)
         expect(notify_log_entry.programmes.map(&:type)).to eq(programme_types)
@@ -160,6 +162,7 @@ describe SMSDeliveryJob do
         expect(notify_log_entry.template_id).to eq(
           GOVUK_NOTIFY_SMS_TEMPLATES[template_name]
         )
+        expect(notify_log_entry.purpose).to eq("consent_request")
         expect(notify_log_entry.parent).to eq(parent)
         expect(notify_log_entry.patient).to eq(patient)
         expect(notify_log_entry.programmes.map(&:type)).to eq(programme_types)
@@ -193,6 +196,7 @@ describe SMSDeliveryJob do
         expect(notify_log_entry.template_id).to eq(
           GOVUK_NOTIFY_SMS_TEMPLATES[template_name]
         )
+        expect(notify_log_entry.purpose).to eq("consent_request")
         expect(notify_log_entry.consent_form).to eq(consent_form)
         expect(notify_log_entry.programmes.map(&:type)).to eq(programme_types)
       end
@@ -246,6 +250,7 @@ describe SMSDeliveryJob do
           expect(notify_log_entry.template_id).to eq(
             GOVUK_NOTIFY_SMS_TEMPLATES[template_name]
           )
+          expect(notify_log_entry.purpose).to eq("consent_request")
           expect(notify_log_entry.consent_form).to eq(consent_form)
           expect(notify_log_entry.programmes.map(&:type)).to eq(programme_types)
           expect(notify_log_entry.sent_by).to eq(sent_by)

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_25_094039) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_03_152926) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -529,6 +529,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_25_094039) do
     t.integer "delivery_status", default: 0, null: false
     t.bigint "parent_id"
     t.bigint "patient_id"
+    t.integer "purpose"
     t.string "recipient", null: false
     t.bigint "sent_by_user_id"
     t.uuid "template_id", null: false
