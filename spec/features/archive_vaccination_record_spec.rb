@@ -148,7 +148,7 @@ describe "Archive vaccination record" do
   def and_an_administered_vaccination_record_exists
     vaccine = @programme.vaccines.first
 
-    batch = create(:batch, team: @team, vaccine:)
+    batch = create(:batch, :not_expired, team: @team, vaccine:)
 
     @vaccination_record =
       create(
