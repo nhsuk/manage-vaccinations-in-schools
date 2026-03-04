@@ -5,7 +5,7 @@ class DraftSchool
   include EditableWrapper
   include WizardStepConcern
 
-  attribute :urn_and_site, :string
+  attribute :parent_urn_and_site, :string
   attribute :name, :string
   attribute :address_line_1, :string
   attribute :address_line_2, :string
@@ -34,11 +34,11 @@ class DraftSchool
   end
 
   def wizard_steps
-    %i[school details confirm]
+    [(:school unless editing?), :details, :confirm].compact
   end
 
   on_wizard_step :school, exact: true do
-    validates :urn_and_site, presence: true
+    validates :parent_urn_and_site, presence: true
   end
 
   on_wizard_step :details, exact: true do
@@ -55,24 +55,25 @@ class DraftSchool
     validates :address_postcode, postcode: true
   end
 
-  def parent_school
-    return nil if urn_and_site.blank?
+  # Returns the source location based on context:
+  # - When editing: the location being edited
+  # - When adding site: the parent school to add a site to
+  def source_location
+    return Location.find(editing_id) if editing?
+    return nil if parent_urn_and_site.blank?
 
-    @parent_school ||=
-      LocationPolicy::Scope
-        .new(@current_user, Location)
-        .resolve
-        .find_by_urn_and_site(urn_and_site)
-  end
-
-  def urn
-    parent_school&.urn
+    LocationPolicy::Scope
+      .new(@current_user, Location)
+      .resolve
+      .find_by_urn_and_site(parent_urn_and_site)
   end
 
   def existing_names
     return [] if urn.blank?
 
-    Location.where(urn:).pluck(:name)
+    scope = Location.where(urn:)
+    scope = scope.where.not(id: editing_id) if editing?
+    scope.pluck(:name)
   end
 
   def request_session_key = "draft_school"
@@ -84,5 +85,48 @@ class DraftSchool
       address_town,
       address_postcode
     ].compact_blank
+  end
+
+  def readable_attribute_names
+    writable_attribute_names
+  end
+
+  def writable_attribute_names
+    %w[name address_line_1 address_line_2 address_town address_postcode]
+  end
+
+  def urn
+    source_location&.urn
+  end
+
+  def urn_and_site
+    if editing?
+      source_location&.urn_and_site
+    else
+      return nil if urn.blank?
+
+      "#{urn}#{next_site_letter}"
+    end
+  end
+
+  def next_site_letter
+    return nil if urn.blank?
+
+    existing_sites = Location.where(urn:).pluck(:site).compact.sort
+    return "B" if existing_sites.empty?
+
+    existing_sites.max_by { [it.length, it] }.next
+  end
+
+  def year_groups
+    source_location&.year_groups || []
+  end
+
+  def programmes
+    source_location&.programmes || []
+  end
+
+  def human_enum_name(attr)
+    source_location&.human_enum_name(attr)
   end
 end

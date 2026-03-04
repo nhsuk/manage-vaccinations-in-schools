@@ -9,7 +9,7 @@ class DraftSchoolsController < ApplicationController
 
   before_action :set_school_options, if: -> { current_step == :school }
   before_action :set_address, if: -> { current_step == :details }
-  before_action :set_site_letter, if: -> { current_step == :confirm }
+  before_action :set_back_link_path
 
   skip_after_action :verify_policy_scoped
 
@@ -22,14 +22,16 @@ class DraftSchoolsController < ApplicationController
   def update
     authorize Location, :create?, policy_class: SchoolPolicy
 
+    @draft_school.assign_attributes(update_params)
+
     case current_step
     when :school
       handle_school
     when :confirm
       handle_confirm
-    else
-      @draft_school.assign_attributes(update_params)
     end
+
+    jump_to("confirm") if @draft_school.editing? && current_step != :confirm
 
     reload_steps
 
@@ -44,10 +46,6 @@ class DraftSchoolsController < ApplicationController
 
   def set_school
     @school = Location.new
-  end
-
-  def set_site_letter
-    @site_letter = next_site_letter(@draft_school.urn)
   end
 
   def set_school_options
@@ -65,12 +63,28 @@ class DraftSchoolsController < ApplicationController
   end
 
   def set_address
-    parent_school = @draft_school.parent_school
+    parent_school = @draft_school.source_location
 
     @draft_school.address_line_1 ||= parent_school&.address_line_1
     @draft_school.address_line_2 ||= parent_school&.address_line_2
     @draft_school.address_town ||= parent_school&.address_town
     @draft_school.address_postcode ||= parent_school&.address_postcode
+  end
+
+  def set_back_link_path
+    @back_link_path =
+      if @draft_school.editing? && current_step != :confirm
+        wizard_path("confirm")
+      elsif first_step_of_flow?
+        schools_team_path
+      else
+        previous_wizard_path
+      end
+  end
+
+  def first_step_of_flow?
+    (current_step == :confirm && @draft_school.editing?) ||
+      current_step == @draft_school.wizard_steps.first
   end
 
   def handle_school
@@ -83,38 +97,47 @@ class DraftSchoolsController < ApplicationController
 
     @draft_school.assign_attributes(update_params)
 
-    parent_school = @draft_school.parent_school
-    @school = parent_school.dup
+    source_school = @draft_school.source_location
 
-    @school.assign_attributes(
-      urn: @draft_school.urn,
-      site: next_site_letter(@draft_school.urn),
-      name: @draft_school.name,
-      address_line_1: @draft_school.address_line_1,
-      address_line_2: @draft_school.address_line_2,
-      address_town: @draft_school.address_town,
-      address_postcode: @draft_school.address_postcode
-    )
+    if @draft_school.editing?
+      @draft_school.write_to!(source_school)
 
-    ActiveRecord::Base.transaction do
-      @school.save!
-      academic_year = AcademicYear.pending
+      source_school.save!
 
-      parent_school
-        .teams_for_academic_year(academic_year)
-        .each do |team|
-          @school.attach_to_team!(team, academic_year:)
-          @school.import_year_groups_from_gias!(academic_year:)
-          @school.import_default_programme_year_groups!(
-            team.programmes,
-            academic_year:
-          )
-        end
+      flash[:success] = "#{source_school.name} has been updated."
+    else
+      @school = source_school.dup
 
-      parent_school.update!(site: "A") if parent_school.site.nil?
+      @school.assign_attributes(
+        urn: @draft_school.urn,
+        site: @draft_school.next_site_letter,
+        name: @draft_school.name,
+        address_line_1: @draft_school.address_line_1,
+        address_line_2: @draft_school.address_line_2,
+        address_town: @draft_school.address_town,
+        address_postcode: @draft_school.address_postcode
+      )
+
+      ActiveRecord::Base.transaction do
+        @school.save!
+        academic_year = AcademicYear.pending
+
+        source_school
+          .teams_for_academic_year(academic_year)
+          .each do |team|
+            @school.attach_to_team!(team, academic_year:)
+            @school.import_year_groups_from_gias!(academic_year:)
+            @school.import_default_programme_year_groups!(
+              team.programmes,
+              academic_year:
+            )
+          end
+
+        source_school.update!(site: "A") if source_school.site.nil?
+      end
+
+      flash[:success] = "#{@school.name} has been added to your team."
     end
-
-    flash[:success] = "#{@school.name} has been added to your team."
 
     @draft_school.clear!
   end
@@ -125,7 +148,7 @@ class DraftSchoolsController < ApplicationController
 
   def update_params
     permitted_attributes = {
-      school: [:urn_and_site],
+      school: [:parent_urn_and_site],
       details: %i[
         name
         address_line_1
@@ -140,14 +163,6 @@ class DraftSchoolsController < ApplicationController
       .fetch(:draft_school, {})
       .permit(permitted_attributes)
       .merge(wizard_step: current_step)
-  end
-
-  def next_site_letter(urn)
-    existing_sites =
-      policy_scope(Location).where(urn:).pluck(:site).compact.sort
-    return "B" if existing_sites.empty?
-
-    existing_sites.max_by { [it.length, it] }.next
   end
 
   def redirect_if_session_cleared

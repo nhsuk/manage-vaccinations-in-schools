@@ -1,13 +1,13 @@
 
 
 <% content_for :before_main do %>
-  <%= govuk_back_link(href: schools_team_path) %>
+  <%= govuk_back_link(href: @back_link_path) %>
 <% end %>
 
   <%= h1 "Which school do you want to add a site to?" %>
 
   <%= form_with(model: @draft_school, url: wizard_path, method: :put) do |f| %>
-    <%= f.govuk_select :urn_and_site,
+    <%= f.govuk_select :parent_urn_and_site,
                        label: {
                          text: "Select a school",
                        },

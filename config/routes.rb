@@ -338,6 +338,7 @@ Rails.application.routes.draw do
     end
     resources :schools,
               only: %i[create edit update],
+              param: :urn_and_site,
               controller: "teams/schools" do
       collection { get :new_site }
     end
