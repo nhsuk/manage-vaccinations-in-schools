@@ -13,6 +13,7 @@ class AppPatientSearchFormComponent < ViewComponent::Base
     heading_level: 3,
     show_aged_out_of_programmes: false,
     show_archived_records: true,
+    show_invited_to_clinic: false,
     show_vaccine_criteria: false
   )
     @form = form
@@ -28,6 +29,7 @@ class AppPatientSearchFormComponent < ViewComponent::Base
     @show_aged_out_of_programmes = show_aged_out_of_programmes
     @show_archived_records = show_archived_records
     @show_vaccine_criteria = show_vaccine_criteria
+    @show_invited_to_clinic = show_invited_to_clinic
   end
 
   private
@@ -44,6 +46,7 @@ class AppPatientSearchFormComponent < ViewComponent::Base
               :heading_level,
               :show_archived_records,
               :show_aged_out_of_programmes,
+              :show_invited_to_clinic,
               :show_vaccine_criteria
 
   delegate :format_year_group,

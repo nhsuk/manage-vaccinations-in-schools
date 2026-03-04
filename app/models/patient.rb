@@ -352,6 +352,22 @@ class Patient < ApplicationRecord
           )
         end
 
+  scope :has_clinic_notification,
+        ->(team:, academic_year:, programmes: []) do
+          clinic_notification_scope =
+            ClinicNotification
+              .select("1")
+              .where("patient_id = patients.id")
+              .where(team:, academic_year:)
+
+          if programmes.present?
+            clinic_notification_scope =
+              clinic_notification_scope.has_any_programmes_of(programmes)
+          end
+
+          where(clinic_notification_scope.arel.exists)
+        end
+
   scope :with_patient_specific_direction,
         ->(programme:, academic_year:, team:) do
           where(

@@ -533,6 +533,102 @@ describe Patient do
         it { should include(patient) }
       end
     end
+
+    describe "#has_clinic_notification" do
+      subject(:scope) do
+        described_class.has_clinic_notification(team:, academic_year:)
+      end
+
+      let(:team) { create(:team) }
+      let(:academic_year) { AcademicYear.current }
+      let(:patient_with_notification) { create(:patient) }
+      let(:patient_without_notification) { create(:patient) }
+
+      it { should be_empty }
+
+      context "when patient has a clinic notification" do
+        before do
+          create(
+            :clinic_notification,
+            :initial_invitation,
+            patient: patient_with_notification,
+            team:,
+            academic_year:,
+            programmes: [Programme.flu]
+          )
+        end
+
+        it { should include(patient_with_notification) }
+        it { should_not include(patient_without_notification) }
+      end
+
+      context "when patient has a clinic notification for different team" do
+        let(:other_team) { create(:team) }
+
+        before do
+          create(
+            :clinic_notification,
+            :initial_invitation,
+            patient: patient_with_notification,
+            team: other_team,
+            academic_year:,
+            programmes: [Programme.flu]
+          )
+        end
+
+        it { should_not include(patient_with_notification) }
+      end
+
+      context "when patient has a clinic notification for different academic year" do
+        before do
+          create(
+            :clinic_notification,
+            :initial_invitation,
+            patient: patient_with_notification,
+            team:,
+            academic_year: academic_year - 1,
+            programmes: [Programme.flu]
+          )
+        end
+
+        it { should_not include(patient_with_notification) }
+      end
+
+      context "when filtering by programmes" do
+        subject(:scope) do
+          described_class.has_clinic_notification(
+            team:,
+            academic_year:,
+            programmes: [Programme.flu]
+          )
+        end
+
+        let(:flu_programme) { Programme.flu }
+        let(:hpv_programme) { Programme.hpv }
+
+        before do
+          create(
+            :clinic_notification,
+            :initial_invitation,
+            patient: patient_with_notification,
+            team:,
+            academic_year:,
+            programmes: [flu_programme]
+          )
+          create(
+            :clinic_notification,
+            :initial_invitation,
+            patient: patient_without_notification,
+            team:,
+            academic_year:,
+            programmes: [hpv_programme]
+          )
+        end
+
+        it { should include(patient_with_notification) }
+        it { should_not include(patient_without_notification) }
+      end
+    end
   end
 
   describe "validations" do
