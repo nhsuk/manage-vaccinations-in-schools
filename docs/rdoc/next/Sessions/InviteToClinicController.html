@@ -708,7 +708,7 @@
 
   <span class="ruby-ivar">@patients_to_invite</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">patient</span><span class="ruby-operator">|</span>
     <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">notifier</span>.<span class="ruby-identifier">send_clinic_invitation</span>(
-      <span class="ruby-value">programme_types:</span> <span class="ruby-ivar">@session</span>.<span class="ruby-identifier">programmes_for</span>(<span class="ruby-value">patient:</span>).<span class="ruby-identifier">map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:type</span>),
+      <span class="ruby-ivar">@session</span>.<span class="ruby-identifier">programmes_for</span>(<span class="ruby-value">patient:</span>),
       <span class="ruby-value">team:</span> <span class="ruby-ivar">@session</span>.<span class="ruby-identifier">team</span>,
       <span class="ruby-value">academic_year:</span> <span class="ruby-ivar">@session</span>.<span class="ruby-identifier">academic_year</span>,
       <span class="ruby-value">sent_by:</span> <span class="ruby-identifier">current_user</span>
