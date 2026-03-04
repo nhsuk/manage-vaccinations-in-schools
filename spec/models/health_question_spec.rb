@@ -33,7 +33,7 @@ describe HealthQuestion do
   let(:vaccine) { create(:vaccine) }
   let!(:hqs) { create_list(:health_question, 3, vaccine:) }
 
-  around(:all) do |example|
+  around do |example|
     # This is safe because we don't reference a programme at any point.
     Vaccine.enable_factorybot_factories = true
     example.run
