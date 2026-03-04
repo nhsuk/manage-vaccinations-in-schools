@@ -17,7 +17,7 @@ def seed_vaccines
 end
 
 def create_gp_practices
-  FactoryBot.create_list(:gp_practice, 30)
+  Location.import!(FactoryBot.build_list(:gp_practice, 30))
 end
 
 def create_team(ods_code:, workgroup: nil, type: :point_of_care)
@@ -79,20 +79,16 @@ def create_community_clinics_for(team)
   FactoryBot.create_list(:community_clinic, 5, team:)
 end
 
-def attach_specific_school_to_team_if_present(team:, urn:)
-  Location.find_by(urn:)&.attach_to_team!(
-    team,
-    academic_year: AcademicYear.current
-  )
-end
-
 def create_session(user, team, programmes:, completed: false, year_groups: nil)
   year_groups ||= programmes.flat_map(&:default_year_groups).uniq
 
-  Vaccine
-    .active
-    .for_programmes(programmes)
-    .find_each { |vaccine| FactoryBot.create(:batch, team:, vaccine:) }
+  Batch.import!(
+    Vaccine
+      .active
+      .for_programmes(programmes)
+      .find_each
+      .map { |vaccine| FactoryBot.build(:batch, team:, vaccine:) }
+  )
 
   location = FactoryBot.create(:school, team:, gias_year_groups: year_groups)
   date = completed ? 1.week.ago.to_date : Date.current
@@ -161,9 +157,8 @@ def create_session(user, team, programmes:, completed: false, year_groups: nil)
       traits << :partially_vaccinated_triage_needed if programme.td_ipv?
 
       traits.each do |trait|
-        FactoryBot.create_list(
+        FactoryBot.create(
           :patient,
-          1,
           trait,
           programmes: [programme],
           session:,
@@ -308,11 +303,6 @@ def create_team_sessions(user, team)
   )
 end
 
-set_feature_flags
-
-seed_vaccines
-create_gp_practices
-
 def create_nurse_joy_team
   team = create_team(ods_code: "R1L")
   user = create_user(:nurse, team:, email: "nurse.joy@example.com")
@@ -324,35 +314,11 @@ def create_nurse_joy_team
   attach_sample_of_schools_to(team)
   create_community_clinics_for(team)
 
-  # Bohunt School Wokingham - used by automated tests
-  attach_specific_school_to_team_if_present(team:, urn: "142181")
-
-  # Barn End Centre - used by automated tests
-  attach_specific_school_to_team_if_present(team:, urn: "118239")
-
   Audited.audit_class.as_user(user) { create_team_sessions(user, team) }
   setup_clinic(team)
   create_patients(team)
   create_imports(user, team)
   create_school_moves(team)
-end
-
-def create_national_reporting_team
-  team =
-    FactoryBot.create(
-      :team,
-      :national_reporting,
-      ods_code: "XX99",
-      programmes: [Programme.flu, Programme.hpv],
-      workgroup: "XX99"
-    )
-  user =
-    create_user(:medical_secretary, team:, email: "admin.sarah@example.com")
-  create_user(:superuser, team:, email: "superuser.rob@example.com")
-
-  create_national_reporting_imports(user, team)
-
-  create_upload_patients_and_vaccination_records(user)
 end
 
 def create_upload_patients_and_vaccination_records(user)
@@ -373,33 +339,60 @@ def create_upload_patients_and_vaccination_records(user)
   end
 end
 
-unless Settings.cis2.enabled
-  # Don't create Nurse Joy's team on a CIS2 env, because password authentication
-  # is not available and password= fails to run.
-  create_nurse_joy_team
+def create_national_reporting_team
+  team =
+    FactoryBot.create(
+      :team,
+      :national_reporting,
+      ods_code: "XX99",
+      programmes: [Programme.flu, Programme.hpv],
+      workgroup: "XX99"
+    )
+  user =
+    create_user(:medical_secretary, team:, email: "admin.sarah@example.com")
+  create_user(:superuser, team:, email: "superuser.rob@example.com")
 
-  create_national_reporting_team
+  create_national_reporting_imports(user, team)
+
+  create_upload_patients_and_vaccination_records(user)
 end
 
-# CIS2 team - the ODS code and user UID need to match the values in the CIS2 env
-team = create_team(ods_code: "A9A5A")
-user = create_user(:nurse, team:, uid: "555057896106")
+def create_a9a5a_team
+  # CIS2 team - the ODS code and user UID need to match the values in the CIS2 env
+  team = create_team(ods_code: "A9A5A")
+  user = create_user(:nurse, team:, uid: "555057896106")
 
-support_team =
-  create_team(
-    ods_code: CIS2Info::SUPPORT_ORGANISATION,
-    workgroup: CIS2Info::SUPPORT_WORKGROUP
-  )
-create_user(:support, team: support_team, email: "support@example.com")
+  attach_sample_of_schools_to(team)
+  create_community_clinics_for(team)
 
-attach_sample_of_schools_to(team)
-create_community_clinics_for(team)
+  Audited.audit_class.as_user(user) { create_team_sessions(user, team) }
+  setup_clinic(team)
+  create_patients(team)
+  create_imports(user, team)
+  create_school_moves(team)
+end
 
-Audited.audit_class.as_user(user) { create_team_sessions(user, team) }
-setup_clinic(team)
-create_patients(team)
-create_imports(user, team)
-create_school_moves(team)
+def create_support_team
+  support_team =
+    create_team(
+      ods_code: CIS2Info::SUPPORT_ORGANISATION,
+      workgroup: CIS2Info::SUPPORT_WORKGROUP
+    )
+  create_user(:support, team: support_team, email: "support@example.com")
+end
+
+set_feature_flags
+
+seed_vaccines
+create_gp_practices
+
+if Settings.cis2.enabled
+  create_a9a5a_team
+  create_support_team
+else
+  create_nurse_joy_team
+  create_national_reporting_team
+end
 
 PatientTeamUpdater.call
 PatientStatusUpdater.call
