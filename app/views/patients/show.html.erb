@@ -26,17 +26,11 @@
       @patient,
       current_team:,
       show_parents: !current_team.has_national_reporting_access?,
+      actions: [
+        ({ text: "Edit child record", href: edit_patient_path(@patient) } if @patient.not_archived?(team: current_team) || current_team.has_national_reporting_access?),
+        ({ text: "Archive child record", href: new_patient_archive_path(@patient) } if @patient.not_archived?(team: current_team)),
+      ].compact,
     ) do %>
-  <% if @patient.not_archived?(team: current_team) %>
-    <div class="nhsuk-button-group">
-      <%= govuk_button_link_to "Edit child record", edit_patient_path(@patient), secondary: true %>
-      <%= govuk_button_link_to "Archive child record", new_patient_archive_path(@patient), class: "app-button--secondary-warning" %>
-    </div>
-  <% elsif current_team.has_national_reporting_access? %>
-    <div class="nhsuk-button-group">
-      <%= govuk_button_link_to "Edit child record", edit_patient_path(@patient), secondary: true %>
-    </div>
-  <% end %>
 <% end %>
 
 <% unless current_team.has_national_reporting_access? %>
@@ -60,5 +54,7 @@
     <% end %>
   <% end %>
 
-  <%= vaccinations_card %>
+  <% unless Flipper.enabled?(:child_record_redesign) %>
+    <%= vaccinations_card %>
+  <% end %>
 <% end %>

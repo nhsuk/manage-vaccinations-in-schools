@@ -12,7 +12,7 @@ class AppPatientProgrammesTableComponent < ViewComponent::Base
       caption: CAPTION,
       head: HEADERS,
       rows:,
-      first_cell_is_header: true
+      first_cell_is_header: false
     )
   end
 
@@ -23,7 +23,7 @@ class AppPatientProgrammesTableComponent < ViewComponent::Base
   delegate :govuk_table, to: :helpers
 
   CAPTION = "Vaccination programmes"
-  HEADERS = ["Programme name", "Status", "Notes"].freeze
+  HEADERS = %w[Programme Status Notes].freeze
 
   def rows
     programmes.flat_map { |programme| rows_for_programme(programme:) }
@@ -52,7 +52,10 @@ class AppPatientProgrammesTableComponent < ViewComponent::Base
     programme_type = programme.type
 
     [
-      name_for_programme(programme:, academic_year:),
+      helpers.govuk_link_to(
+        name_for_programme(programme:, academic_year:),
+        patient_programme_path(patient, programme_type)
+      ),
       status_for_programme(programme_type:, academic_year:),
       notes_for_programme(programme_type:, academic_year:)
     ]

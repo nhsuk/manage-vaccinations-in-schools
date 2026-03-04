@@ -139,7 +139,10 @@ describe "View children" do
 
   def then_i_see_the_childs_flu_vaccinations
     expect(page).to have_current_path(patient_programme_path(@patient, "flu"))
-    expect(page).to have_css("h3.nhsuk-card__heading", text: "Vaccinations")
+    expect(page).to have_css(
+      "h3.nhsuk-card__heading",
+      text: "No vaccination record"
+    )
   end
 
   def and_the_flu_tab_is_selected
@@ -152,7 +155,10 @@ describe "View children" do
 
   def then_i_see_the_childs_hpv_vaccinations
     expect(page).to have_current_path(patient_programme_path(@patient, "hpv"))
-    expect(page).to have_css("h3.nhsuk-card__heading", text: "Vaccinations")
+    expect(page).to have_css(
+      "h3.nhsuk-card__heading",
+      text: "Vaccination record"
+    )
   end
 
   def and_the_hpv_tab_is_selected
