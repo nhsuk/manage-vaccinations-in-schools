@@ -725,7 +725,7 @@
             </details>
           </div>
           <div class="method-source-code" id="edit_invalidate-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/controllers/patient_sessions/consents_controller.rb, line 78</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/controllers/patient_sessions/consents_controller.rb, line 76</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">edit_invalidate</span>
   <span class="ruby-identifier">render</span> <span class="ruby-value">:invalidate</span>
 <span class="ruby-keyword">end</span></pre>
@@ -767,7 +767,7 @@
             </details>
           </div>
           <div class="method-source-code" id="edit_withdraw-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/controllers/patient_sessions/consents_controller.rb, line 58</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/controllers/patient_sessions/consents_controller.rb, line 56</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">edit_withdraw</span>
   <span class="ruby-identifier">render</span> <span class="ruby-value">:withdraw</span>
 <span class="ruby-keyword">end</span></pre>
@@ -825,12 +825,10 @@
       .<span class="ruby-identifier">values</span>
       .<span class="ruby-identifier">find</span> { <span class="ruby-identifier">it</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-ivar">@programme</span>) }
 
-  <span class="ruby-constant">ConsentNotification</span>.<span class="ruby-identifier">create_and_send!</span>(
-    <span class="ruby-value">patient:</span> <span class="ruby-ivar">@patient</span>,
-    <span class="ruby-value">programmes:</span>,
+  <span class="ruby-ivar">@patient</span>.<span class="ruby-identifier">notifier</span>.<span class="ruby-identifier">send_consent_request</span>(
+    <span class="ruby-identifier">programmes</span>,
     <span class="ruby-value">session:</span> <span class="ruby-ivar">@session</span>,
-    <span class="ruby-value">type:</span> <span class="ruby-value">:request</span>,
-    <span class="ruby-value">current_user:</span>
+    <span class="ruby-value">sent_by:</span> <span class="ruby-identifier">current_user</span>
   )
 
   <span class="ruby-identifier">redirect_to</span> <span class="ruby-identifier">session_patient_programme_path</span>(<span class="ruby-ivar">@session</span>, <span class="ruby-ivar">@patient</span>, <span class="ruby-ivar">@programme</span>),
@@ -876,7 +874,7 @@
             </details>
           </div>
           <div class="method-source-code" id="show-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/controllers/patient_sessions/consents_controller.rb, line 55</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/controllers/patient_sessions/consents_controller.rb, line 53</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">show</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
@@ -917,7 +915,7 @@
             </details>
           </div>
           <div class="method-source-code" id="update_invalidate-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/controllers/patient_sessions/consents_controller.rb, line 82</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/controllers/patient_sessions/consents_controller.rb, line 80</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">update_invalidate</span>
   <span class="ruby-ivar">@consent</span>.<span class="ruby-identifier">assign_attributes</span>(<span class="ruby-identifier">invalidate_params</span>)
 
@@ -977,7 +975,7 @@
             </details>
           </div>
           <div class="method-source-code" id="update_withdraw-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/controllers/patient_sessions/consents_controller.rb, line 62</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/controllers/patient_sessions/consents_controller.rb, line 60</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">update_withdraw</span>
   <span class="ruby-ivar">@consent</span>.<span class="ruby-identifier">assign_attributes</span>(<span class="ruby-identifier">withdraw_params</span>)
 

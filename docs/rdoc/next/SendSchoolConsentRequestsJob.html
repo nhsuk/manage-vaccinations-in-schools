@@ -668,7 +668,7 @@
             </details>
           </div>
           <div class="method-source-code" id="patients_and_programmes-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/jobs/send_school_consent_requests_job.rb, line 18</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/jobs/send_school_consent_requests_job.rb, line 12</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">patients_and_programmes</span>(<span class="ruby-identifier">session</span>)
   <span class="ruby-identifier">patient_programmes_eligible_for_notification</span>(
     <span class="ruby-value">session:</span>
@@ -719,13 +719,7 @@
             <pre class="ruby"><span class="ruby-comment"># File app/jobs/send_school_consent_requests_job.rb, line 6</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">perform</span>(<span class="ruby-identifier">session</span>)
   <span class="ruby-identifier">patients_and_programmes</span>(<span class="ruby-identifier">session</span>) <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">patient</span>, <span class="ruby-identifier">programmes</span><span class="ruby-operator">|</span>
-    <span class="ruby-constant">ConsentNotification</span>.<span class="ruby-identifier">create_and_send!</span>(
-      <span class="ruby-value">patient:</span>,
-      <span class="ruby-value">session:</span>,
-      <span class="ruby-value">programmes:</span>,
-      <span class="ruby-value">type:</span> <span class="ruby-value">:request</span>,
-      <span class="ruby-value">current_user:</span> <span class="ruby-keyword">nil</span>
-    )
+    <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">notifier</span>.<span class="ruby-identifier">send_consent_request</span>(<span class="ruby-identifier">programmes</span>, <span class="ruby-value">session:</span>, <span class="ruby-value">sent_by:</span> <span class="ruby-keyword">nil</span>)
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
@@ -766,7 +760,7 @@
             </details>
           </div>
           <div class="method-source-code" id="should_send_notification-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/jobs/send_school_consent_requests_job.rb, line 28</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/jobs/send_school_consent_requests_job.rb, line 22</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">should_send_notification?</span>(<span class="ruby-value">patient:</span>, <span class="ruby-value">programmes:</span>)
   <span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">any?</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">programme</span><span class="ruby-operator">|</span>
     <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">consent_notifications</span>.<span class="ruby-identifier">none?</span> <span class="ruby-keyword">do</span>
