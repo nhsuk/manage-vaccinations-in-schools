@@ -34,16 +34,4 @@ module SendSchoolConsentNotificationConcern
       patient.programme_status(programme, academic_year:).needs_consent?
     end
   end
-
-  def reminder_notification_type(patient:, programmes:)
-    sent_initial_reminder =
-      programmes.all? do |programme|
-        patient
-          .consent_notifications
-          .select { it.programmes.include?(programme) }
-          .any?(&:initial_reminder?)
-      end
-
-    sent_initial_reminder ? :subsequent_reminder : :initial_reminder
-  end
 end

@@ -38,12 +38,10 @@ class PatientSessions::ConsentsController < PatientSessions::BaseController
         .values
         .find { it.include?(@programme) }
 
-    ConsentNotification.create_and_send!(
-      patient: @patient,
-      programmes:,
+    @patient.notifier.send_consent_request(
+      programmes,
       session: @session,
-      type: :request,
-      current_user:
+      sent_by: current_user
     )
 
     redirect_to session_patient_programme_path(@session, @patient, @programme),

@@ -39,8 +39,7 @@ describe SendSchoolConsentRequestsJob do
     let(:session) { create(:session, :unscheduled, programmes:) }
 
     it "doesn't send any notifications" do
-      expect(ConsentNotification).not_to receive(:create_and_send!)
-      perform_now
+      expect { perform_now }.not_to change(ConsentNotification, :count)
     end
   end
 
@@ -55,28 +54,20 @@ describe SendSchoolConsentRequestsJob do
     end
 
     it "sends notifications to one patient" do
-      expect(ConsentNotification).to receive(:create_and_send!).once.with(
-        patient: patient_not_sent_request,
-        programmes:,
-        session:,
-        type: :request,
-        current_user: nil
+      expect { perform_now }.to change(ConsentNotification, :count).by(1)
+      expect(ConsentNotification.last.patient_id).to eq(
+        patient_not_sent_request.id
       )
-      perform_now
     end
 
     context "with Td/IPV and MenACWY" do
       let(:programmes) { [Programme.menacwy, Programme.td_ipv] }
 
       it "sends one notification to one patient" do
-        expect(ConsentNotification).to receive(:create_and_send!).once.with(
-          patient: patient_not_sent_request,
-          programmes:,
-          session:,
-          current_user: nil,
-          type: :request
+        expect { perform_now }.to change(ConsentNotification, :count).by(1)
+        expect(ConsentNotification.last.patient_id).to eq(
+          patient_not_sent_request.id
         )
-        perform_now
       end
     end
 
@@ -95,14 +86,10 @@ describe SendSchoolConsentRequestsJob do
         before { PatientStatusUpdater.call(patient: patient_not_sent_request) }
 
         it "sends only one notification for HPV" do
-          expect(ConsentNotification).to receive(:create_and_send!).once.with(
-            patient: patient_not_sent_request,
-            programmes: [hpv_programme],
-            session:,
-            current_user: nil,
-            type: :request
+          expect { perform_now }.to change(ConsentNotification, :count).by(1)
+          expect(ConsentNotification.last.programmes).to contain_exactly(
+            hpv_programme
           )
-          perform_now
         end
       end
 
@@ -114,21 +101,12 @@ describe SendSchoolConsentRequestsJob do
         before { PatientStatusUpdater.call(patient: patient_not_sent_request) }
 
         it "sends two notifications for HPV, and MenACWY and Td/IPV" do
-          expect(ConsentNotification).to receive(:create_and_send!).with(
-            patient: patient_not_sent_request,
-            programmes: [hpv_programme],
-            session:,
-            type: :request,
-            current_user: nil
-          )
-          expect(ConsentNotification).to receive(:create_and_send!).with(
-            patient: patient_not_sent_request,
-            programmes: [menacwy_programme, td_ipv_programme],
-            session:,
-            type: :request,
-            current_user: nil
-          )
-          perform_now
+          expect { perform_now }.to change(ConsentNotification, :count).by(2)
+          expect(
+            ConsentNotification.where(patient: patient_not_sent_request).map(
+              &:programme_types
+            )
+          ).to contain_exactly(%w[hpv], %w[menacwy td_ipv])
         end
       end
     end
@@ -139,8 +117,7 @@ describe SendSchoolConsentRequestsJob do
       let(:session) { create(:session, programmes:, team:) }
 
       it "doesn't send any notifications" do
-        expect(ConsentNotification).not_to receive(:create_and_send!)
-        perform_now
+        expect { perform_now }.not_to change(ConsentNotification, :count)
       end
     end
   end

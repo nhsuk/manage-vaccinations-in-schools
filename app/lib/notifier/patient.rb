@@ -8,6 +8,32 @@ class Notifier::Patient
   end
 
   ##
+  # Send a consent request email and SMS to the parents of this patient.
+  def send_consent_request(programmes, session:, sent_by:)
+    send_consent_notification(programmes, type: :request, session:, sent_by:)
+  end
+
+  ##
+  # Send a consent reminder email and SMS to the parents of this patient.
+  #
+  # This determines whether to send the initial reminder or subsequent
+  # reminder based on what has already been sent to this patient.
+  def send_consent_reminder(programmes, session:, sent_by:)
+    already_sent_initial_reminder =
+      programmes.all? do |programme|
+        patient
+          .consent_notifications
+          .select { it.programmes.include?(programme) }
+          .any?(&:initial_reminder?)
+      end
+
+    type =
+      already_sent_initial_reminder ? :subsequent_reminder : :initial_reminder
+
+    send_consent_notification(programmes, type:, session:, sent_by:)
+  end
+
+  ##
   # Send a clinic initiation email and SMS to the parents of this patient.
   #
   # This determines the correct type of invitation to use (either an initial
@@ -31,7 +57,7 @@ class Notifier::Patient
     return unless send_notification?(team:)
 
     programme_types =
-      programme_types_to_send_for(
+      programme_types_to_send_clinic_invitation_for(
         programmes,
         team:,
         academic_year:,
@@ -43,10 +69,6 @@ class Notifier::Patient
 
     type = clinic_invitation_type(programme_types, team:, academic_year:)
 
-    # We create a record in the database first to avoid sending duplicate emails/texts.
-    # If a problem occurs while the emails/texts are sent, they will be in the job
-    # queue and restarted at a later date.
-
     ClinicNotification.create!(
       patient:,
       programme_types:,
@@ -57,7 +79,7 @@ class Notifier::Patient
       sent_by:
     )
 
-    template_name = find_template_name(type, team:)
+    template_name = find_clinic_template_name(type, team:)
 
     params = { academic_year:, patient:, programme_types:, sent_by:, team: }
 
@@ -72,15 +94,128 @@ class Notifier::Patient
   attr_reader :patient
 
   def send_notification?(team:)
-    patient.send_notifications?(team:, send_to_archived: true) &&
-      parents.present?
+    patient.send_notifications?(team:) && parents.present?
   end
 
   def parents
     @parents ||= patient.parents.select(&:contactable?).uniq
   end
 
-  def programme_types_to_send_for(
+  def send_consent_notification(programmes, type:, session:, sent_by:)
+    return unless send_notification?(team: session.team)
+
+    ConsentNotification.create!(
+      programmes:,
+      patient:,
+      session:,
+      type:,
+      sent_at: Time.current,
+      sent_by:
+    )
+
+    email_template, sms_template =
+      generate_consent_templates(programmes:, patient:, session:, type:)
+
+    programme_types = programmes.map(&:type)
+    disease_types = programmes.flat_map(&:disease_types).presence
+
+    parents.each do |parent|
+      EmailDeliveryJob.perform_later(
+        email_template,
+        disease_types:,
+        parent:,
+        patient:,
+        programme_types:,
+        session:,
+        sent_by:
+      )
+
+      SMSDeliveryJob.perform_later(
+        sms_template,
+        disease_types:,
+        parent:,
+        patient:,
+        programme_types:,
+        session:,
+        sent_by:
+      )
+    end
+  end
+
+  def generate_consent_templates(programmes:, patient:, session:, type:)
+    is_school = session.location.school?
+    base_template = :"consent_#{is_school ? "school" : "clinic"}_#{type}"
+
+    # We can only handle a single programme group or variant in the template.
+    group = ProgrammeGrouper.call(programmes).keys.sole
+    variant =
+      if programmes.count == 1
+        programmes.sole.variant_for(patient:).variant_type
+      end
+
+    email_template =
+      if is_school
+        template =
+          resolve_consent_template(
+            base_template:,
+            group:,
+            variant:,
+            session:,
+            channel: :email
+          )
+        if template.blank?
+          raise(
+            "Missing email template for consent notification: #{base_template} " \
+              "with group=#{group.inspect} variant=#{variant.inspect} " \
+              "outbreak=#{is_outbreak.inspect}"
+          )
+        end
+        template
+      else
+        base_template
+      end
+
+    sms_template =
+      if type == :request
+        template =
+          resolve_consent_template(
+            base_template:,
+            group:,
+            variant:,
+            session:,
+            channel: :sms
+          )
+        template || base_template
+      elsif is_school
+        :consent_school_reminder
+      end
+
+    [email_template, sms_template]
+  end
+
+  def resolve_consent_template(
+    base_template:,
+    group:,
+    variant:,
+    session:,
+    channel:
+  )
+    renderer = NotifyTemplateRenderer.for(channel)
+    is_outbreak = session.outbreak
+
+    combinations = [([group, :outbreak] if is_outbreak), [group]]
+    if variant.present? && variant != group
+      combinations.prepend(([variant, :outbreak] if is_outbreak), [variant])
+    end
+    combinations.compact!
+
+    combinations
+      .lazy
+      .map { |parts| :"#{base_template}_#{parts.join("_")}" }
+      .detect { renderer.template_exists?(it, source: :any) }
+  end
+
+  def programme_types_to_send_clinic_invitation_for(
     programmes,
     team:,
     academic_year:,
@@ -129,7 +264,7 @@ class Notifier::Patient
     end
   end
 
-  def find_template_name(type, team:)
+  def find_clinic_template_name(type, team:)
     template_names = [
       :"clinic_#{type}_#{team.organisation.ods_code.downcase}",
       :"clinic_#{type}"
