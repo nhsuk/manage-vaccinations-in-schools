@@ -67,7 +67,7 @@ class ImportsController < ApplicationController
         .union(immunisation_imports)
         .order("created_at DESC")
 
-    @pagy, @mixnmatch_imports = pagy(mixnmatch_imports)
+    @pagy, @mixnmatch_imports = pagy(mixnmatch_imports, limit: 20)
 
     @active = :imported
     render :index
