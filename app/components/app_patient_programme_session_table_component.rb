@@ -66,7 +66,11 @@ class AppPatientProgrammeSessionTableComponent < ViewComponent::Base
 
   def session_outcome_tag(session, programme_type)
     vaccination_record =
-      session.vaccination_records.where(programme_type:, patient:).last
+      session
+        .vaccination_records
+        .where(programme_type:, patient:)
+        .order(:performed_at_date, :performed_at_time)
+        .last
     return "No outcome" unless vaccination_record
 
     helpers.vaccination_record_status_tag(vaccination_record)

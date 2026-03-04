@@ -67,6 +67,15 @@ describe AppPatientProgrammeSessionTableComponent do
           patient:,
           session:,
           outcome: :administered,
+          performed_at_date: 1.month.ago,
+          programme_type:
+        )
+        create(
+          :vaccination_record,
+          patient:,
+          session:,
+          outcome: :refused,
+          performed_at_date: 1.year.ago,
           programme_type:
         )
       end
