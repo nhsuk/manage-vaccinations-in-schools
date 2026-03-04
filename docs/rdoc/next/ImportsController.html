@@ -539,6 +539,28 @@
 
 
   
+<div id="includes-section" class="nav-section">
+  <details class="nav-section-collapsible" open>
+    <summary class="nav-section-header">
+      <span class="nav-section-icon">
+        <svg><use href="#icon-includes"></use></svg>
+      </span>
+      <span class="nav-section-title">Included Modules</span>
+      <span class="nav-section-chevron">
+        <svg><use href="#icon-chevron"></use></svg>
+      </span>
+    </summary>
+
+    <ul class="nav-list">
+
+
+      <li><span class="include">Pagy::Backend</span></li>
+
+
+    </ul>
+  </details>
+</div>
+
 
   
 
@@ -646,7 +668,7 @@
             </details>
           </div>
           <div class="method-source-code" id="create-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/controllers/imports_controller.rb, line 20</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/controllers/imports_controller.rb, line 76</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">create</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">current_team</span>.<span class="ruby-identifier">has_national_reporting_access?</span>
     <span class="ruby-identifier">redirect_to</span> <span class="ruby-identifier">new_immunisation_import_path</span>
@@ -693,8 +715,35 @@
             </details>
           </div>
           <div class="method-source-code" id="index-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/controllers/imports_controller.rb, line 11</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/controllers/imports_controller.rb, line 13</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">index</span>
+  <span class="ruby-identifier">cohort_imports</span> =
+    <span class="ruby-identifier">policy_scope</span>(<span class="ruby-constant">CohortImport</span>).<span class="ruby-identifier">status_for_uploaded_files</span>.<span class="ruby-identifier">select</span>(
+      <span class="ruby-value">:id</span>,
+      <span class="ruby-value">:created_at</span>,
+      <span class="ruby-string">&quot;&#39;CohortImport&#39; as model_name&quot;</span>
+    )
+  <span class="ruby-identifier">class_imports</span> =
+    <span class="ruby-identifier">policy_scope</span>(<span class="ruby-constant">ClassImport</span>).<span class="ruby-identifier">status_for_uploaded_files</span>.<span class="ruby-identifier">select</span>(
+      <span class="ruby-value">:id</span>,
+      <span class="ruby-value">:created_at</span>,
+      <span class="ruby-string">&quot;&#39;ClassImport&#39; as model_name&quot;</span>
+    )
+  <span class="ruby-identifier">immunisation_imports</span> =
+    <span class="ruby-identifier">policy_scope</span>(<span class="ruby-constant">ImmunisationImport</span>).<span class="ruby-identifier">status_for_uploaded_files</span>.<span class="ruby-identifier">select</span>(
+      <span class="ruby-value">:id</span>,
+      <span class="ruby-value">:created_at</span>,
+      <span class="ruby-string">&quot;&#39;ImmunisationImport&#39; as model_name&quot;</span>
+    )
+
+  <span class="ruby-identifier">mixnmatch_imports</span> =
+    <span class="ruby-identifier">cohort_imports</span>
+      .<span class="ruby-identifier">union</span>(<span class="ruby-identifier">class_imports</span>)
+      .<span class="ruby-identifier">union</span>(<span class="ruby-identifier">immunisation_imports</span>)
+      .<span class="ruby-identifier">order</span>(<span class="ruby-string">&quot;created_at DESC&quot;</span>)
+
+  <span class="ruby-ivar">@pagy</span>, <span class="ruby-ivar">@mixnmatch_imports</span> = <span class="ruby-identifier">pagy</span>(<span class="ruby-identifier">mixnmatch_imports</span>, <span class="ruby-value">limit:</span> <span class="ruby-value">20</span>)
+
   <span class="ruby-ivar">@active</span> = <span class="ruby-value">:uploaded</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
@@ -735,8 +784,35 @@
             </details>
           </div>
           <div class="method-source-code" id="records-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/controllers/imports_controller.rb, line 15</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/controllers/imports_controller.rb, line 44</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">records</span>
+  <span class="ruby-identifier">cohort_imports</span> =
+    <span class="ruby-identifier">policy_scope</span>(<span class="ruby-constant">CohortImport</span>).<span class="ruby-identifier">status_for_imported_records</span>.<span class="ruby-identifier">select</span>(
+      <span class="ruby-value">:id</span>,
+      <span class="ruby-value">:created_at</span>,
+      <span class="ruby-string">&quot;&#39;CohortImport&#39; as model_name&quot;</span>
+    )
+  <span class="ruby-identifier">class_imports</span> =
+    <span class="ruby-identifier">policy_scope</span>(<span class="ruby-constant">ClassImport</span>).<span class="ruby-identifier">status_for_imported_records</span>.<span class="ruby-identifier">select</span>(
+      <span class="ruby-value">:id</span>,
+      <span class="ruby-value">:created_at</span>,
+      <span class="ruby-string">&quot;&#39;ClassImport&#39; as model_name&quot;</span>
+    )
+  <span class="ruby-identifier">immunisation_imports</span> =
+    <span class="ruby-identifier">policy_scope</span>(<span class="ruby-constant">ImmunisationImport</span>).<span class="ruby-identifier">status_for_imported_records</span>.<span class="ruby-identifier">select</span>(
+      <span class="ruby-value">:id</span>,
+      <span class="ruby-value">:created_at</span>,
+      <span class="ruby-string">&quot;&#39;ImmunisationImport&#39; as model_name&quot;</span>
+    )
+
+  <span class="ruby-identifier">mixnmatch_imports</span> =
+    <span class="ruby-identifier">cohort_imports</span>
+      .<span class="ruby-identifier">union</span>(<span class="ruby-identifier">class_imports</span>)
+      .<span class="ruby-identifier">union</span>(<span class="ruby-identifier">immunisation_imports</span>)
+      .<span class="ruby-identifier">order</span>(<span class="ruby-string">&quot;created_at DESC&quot;</span>)
+
+  <span class="ruby-ivar">@pagy</span>, <span class="ruby-ivar">@mixnmatch_imports</span> = <span class="ruby-identifier">pagy</span>(<span class="ruby-identifier">mixnmatch_imports</span>)
+
   <span class="ruby-ivar">@active</span> = <span class="ruby-value">:imported</span>
   <span class="ruby-identifier">render</span> <span class="ruby-value">:index</span>
 <span class="ruby-keyword">end</span></pre>

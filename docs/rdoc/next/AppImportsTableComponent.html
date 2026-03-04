@@ -654,7 +654,7 @@
             <div class="method-heading">
               <a href="#method-c-new" title="Link to this method">
                 <span class="method-name">new</span>
-                <span class="method-args">(team:, uploaded_files: true)</span>
+                <span class="method-args">(team:, uploaded_files:, mixnmatch_imports:, pagy:)</span>
               </a>
             </div>
 
@@ -668,9 +668,11 @@
           </div>
           <div class="method-source-code" id="new-source">
             <pre class="ruby"><span class="ruby-comment"># File app/components/app_imports_table_component.rb, line 4</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-value">team:</span>, <span class="ruby-value">uploaded_files:</span> <span class="ruby-keyword">true</span>)
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-value">team:</span>, <span class="ruby-value">uploaded_files:</span>, <span class="ruby-value">mixnmatch_imports:</span>, <span class="ruby-value">pagy:</span>)
   <span class="ruby-ivar">@team</span> = <span class="ruby-identifier">team</span>
   <span class="ruby-ivar">@uploaded_files</span> = <span class="ruby-identifier">uploaded_files</span>
+  <span class="ruby-ivar">@mixnmatch_imports</span> = <span class="ruby-identifier">mixnmatch_imports</span>
+  <span class="ruby-ivar">@pagy</span> = <span class="ruby-identifier">pagy</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -724,7 +726,7 @@
             </details>
           </div>
           <div class="method-source-code" id="class_import_records-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/components/app_imports_table_component.rb, line 34</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/components/app_imports_table_component.rb, line 35</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">class_import_records</span>
   <span class="ruby-constant">ClassImport</span>
     .<span class="ruby-identifier">select</span>(<span class="ruby-string">&quot;class_imports.*&quot;</span>, <span class="ruby-string">&quot;COUNT(patients.id) AS record_count&quot;</span>)
@@ -771,7 +773,7 @@
             </details>
           </div>
           <div class="method-source-code" id="cohort_import_records-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/components/app_imports_table_component.rb, line 43</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/components/app_imports_table_component.rb, line 44</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">cohort_import_records</span>
   <span class="ruby-constant">CohortImport</span>
     .<span class="ruby-identifier">select</span>(<span class="ruby-string">&quot;cohort_imports.*&quot;</span>, <span class="ruby-string">&quot;COUNT(patients.id) AS record_count&quot;</span>)
@@ -818,7 +820,7 @@
             </details>
           </div>
           <div class="method-source-code" id="immunisation_import_records-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/components/app_imports_table_component.rb, line 52</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/components/app_imports_table_component.rb, line 53</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">immunisation_import_records</span>
   <span class="ruby-constant">ImmunisationImport</span>
     .<span class="ruby-identifier">select</span>(
@@ -868,22 +870,21 @@
             </details>
           </div>
           <div class="method-source-code" id="imports-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/components/app_imports_table_component.rb, line 17</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/components/app_imports_table_component.rb, line 19</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">imports</span>
   <span class="ruby-ivar">@imports</span> <span class="ruby-operator">||=</span>
-    <span class="ruby-keyword">if</span> <span class="ruby-ivar">@uploaded_files</span>
-      (
-        <span class="ruby-identifier">class_import_records</span>.<span class="ruby-identifier">status_for_uploaded_files</span> <span class="ruby-operator">+</span>
-          <span class="ruby-identifier">cohort_import_records</span>.<span class="ruby-identifier">status_for_uploaded_files</span> <span class="ruby-operator">+</span>
-          <span class="ruby-identifier">immunisation_import_records</span>.<span class="ruby-identifier">status_for_uploaded_files</span>
-      ).<span class="ruby-identifier">sort_by</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:created_at</span>).<span class="ruby-identifier">reverse</span>
-    <span class="ruby-keyword">else</span>
-      (
-        <span class="ruby-identifier">class_import_records</span>.<span class="ruby-identifier">status_for_imported_records</span> <span class="ruby-operator">+</span>
-          <span class="ruby-identifier">cohort_import_records</span>.<span class="ruby-identifier">status_for_imported_records</span> <span class="ruby-operator">+</span>
-          <span class="ruby-identifier">immunisation_import_records</span>.<span class="ruby-identifier">status_for_imported_records</span>
-      ).<span class="ruby-identifier">sort_by</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:created_at</span>).<span class="ruby-identifier">reverse</span>
-    <span class="ruby-keyword">end</span>
+    <span class="ruby-ivar">@mixnmatch_imports</span>
+      .<span class="ruby-identifier">pluck</span>(<span class="ruby-value">:id</span>, <span class="ruby-value">:model_name</span>)
+      .<span class="ruby-identifier">map</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">id</span>, <span class="ruby-identifier">model_name</span><span class="ruby-operator">|</span>
+        <span class="ruby-keyword">case</span> <span class="ruby-identifier">model_name</span>
+        <span class="ruby-keyword">when</span> <span class="ruby-string">&quot;ClassImport&quot;</span>
+          <span class="ruby-identifier">class_import_records</span>.<span class="ruby-identifier">find</span>(<span class="ruby-identifier">id</span>)
+        <span class="ruby-keyword">when</span> <span class="ruby-string">&quot;CohortImport&quot;</span>
+          <span class="ruby-identifier">cohort_import_records</span>.<span class="ruby-identifier">find</span>(<span class="ruby-identifier">id</span>)
+        <span class="ruby-keyword">when</span> <span class="ruby-string">&quot;ImmunisationImport&quot;</span>
+          <span class="ruby-identifier">immunisation_import_records</span>.<span class="ruby-identifier">find</span>(<span class="ruby-identifier">id</span>)
+        <span class="ruby-keyword">end</span>
+      <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -923,7 +924,7 @@
             </details>
           </div>
           <div class="method-source-code" id="path-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/components/app_imports_table_component.rb, line 64</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/components/app_imports_table_component.rb, line 65</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">path</span>(<span class="ruby-identifier">import</span>)
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">import</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">ClassImport</span>)
     <span class="ruby-identifier">class_import_path</span>(<span class="ruby-identifier">import</span>)
@@ -971,7 +972,7 @@
             </details>
           </div>
           <div class="method-source-code" id="record_type-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/components/app_imports_table_component.rb, line 74</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/components/app_imports_table_component.rb, line 75</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">record_type</span>(<span class="ruby-identifier">import</span>)
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">import</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">ClassImport</span>)
     <span class="ruby-string">&quot;Class list records&quot;</span>
@@ -1019,7 +1020,7 @@
             </details>
           </div>
           <div class="method-source-code" id="render-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/components/app_imports_table_component.rb, line 9</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/components/app_imports_table_component.rb, line 11</span>
   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">render?</span> = <span class="ruby-identifier">imports</span>.<span class="ruby-identifier">present?</span>
 
   <span class="ruby-identifier">private</span>
@@ -1030,19 +1031,18 @@
 
   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">imports</span>
     <span class="ruby-ivar">@imports</span> <span class="ruby-operator">||=</span>
-      <span class="ruby-keyword">if</span> <span class="ruby-ivar">@uploaded_files</span>
-        (
-          <span class="ruby-identifier">class_import_records</span>.<span class="ruby-identifier">status_for_uploaded_files</span> <span class="ruby-operator">+</span>
-            <span class="ruby-identifier">cohort_import_records</span>.<span class="ruby-identifier">status_for_uploaded_files</span> <span class="ruby-operator">+</span>
-            <span class="ruby-identifier">immunisation_import_records</span>.<span class="ruby-identifier">status_for_uploaded_files</span>
-        ).<span class="ruby-identifier">sort_by</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:created_at</span>).<span class="ruby-identifier">reverse</span>
-      <span class="ruby-keyword">else</span>
-        (
-          <span class="ruby-identifier">class_import_records</span>.<span class="ruby-identifier">status_for_imported_records</span> <span class="ruby-operator">+</span>
-            <span class="ruby-identifier">cohort_import_records</span>.<span class="ruby-identifier">status_for_imported_records</span> <span class="ruby-operator">+</span>
-            <span class="ruby-identifier">immunisation_import_records</span>.<span class="ruby-identifier">status_for_imported_records</span>
-        ).<span class="ruby-identifier">sort_by</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:created_at</span>).<span class="ruby-identifier">reverse</span>
-      <span class="ruby-keyword">end</span>
+      <span class="ruby-ivar">@mixnmatch_imports</span>
+        .<span class="ruby-identifier">pluck</span>(<span class="ruby-value">:id</span>, <span class="ruby-value">:model_name</span>)
+        .<span class="ruby-identifier">map</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">id</span>, <span class="ruby-identifier">model_name</span><span class="ruby-operator">|</span>
+          <span class="ruby-keyword">case</span> <span class="ruby-identifier">model_name</span>
+          <span class="ruby-keyword">when</span> <span class="ruby-string">&quot;ClassImport&quot;</span>
+            <span class="ruby-identifier">class_import_records</span>.<span class="ruby-identifier">find</span>(<span class="ruby-identifier">id</span>)
+          <span class="ruby-keyword">when</span> <span class="ruby-string">&quot;CohortImport&quot;</span>
+            <span class="ruby-identifier">cohort_import_records</span>.<span class="ruby-identifier">find</span>(<span class="ruby-identifier">id</span>)
+          <span class="ruby-keyword">when</span> <span class="ruby-string">&quot;ImmunisationImport&quot;</span>
+            <span class="ruby-identifier">immunisation_import_records</span>.<span class="ruby-identifier">find</span>(<span class="ruby-identifier">id</span>)
+          <span class="ruby-keyword">end</span>
+        <span class="ruby-keyword">end</span>
   <span class="ruby-keyword">end</span>
 
   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">class_import_records</span>
