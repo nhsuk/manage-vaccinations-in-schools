@@ -5,13 +5,7 @@ class SendSchoolConsentRequestsJob < ApplicationJob
 
   def perform(session)
     patients_and_programmes(session) do |patient, programmes|
-      ConsentNotification.create_and_send!(
-        patient:,
-        session:,
-        programmes:,
-        type: :request,
-        current_user: nil
-      )
+      patient.notifier.send_consent_request(programmes, session:, sent_by: nil)
     end
   end
 
