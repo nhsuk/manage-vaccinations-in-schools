@@ -148,7 +148,9 @@ describe PatientChangeset do
 
     context "when new location is a known school" do
       it "returns false" do
-        expect(changeset.school_move_to_unknown_from_another_team?).to be(false)
+        expect(
+          changeset.school_move_to_unknown_school_from_another_team?
+        ).to be(false)
       end
     end
 
@@ -160,7 +162,9 @@ describe PatientChangeset do
       end
 
       it "returns false" do
-        expect(changeset.school_move_to_unknown_from_another_team?).to be(false)
+        expect(
+          changeset.school_move_to_unknown_school_from_another_team?
+        ).to be(false)
       end
     end
 
@@ -182,7 +186,9 @@ describe PatientChangeset do
       end
 
       it "returns true" do
-        expect(changeset.school_move_to_unknown_from_another_team?).to be(true)
+        expect(
+          changeset.school_move_to_unknown_school_from_another_team?
+        ).to be(true)
       end
     end
 
@@ -209,7 +215,9 @@ describe PatientChangeset do
       end
 
       it "returns false" do
-        expect(changeset.school_move_to_unknown_from_another_team?).to be(false)
+        expect(
+          changeset.school_move_to_unknown_school_from_another_team?
+        ).to be(false)
       end
     end
 
@@ -236,7 +244,9 @@ describe PatientChangeset do
       end
 
       it "returns true" do
-        expect(changeset.school_move_to_unknown_from_another_team?).to be(true)
+        expect(
+          changeset.school_move_to_unknown_school_from_another_team?
+        ).to be(true)
       end
     end
   end

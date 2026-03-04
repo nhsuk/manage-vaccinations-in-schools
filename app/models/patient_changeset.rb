@@ -279,7 +279,7 @@ class PatientChangeset < ApplicationRecord
       begin
         return if patient.deceased?
         if import_type == "CohortImport" &&
-             school_move_to_unknown_from_another_team?
+             school_move_to_unknown_school_from_another_team?
           return
         end
         if patient.new_record? || patient.school != school ||
@@ -297,16 +297,16 @@ class PatientChangeset < ApplicationRecord
       end
   end
 
-  def school_move_to_unknown_from_another_team?
+  def school_move_to_unknown_school_from_another_team?
     return false unless patient.persisted?
 
-    return false if school.present? || home_educated
-    return false unless patient.school.present? || !patient.home_educated?
+    moving_to_unknown_school =
+      (patient.school.present? || patient.home_educated?) &&
+        !(school.present? || home_educated)
 
-    current_teams = patient.teams_via_patient_locations
-    return false if current_teams.include?(team)
+    from_another_team = !patient.teams_via_patient_locations.include?(team)
 
-    true
+    moving_to_unknown_school && from_another_team
   end
 
   def existing_patients
@@ -465,7 +465,7 @@ class PatientChangeset < ApplicationRecord
   def changeset_type
     if patient.id.nil?
       :new_patient
-    elsif school_move_to_unknown_from_another_team?
+    elsif school_move_to_unknown_school_from_another_team?
       :skipped_school_move
     elsif patient.pending_changes.any?
       :import_issue
