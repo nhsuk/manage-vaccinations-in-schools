@@ -60,10 +60,13 @@ FactoryBot.define do
 
     trait :national_reporting do
       type { :national_reporting }
+
       email { nil }
       phone { nil }
       privacy_notice_url { nil }
       privacy_policy_url { nil }
+
+      programmes { [Programme.flu, Programme.hpv] }
     end
 
     trait :with_one_nurse do
