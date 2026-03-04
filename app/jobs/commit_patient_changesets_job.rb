@@ -30,9 +30,10 @@ class CommitPatientChangesetsJob
       # Reset patient_ids to avoid stale associations
       changesets.update_all(patient_id: nil)
 
-      to_process = changesets.select { review_consistent?(it) }
-      to_skip = changesets.select(&:skipped_school_move?)
-      to_process -= to_skip
+      to_skip, to_process =
+        changesets
+          .select { review_consistent?(it) }
+          .partition(&:skipped_school_move?)
 
       if to_process.any?
         increment_column_counts!(import, counts, to_process)
