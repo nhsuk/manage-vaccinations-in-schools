@@ -14,46 +14,40 @@ class SearchVaccinationRecordsInNHSJob < ImmunisationsAPIJob
       return
     end
 
-    tx_id = SecureRandom.urlsafe_base64(16)
+    @programmes = Programme.all_as_variants
 
-    SemanticLogger.tagged(tx_id:, job_id:) do
-      Sentry.set_tags(tx_id:, job_id:)
+    return unless feature_flags_enabled
 
-      @programmes = Programme.all_as_variants
-
-      return unless feature_flags_enabled
-
-      existing_vaccination_records.find_each do |vaccination_record|
-        incoming_vaccination_record =
-          incoming_vaccination_records.find do
-            it.nhs_immunisations_api_id ==
-              vaccination_record.nhs_immunisations_api_id
-          end
-
-        if incoming_vaccination_record
-          vaccination_record.update!(
-            incoming_vaccination_record
-              .attributes
-              .except("id", "uuid", "created_at")
-              .merge(updated_at: Time.current)
-          )
-
-          incoming_vaccination_records.delete(incoming_vaccination_record)
-        else
-          vaccination_record.destroy!
+    existing_vaccination_records.find_each do |vaccination_record|
+      incoming_vaccination_record =
+        incoming_vaccination_records.find do
+          it.nhs_immunisations_api_id ==
+            vaccination_record.nhs_immunisations_api_id
         end
+
+      if incoming_vaccination_record
+        vaccination_record.update!(
+          incoming_vaccination_record
+            .attributes
+            .except("id", "uuid", "created_at")
+            .merge(updated_at: Time.current)
+        )
+
+        incoming_vaccination_records.delete(incoming_vaccination_record)
+      else
+        vaccination_record.destroy!
       end
+    end
 
-      # Remaining incoming_vaccination_records are new
-      incoming_vaccination_records.each(&:save!)
+    # Remaining incoming_vaccination_records are new
+    incoming_vaccination_records.each(&:save!)
 
-      update_vaccination_search_timestamps if patient.nhs_number.present?
+    update_vaccination_search_timestamps if patient.nhs_number.present?
 
-      PatientStatusUpdater.call(patient:)
+    PatientStatusUpdater.call(patient:)
 
-      incoming_vaccination_records.each do |vaccination_record|
-        AlreadyHadNotificationSender.call(vaccination_record:)
-      end
+    incoming_vaccination_records.each do |vaccination_record|
+      AlreadyHadNotificationSender.call(vaccination_record:)
     end
   end
 

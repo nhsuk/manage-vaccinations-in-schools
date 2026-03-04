@@ -19,6 +19,19 @@ Sidekiq.configure_server do |config|
 
   config.server_middleware do |chain|
     chain.add SidekiqUniqueJobs::Middleware::Server
+
+    chain.add(
+      Class.new do
+        def call(_worker, job, _queue)
+          execution_id = SecureRandom.urlsafe_base64(8)
+
+          SemanticLogger.tagged(execution_id:) do
+            Sentry.set_tags(execution_id:, jid: job["jid"])
+            yield
+          end
+        end
+      end
+    )
   end
 
   SidekiqUniqueJobs::Server.configure(config)

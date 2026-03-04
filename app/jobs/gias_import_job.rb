@@ -6,17 +6,11 @@ class GIASImportJob < ApplicationJob
   queue_as :third_party_data_imports
 
   def perform(dry_run: false)
-    tx_id = SecureRandom.urlsafe_base64(16)
+    GIAS.download
 
-    SemanticLogger.tagged(tx_id:, job_id:) do
-      Sentry.set_tags(tx_id:, job_id:)
+    results = GIAS.check_import
+    GIAS.log_import_check_results(results)
 
-      GIAS.download
-
-      results = GIAS.check_import
-      GIAS.log_import_check_results(results)
-
-      GIAS.import unless dry_run
-    end
+    GIAS.import unless dry_run
   end
 end
