@@ -40,9 +40,8 @@ class CommitImportJob
         .from_file
         .includes(:school)
         .find_in_batches(batch_size: 100) do |batch|
-          to_skip =
-            batch.select(&:school_move_to_unknown_school_from_another_team?)
-          to_process = batch - to_skip
+          to_skip, to_process =
+            batch.partition(&:school_move_to_unknown_school_from_another_team?)
 
           if to_process.any?
             increment_column_counts!(import, counts, to_process)
