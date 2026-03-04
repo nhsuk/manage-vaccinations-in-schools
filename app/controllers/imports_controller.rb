@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class ImportsController < ApplicationController
+  include Pagy::Backend
+
   before_action :authorize_import
   skip_after_action :verify_policy_scoped
 
@@ -9,10 +11,64 @@ class ImportsController < ApplicationController
   layout "full"
 
   def index
+    cohort_imports =
+      policy_scope(CohortImport).status_for_uploaded_files.select(
+        :id,
+        :created_at,
+        "'CohortImport' as model_name"
+      )
+    class_imports =
+      policy_scope(ClassImport).status_for_uploaded_files.select(
+        :id,
+        :created_at,
+        "'ClassImport' as model_name"
+      )
+    immunisation_imports =
+      policy_scope(ImmunisationImport).status_for_uploaded_files.select(
+        :id,
+        :created_at,
+        "'ImmunisationImport' as model_name"
+      )
+
+    mixnmatch_imports =
+      cohort_imports
+        .union(class_imports)
+        .union(immunisation_imports)
+        .order("created_at DESC")
+
+    @pagy, @mixnmatch_imports = pagy(mixnmatch_imports, limit: 20)
+
     @active = :uploaded
   end
 
   def records
+    cohort_imports =
+      policy_scope(CohortImport).status_for_imported_records.select(
+        :id,
+        :created_at,
+        "'CohortImport' as model_name"
+      )
+    class_imports =
+      policy_scope(ClassImport).status_for_imported_records.select(
+        :id,
+        :created_at,
+        "'ClassImport' as model_name"
+      )
+    immunisation_imports =
+      policy_scope(ImmunisationImport).status_for_imported_records.select(
+        :id,
+        :created_at,
+        "'ImmunisationImport' as model_name"
+      )
+
+    mixnmatch_imports =
+      cohort_imports
+        .union(class_imports)
+        .union(immunisation_imports)
+        .order("created_at DESC")
+
+    @pagy, @mixnmatch_imports = pagy(mixnmatch_imports)
+
     @active = :imported
     render :index
   end

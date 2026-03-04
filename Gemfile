@@ -22,6 +22,7 @@ gem "stackprof"
 # 3rd party gems
 gem "activerecord-import"
 gem "activerecord-session_store"
+gem "active_record_union"
 gem "amazing_print"
 gem "array_enum"
 gem "audited", github: "tvararu/audited", branch: "encryption"
