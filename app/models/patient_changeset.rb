@@ -298,10 +298,10 @@ class PatientChangeset < ApplicationRecord
   end
 
   def school_move_to_unknown_from_another_team?
-    return false if school.present? || home_educated == true
-
     return false unless patient.persisted?
-    return false if patient.school.nil? && !patient.home_educated?
+
+    return false if school.present? || home_educated
+    return false unless patient.school.present? || !patient.home_educated?
 
     current_teams = patient.teams_via_patient_locations
     return false if current_teams.empty?
