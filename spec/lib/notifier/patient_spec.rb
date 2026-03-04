@@ -9,10 +9,12 @@ describe Notifier::Patient do
     subject(:send_clinic_invitation) do
       travel_to(today) do
         notifier.send_clinic_invitation(
-          programme_types:,
+          programmes,
           team:,
           academic_year:,
-          sent_by:
+          sent_by:,
+          include_vaccinated_programmes:,
+          include_already_invited_programmes:
         )
       end
     end
@@ -21,12 +23,13 @@ describe Notifier::Patient do
 
     let(:parents) { create_list(:parent, 2) }
     let(:patient) { create(:patient, parents:, year_group: 10) }
-    let(:programme) { Programme.td_ipv }
-    let(:programmes) { [programme] }
+    let(:programmes) { [Programme.td_ipv] }
     let(:programme_types) { programmes.map(&:type) }
     let(:team) { create(:team, programmes:) }
     let(:location) { create(:school, team:) }
     let(:academic_year) { AcademicYear.current }
+    let(:include_vaccinated_programmes) { false }
+    let(:include_already_invited_programmes) { true }
 
     context "without an invitation already" do
       it "creates a record" do
@@ -278,6 +281,153 @@ describe Notifier::Patient do
             academic_year:,
             sent_by:
           )
+        end
+      end
+    end
+
+    context "when already invited to one of two possible programmes" do
+      let(:programmes) { [Programme.flu, Programme.hpv] }
+
+      before do
+        create(
+          :clinic_notification,
+          :initial_invitation,
+          patient:,
+          team:,
+          academic_year:,
+          programmes: [Programme.flu]
+        )
+      end
+
+      it "creates a record" do
+        expect { send_clinic_invitation }.to change(
+          ClinicNotification,
+          :count
+        ).by(1)
+
+        clinic_notification = ClinicNotification.last
+        expect(clinic_notification).to be_initial_invitation
+        expect(clinic_notification.team).to eq(team)
+        expect(clinic_notification.patient).to eq(patient)
+        expect(clinic_notification.sent_at).to eq(today)
+      end
+
+      it "enqueues an email per parent" do
+        expect { send_clinic_invitation }.to have_delivered_email(
+          :clinic_initial_invitation
+        ).with(
+          parent: parents.first,
+          patient:,
+          programme_types:,
+          team:,
+          academic_year:,
+          sent_by:
+        ).and have_delivered_email(:clinic_initial_invitation).with(
+                parent: parents.second,
+                patient:,
+                programme_types:,
+                team:,
+                academic_year:,
+                sent_by:
+              )
+      end
+
+      it "enqueues a text per parent" do
+        expect { send_clinic_invitation }.to have_delivered_sms(
+          :clinic_initial_invitation
+        ).with(
+          parent: parents.first,
+          patient:,
+          programme_types:,
+          team:,
+          academic_year:,
+          sent_by:
+        ).and have_delivered_sms(:clinic_initial_invitation).with(
+                parent: parents.second,
+                patient:,
+                programme_types:,
+                team:,
+                academic_year:,
+                sent_by:
+              )
+      end
+
+      context "when parent doesn't want to receive updates by text" do
+        let(:parent) { parents.first }
+
+        before { parent.update!(phone_receive_updates: false) }
+
+        it "still enqueues a text" do
+          expect { send_clinic_invitation }.to have_delivered_sms(
+            :clinic_initial_invitation
+          ).with(
+            parent:,
+            patient:,
+            programme_types:,
+            team:,
+            academic_year:,
+            sent_by:
+          )
+        end
+      end
+
+      context "and not including already invited programmes" do
+        let(:include_already_invited_programmes) { false }
+
+        it "creates a record" do
+          expect { send_clinic_invitation }.to change(
+            ClinicNotification,
+            :count
+          ).by(1)
+
+          clinic_notification = ClinicNotification.last
+          expect(clinic_notification).to be_initial_invitation
+          expect(clinic_notification.team).to eq(team)
+          expect(clinic_notification.patient).to eq(patient)
+          expect(clinic_notification.sent_at).to eq(today)
+          expect(clinic_notification.programmes).to contain_exactly(
+            Programme.hpv
+          )
+        end
+
+        it "enqueues an email per parent" do
+          expect { send_clinic_invitation }.to have_delivered_email(
+            :clinic_initial_invitation
+          ).with(
+            parent: parents.first,
+            patient:,
+            programme_types: %w[hpv],
+            team:,
+            academic_year:,
+            sent_by:
+          ).and have_delivered_email(:clinic_initial_invitation).with(
+                  parent: parents.second,
+                  patient:,
+                  programme_types: %w[hpv],
+                  team:,
+                  academic_year:,
+                  sent_by:
+                )
+        end
+
+        it "enqueues a text per parent" do
+          expect { send_clinic_invitation }.to have_delivered_sms(
+            :clinic_initial_invitation
+          ).with(
+            parent: parents.first,
+            patient:,
+            programme_types: %w[hpv],
+            team:,
+            academic_year:,
+            sent_by:
+          ).and have_delivered_sms(:clinic_initial_invitation).with(
+                  parent: parents.second,
+                  patient:,
+                  programme_types: %w[hpv],
+                  team:,
+                  academic_year:,
+                  sent_by:
+                )
         end
       end
     end

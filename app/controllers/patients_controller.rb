@@ -75,7 +75,7 @@ class PatientsController < ApplicationController
     end
 
     @patient.notifier.send_clinic_invitation(
-      programme_types: current_team.programme_types,
+      current_team.programmes,
       team: current_team,
       academic_year:,
       sent_by: current_user

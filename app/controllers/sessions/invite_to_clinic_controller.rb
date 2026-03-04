@@ -17,7 +17,7 @@ class Sessions::InviteToClinicController < Sessions::BaseController
 
     @patients_to_invite.each do |patient|
       patient.notifier.send_clinic_invitation(
-        programme_types: @session.programmes_for(patient:).map(&:type),
+        @session.programmes_for(patient:),
         team: @session.team,
         academic_year: @session.academic_year,
         sent_by: current_user
