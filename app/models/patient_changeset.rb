@@ -304,10 +304,7 @@ class PatientChangeset < ApplicationRecord
     return false unless patient.school.present? || !patient.home_educated?
 
     current_teams = patient.teams_via_patient_locations
-    return false if current_teams.empty?
-
-    import_team = import.team
-    return false if import_team && current_teams.include?(import_team)
+    return false if current_teams.include?(team)
 
     true
   end
