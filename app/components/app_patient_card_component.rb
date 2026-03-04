@@ -3,7 +3,7 @@
 class AppPatientCardComponent < ViewComponent::Base
   erb_template <<-ERB
     <%= render AppCardComponent.new(section: true) do |card| %>
-      <% card.with_heading(level: heading_level) { "Child record" } %>
+      <% card.with_heading(level: heading_level, actions:) { "Child record" } %>
 
       <% important_notices.each do |notice| %>
         <%= render AppStatusComponent.new(text: notice) %>
@@ -30,7 +30,8 @@ class AppPatientCardComponent < ViewComponent::Base
     show_add_parent: false,
     change_links: {},
     remove_links: {},
-    heading_level: 3
+    heading_level: 3,
+    actions: []
   )
     @patient = patient
     @current_team = current_team
@@ -39,6 +40,7 @@ class AppPatientCardComponent < ViewComponent::Base
     @change_links = change_links
     @remove_links = remove_links
     @heading_level = heading_level
+    @actions = actions
   end
 
   private
@@ -49,7 +51,8 @@ class AppPatientCardComponent < ViewComponent::Base
               :show_add_parent,
               :change_links,
               :remove_links,
-              :heading_level
+              :heading_level,
+              :actions
 
   def show_school_and_year_group = patient.show_year_group?(team: current_team)
 
