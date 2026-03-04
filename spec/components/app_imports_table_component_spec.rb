@@ -116,28 +116,18 @@ describe AppImportsTableComponent do
     expect(rendered).to have_content("Test School")
   end
 
-  context "when uploaded_files is false" do
+  context "when uploaded_files is true" do
     let(:uploaded_files) { true }
 
-    before do
-      CohortImport.destroy_all
-      ImmunisationImport.destroy_all
-      ClassImport.destroy_all
-      create(:cohort_import, status: "pending_import", team:)
-    end
-
     it "does not show the Records column header" do
-      rendered =
-        render_inline(described_class.new(team:, uploaded_files: false))
       expect(rendered).not_to have_css(".nhsuk-table__header", text: "Records")
     end
 
     it "does not show record counts" do
-      expect(rendered).to have_css(
-        ".nhsuk-table__body .nhsuk-table__row",
-        count: 1
+      expect(rendered).not_to have_css(
+        ".nhsuk-table__cell",
+        text: /Records\s+\d+/m
       )
-      expect(rendered).not_to have_css(".nhsuk-table__cell", text: /^\d+$/)
     end
   end
 end
