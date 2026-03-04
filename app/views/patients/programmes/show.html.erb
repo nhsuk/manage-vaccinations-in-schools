@@ -15,3 +15,8 @@
         @patient, academic_year: AcademicYear.current, show_caption: false, programme: @programme,
       ) %>
 <% end %>
+
+<%= render AppCardComponent.new(section: true) do |card| %>
+  <% card.with_heading { "Sessions" } %>
+  <%= render AppPatientProgrammeSessionTableComponent.new(@patient, current_team:, programme_type: @programme.type) %>
+<% end %>
