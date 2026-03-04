@@ -54,5 +54,7 @@
     <% end %>
   <% end %>
 
-  <%= vaccinations_card %>
+  <% unless Flipper.enabled?(:child_record_redesign) %>
+    <%= vaccinations_card %>
+  <% end %>
 <% end %>

@@ -29,12 +29,14 @@ describe AppPatientProgrammesTableComponent do
     end
 
     it { should have_content("Vaccination programmes") }
-    it do
-      should have_link(
-               "Flu (winter 2025)",
-               href: patient_programme_path(patient, "flu")
-             )
+
+    it "renders a link to the Flu tab" do
+      expect(rendered).to have_link(
+        "Flu (winter 2025)",
+        href: patient_programme_path(patient, "flu")
+      )
     end
+
     it { should_not have_content("Vaccinated") }
 
     context "when vaccinated" do
@@ -149,17 +151,19 @@ describe AppPatientProgrammesTableComponent do
 
     it { should have_content("Vaccination programmes") }
     it { should have_link("HPV", href: patient_programme_path(patient, "hpv")) }
-    it do
-      should have_link(
-               "Td/IPV",
-               href: patient_programme_path(patient, "td_ipv")
-             )
+
+    it "renders a link to the Td/IPV tab" do
+      expect(rendered).to have_link(
+        "Td/IPV",
+        href: patient_programme_path(patient, "td_ipv")
+      )
     end
-    it do
-      should have_link(
-               "MenACWY",
-               href: patient_programme_path(patient, "menacwy")
-             )
+
+    it "renders a link to the MenACWY tab" do
+      expect(rendered).to have_link(
+        "MenACWY",
+        href: patient_programme_path(patient, "menacwy")
+      )
     end
 
     context "when vaccinated last year" do
