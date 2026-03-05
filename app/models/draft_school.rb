@@ -68,7 +68,7 @@ class DraftSchool
   end
 
   on_wizard_step :confirm_urn, exact: true do
-    validates :confirm_school, presence: true, inclusion: { in: %w[yes no] }
+    validates :confirm_school, inclusion: { in: %w[yes no] }
   end
 
   on_wizard_step :school, exact: true do
@@ -76,9 +76,11 @@ class DraftSchool
   end
 
   on_wizard_step :details, exact: true do
-    validates :name, presence: true
-    validates :name, name: { school_name: true }
     validates :name,
+              presence: true,
+              name: {
+                school_name: true
+              },
               exclusion: {
                 in: ->(record) { record.existing_names },
                 message:

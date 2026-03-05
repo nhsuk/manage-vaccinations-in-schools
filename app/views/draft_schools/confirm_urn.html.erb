@@ -12,7 +12,7 @@
   </p>
 </div>
 
-<%= form_with(model: @draft_school, url: wizard_path, method: :put) do |form| %>
+<%= form_with model: @draft_school, url: wizard_path, method: :put do |form| %>
   <%= form.govuk_radio_buttons_fieldset :confirm_school, legend: { text: "Is this the correct school?", size: "s" } do %>
     <%= form.govuk_radio_button :confirm_school, :yes, label: { text: "Yes, add this school" } %>
     <%= form.govuk_radio_button :confirm_school, :no, label: { text: "No, search again" }, link_errors: true %>

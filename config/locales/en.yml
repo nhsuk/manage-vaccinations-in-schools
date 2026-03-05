@@ -71,6 +71,18 @@ en:
               inclusion: Choose which type of records you are importing
             year_groups:
               blank: Choose which year groups you want to import class list records for
+        draft_school:
+          attributes:
+            address_line_1:
+              blank: Enter an address line 1
+            address_postcode:
+              blank: Enter a postcode
+            address_town:
+              blank: Enter a town or city
+            confirm_school:
+              inclusion: Choose if this is the correct school
+            name:
+              blank: Enter a name
         draft_session:
           attributes:
             location_id:
