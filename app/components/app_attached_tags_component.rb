@@ -28,7 +28,7 @@ class AppAttachedTagsComponent < ViewComponent::Base
     attached_tag =
       tag.strong(
         attached,
-        class: "nhsuk-tag app-tag--attached nhsuk-tag--transparent"
+        class: "nhsuk-tag app-tag--attached app-tag--transparent"
       )
 
     main_tag = tag.strong(text, class: "nhsuk-tag nhsuk-tag--#{colour}")
