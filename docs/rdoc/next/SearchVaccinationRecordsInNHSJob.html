@@ -692,46 +692,40 @@
     <span class="ruby-keyword">return</span>
   <span class="ruby-keyword">end</span>
 
-  <span class="ruby-identifier">tx_id</span> = <span class="ruby-constant">SecureRandom</span>.<span class="ruby-identifier">urlsafe_base64</span>(<span class="ruby-value">16</span>)
+  <span class="ruby-ivar">@programmes</span> = <span class="ruby-constant">Programme</span>.<span class="ruby-identifier">all_as_variants</span>
 
-  <span class="ruby-constant">SemanticLogger</span>.<span class="ruby-identifier">tagged</span>(<span class="ruby-value">tx_id:</span>, <span class="ruby-value">job_id:</span>) <span class="ruby-keyword">do</span>
-    <span class="ruby-constant">Sentry</span>.<span class="ruby-identifier">set_tags</span>(<span class="ruby-value">tx_id:</span>, <span class="ruby-value">job_id:</span>)
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">feature_flags_enabled</span>
 
-    <span class="ruby-ivar">@programmes</span> = <span class="ruby-constant">Programme</span>.<span class="ruby-identifier">all_as_variants</span>
-
-    <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">feature_flags_enabled</span>
-
-    <span class="ruby-identifier">existing_vaccination_records</span>.<span class="ruby-identifier">find_each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">vaccination_record</span><span class="ruby-operator">|</span>
-      <span class="ruby-identifier">incoming_vaccination_record</span> =
-        <span class="ruby-identifier">incoming_vaccination_records</span>.<span class="ruby-identifier">find</span> <span class="ruby-keyword">do</span>
-          <span class="ruby-identifier">it</span>.<span class="ruby-identifier">nhs_immunisations_api_id</span> <span class="ruby-operator">==</span>
-            <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">nhs_immunisations_api_id</span>
-        <span class="ruby-keyword">end</span>
-
-      <span class="ruby-keyword">if</span> <span class="ruby-identifier">incoming_vaccination_record</span>
-        <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">update!</span>(
-          <span class="ruby-identifier">incoming_vaccination_record</span>
-            .<span class="ruby-identifier">attributes</span>
-            .<span class="ruby-identifier">except</span>(<span class="ruby-string">&quot;id&quot;</span>, <span class="ruby-string">&quot;uuid&quot;</span>, <span class="ruby-string">&quot;created_at&quot;</span>)
-            .<span class="ruby-identifier">merge</span>(<span class="ruby-value">updated_at:</span> <span class="ruby-constant">Time</span>.<span class="ruby-identifier">current</span>)
-        )
-
-        <span class="ruby-identifier">incoming_vaccination_records</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-identifier">incoming_vaccination_record</span>)
-      <span class="ruby-keyword">else</span>
-        <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">destroy!</span>
+  <span class="ruby-identifier">existing_vaccination_records</span>.<span class="ruby-identifier">find_each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">vaccination_record</span><span class="ruby-operator">|</span>
+    <span class="ruby-identifier">incoming_vaccination_record</span> =
+      <span class="ruby-identifier">incoming_vaccination_records</span>.<span class="ruby-identifier">find</span> <span class="ruby-keyword">do</span>
+        <span class="ruby-identifier">it</span>.<span class="ruby-identifier">nhs_immunisations_api_id</span> <span class="ruby-operator">==</span>
+          <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">nhs_immunisations_api_id</span>
       <span class="ruby-keyword">end</span>
+
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">incoming_vaccination_record</span>
+      <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">update!</span>(
+        <span class="ruby-identifier">incoming_vaccination_record</span>
+          .<span class="ruby-identifier">attributes</span>
+          .<span class="ruby-identifier">except</span>(<span class="ruby-string">&quot;id&quot;</span>, <span class="ruby-string">&quot;uuid&quot;</span>, <span class="ruby-string">&quot;created_at&quot;</span>)
+          .<span class="ruby-identifier">merge</span>(<span class="ruby-value">updated_at:</span> <span class="ruby-constant">Time</span>.<span class="ruby-identifier">current</span>)
+      )
+
+      <span class="ruby-identifier">incoming_vaccination_records</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-identifier">incoming_vaccination_record</span>)
+    <span class="ruby-keyword">else</span>
+      <span class="ruby-identifier">vaccination_record</span>.<span class="ruby-identifier">destroy!</span>
     <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">end</span>
 
-    <span class="ruby-comment"># Remaining incoming_vaccination_records are new</span>
-    <span class="ruby-identifier">incoming_vaccination_records</span>.<span class="ruby-identifier">each</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:save!</span>)
+  <span class="ruby-comment"># Remaining incoming_vaccination_records are new</span>
+  <span class="ruby-identifier">incoming_vaccination_records</span>.<span class="ruby-identifier">each</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:save!</span>)
 
-    <span class="ruby-identifier">update_vaccination_search_timestamps</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">nhs_number</span>.<span class="ruby-identifier">present?</span>
+  <span class="ruby-identifier">update_vaccination_search_timestamps</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">nhs_number</span>.<span class="ruby-identifier">present?</span>
 
-    <span class="ruby-constant">PatientStatusUpdater</span>.<span class="ruby-identifier">call</span>(<span class="ruby-value">patient:</span>)
+  <span class="ruby-constant">PatientStatusUpdater</span>.<span class="ruby-identifier">call</span>(<span class="ruby-value">patient:</span>)
 
-    <span class="ruby-identifier">incoming_vaccination_records</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">vaccination_record</span><span class="ruby-operator">|</span>
-      <span class="ruby-constant">AlreadyHadNotificationSender</span>.<span class="ruby-identifier">call</span>(<span class="ruby-value">vaccination_record:</span>)
-    <span class="ruby-keyword">end</span>
+  <span class="ruby-identifier">incoming_vaccination_records</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">vaccination_record</span><span class="ruby-operator">|</span>
+    <span class="ruby-constant">AlreadyHadNotificationSender</span>.<span class="ruby-identifier">call</span>(<span class="ruby-value">vaccination_record:</span>)
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
           </div>

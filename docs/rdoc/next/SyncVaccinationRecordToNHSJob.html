@@ -650,13 +650,7 @@
     <span class="ruby-keyword">return</span>
   <span class="ruby-keyword">end</span>
 
-  <span class="ruby-identifier">tx_id</span> = <span class="ruby-constant">SecureRandom</span>.<span class="ruby-identifier">urlsafe_base64</span>(<span class="ruby-value">16</span>)
-
-  <span class="ruby-constant">SemanticLogger</span>.<span class="ruby-identifier">tagged</span>(<span class="ruby-value">tx_id:</span>, <span class="ruby-value">job_id:</span>) <span class="ruby-keyword">do</span>
-    <span class="ruby-constant">Sentry</span>.<span class="ruby-identifier">set_tags</span>(<span class="ruby-value">tx_id:</span>, <span class="ruby-value">job_id:</span>)
-
-    <span class="ruby-constant">NHS</span><span class="ruby-operator">::</span><span class="ruby-constant">ImmunisationsAPI</span>.<span class="ruby-identifier">sync_immunisation</span>(<span class="ruby-identifier">vaccination_record</span>)
-  <span class="ruby-keyword">end</span>
+  <span class="ruby-constant">NHS</span><span class="ruby-operator">::</span><span class="ruby-constant">ImmunisationsAPI</span>.<span class="ruby-identifier">sync_immunisation</span>(<span class="ruby-identifier">vaccination_record</span>)
 <span class="ruby-keyword">end</span></pre>
           </div>
 

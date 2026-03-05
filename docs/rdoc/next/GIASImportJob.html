@@ -666,18 +666,12 @@
           <div class="method-source-code" id="perform-source">
             <pre class="ruby"><span class="ruby-comment"># File app/jobs/gias_import_job.rb, line 8</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">perform</span>(<span class="ruby-value">dry_run:</span> <span class="ruby-keyword">false</span>)
-  <span class="ruby-identifier">tx_id</span> = <span class="ruby-constant">SecureRandom</span>.<span class="ruby-identifier">urlsafe_base64</span>(<span class="ruby-value">16</span>)
+  <span class="ruby-constant">GIAS</span>.<span class="ruby-identifier">download</span>
 
-  <span class="ruby-constant">SemanticLogger</span>.<span class="ruby-identifier">tagged</span>(<span class="ruby-value">tx_id:</span>, <span class="ruby-value">job_id:</span>) <span class="ruby-keyword">do</span>
-    <span class="ruby-constant">Sentry</span>.<span class="ruby-identifier">set_tags</span>(<span class="ruby-value">tx_id:</span>, <span class="ruby-value">job_id:</span>)
+  <span class="ruby-identifier">results</span> = <span class="ruby-constant">GIAS</span>.<span class="ruby-identifier">check_import</span>
+  <span class="ruby-constant">GIAS</span>.<span class="ruby-identifier">log_import_check_results</span>(<span class="ruby-identifier">results</span>)
 
-    <span class="ruby-constant">GIAS</span>.<span class="ruby-identifier">download</span>
-
-    <span class="ruby-identifier">results</span> = <span class="ruby-constant">GIAS</span>.<span class="ruby-identifier">check_import</span>
-    <span class="ruby-constant">GIAS</span>.<span class="ruby-identifier">log_import_check_results</span>(<span class="ruby-identifier">results</span>)
-
-    <span class="ruby-constant">GIAS</span>.<span class="ruby-identifier">import</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">dry_run</span>
-  <span class="ruby-keyword">end</span>
+  <span class="ruby-constant">GIAS</span>.<span class="ruby-identifier">import</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">dry_run</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
 
