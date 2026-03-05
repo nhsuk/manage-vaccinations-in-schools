@@ -29,7 +29,6 @@ service hostname do
     options = { protocol: protocol }
 
     if scheme == "https"
-      require "localhost"
       authority = Localhost::Authority.fetch
       ssl_context = authority.server_context
       alpn_names = protocol.names
