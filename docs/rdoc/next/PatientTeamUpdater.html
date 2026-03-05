@@ -607,8 +607,6 @@
 
         <li ><a href="#method-i-vaccination_record_import_relation">vaccination_record_import_relation</a></li>
 
-        <li ><a href="#method-i-vaccination_record_organisation_relation">vaccination_record_organisation_relation</a></li>
-
         <li ><a href="#method-i-vaccination_record_session_relation">vaccination_record_session_relation</a></li>
 
       </ul>
@@ -744,7 +742,6 @@
       <span class="ruby-identifier">school_move_school_relation</span>,
       <span class="ruby-identifier">school_move_team_relation</span>,
       <span class="ruby-identifier">vaccination_record_import_relation</span>,
-      <span class="ruby-identifier">vaccination_record_organisation_relation</span>,
       <span class="ruby-identifier">vaccination_record_session_relation</span>
     ]
   <span class="ruby-keyword">end</span>
@@ -838,25 +835,6 @@
     <span class="ruby-identifier">scope</span>.<span class="ruby-identifier">select</span>(
       <span class="ruby-value">:patient_id</span>,
       <span class="ruby-constant">Arel</span>.<span class="ruby-identifier">sql</span>(<span class="ruby-string">&quot;immunisation_imports.team_id AS team_id&quot;</span>),
-      <span class="ruby-constant">Arel</span>.<span class="ruby-identifier">sql</span>(<span class="ruby-node">&quot;#{source} AS source&quot;</span>)
-    )
-  <span class="ruby-keyword">end</span>
-
-  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccination_record_organisation_relation</span>
-    <span class="ruby-identifier">source</span> = <span class="ruby-constant">PatientTeam</span>.<span class="ruby-identifier">sources</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-string">&quot;vaccination_record_organisation&quot;</span>)
-
-    <span class="ruby-identifier">scope</span> =
-      <span class="ruby-identifier">merge_patient_scope</span>(
-        <span class="ruby-constant">VaccinationRecord</span>.<span class="ruby-identifier">where</span>(
-          <span class="ruby-value">session_id:</span> <span class="ruby-keyword">nil</span>
-        ).<span class="ruby-identifier">joins_teams_on_performed_ods_code</span>
-      )
-
-    <span class="ruby-identifier">scope</span> = <span class="ruby-identifier">scope</span>.<span class="ruby-identifier">merge</span>(<span class="ruby-identifier">team_scope</span>) <span class="ruby-keyword">if</span> <span class="ruby-identifier">team_scope</span>
-
-    <span class="ruby-identifier">scope</span>.<span class="ruby-identifier">select</span>(
-      <span class="ruby-value">:patient_id</span>,
-      <span class="ruby-constant">Arel</span>.<span class="ruby-identifier">sql</span>(<span class="ruby-string">&quot;teams.id AS team_id&quot;</span>),
       <span class="ruby-constant">Arel</span>.<span class="ruby-identifier">sql</span>(<span class="ruby-node">&quot;#{source} AS source&quot;</span>)
     )
   <span class="ruby-keyword">end</span>
@@ -1033,7 +1011,7 @@
             </details>
           </div>
           <div class="method-source-code" id="archive_reason_relation-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/patient_team_updater.rb, line 92</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/patient_team_updater.rb, line 91</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">archive_reason_relation</span>
   <span class="ruby-identifier">source</span> = <span class="ruby-constant">PatientTeam</span>.<span class="ruby-identifier">sources</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-string">&quot;archive_reason&quot;</span>)
 
@@ -1217,7 +1195,7 @@
             </details>
           </div>
           <div class="method-source-code" id="is_team_scope_id_only-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/patient_team_updater.rb, line 271</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/patient_team_updater.rb, line 251</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">is_team_scope_id_only?</span>
   <span class="ruby-ivar">@is_team_scope_id_only</span> <span class="ruby-operator">||=</span> <span class="ruby-identifier">is_id_only_scope?</span>(<span class="ruby-identifier">team_scope</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -1259,7 +1237,7 @@
             </details>
           </div>
           <div class="method-source-code" id="joins_team_locations_alias_on_patient_locations-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/patient_team_updater.rb, line 229</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/patient_team_updater.rb, line 209</span>
   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">joins_team_locations_alias_on_patient_locations</span>(<span class="ruby-identifier">scope</span>)
     <span class="ruby-identifier">scope</span>.<span class="ruby-identifier">joins</span>(<span class="ruby-identifier">&lt;&lt;-SQL</span>).<span class="ruby-identifier">references</span>(<span class="ruby-value">:team_locations_alias</span>)
 <span class="ruby-value">      INNER JOIN team_locations team_locations_alias
@@ -1307,7 +1285,7 @@
             </details>
           </div>
           <div class="method-source-code" id="joins_team_locations_alias_on_school_moves-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/patient_team_updater.rb, line 237</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/patient_team_updater.rb, line 217</span>
   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">joins_team_locations_alias_on_school_moves</span>(<span class="ruby-identifier">scope</span>)
     <span class="ruby-identifier">scope</span>.<span class="ruby-identifier">joins</span>(<span class="ruby-identifier">&lt;&lt;-SQL</span>).<span class="ruby-identifier">references</span>(<span class="ruby-value">:team_locations_alias</span>)
 <span class="ruby-value">      INNER JOIN team_locations team_locations_alias
@@ -1353,7 +1331,7 @@
             </details>
           </div>
           <div class="method-source-code" id="joins_team_locations_alias_on_vaccination_records-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/patient_team_updater.rb, line 245</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/patient_team_updater.rb, line 225</span>
   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">joins_team_locations_alias_on_vaccination_records</span>(<span class="ruby-identifier">scope</span>)
     <span class="ruby-identifier">scope</span>.<span class="ruby-identifier">joins</span>(<span class="ruby-identifier">&lt;&lt;-SQL</span>).<span class="ruby-identifier">references</span>(<span class="ruby-value">:sessions_alias</span>, <span class="ruby-value">:team_locations_alias</span>)
 <span class="ruby-value">      INNER JOIN sessions sessions_alias
@@ -1400,7 +1378,7 @@
             </details>
           </div>
           <div class="method-source-code" id="joins_teams_on_team_locations_alias-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/patient_team_updater.rb, line 254</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/patient_team_updater.rb, line 234</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">joins_teams_on_team_locations_alias</span>(<span class="ruby-identifier">scope</span>)
   <span class="ruby-identifier">scope</span>.<span class="ruby-identifier">joins</span>(<span class="ruby-string">&quot;INNER JOIN teams ON teams.id = team_locations_alias.team_id&quot;</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -1442,7 +1420,7 @@
             </details>
           </div>
           <div class="method-source-code" id="merge_team_scope-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/patient_team_updater.rb, line 261</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/patient_team_updater.rb, line 241</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">merge_team_scope</span>(<span class="ruby-identifier">scope</span>)
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">is_team_scope_id_only?</span>
     <span class="ruby-identifier">scope</span>.<span class="ruby-identifier">where</span>(<span class="ruby-value">team_id:</span> <span class="ruby-identifier">team_scope</span>.<span class="ruby-identifier">select</span>(<span class="ruby-value">:id</span>))
@@ -1492,7 +1470,7 @@
             </details>
           </div>
           <div class="method-source-code" id="null_relation-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/patient_team_updater.rb, line 100</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/patient_team_updater.rb, line 99</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">null_relation</span>
   <span class="ruby-comment"># This relation represents all the existing patient teams that exist for</span>
   <span class="ruby-comment">#  this patient scope and team scope. It ensures that if any existing</span>
@@ -1543,7 +1521,7 @@
             </details>
           </div>
           <div class="method-source-code" id="patient_location_relation-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/patient_team_updater.rb, line 113</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/patient_team_updater.rb, line 112</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">patient_location_relation</span>
   <span class="ruby-identifier">source</span> = <span class="ruby-constant">PatientTeam</span>.<span class="ruby-identifier">sources</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-string">&quot;patient_location&quot;</span>)
 
@@ -1612,7 +1590,6 @@
     <span class="ruby-identifier">school_move_school_relation</span>,
     <span class="ruby-identifier">school_move_team_relation</span>,
     <span class="ruby-identifier">vaccination_record_import_relation</span>,
-    <span class="ruby-identifier">vaccination_record_organisation_relation</span>,
     <span class="ruby-identifier">vaccination_record_session_relation</span>
   ]
 <span class="ruby-keyword">end</span></pre>
@@ -1656,7 +1633,7 @@
             </details>
           </div>
           <div class="method-source-code" id="school_move_school_relation-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/patient_team_updater.rb, line 135</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/patient_team_updater.rb, line 134</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">school_move_school_relation</span>
   <span class="ruby-identifier">source</span> = <span class="ruby-constant">PatientTeam</span>.<span class="ruby-identifier">sources</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-string">&quot;school_move_school&quot;</span>)
 
@@ -1716,7 +1693,7 @@
             </details>
           </div>
           <div class="method-source-code" id="school_move_team_relation-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/patient_team_updater.rb, line 157</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/patient_team_updater.rb, line 156</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">school_move_team_relation</span>
   <span class="ruby-identifier">source</span> = <span class="ruby-constant">PatientTeam</span>.<span class="ruby-identifier">sources</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-string">&quot;school_move_team&quot;</span>)
 
@@ -1811,7 +1788,7 @@
             </details>
           </div>
           <div class="method-source-code" id="vaccination_record_import_relation-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/patient_team_updater.rb, line 166</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/patient_team_updater.rb, line 165</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccination_record_import_relation</span>
   <span class="ruby-identifier">source</span> = <span class="ruby-constant">PatientTeam</span>.<span class="ruby-identifier">sources</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-string">&quot;vaccination_record_import&quot;</span>)
 
@@ -1827,63 +1804,6 @@
   <span class="ruby-identifier">scope</span>.<span class="ruby-identifier">select</span>(
     <span class="ruby-value">:patient_id</span>,
     <span class="ruby-constant">Arel</span>.<span class="ruby-identifier">sql</span>(<span class="ruby-string">&quot;immunisation_imports.team_id AS team_id&quot;</span>),
-    <span class="ruby-constant">Arel</span>.<span class="ruby-identifier">sql</span>(<span class="ruby-node">&quot;#{source} AS source&quot;</span>)
-  )
-<span class="ruby-keyword">end</span></pre>
-          </div>
-
-
-
-        <div class="method-description">
-
-
-          
-
-
-        </div>
-
-
-
-
-
-      </div>
-
-
-      <div id="method-i-vaccination_record_organisation_relation" class="method-detail anchor-link ">
-        <div class="method-header">
-
-            <div class="method-heading">
-              <a href="#method-i-vaccination_record_organisation_relation" title="Link to this method">
-                <span class="method-name">vaccination_record_organisation_relation</span>
-                <span class="method-args">()</span>
-              </a>
-            </div>
-
-        </div>
-
-
-          <div class="method-controls">
-            <details class="method-source-toggle">
-              <summary>Source</summary>
-            </details>
-          </div>
-          <div class="method-source-code" id="vaccination_record_organisation_relation-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/patient_team_updater.rb, line 185</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccination_record_organisation_relation</span>
-  <span class="ruby-identifier">source</span> = <span class="ruby-constant">PatientTeam</span>.<span class="ruby-identifier">sources</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-string">&quot;vaccination_record_organisation&quot;</span>)
-
-  <span class="ruby-identifier">scope</span> =
-    <span class="ruby-identifier">merge_patient_scope</span>(
-      <span class="ruby-constant">VaccinationRecord</span>.<span class="ruby-identifier">where</span>(
-        <span class="ruby-value">session_id:</span> <span class="ruby-keyword">nil</span>
-      ).<span class="ruby-identifier">joins_teams_on_performed_ods_code</span>
-    )
-
-  <span class="ruby-identifier">scope</span> = <span class="ruby-identifier">scope</span>.<span class="ruby-identifier">merge</span>(<span class="ruby-identifier">team_scope</span>) <span class="ruby-keyword">if</span> <span class="ruby-identifier">team_scope</span>
-
-  <span class="ruby-identifier">scope</span>.<span class="ruby-identifier">select</span>(
-    <span class="ruby-value">:patient_id</span>,
-    <span class="ruby-constant">Arel</span>.<span class="ruby-identifier">sql</span>(<span class="ruby-string">&quot;teams.id AS team_id&quot;</span>),
     <span class="ruby-constant">Arel</span>.<span class="ruby-identifier">sql</span>(<span class="ruby-node">&quot;#{source} AS source&quot;</span>)
   )
 <span class="ruby-keyword">end</span></pre>
@@ -1925,7 +1845,7 @@
             </details>
           </div>
           <div class="method-source-code" id="vaccination_record_session_relation-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/patient_team_updater.rb, line 204</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/patient_team_updater.rb, line 184</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccination_record_session_relation</span>
   <span class="ruby-identifier">source</span> = <span class="ruby-constant">PatientTeam</span>.<span class="ruby-identifier">sources</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-string">&quot;vaccination_record_session&quot;</span>)
 
