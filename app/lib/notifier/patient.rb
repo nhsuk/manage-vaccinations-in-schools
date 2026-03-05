@@ -80,15 +80,16 @@ class Notifier::Patient
 
     programme_types = programmes_to_send_for.map(&:type)
 
-    ClinicNotification.create!(
-      patient:,
-      programme_types:,
-      team:,
-      academic_year:,
-      type:,
-      sent_at: Time.current,
-      sent_by:
-    )
+    clinic_notification =
+      ClinicNotification.create!(
+        patient:,
+        programme_types:,
+        team:,
+        academic_year:,
+        type:,
+        sent_at: Time.current,
+        sent_by:
+      )
 
     template_name = find_clinic_template_name(type, team:)
 
@@ -98,6 +99,8 @@ class Notifier::Patient
       EmailDeliveryJob.perform_later(template_name, parent:, **params)
       SMSDeliveryJob.perform_later(template_name, parent:, **params)
     end
+
+    clinic_notification
   end
 
   private
@@ -127,14 +130,15 @@ class Notifier::Patient
 
     return if programmes_to_send_for.empty?
 
-    ConsentNotification.create!(
-      programmes: programmes_to_send_for,
-      patient:,
-      session:,
-      type:,
-      sent_at: Time.current,
-      sent_by:
-    )
+    consent_notification =
+      ConsentNotification.create!(
+        programmes: programmes_to_send_for,
+        patient:,
+        session:,
+        type:,
+        sent_at: Time.current,
+        sent_by:
+      )
 
     email_template, sms_template =
       generate_consent_templates(
@@ -168,6 +172,8 @@ class Notifier::Patient
         sent_by:
       )
     end
+
+    consent_notification
   end
 
   def generate_consent_templates(programmes:, patient:, session:, type:)
