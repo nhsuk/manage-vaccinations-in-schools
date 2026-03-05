@@ -53,18 +53,6 @@ class ClinicPatientLocationsFactory
 
     return false if eligible_programmes.empty?
 
-    programme_types = eligible_programmes.map(&:type)
-
-    already_invited =
-      patient.clinic_notifications.any? do
-        it.initial_invitation? && it.team_id == team.id &&
-          it.academic_year == academic_year &&
-          (programme_types - it.programme_types).empty? # is subset
-      end
-
-    # We only send initial invitations to patients who haven't already
-    # received an invitation.
-
-    !already_invited
+    !patient.invited_to_clinic?(eligible_programmes, team:, academic_year:)
   end
 end
