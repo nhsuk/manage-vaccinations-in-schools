@@ -12,7 +12,8 @@ WORKDIR /rails
 
 # Install base packages
 RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y curl libjemalloc2 libvips libicu-dev postgresql-client jq && \
+    apt-get install --no-install-recommends -y curl libjemalloc2 \
+    libvips libicu-dev postgresql-client jq ca-certificates && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
 # Set production environment
@@ -82,13 +83,12 @@ RUN groupadd --system --gid 1000 rails && \
     chown -R rails:rails db log storage tmp
 
 # Generate and install self-signed TLS certificates at build time.
-# Cannot use `bake localhost:install` as it requires sudo, so we do it manually
-RUN bundle exec ruby -e "require 'localhost'; Localhost::Authority.fetch" && \
-    cp /root/.local/state/localhost.rb/development.crt /usr/local/share/ca-certificates/localhost.crt && \
-    update-ca-certificates && \
-    mkdir -p /home/rails/.local/state && \
-    cp -r /root/.local/state/localhost.rb /home/rails/.local/state/localhost.rb && \
-    chown -R rails:rails /home/rails/.local
+RUN apt-get update -qq && \
+    apt-get install --no-install-recommends -y sudo && \
+    bundle exec "bake localhost:install" && \
+    SUDO_FORCE_REMOVE=yes apt-get purge -y sudo && \
+    apt-get autoremove -y && \
+    rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
 USER 1000:1000
 

@@ -983,6 +983,7 @@ DEPENDENCIES
   jsbundling-rails
   jsonb_accessor
   jwt
+  localhost
   mechanize
   notifications-ruby-client
   okcomputer
