@@ -187,24 +187,7 @@ def setup_clinic(team)
       dates:
     )
 
-  # All unknown school or home-schooled patients belong to the community clinic.
-  # This is normally handled by school moves, but here we need to do it manually.
-  new_patient_location_records =
-    team
-      .patients
-      .where(school: nil)
-      .map do
-        PatientLocation.new(
-          patient: it,
-          location: clinic_session.location,
-          academic_year: clinic_session.academic_year
-        )
-      end
-
-  PatientLocation.import(
-    new_patient_location_records,
-    on_duplicate_key_ignore: :all
-  )
+  FactoryBot.create_list(:patient, 10, session: clinic_session)
 end
 
 def create_patients(team)
