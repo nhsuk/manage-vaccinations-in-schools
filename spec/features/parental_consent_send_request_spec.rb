@@ -284,23 +284,23 @@ describe "Parental consent" do
       "Consent #{location_text} request#{programme_text}#{outbreak_text} sent"
 
     expect(page).to have_content(
-      "#{programme_name} #{title}\n" \
-        "USER, Test · 1 January 2024 at 12:00am\n#{@parent.email}"
+      "#{title}\n" \
+        "#{programme_name} USER, Test · 1 January 2024 at 12:00am\n#{@parent.email}"
     )
   end
 
   def then_an_activity_log_entry_is_visible_for_the_email(programme_name)
     expect(page).to have_content(
-      "#{programme_name} Consent clinic request sent\n" \
-        "USER, Test · 1 January 2024 at 12:00am\n#{@parent.email}"
+      "Consent clinic request sent\n" \
+        "#{programme_name} USER, Test · 1 January 2024 at 12:00am\n#{@parent.email}"
     )
   end
 
   def and_an_activity_log_entry_is_visible_for_the_text(programme_name)
     click_on "Session activity and notes"
     expect(page).to have_content(
-      "#{programme_name} Consent clinic request sent\n" \
-        "USER, Test · 1 January 2024 at 12:00am\n#{@parent.phone}"
+      "Consent clinic request sent\n" \
+        "#{programme_name} USER, Test · 1 January 2024 at 12:00am\n#{@parent.phone}"
     )
   end
 end

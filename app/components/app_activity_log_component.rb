@@ -6,14 +6,14 @@ class AppActivityLogComponent < ViewComponent::Base
       <% all_events.each do |event| %>
         <%= render AppTimelineItemComponent.new(is_past: true) do |item| %>
           <% item.with_heading do %>
-            <% if (programmes = event[:programmes]) %>
-              <%= render AppProgrammeTagsComponent.new(programmes) %>
-            <% end %>
-
             <%= event[:invalidated] ? tag.s(event[:title]) : event[:title] %>
           <% end %>
 
           <% item.with_description do %>
+            <% if (programmes = event[:programmes]) %>
+              <%= render AppProgrammeTagsComponent.new(programmes) %>
+            <% end %>
+
             <% if event[:invalidated] %><s><% end %>
 
             <% if (subtitle = event[:subtitle]).present? %>

@@ -287,8 +287,8 @@ describe "MMR vaccination" do
     expect(page).to have_content("Completed pre-screening checks")
     expect(page).to have_content("Vaccinated with Priorix")
     expect(page).to have_content(
-      "MMR(V) Triaged decision: Delay vaccination to a later date\n" \
-        "1 October 2024 at 9:00am\n" \
+      "Triaged decision: Delay vaccination to a later date\n" \
+        "MMR(V) 1 October 2024 at 9:00am\n" \
         "Next dose 29 October 2024 at 9:00am"
     )
   end
