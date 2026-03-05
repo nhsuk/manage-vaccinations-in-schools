@@ -5,7 +5,9 @@ module MavisCLI
     class AddProgrammeYearGroup < Dry::CLI::Command
       desc "Add programme year groups to a school"
 
-      argument :urn, required: true, desc: "The URN of the school"
+      argument :urn_or_id,
+               required: true,
+               desc: "School URN or ID (use --id to control)"
       argument :programme_type,
                required: true,
                desc: "The programme to add year groups to"
@@ -14,10 +16,20 @@ module MavisCLI
                required: true,
                desc: "The year groups to add"
 
-      def call(urn:, programme_type:, year_groups:, **)
+      option :id,
+             type: :boolean,
+             default: false,
+             desc: "Provided school identifier is an ID"
+
+      def call(urn_or_id:, programme_type:, year_groups:, id:, **)
         MavisCLI.load_rails
 
-        location = Location.school.find_by_urn_and_site(urn)
+        location =
+          if id
+            Location.find(urn_or_id)
+          else
+            Location.school.find_by_urn_and_site(urn_or_id)
+          end
 
         if location.nil?
           warn "Could not find school."

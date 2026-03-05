@@ -29,12 +29,30 @@ describe "mavis schools add-programme-year-group" do
     end
   end
 
+  context "when a school id is provided" do
+    it "runs successfully" do
+      given_the_school_exists
+      and_the_programme_exists
+
+      when_i_run_the_command_with_the_id
+      then_the_year_groups_are_added_to_the_school
+    end
+  end
+
   private
 
-  def command
-    Dry::CLI.new(MavisCLI).call(
-      arguments: %w[schools add-programme-year-group 123456 flu 12 13 14]
-    )
+  def command(using_id: false)
+    identifier = using_id ? ["--id", @school.id] : ["123456"]
+    arguments = [
+      "schools",
+      "add-programme-year-group",
+      *identifier,
+      "flu",
+      "12",
+      "13",
+      "14"
+    ]
+    Dry::CLI.new(MavisCLI).call(arguments:)
   end
 
   def command_with_invalid_programme
@@ -53,6 +71,10 @@ describe "mavis schools add-programme-year-group" do
 
   def when_i_run_the_command
     @output = capture_output { command }
+  end
+
+  def when_i_run_the_command_with_the_id
+    @output = capture_output { command(using_id: true) }
   end
 
   def when_i_run_the_command_expecting_an_error
