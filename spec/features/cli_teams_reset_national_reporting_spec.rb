@@ -262,7 +262,8 @@ describe "mavis teams reset-national-reporting" do
         :vaccination_record,
         team: @point_of_care_team,
         patient: @shared_patient,
-        performed_at: 2.days.ago
+        performed_at: 2.days.ago,
+        session: create(:session, team: @point_of_care_team)
       )
   end
 

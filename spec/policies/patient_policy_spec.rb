@@ -143,7 +143,7 @@ describe PatientPolicy do
         )
       end
 
-      it { should contain_exactly(patient_with_vaccination_record) }
+      it { should be_empty }
     end
   end
 end

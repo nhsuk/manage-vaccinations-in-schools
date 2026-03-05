@@ -53,7 +53,7 @@ describe("National reporting immunisation imports") do
 
   def given_mavis_logins_are_configured
     @team = create(:team, :national_reporting, :with_one_nurse, ods_code: "R1L")
-    create(:school, team: @team, urn: 100_000)
+    @school = create(:school, team: @team, urn: 100_000)
   end
 
   def given_i_am_signed_in_as_a_national_reporting_user
@@ -73,7 +73,12 @@ describe("National reporting immunisation imports") do
       )
 
     # Create a vaccination record to link this patient with the team
-    create(:vaccination_record, patient: @existing_patient, team: @team)
+    create(
+      :vaccination_record,
+      patient: @existing_patient,
+      team: @team,
+      session: create(:session, team: @team, location: @school)
+    )
   end
 
   def and_sending_to_nhs_immunisations_api_is_enabled
