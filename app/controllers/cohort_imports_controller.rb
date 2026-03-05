@@ -71,6 +71,12 @@ class CohortImportsController < ApplicationController
         @cohort_import.changesets.includes(:patient).nhs_number_discrepancies
 
       @cancelled = @cohort_import.changesets.from_file.cancelled
+      @skipped_school_moves =
+        @cohort_import
+          .changesets
+          .includes(:patient, patient: :school)
+          .from_file
+          .skipped_school_move
     end
 
     render template: "imports/show",
@@ -186,5 +192,11 @@ class CohortImportsController < ApplicationController
         .includes(:school, patient: :school)
         .ready_for_review
         .with_school_moves - @inter_team
+    @skipped_school_moves =
+      @cohort_import
+        .changesets
+        .includes(:patient, patient: :school)
+        .ready_for_review
+        .skipped_school_move
   end
 end

@@ -76,7 +76,13 @@ class PatientChangeset < ApplicationRecord
        validate: true
 
   enum :record_type,
-       { auto_match: 0, new_patient: 1, import_issue: 2, not_in_file: 3 },
+       {
+         auto_match: 0,
+         new_patient: 1,
+         import_issue: 2,
+         not_in_file: 3,
+         skipped_school_move: 4
+       },
        validate: true
 
   scope :nhs_number_discrepancies,
@@ -272,6 +278,10 @@ class PatientChangeset < ApplicationRecord
     @school_move ||=
       begin
         return if patient.deceased?
+        if import_type == "CohortImport" &&
+             school_move_to_unknown_school_from_another_team?
+          return
+        end
         if patient.new_record? || patient.school != school ||
              patient.home_educated != home_educated ||
              patient.not_in_team?(team:, academic_year:) ||
@@ -285,6 +295,18 @@ class PatientChangeset < ApplicationRecord
           school_move
         end
       end
+  end
+
+  def school_move_to_unknown_school_from_another_team?
+    return false unless patient.persisted?
+
+    moving_to_unknown_school =
+      (patient.school.present? || patient.home_educated?) &&
+        !(school.present? || home_educated)
+
+    from_another_team = !patient.teams_via_patient_locations.include?(team)
+
+    moving_to_unknown_school && from_another_team
   end
 
   def existing_patients
@@ -443,6 +465,8 @@ class PatientChangeset < ApplicationRecord
   def changeset_type
     if patient.id.nil?
       :new_patient
+    elsif school_move_to_unknown_school_from_another_team?
+      :skipped_school_move
     elsif patient.pending_changes.any?
       :import_issue
     else
