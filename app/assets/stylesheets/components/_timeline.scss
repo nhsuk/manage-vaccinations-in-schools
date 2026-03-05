@@ -44,9 +44,9 @@ $_timeline-border-width: 2px;
     margin-left: _dot-ml($tablet);
 
     @if $size == "default" {
-      margin-top: dot-mt-tablet($mt);
+      margin-top: _dot-mt-tablet($mt);
     } @else {
-      margin-top: dot-mt-tablet($mt-small);
+      margin-top: _dot-mt-tablet($mt-small);
     }
   }
 }
