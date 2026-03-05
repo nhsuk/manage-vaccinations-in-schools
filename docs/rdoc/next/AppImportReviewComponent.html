@@ -623,7 +623,7 @@
             <div class="method-heading">
               <a href="#method-c-new" title="Link to this method">
                 <span class="method-name">new</span>
-                <span class="method-args">( import:, inter_team:, new_records:, auto_matched_records:, import_issues:, school_moves: )</span>
+                <span class="method-args">( import:, inter_team:, new_records:, auto_matched_records:, import_issues:, school_moves:, skipped_school_moves: [] )</span>
               </a>
             </div>
 
@@ -643,7 +643,8 @@
   <span class="ruby-value">new_records:</span>,
   <span class="ruby-value">auto_matched_records:</span>,
   <span class="ruby-value">import_issues:</span>,
-  <span class="ruby-value">school_moves:</span>
+  <span class="ruby-value">school_moves:</span>,
+  <span class="ruby-value">skipped_school_moves:</span> []
 )
   <span class="ruby-ivar">@import</span> = <span class="ruby-identifier">import</span>
   <span class="ruby-ivar">@inter_team</span> = <span class="ruby-identifier">inter_team</span>.<span class="ruby-identifier">sort_by</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:row_number</span>)
@@ -654,6 +655,7 @@
   <span class="ruby-ivar">@import_issues</span> = <span class="ruby-identifier">import_issues</span>.<span class="ruby-identifier">sort_by</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:row_number</span>)
   <span class="ruby-ivar">@school_moves</span> = <span class="ruby-identifier">school_moves</span>
   <span class="ruby-ivar">@school_moves_from_file</span> = <span class="ruby-ivar">@school_moves</span>.<span class="ruby-identifier">reject</span> { <span class="ruby-identifier">it</span>.<span class="ruby-identifier">row_number</span>.<span class="ruby-identifier">nil?</span> }
+  <span class="ruby-ivar">@skipped_school_moves</span> = <span class="ruby-identifier">skipped_school_moves</span>.<span class="ruby-identifier">sort_by</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:row_number</span>)
 <span class="ruby-keyword">end</span></pre>
           </div>
 

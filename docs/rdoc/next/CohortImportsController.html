@@ -678,7 +678,7 @@
             </details>
           </div>
           <div class="method-source-code" id="approve-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/controllers/cohort_imports_controller.rb, line 105</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/controllers/cohort_imports_controller.rb, line 111</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">approve</span>
   <span class="ruby-ivar">@cohort_import</span>.<span class="ruby-identifier">reviewed_by_user_ids</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">current_user</span>.<span class="ruby-identifier">id</span>
   <span class="ruby-ivar">@cohort_import</span>.<span class="ruby-identifier">reviewed_at</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-constant">Time</span>.<span class="ruby-identifier">zone</span>.<span class="ruby-identifier">now</span>
@@ -728,7 +728,7 @@
             </details>
           </div>
           <div class="method-source-code" id="cancel-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/controllers/cohort_imports_controller.rb, line 117</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/controllers/cohort_imports_controller.rb, line 123</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">cancel</span>
   <span class="ruby-ivar">@cohort_import</span>.<span class="ruby-identifier">reviewed_by_user_ids</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">current_user</span>.<span class="ruby-identifier">id</span>
   <span class="ruby-ivar">@cohort_import</span>.<span class="ruby-identifier">reviewed_at</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-constant">Time</span>.<span class="ruby-identifier">zone</span>.<span class="ruby-identifier">now</span>
@@ -848,7 +848,7 @@
             </details>
           </div>
           <div class="method-source-code" id="imported_records-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/controllers/cohort_imports_controller.rb, line 97</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/controllers/cohort_imports_controller.rb, line 103</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">imported_records</span>
   <span class="ruby-identifier">render</span> <span class="ruby-value">template:</span> <span class="ruby-string">&quot;imports/imported_records&quot;</span>,
          <span class="ruby-value">layout:</span> <span class="ruby-string">&quot;full&quot;</span>,
@@ -936,7 +936,7 @@
             </details>
           </div>
           <div class="method-source-code" id="re_review-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/controllers/cohort_imports_controller.rb, line 89</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/controllers/cohort_imports_controller.rb, line 95</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">re_review</span>
   <span class="ruby-identifier">render</span> <span class="ruby-value">template:</span> <span class="ruby-string">&quot;imports/re_review&quot;</span>,
          <span class="ruby-value">layout:</span> <span class="ruby-string">&quot;full&quot;</span>,
@@ -1020,6 +1020,12 @@
       <span class="ruby-ivar">@cohort_import</span>.<span class="ruby-identifier">changesets</span>.<span class="ruby-identifier">includes</span>(<span class="ruby-value">:patient</span>).<span class="ruby-identifier">nhs_number_discrepancies</span>
 
     <span class="ruby-ivar">@cancelled</span> = <span class="ruby-ivar">@cohort_import</span>.<span class="ruby-identifier">changesets</span>.<span class="ruby-identifier">from_file</span>.<span class="ruby-identifier">cancelled</span>
+    <span class="ruby-ivar">@skipped_school_moves</span> =
+      <span class="ruby-ivar">@cohort_import</span>
+        .<span class="ruby-identifier">changesets</span>
+        .<span class="ruby-identifier">includes</span>(<span class="ruby-value">:patient</span>, <span class="ruby-value">patient:</span> <span class="ruby-value">:school</span>)
+        .<span class="ruby-identifier">from_file</span>
+        .<span class="ruby-identifier">skipped_school_move</span>
   <span class="ruby-keyword">end</span>
 
   <span class="ruby-identifier">render</span> <span class="ruby-value">template:</span> <span class="ruby-string">&quot;imports/show&quot;</span>,
@@ -1066,7 +1072,7 @@
             </details>
           </div>
           <div class="method-source-code" id="update-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/controllers/cohort_imports_controller.rb, line 83</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/controllers/cohort_imports_controller.rb, line 89</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">update</span>
   <span class="ruby-ivar">@cohort_import</span>.<span class="ruby-identifier">process!</span>
 

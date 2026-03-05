@@ -685,7 +685,10 @@
     <span class="ruby-comment"># Reset patient_ids to avoid stale associations</span>
     <span class="ruby-identifier">changesets</span>.<span class="ruby-identifier">update_all</span>(<span class="ruby-value">patient_id:</span> <span class="ruby-keyword">nil</span>)
 
-    <span class="ruby-identifier">to_process</span> = <span class="ruby-identifier">changesets</span>.<span class="ruby-identifier">select</span> { <span class="ruby-identifier">review_consistent?</span>(<span class="ruby-identifier">it</span>) }
+    <span class="ruby-identifier">to_skip</span>, <span class="ruby-identifier">to_process</span> =
+      <span class="ruby-identifier">changesets</span>
+        .<span class="ruby-identifier">select</span> { <span class="ruby-identifier">review_consistent?</span>(<span class="ruby-identifier">it</span>) }
+        .<span class="ruby-identifier">partition</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:skipped_school_move?</span>)
 
     <span class="ruby-keyword">if</span> <span class="ruby-identifier">to_process</span>.<span class="ruby-identifier">any?</span>
       <span class="ruby-identifier">increment_column_counts!</span>(<span class="ruby-identifier">import</span>, <span class="ruby-identifier">counts</span>, <span class="ruby-identifier">to_process</span>)
@@ -694,6 +697,8 @@
       <span class="ruby-identifier">import_pds_search_results</span>(<span class="ruby-identifier">to_process</span>, <span class="ruby-identifier">import</span>)
       <span class="ruby-identifier">to_process</span>.<span class="ruby-identifier">each</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:processed!</span>)
     <span class="ruby-keyword">end</span>
+
+    <span class="ruby-identifier">to_skip</span>.<span class="ruby-identifier">each</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:processed!</span>)
 
     <span class="ruby-constant">PatientTeamUpdater</span>.<span class="ruby-identifier">call</span>(<span class="ruby-value">patient_scope:</span> <span class="ruby-identifier">import</span>.<span class="ruby-identifier">patients</span>)
   <span class="ruby-keyword">end</span>
