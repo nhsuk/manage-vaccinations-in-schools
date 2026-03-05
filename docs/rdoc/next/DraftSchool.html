@@ -995,7 +995,7 @@
             </details>
           </div>
           <div class="method-source-code" id="address_parts-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_school.rb, line 121</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_school.rb, line 123</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">address_parts</span>
   [
     <span class="ruby-identifier">address_line_1</span>,
@@ -1089,7 +1089,7 @@
             </details>
           </div>
           <div class="method-source-code" id="existing_names-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_school.rb, line 111</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_school.rb, line 113</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">existing_names</span>
   <span class="ruby-keyword">return</span> [] <span class="ruby-keyword">if</span> <span class="ruby-identifier">resolved_urn</span>.<span class="ruby-identifier">blank?</span>
 
@@ -1135,7 +1135,7 @@
             </details>
           </div>
           <div class="method-source-code" id="human_enum_name-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_school.rb, line 175</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_school.rb, line 177</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">human_enum_name</span>(<span class="ruby-identifier">attr</span>)
   <span class="ruby-identifier">source_location</span>&amp;.<span class="ruby-identifier">human_enum_name</span>(<span class="ruby-identifier">attr</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -1224,7 +1224,7 @@
             </details>
           </div>
           <div class="method-source-code" id="next_site_letter-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_school.rb, line 152</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_school.rb, line 154</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">next_site_letter</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">resolved_urn</span>.<span class="ruby-identifier">blank?</span>
 
@@ -1271,7 +1271,7 @@
             </details>
           </div>
           <div class="method-source-code" id="programmes-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_school.rb, line 166</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_school.rb, line 168</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">programmes</span>
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">source_location</span>.<span class="ruby-identifier">programmes</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">source_location</span>&amp;.<span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">present?</span>
   <span class="ruby-keyword">return</span> [] <span class="ruby-keyword">if</span> <span class="ruby-identifier">current_team</span>.<span class="ruby-identifier">nil?</span>
@@ -1318,7 +1318,7 @@
             </details>
           </div>
           <div class="method-source-code" id="readable_attribute_names-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_school.rb, line 130</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_school.rb, line 132</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">readable_attribute_names</span>
   <span class="ruby-identifier">writable_attribute_names</span>
 <span class="ruby-keyword">end</span></pre>
@@ -1360,7 +1360,7 @@
             </details>
           </div>
           <div class="method-source-code" id="request_session_key-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_school.rb, line 119</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_school.rb, line 121</span>
   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">request_session_key</span> = <span class="ruby-string">&quot;draft_school&quot;</span>
 
   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">address_parts</span>
@@ -1502,7 +1502,7 @@
             </details>
           </div>
           <div class="method-source-code" id="resolved_urn-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_school.rb, line 138</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_school.rb, line 140</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">resolved_urn</span>
   <span class="ruby-identifier">source_location</span>&amp;.<span class="ruby-identifier">urn</span>
 <span class="ruby-keyword">end</span></pre>
@@ -1544,7 +1544,7 @@
             </details>
           </div>
           <div class="method-source-code" id="school_exists_and_available-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_school.rb, line 187</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_school.rb, line 189</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">school_exists_and_available</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">urn</span>.<span class="ruby-identifier">blank?</span>
 
@@ -1617,7 +1617,7 @@
             </details>
           </div>
           <div class="method-source-code" id="schools_with_urn-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_school.rb, line 179</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_school.rb, line 181</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">schools_with_urn</span>
   <span class="ruby-keyword">return</span> [] <span class="ruby-keyword">if</span> <span class="ruby-identifier">resolved_urn</span>.<span class="ruby-identifier">blank?</span>
 
@@ -1661,7 +1661,7 @@
             </details>
           </div>
           <div class="method-source-code" id="source_location-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_school.rb, line 96</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_school.rb, line 98</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">source_location</span>
   <span class="ruby-keyword">return</span> <span class="ruby-constant">Location</span>.<span class="ruby-identifier">find</span>(<span class="ruby-identifier">editing_id</span>) <span class="ruby-keyword">if</span> <span class="ruby-identifier">editing?</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">add_site_context?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">parent_urn_and_site</span>.<span class="ruby-identifier">blank?</span>
@@ -1721,7 +1721,7 @@
             </details>
           </div>
           <div class="method-source-code" id="urn_and_site-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_school.rb, line 142</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_school.rb, line 144</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">urn_and_site</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">editing?</span>
     <span class="ruby-identifier">source_location</span>&amp;.<span class="ruby-identifier">urn_and_site</span>
@@ -1817,7 +1817,7 @@
             </details>
           </div>
           <div class="method-source-code" id="writable_attribute_names-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_school.rb, line 134</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_school.rb, line 136</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">writable_attribute_names</span>
   <span class="ruby-node">%w[name address_line_1 address_line_2 address_town address_postcode]</span>
 <span class="ruby-keyword">end</span></pre>
@@ -1859,7 +1859,7 @@
             </details>
           </div>
           <div class="method-source-code" id="year_groups-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_school.rb, line 161</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_school.rb, line 163</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">year_groups</span>
   <span class="ruby-identifier">source_location</span>&amp;.<span class="ruby-identifier">year_groups</span>.<span class="ruby-identifier">presence</span> <span class="ruby-operator">||</span>
     <span class="ruby-identifier">source_location</span>&amp;.<span class="ruby-identifier">gias_year_groups</span> <span class="ruby-operator">||</span> []
