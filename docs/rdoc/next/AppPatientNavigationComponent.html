@@ -723,6 +723,7 @@
       <span class="ruby-value">text:</span> <span class="ruby-string">&quot;Child record&quot;</span>,
       <span class="ruby-value">selected:</span> <span class="ruby-identifier">active</span> <span class="ruby-operator">==</span> <span class="ruby-value">:show</span>
     )
+
     <span class="ruby-keyword">if</span> <span class="ruby-constant">Flipper</span>.<span class="ruby-identifier">enabled?</span>(<span class="ruby-value">:child_record_redesign</span>)
       <span class="ruby-ivar">@programmes</span>.<span class="ruby-identifier">flat_map</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">programme</span><span class="ruby-operator">|</span>
         <span class="ruby-identifier">nav</span>.<span class="ruby-identifier">with_item</span>(
@@ -732,11 +733,14 @@
         )
       <span class="ruby-keyword">end</span>
     <span class="ruby-keyword">end</span>
-    <span class="ruby-identifier">nav</span>.<span class="ruby-identifier">with_item</span>(
-      <span class="ruby-value">href:</span> <span class="ruby-identifier">log_patient_path</span>(<span class="ruby-identifier">patient</span>),
-      <span class="ruby-value">text:</span> <span class="ruby-string">&quot;Activity log&quot;</span>,
-      <span class="ruby-value">selected:</span> <span class="ruby-identifier">active</span> <span class="ruby-operator">==</span> <span class="ruby-value">:log</span>
-    )
+
+    <span class="ruby-keyword">unless</span> <span class="ruby-constant">Flipper</span>.<span class="ruby-identifier">enabled?</span>(<span class="ruby-value">:child_record_redesign</span>)
+      <span class="ruby-identifier">nav</span>.<span class="ruby-identifier">with_item</span>(
+        <span class="ruby-value">href:</span> <span class="ruby-identifier">log_patient_path</span>(<span class="ruby-identifier">patient</span>),
+        <span class="ruby-value">text:</span> <span class="ruby-string">&quot;Activity log&quot;</span>,
+        <span class="ruby-value">selected:</span> <span class="ruby-identifier">active</span> <span class="ruby-operator">==</span> <span class="ruby-value">:log</span>
+      )
+    <span class="ruby-keyword">end</span>
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
@@ -787,6 +791,7 @@
         <span class="ruby-value">text:</span> <span class="ruby-string">&quot;Child record&quot;</span>,
         <span class="ruby-value">selected:</span> <span class="ruby-identifier">active</span> <span class="ruby-operator">==</span> <span class="ruby-value">:show</span>
       )
+
       <span class="ruby-keyword">if</span> <span class="ruby-constant">Flipper</span>.<span class="ruby-identifier">enabled?</span>(<span class="ruby-value">:child_record_redesign</span>)
         <span class="ruby-ivar">@programmes</span>.<span class="ruby-identifier">flat_map</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">programme</span><span class="ruby-operator">|</span>
           <span class="ruby-identifier">nav</span>.<span class="ruby-identifier">with_item</span>(
@@ -796,11 +801,14 @@
           )
         <span class="ruby-keyword">end</span>
       <span class="ruby-keyword">end</span>
-      <span class="ruby-identifier">nav</span>.<span class="ruby-identifier">with_item</span>(
-        <span class="ruby-value">href:</span> <span class="ruby-identifier">log_patient_path</span>(<span class="ruby-identifier">patient</span>),
-        <span class="ruby-value">text:</span> <span class="ruby-string">&quot;Activity log&quot;</span>,
-        <span class="ruby-value">selected:</span> <span class="ruby-identifier">active</span> <span class="ruby-operator">==</span> <span class="ruby-value">:log</span>
-      )
+
+      <span class="ruby-keyword">unless</span> <span class="ruby-constant">Flipper</span>.<span class="ruby-identifier">enabled?</span>(<span class="ruby-value">:child_record_redesign</span>)
+        <span class="ruby-identifier">nav</span>.<span class="ruby-identifier">with_item</span>(
+          <span class="ruby-value">href:</span> <span class="ruby-identifier">log_patient_path</span>(<span class="ruby-identifier">patient</span>),
+          <span class="ruby-value">text:</span> <span class="ruby-string">&quot;Activity log&quot;</span>,
+          <span class="ruby-value">selected:</span> <span class="ruby-identifier">active</span> <span class="ruby-operator">==</span> <span class="ruby-value">:log</span>
+        )
+      <span class="ruby-keyword">end</span>
     <span class="ruby-keyword">end</span>
   <span class="ruby-keyword">end</span>
 
