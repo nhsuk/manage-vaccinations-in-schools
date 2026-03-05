@@ -80,7 +80,7 @@ class AppConsentSummaryComponent < ViewComponent::Base
         text:
           tag.strong(
             programme.name,
-            class: "nhsuk-tag app-tag--attached nhsuk-tag--white"
+            class: "nhsuk-tag app-tag--attached nhsuk-tag--transparent"
           )
       }
     }
