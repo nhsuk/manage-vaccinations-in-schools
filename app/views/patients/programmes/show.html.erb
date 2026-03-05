@@ -20,3 +20,12 @@
   <% card.with_heading { "Sessions" } %>
   <%= render AppPatientProgrammeSessionTableComponent.new(@patient, current_team:, programme_type: @programme.type) %>
 <% end %>
+
+<%= render AppCardComponent.new(section: true) do |card| %>
+  <% card.with_heading { "Programme activity" } %>
+  <%= render AppActivityLogComponent.new(
+        patient: @patient,
+        programme_type: @programme.type,
+        team: current_team,
+      ) %>
+<% end %>
