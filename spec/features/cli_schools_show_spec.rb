@@ -44,6 +44,14 @@ describe "mavis schools show" do
     end
   end
 
+  context "with a clinic" do
+    it "finds the school with the id" do
+      given_a_clinic_exists
+      when_i_run_the_command_with_the_id_option
+      then_the_clinic_details_are_displayed
+    end
+  end
+
   def given_a_school_exists
     team = create(:team, programme_types: %w[flu hpv])
     @school =
@@ -51,6 +59,26 @@ describe "mavis schools show" do
         :school,
         name: "Test School",
         urn: "123456",
+        team:
+      ).tap do |location|
+        location.import_year_groups_from_gias!(
+          academic_year: AcademicYear.previous
+        )
+
+        location.import_default_programme_year_groups!(
+          [Programme.flu],
+          academic_year: AcademicYear.previous
+        )
+      end
+  end
+
+  def given_a_clinic_exists
+    team = create(:team, programme_types: %w[flu hpv])
+    @clinic =
+      create(
+        :location,
+        :generic_clinic,
+        name: "Test Clinic",
         team:
       ).tap do |location|
         location.import_year_groups_from_gias!(
@@ -160,11 +188,10 @@ describe "mavis schools show" do
   end
 
   def when_i_run_the_command_with_the_id_option
+    id = @school&.id || @clinic.id
     @output =
       capture_output do
-        Dry::CLI.new(MavisCLI).call(
-          arguments: %w[schools show --id] + [@school.id]
-        )
+        Dry::CLI.new(MavisCLI).call(arguments: %w[schools show --id] + [id])
       end
   end
 
@@ -214,5 +241,10 @@ describe "mavis schools show" do
     expect(@output).to match(/^  in current academic year: 3/)
     expect(@output).to match(/^    with attendance records: 1/)
     expect(@output).to match(/^    with gillick assessments: 1/)
+  end
+
+  def then_the_clinic_details_are_displayed
+    expect(@output).to match(/name.*Test Clinic/)
+    expect(@output).not_to include("other locations with the same URN")
   end
 end
