@@ -56,8 +56,8 @@ class Notifier::Patient
   )
     return unless send_notification?(team:)
 
-    programme_types =
-      programme_types_to_send_clinic_invitation_for(
+    programmes_to_send_for =
+      programmes_to_send_clinic_invitation_for(
         programmes,
         team:,
         academic_year:,
@@ -65,9 +65,20 @@ class Notifier::Patient
         include_already_invited_programmes:
       )
 
-    return if programme_types.empty?
+    return if programmes_to_send_for.empty?
 
-    type = clinic_invitation_type(programme_types, team:, academic_year:)
+    type =
+      if patient.invited_to_clinic?(
+           programmes_to_send_for,
+           team:,
+           academic_year:
+         )
+        :subsequent_invitation
+      else
+        :initial_invitation
+      end
+
+    programme_types = programmes_to_send_for.map(&:type)
 
     ClinicNotification.create!(
       patient:,
@@ -232,52 +243,25 @@ class Notifier::Patient
       .detect { renderer.template_exists?(it, source: :any) }
   end
 
-  def programme_types_to_send_clinic_invitation_for(
+  def programmes_to_send_clinic_invitation_for(
     programmes,
     team:,
     academic_year:,
     include_vaccinated_programmes: false,
     include_already_invited_programmes: true
   )
-    programmes_to_send_for =
-      filter_programmes_notify_parents(programmes).select do |programme|
-        unless include_vaccinated_programmes
-          is_vaccinated =
-            patient.programme_status(programme, academic_year:).vaccinated?
-
-          next false if is_vaccinated
-        end
-
-        unless include_already_invited_programmes
-          already_invited =
-            patient.clinic_notifications.any? do
-              it.team_id == team.id && it.academic_year == academic_year &&
-                it.programme_types.include?(programme.type)
-            end
-
-          next false if already_invited
-        end
-
-        true
+    filter_programmes_notify_parents(programmes).select do |programme|
+      if !include_vaccinated_programmes &&
+           patient.programme_status(programme, academic_year:).vaccinated?
+        next false
       end
 
-    programmes_to_send_for.map(&:type)
-  end
-
-  def clinic_invitation_type(programme_types, team:, academic_year:)
-    already_sent_initial_invitation_to_all_programmes =
-      programme_types.all? do |programme_type|
-        patient.clinic_notifications.any? do
-          it.team_id == team.id && it.academic_year == academic_year &&
-            it.initial_invitation? &&
-            it.programme_types.include?(programme_type)
-        end
+      if !include_already_invited_programmes &&
+           patient.invited_to_clinic?([programme], team:, academic_year:)
+        next false
       end
 
-    if already_sent_initial_invitation_to_all_programmes
-      :subsequent_invitation
-    else
-      :initial_invitation
+      true
     end
   end
 
