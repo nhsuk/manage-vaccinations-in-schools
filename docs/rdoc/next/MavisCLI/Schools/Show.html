@@ -803,7 +803,8 @@
 
     <span class="ruby-identifier">puts</span> <span class="ruby-string">&quot;&quot;</span>
 
-    <span class="ruby-keyword">if</span> <span class="ruby-constant">Location</span>.<span class="ruby-identifier">where</span>(<span class="ruby-value">urn:</span> <span class="ruby-identifier">location</span>.<span class="ruby-identifier">urn</span>).<span class="ruby-identifier">count</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">1</span>
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">location</span>.<span class="ruby-identifier">urn</span>.<span class="ruby-identifier">present?</span> <span class="ruby-operator">&amp;&amp;</span>
+         <span class="ruby-constant">Location</span>.<span class="ruby-identifier">where</span>(<span class="ruby-value">urn:</span> <span class="ruby-identifier">location</span>.<span class="ruby-identifier">urn</span>).<span class="ruby-identifier">count</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">1</span>
       <span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;#{Rainbow(&quot;other locations with the same URN&quot;).bright}:&quot;</span>
       <span class="ruby-constant">Location</span>
         .<span class="ruby-identifier">where</span>(<span class="ruby-value">urn:</span> <span class="ruby-identifier">location</span>.<span class="ruby-identifier">urn</span>)
