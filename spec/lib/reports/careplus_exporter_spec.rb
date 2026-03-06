@@ -372,7 +372,7 @@ describe Reports::CareplusExporter do
     let(:programme) { Programme.menacwy }
     let(:vaccine) { programme.vaccines.sample }
     let(:delivery_method) { :intramuscular }
-    let(:expected_vaccine_code) { "ACWYX14" }
+    let(:expected_vaccine_code) { "ACWYX4" }
 
     include_examples "generates a report"
   end
