@@ -297,7 +297,15 @@ describe "Parental consent" do
   end
 
   def and_a_clinic_request_sms_is_sent_to_the_parent
-    expect_sms_to(@parent.phone, :consent_clinic_request)
+    expect(sms_deliveries).to include(
+      matching_notify_sms(
+        phone_number: @parent.phone,
+        template: :consent_clinic_request
+      ).with_content_including(
+        "You recently booked a clinic appointment",
+        "Please give consent for them to get the"
+      )
+    )
   end
 
   def and_an_hpv_school_request_email_is_sent_to_the_parent
