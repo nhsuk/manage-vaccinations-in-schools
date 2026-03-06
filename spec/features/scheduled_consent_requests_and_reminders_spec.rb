@@ -247,6 +247,16 @@ describe "Scheduled consent requests and reminders" do
       )
     )
 
+    expect(sms_deliveries).to include(
+      matching_notify_sms(
+        phone_number: "07700 900000",
+        template: :consent_school_request
+      ).with_content_including(
+        "Give or refuse consent",
+        "Responding will take less than 5 minutes"
+      )
+    )
+
     parent_phones.each do |phone|
       expect_sms_to(phone, :consent_school_request, :any)
     end
