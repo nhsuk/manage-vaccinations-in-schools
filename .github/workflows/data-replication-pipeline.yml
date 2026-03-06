@@ -30,7 +30,7 @@ on:
       git_ref_to_deploy:
         description: Git ref to deploy, for example, a tag, branch name or commit SHA
         type: string
-        required: true  
+        required: true
 
 permissions: {}
 
@@ -72,7 +72,7 @@ jobs:
           ref: ${{ env.git_ref_to_deploy }}
       - name: Get git sha
         id: get-git-sha
-        run: echo "git-sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
+        run: echo "git-sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
 
   build-and-push-image:
     permissions:
@@ -106,7 +106,7 @@ jobs:
             --image-ids imageTag=${{ needs.determine-git-sha.outputs.git-sha }} \
             --query 'imageDetails[0].imageDigest' \
             --output text)
-          echo "digest=$digest" >> $GITHUB_OUTPUT
+          echo "digest=$digest" >> "$GITHUB_OUTPUT"
       - name: Parse environment variables
         id: parse-environment-variables
         env:
@@ -191,7 +191,7 @@ jobs:
         run: |
           file_path="${{ runner.temp }}/data-replication-task-definition.json"
           family_name="mavis-data-replication-task-definition-$environment"
-          echo "$(jq --arg f "$family_name" '.family = $f' "$file_path")" > "$file_path"
+          jq --arg f "$family_name" '.family = $f' "$file_path" > tmpfile && mv tmpfile "$file_path"
       - name: Deploy data-replication service
         id: ecs-deploy
         uses: aws-actions/amazon-ecs-deploy-task-definition@v2
@@ -203,7 +203,7 @@ jobs:
           wait-for-service-stability: true
       - name: Check if deployment was successful
         run: |
-          current_task_definition_arn=$(aws ecs describe-services --cluster mavis-$environment-data-replication --services mavis-$environment-data-replication --query services[0].deployments[0].taskDefinition | jq -r ".")
+          current_task_definition_arn=$(aws ecs describe-services --cluster "mavis-$environment-data-replication" --services "mavis-$environment-data-replication" --query services[0].deployments[0].taskDefinition | jq -r ".")
           new_task_definition_arn=${{ steps.ecs-deploy.outputs.task-definition-arn }}
           echo "Current task definition arn: $current_task_definition_arn"
           echo "Expected task definition arn after deployment: $new_task_definition_arn"

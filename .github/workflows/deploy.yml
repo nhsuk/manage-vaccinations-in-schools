@@ -80,7 +80,7 @@ jobs:
           ref: ${{ inputs.git_ref_to_deploy || github.sha }}
       - name: Get git sha
         id: get-git-sha
-        run: echo "git-sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
+        run: echo "git-sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
   build-and-push-images:
       permissions:
         id-token: write
@@ -117,11 +117,11 @@ jobs:
           image_tag: ${{ needs.determine-git-sha.outputs.git-sha }}
         run: |
           digest=$(aws ecr describe-images \
-            --repository-name $repository_name \
-            --image-ids imageTag=$image_tag \
+            --repository-name "$repository_name" \
+            --image-ids "imageTag=$image_tag" \
             --query 'imageDetails[0].imageDigest' \
             --output text)
-          echo "digest=$digest" >> $GITHUB_OUTPUT
+          echo "digest=$digest" >> "$GITHUB_OUTPUT"
       - name: Populate task definition
         id: create-task-definition
         uses: aws-actions/amazon-ecs-render-task-definition@v1
@@ -195,29 +195,29 @@ jobs:
         run: |
           family_name="mavis-migration-task-definition-$environment"
           file_path="${{ runner.temp }}/migration-task-definition.json"
-          echo "$(jq --arg f "$family_name" '.family = $f' "${{ runner.temp }}/ops-task-definition.json")" > "$file_path"
+          jq --arg f "$family_name" '.family = $f' "${{ runner.temp }}/ops-task-definition.json" > "$file_path"
           task_definition_arn=$(aws ecs register-task-definition \
                                   --cli-input-json file://$file_path \
                                   --query 'taskDefinition.taskDefinitionArn' \
                                   --output text
                                 )
-          echo "task_definition_arn=$task_definition_arn" >> $GITHUB_OUTPUT
+          echo "task_definition_arn=$task_definition_arn" >> "$GITHUB_OUTPUT"
       - name: Run schema migrations
         id: run-schema-migrations
         env:
           SLACK_MAVIS_RELEASES_WEBHOOK_URL: ${{ secrets.SLACK_MAVIS_RELEASES_WEBHOOK_URL }}
         run: |
           TASK_DEFINITION_ARN=${{ steps.register-migration-task-definition.outputs.task_definition_arn }}
-          SUBNET_ID=$(aws ec2 describe-subnets --filters Name=tag:Name,Values=private-subnet-$environment-a --query 'Subnets[0].SubnetId' --output text)
-          SECURITY_GROUP_ID=$(aws ec2 describe-security-groups --filters Name=group-name,Values=ops-service-$environment --query 'SecurityGroups[0].GroupId' --output text)
-          
+          SUBNET_ID=$(aws ec2 describe-subnets --filters "Name=tag:Name,Values=private-subnet-$environment-a" --query 'Subnets[0].SubnetId' --output text)
+          SECURITY_GROUP_ID=$(aws ec2 describe-security-groups --filters "Name=group-name,Values=ops-service-$environment" --query 'SecurityGroups[0].GroupId' --output text)
+
           MAX_ATTEMPTS=3
           ATTEMPT=1
 
           while [ $ATTEMPT -le $MAX_ATTEMPTS ]; do
             TASK_ARN=$(aws ecs run-task \
-              --cluster $cluster_name \
-              --task-definition $TASK_DEFINITION_ARN \
+              --cluster "$cluster_name" \
+              --task-definition "$TASK_DEFINITION_ARN" \
               --launch-type FARGATE \
               --network-configuration "awsvpcConfiguration={subnets=[$SUBNET_ID],securityGroups=[$SECURITY_GROUP_ID]}" \
               --overrides '{
@@ -228,13 +228,15 @@ jobs:
               }' \
               --query 'tasks[0].taskArn' \
               --output text)
-            
+
             echo "Waiting for task to complete: $TASK_ARN"
-            TASK_ID=$(sed 's:^.*/::' <<< $TASK_ARN)
+
+            # shellcheck disable=SC2001
+            TASK_ID=$(sed 's:^.*/::' <<< "$TASK_ARN")
             AWS_CONSOLE_URL="https://eu-west-2.console.aws.amazon.com/ecs/v2/clusters/$cluster_name/tasks/$TASK_ID/logs"
-            
+
             echo "View logs in AWS Console: $AWS_CONSOLE_URL"
-            if [ $environment = 'production' ]; then
+            if [ "$environment" = 'production' ]; then
               ./.github/send_slack_notification.sh "${{ secrets.SLACK_MAVIS_RELEASES_WEBHOOK_URL }}" "$AWS_CONSOLE_URL" "Running schema migrations attempt $ATTEMPT/$MAX_ATTEMPTS"
             fi
 
@@ -242,35 +244,35 @@ jobs:
             POLL_INTERVAL=10 # Poll every 10 seconds
             ELAPSED=0
 
-            while [ $ELAPSED -lt $MAX_WAIT_TIME ]; do
+            while [ "$ELAPSED" -lt "$MAX_WAIT_TIME" ]; do
               TASK_STATUS=$(aws ecs describe-tasks \
-                --cluster $cluster_name \
-                --tasks $TASK_ID \
+                --cluster "$cluster_name" \
+                --tasks "$TASK_ID" \
                 --query 'tasks[0].lastStatus' \
                 --output text)
-              
+
               if [ "$TASK_STATUS" = "STOPPED" ]; then
                 echo "Task has stopped"
                 break
               fi
-              
-              sleep $POLL_INTERVAL
+
+              sleep "$POLL_INTERVAL"
               ELAPSED=$((ELAPSED + POLL_INTERVAL))
             done
 
-            if [ $ELAPSED -ge $MAX_WAIT_TIME ]; then
+            if [ "$ELAPSED" -ge "$MAX_WAIT_TIME" ]; then
               echo "ERROR: Migration task did not complete within $MAX_WAIT_TIME seconds."
               exit 1
             fi
-            
+
             EXIT_CODE=$(aws ecs describe-tasks \
-              --cluster $cluster_name \
-              --tasks $TASK_ARN \
+              --cluster "$cluster_name" \
+              --tasks "$TASK_ARN" \
               --query 'tasks[0].containers[0].exitCode' \
               --output text)
-          
+
             echo "Container exit code: $EXIT_CODE"
-          
+
             if [ "$EXIT_CODE" = "0" ]; then
               echo "Migrations completed"
               break
@@ -279,7 +281,7 @@ jobs:
               if [ "$ATTEMPT" = "$MAX_ATTEMPTS" ]; then
                 exit 1
               fi
-              ATTEMPT=$((ATTEMPT+1))   
+              ATTEMPT=$((ATTEMPT+1))
             fi
           done
       - name: Notify migrations completed
@@ -294,7 +296,7 @@ jobs:
               - type: "section"
                 text:
                   type: "mrkdwn"
-                  text: "Schema migrations finished successfully :white_check_mark:"        
+                  text: "Schema migrations finished successfully :white_check_mark:"
   deploy-service:
     name: Deploy service
     runs-on: ubuntu-latest
@@ -321,7 +323,7 @@ jobs:
         run: |
           file_path="${{ runner.temp }}/${{ matrix.service }}-task-definition.json"
           family_name="mavis-${{ matrix.service }}-task-definition-$environment"
-          echo "$(jq --arg f "$family_name" '.family = $f' "$file_path")" > "$file_path"
+          jq --arg f "$family_name" '.family = $f' "$file_path" > tmpfile && mv tmpfile "$file_path"
       - name: Deploy ${{ matrix.service }} service
         id: ecs-deploy
         uses: aws-actions/amazon-ecs-deploy-task-definition@v2
@@ -333,7 +335,7 @@ jobs:
           wait-for-service-stability: true
       - name: Check if deployment was successful
         run: |
-          current_task_definition_arn=$(aws ecs describe-services --cluster mavis-$environment --services mavis-$environment-${{ matrix.service }} --query services[0].deployments[0].taskDefinition | jq -r ".")
+          current_task_definition_arn=$(aws ecs describe-services --cluster "mavis-$environment" --services "mavis-$environment-${{ matrix.service }}" --query services[0].deployments[0].taskDefinition | jq -r ".")
           new_task_definition_arn=${{ steps.ecs-deploy.outputs.task-definition-arn }}
           echo "Current task definition arn: $current_task_definition_arn"
           echo "Expected task definition arn after deployment: $new_task_definition_arn"
@@ -348,7 +350,7 @@ jobs:
     if: ${{ !cancelled() && inputs.environment == 'production' }}
     steps:
       - name: Notify deployment success
-        if: ${{ needs.deploy-service.result == 'success' }} 
+        if: ${{ needs.deploy-service.result == 'success' }}
         uses: slackapi/slack-github-action@91efab103c0de0a537f72a35f6b8cda0ee76bf0a
         with:
           webhook: ${{ secrets.SLACK_MAVIS_RELEASES_WEBHOOK_URL }}

@@ -58,14 +58,14 @@ jobs:
         env:
           GIT_REF: ${{ inputs.git_reference_for_application_image && format('origin/{0}', inputs.git_reference_for_application_image) || github.event.pull_request.head.sha || github.sha }}
         run: |
-          GIT_REF_SHA=$(git rev-parse $GIT_REF)
-          echo "GIT_REF_SHA=$GIT_REF_SHA" >> $GITHUB_OUTPUT
-          if aws ecr describe-images --repository-name mavis/development --image-ids imageTag=$GIT_REF_SHA > /dev/null 2>&1; then
+          GIT_REF_SHA=$(git rev-parse "$GIT_REF")
+          echo "GIT_REF_SHA=$GIT_REF_SHA" >> "$GITHUB_OUTPUT"
+          if aws ecr describe-images --repository-name mavis/development --image-ids "imageTag=$GIT_REF_SHA" > /dev/null 2>&1; then
             echo "Docker image with given tag already exists"
-            echo "build-needed=false" >> $GITHUB_OUTPUT
+            echo "build-needed=false" >> "$GITHUB_OUTPUT"
           else
             echo "Docker image does not exist. Build needed"
-            echo "build-needed=true" >> $GITHUB_OUTPUT
+            echo "build-needed=true" >> "$GITHUB_OUTPUT"
           fi
   build-and-push-development-image:
     needs: [ check-development-image-presence ]
@@ -118,14 +118,14 @@ jobs:
         env:
           GIT_REF: ${{ inputs.git_reference_for_database_image && format('origin/{0}', inputs.git_reference_for_database_image) || github.event.pull_request.base.sha || github.sha }}
         run: |
-          GIT_REF_SHA=$(git rev-parse $GIT_REF)
-          echo "GIT_REF_SHA=$GIT_REF_SHA" >> $GITHUB_OUTPUT
-          if aws ecr describe-images --repository-name mavis/development/postgres_db --image-ids imageTag=$GIT_REF_SHA > /dev/null 2>&1; then
+          GIT_REF_SHA=$(git rev-parse "$GIT_REF")
+          echo "GIT_REF_SHA=$GIT_REF_SHA" >> "$GITHUB_OUTPUT"
+          if aws ecr describe-images --repository-name mavis/development/postgres_db --image-ids "imageTag=$GIT_REF_SHA" > /dev/null 2>&1; then
             echo "Docker image with given tag already exists"
-            echo "build-needed=false" >> $GITHUB_OUTPUT
+            echo "build-needed=false" >> "$GITHUB_OUTPUT"
           else
             echo "Docker image does not exist. Build needed"
-            echo "build-needed=true" >> $GITHUB_OUTPUT
+            echo "build-needed=true" >> "$GITHUB_OUTPUT"
           fi
   build-and-push-database-image:
     needs: [ check-database-image-presence]
@@ -185,13 +185,13 @@ jobs:
         run: |
           file_path="assurance-testing-mavis-development-task-definition.json"
           family_name="assurance-testing-mavis-development-task-definition"
-          echo "$(jq --arg f "$family_name" '.family = $f' "${{ steps.render-task-definition-sidekiq.outputs.task-definition }}")" > "$file_path"
+          jq --arg f "$family_name" '.family = $f' "${{ steps.render-task-definition-sidekiq.outputs.task-definition }}" > "$file_path"
 
           subnet_id=$(aws ec2 describe-subnets --filters Name=tag:Name,Values=assurance-testing-subnet --query 'Subnets[0].SubnetId' --output text)
           security_group_id=$(aws ec2 describe-security-groups --filters Name=group-name,Values=assurance-testing-mavis-development-sg --query 'SecurityGroups[0].GroupId' --output text)
 
-          echo "run-task-subnets=$subnet_id" >> $GITHUB_OUTPUT
-          echo "run-task-security-groups=$security_group_id" >> $GITHUB_OUTPUT
+          echo "run-task-subnets=$subnet_id" >> "$GITHUB_OUTPUT"
+          echo "run-task-security-groups=$security_group_id" >> "$GITHUB_OUTPUT"
       - name: Deploy task definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@v2
         id: run-task
@@ -221,13 +221,18 @@ jobs:
       - name: Get container logs
         run: |
           TASK_ARN=$(echo '${{ needs.launch-dockerized-devimage.outputs.run_task_arn }}' | jq -r '.[0]')
-          TASK_ID=$(sed 's:^.*/::' <<< $TASK_ARN)
+          # shellcheck disable=SC2001
+          TASK_ID=$(sed 's:^.*/::' <<< "$TASK_ARN")
           WEB_CLOUDWATCH_URL="https://eu-west-2.console.aws.amazon.com/cloudwatch/home?region=eu-west-2#logsV2:log-groups/log-group/assurance-testing-ecs/log-events/assurance-testing-logs\$252Fmavis-development-web\$252F${TASK_ID}\$3Fstart\$3D$(date +%s)000\$26end\$3D$(date -d '+30 minutes' +%s)000"
           SIDEKIQ_CLOUDWATCH_URL="https://eu-west-2.console.aws.amazon.com/cloudwatch/home?region=eu-west-2#logsV2:log-groups/log-group/assurance-testing-ecs/log-events/assurance-testing-logs\$252Fmavis-development-sidekiq\$252F${TASK_ID}\$3Fstart\$3D$(date +%s)000\$26end\$3D$(date -d '+30 minutes' +%s)000"
-          echo "**Task ID:** $TASK_ID" >> $GITHUB_STEP_SUMMARY
-          echo "**Container Logs:** " >> $GITHUB_STEP_SUMMARY
-          echo "  * WEB logs: $WEB_CLOUDWATCH_URL" >> $GITHUB_STEP_SUMMARY
-          echo "  * SIDEKIQ logs: $SIDEKIQ_CLOUDWATCH_URL" >> $GITHUB_STEP_SUMMARY
+
+          {
+            echo "**Task ID:** $TASK_ID"
+            echo "**Container Logs:** "
+            echo "  * WEB logs: $WEB_CLOUDWATCH_URL"
+            echo "  * SIDEKIQ logs: $SIDEKIQ_CLOUDWATCH_URL"
+          } >> "$GITHUB_STEP_SUMMARY"
+
           echo "Logs for server: [web](${WEB_CLOUDWATCH_URL}) and [sidekiq](${SIDEKIQ_CLOUDWATCH_URL})"
       - name: Wait for task to stabilise
         run: |
@@ -292,11 +297,11 @@ jobs:
             --tasks "$TASK_ARN" \
             | jq -r '.tasks[0].attachments[0].details[] | select(.name == "networkInterfaceId") | .value')
           CONTAINER_IP=$(aws ec2 describe-network-interfaces \
-            --network-interface-ids $NETWORK_INTERFACE \
+            --network-interface-ids "$NETWORK_INTERFACE" \
             --query 'NetworkInterfaces[0].Association.PublicIp' \
             --output text)
-          echo "container_ip=$CONTAINER_IP" >> $GITHUB_OUTPUT
-          echo "task_arn=$TASK_ARN" >> $GITHUB_OUTPUT
+          echo "container_ip=$CONTAINER_IP" >> "$GITHUB_OUTPUT"
+          echo "task_arn=$TASK_ARN" >> "$GITHUB_OUTPUT"
           echo "Started task: $TASK_ARN"
   find-correct-test-branch:
     needs: [ wait-for-task-stability ]
@@ -311,9 +316,9 @@ jobs:
         id: check-branch
         run: |
           if git ls-remote --exit-code --heads https://github.com/NHSDigital/manage-vaccinations-in-schools-testing.git "$BRANCH_TO_CHECK" > /dev/null 2>&1; then
-            echo "test_branch=$BRANCH_TO_CHECK" >> $GITHUB_OUTPUT
+            echo "test_branch=$BRANCH_TO_CHECK" >> "$GITHUB_OUTPUT"
           else
-            echo "test_branch=main" >> $GITHUB_OUTPUT
+            echo "test_branch=main" >> "$GITHUB_OUTPUT"
           fi
         env:
           BRANCH_TO_CHECK: ${{ github.head_ref }}
