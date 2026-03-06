@@ -75,6 +75,15 @@ class Session < ApplicationRecord
 
   scope :has_date, ->(value) { where("dates @> ARRAY[?]::date[]", value) }
 
+  scope :has_programme_type,
+        ->(programme_type) do
+          joins_session_programme_year_groups.where(
+            session_programme_year_groups: {
+              programme_type:
+            }
+          )
+        end
+
   scope :has_all_programme_types_of,
         ->(values) do
           where(

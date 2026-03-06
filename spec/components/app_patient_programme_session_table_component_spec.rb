@@ -33,7 +33,7 @@ describe AppPatientProgrammeSessionTableComponent do
 
     # Can't use year_group here because we need an absolute date, not one
     # relative to the current academic year.
-    let(:patient) { create(:patient, date_of_birth: Date.new(2011, 9, 1)) }
+    let(:patient) { create(:patient, date_of_birth: Date.new(2009, 9, 1)) }
 
     before { create_list(:patient_location, 1, patient:, session:) }
 
@@ -66,7 +66,9 @@ describe AppPatientProgrammeSessionTableComponent do
           date: Date.new(2025, 2, 1)
         )
       end
-      let(:other_programmes) { [Programme.hpv, Programme.menacwy] }
+      let(:other_programmes) do
+        [Programme.hpv, Programme.flu, Programme.menacwy]
+      end
 
       before do
         create(:patient_location, patient:, session: other_session)
