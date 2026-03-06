@@ -24,10 +24,11 @@ class PatientSessions::ConsentsController < PatientSessions::BaseController
   end
 
   def send_request
-    unless @patient.programme_status(
-             @programme,
-             academic_year: @academic_year
-           ).needs_consent_no_response?
+    programme_status =
+      @patient.programme_status(@programme, academic_year: @academic_year)
+
+    unless programme_status.needs_consent_no_response? ||
+             programme_status.needs_consent_request_not_scheduled?
       return
     end
 
