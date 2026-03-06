@@ -461,6 +461,7 @@ describe GovukNotifyPersonalisation do
 
       context "Leicestershire (RT5) message inviting patient to clinic" do
         let(:ods_code) { "RT5" }
+        let(:session) { nil }
 
         it do
           expect(to_h).to include(
@@ -473,6 +474,7 @@ describe GovukNotifyPersonalisation do
 
       context "Coventry & Warwickshire (RYG) message inviting patient to clinic" do
         let(:ods_code) { "RYG" }
+        let(:session) { nil }
 
         it do
           expect(to_h).to include(
