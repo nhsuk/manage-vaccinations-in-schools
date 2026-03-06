@@ -1,5 +1,5 @@
 name: Build and push images
-run-name: Build and push images for ${{ inputs.git-sha || github.sha }}
+run-name: Build and push images for ${{ inputs.git_sha || github.sha }}
 
 on:
   workflow_dispatch:
