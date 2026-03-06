@@ -1,7 +1,8 @@
-awscli      2.27.46
-hk          1.25.0
-nodejs      22.15.0
-pkl         0.28.1
-postgres    17.2
-redis       8.2.1
-ruby        4.0.1
+actionlint 1.7.11
+awscli     2.27.46
+hk         1.25.0
+nodejs     22.15.0
+pkl        0.28.1
+postgres   17.2
+redis      8.2.1
+ruby       4.0.1
