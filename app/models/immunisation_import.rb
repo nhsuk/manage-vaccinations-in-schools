@@ -92,7 +92,7 @@ class ImmunisationImport < ApplicationRecord
   end
 
   def process_row(row)
-    patient = row.set_patient(candidates: @all_patients)
+    patient = row.set_patient(candidates: @patients_batch)
     vaccination_record = row.to_vaccination_record
 
     count_column_to_increment = count_column(vaccination_record)
@@ -100,7 +100,6 @@ class ImmunisationImport < ApplicationRecord
 
     @vaccination_records_batch.add(vaccination_record)
     @patients_batch.add(patient)
-    @all_patients.add(patient)
 
     if (patient_location = row.to_patient_location)
       @patient_locations_batch.add(patient_location)
@@ -118,7 +117,6 @@ class ImmunisationImport < ApplicationRecord
 
     @vaccination_records_batch = Set.new
     @patients_batch = Set.new
-    @all_patients = Set.new
     @patient_locations_batch = Set.new
     @archive_reasons_batch = Set.new
 
