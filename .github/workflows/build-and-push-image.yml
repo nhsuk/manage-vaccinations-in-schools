@@ -44,11 +44,11 @@ jobs:
       - name: Check if dev image exists
         id: check-dev-image
         run: |
-          if aws ecr describe-images --repository-name mavis/${{ matrix.image_type }} --image-ids imageTag=$git_ref > /dev/null 2>&1; then
+          if aws ecr describe-images --repository-name mavis/${{ matrix.image_type }} --image-ids "imageTag=$git_ref" > /dev/null 2>&1; then
             echo "Dev image with given tag already exists"
           else
             echo "Dev image does not exist. Build needed"
-            echo "${{ matrix.image_type }}-build-needed=true" >> $GITHUB_OUTPUT
+            echo "${{ matrix.image_type }}-build-needed=true" >> "$GITHUB_OUTPUT"
           fi
       - name: Configure AWS Production credentials
         if: env.PUSH_IMAGE_TO_PRODUCTION == 'true'
@@ -60,11 +60,11 @@ jobs:
         if: env.PUSH_IMAGE_TO_PRODUCTION == 'true'
         id: check-prod-image
         run: |
-          if aws ecr describe-images --repository-name mavis/${{ matrix.image_type }} --image-ids imageTag=$git_ref > /dev/null 2>&1; then
+          if aws ecr describe-images --repository-name mavis/${{ matrix.image_type }} --image-ids "imageTag=$git_ref" > /dev/null 2>&1; then
             echo "Production image with given tag already exists"
           else
             echo "Production image does not exist. Build needed"
-            echo "${{ matrix.image_type }}-build-needed=true" >> $GITHUB_OUTPUT
+            echo "${{ matrix.image_type }}-build-needed=true" >> "$GITHUB_OUTPUT"
           fi
   define-matrix:
     name: Determine AWS roles to push the image
@@ -76,10 +76,10 @@ jobs:
       - name: Set aws roles
         id: determine-aws-roles
         run: |
-          if [ $PUSH_IMAGE_TO_PRODUCTION = 'true' ]; then
-            echo 'aws-roles=["arn:aws:iam::393416225559:role/GithubDeployMavisAndInfrastructure", "arn:aws:iam::820242920762:role/GithubDeployMavisAndInfrastructure"]' >> $GITHUB_OUTPUT
+          if [ "$PUSH_IMAGE_TO_PRODUCTION" = "true" ]; then
+            echo 'aws-roles=["arn:aws:iam::393416225559:role/GithubDeployMavisAndInfrastructure", "arn:aws:iam::820242920762:role/GithubDeployMavisAndInfrastructure"]' >> "$GITHUB_OUTPUT"
           else
-            echo 'aws-roles=["arn:aws:iam::393416225559:role/GithubDeployMavisAndInfrastructure"]' >> $GITHUB_OUTPUT
+            echo 'aws-roles=["arn:aws:iam::393416225559:role/GithubDeployMavisAndInfrastructure"]' >> "$GITHUB_OUTPUT"
           fi
   build:
     needs: check-image-presence

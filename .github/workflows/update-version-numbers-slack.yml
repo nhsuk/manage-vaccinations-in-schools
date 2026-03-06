@@ -1,11 +1,12 @@
-name: Set Slack Topics
+name: Update version numbers in Slack topic
+
 on:
   push:
     branches:
       - main
       - release
     tags:
-      - 'v*'
+      - v*
   workflow_dispatch:
 
 jobs:
@@ -32,12 +33,12 @@ jobs:
             latest_tag=$(git tag --merged "$full_branch" | grep -P '^v\d+\.\d+\.\d+' | sort -V | tail -1)
             if [ -n "$latest_tag" ]; then
                 echo "Latest tag on branch $branch: $latest_tag"
-                echo "${branch}_tag=$latest_tag" >> $GITHUB_OUTPUT
+                echo "${branch}_tag=$latest_tag" >> "$GITHUB_OUTPUT"
             else
                 echo "No semantic version tags found on branch $branch."
             fi
           done
-  update-topics:
+  update-topic:
     needs: get-tags
     runs-on: ubuntu-latest
     steps:
@@ -46,16 +47,16 @@ jobs:
           CURRENT_VERSION=${{ needs.get-tags.outputs.main_tag }}
           major=${CURRENT_VERSION#v};
           major=${major%%.*};
-          minor=${CURRENT_VERSION#v${major}.};
+          minor=${CURRENT_VERSION#v"$major".};
           minor=${minor%%.*};
           new_minor=$((minor+1));
-          patch=${CURRENT_VERSION#v${major}.${minor}.};
-          NEXT_VERSION=$(echo "v${major}.${new_minor}.${patch}")
-          echo "next_tag=$NEXT_VERSION" >> $GITHUB_ENV
+          patch=${CURRENT_VERSION#v"$major"."$minor".};
+          NEXT_VERSION=v"$major"."$new_minor"."$patch"
+          echo "next_tag=$NEXT_VERSION" >> "$GITHUB_ENV"
       - name: Create channel topic
         run: |
           TOPIC="release: ${{ needs.get-tags.outputs.release_tag }} - main: ${{ needs.get-tags.outputs.main_tag }} - next: $next_tag"
-          echo "MAVIS_TECH_TOPIC=$TOPIC" >> $GITHUB_ENV
+          echo "MAVIS_TECH_TOPIC=$TOPIC" >> "$GITHUB_ENV"
       - name: Update mavis tech channel topic
         uses: slackapi/slack-github-action@91efab103c0de0a537f72a35f6b8cda0ee76bf0a
         with:
