@@ -237,18 +237,15 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
         end
       end
 
-      if @vaccination_record.performed_by.present? ||
-           Flipper.enabled?(:already_vaccinated)
-        summary_list.with_row do |row|
-          row.with_key { "Vaccinator" }
-          row.with_value { vaccinator_value }
-          if (href = @change_links[:vaccinator])
-            row.with_action(
-              text: "Change",
-              visually_hidden_text: "vaccinator",
-              href:
-            )
-          end
+      summary_list.with_row do |row|
+        row.with_key { "Vaccinator" }
+        row.with_value { vaccinator_value }
+        if (href = @change_links[:vaccinator])
+          row.with_action(
+            text: "Change",
+            visually_hidden_text: "vaccinator",
+            href:
+          )
         end
       end
 
@@ -297,16 +294,14 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
         end
       end
 
-      if Flipper.enabled?(:already_vaccinated) &&
-           @vaccination_record.reported_by.present?
+      if @vaccination_record.reported_by.present?
         summary_list.with_row do |row|
           row.with_key { "Reported by" }
           row.with_value { @vaccination_record.reported_by&.full_name }
         end
       end
 
-      if Flipper.enabled?(:already_vaccinated) &&
-           @vaccination_record.reported_at.present?
+      if @vaccination_record.reported_at.present?
         summary_list.with_row do |row|
           row.with_key { "Reported on" }
           row.with_value { @vaccination_record.reported_at.to_fs(:long) }

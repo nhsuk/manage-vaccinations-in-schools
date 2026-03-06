@@ -65,7 +65,7 @@ class DraftVaccinationRecord
       (:notes unless national_reporting_user_and_record?),
       (
         if programme&.mmr? && (administered? || already_had?) &&
-             patient.eligible_for_mmrv? && Flipper.enabled?(:already_vaccinated)
+             patient.eligible_for_mmrv?
           :mmr_or_mmrv
         end
       ),
@@ -200,8 +200,7 @@ class DraftVaccinationRecord
   end
 
   def reported_as_already_vaccinated?
-    Flipper.enabled?(:already_vaccinated) && administered? &&
-      sourced_from_manual_report?
+    administered? && sourced_from_manual_report?
   end
 
   # So that a form error matches to a field in this model
