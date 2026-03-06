@@ -59,7 +59,7 @@ class AppPatientProgrammeSessionTableComponent < ViewComponent::Base
     @sessions ||=
       patient
         .sessions
-        .has_programme_type(programme_type)
+        .where(session_programme_year_groups: { programme_type: })
         .for_team(current_team)
         .includes(:location, :session_programme_year_groups)
   end
