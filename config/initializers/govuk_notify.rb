@@ -14,7 +14,6 @@ GOVUK_NOTIFY_EMAIL_TEMPLATES = {
   consent_school_initial_reminder_mmrv: "fe47875a-a0a6-40d9-bd41-a411ebb31cff",
   consent_school_request_doubles: "9b1a015d-6caa-47c5-a223-f72377586602",
   consent_school_request_mmr_outbreak: "517b02ee-2b1c-493e-bec2-1ee39f73dbae",
-  consent_school_request_mmrv: "fe194b88-5692-49a2-ab14-648e8ce2af63",
   consent_school_request_mmrv_outbreak: "abe274c2-cd29-4099-b3ff-0e5ed710e532",
   consent_school_subsequent_reminder_doubles:
     "ea03aada-0912-4373-91e1-80082071a7aa",
