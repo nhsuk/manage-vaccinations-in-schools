@@ -61,6 +61,43 @@ describe "Parental consent create patient" do
     then_the_patient_should_be_safe_to_vaccinate
   end
 
+  scenario "Consent form matches an NHS number and patient with same NHS number exists" do
+    stub_pds_search_to_return_a_patient(
+      "9435792170",
+      "family" => @child.family_name,
+      "given" => @child.given_name,
+      "birthdate" => "eq#{@child.date_of_birth}",
+      "address-postalcode" => "TE1 1ST"
+    )
+
+    when_i_go_to_the_consent_form
+    when_i_fill_in_my_childs_name_and_birthday
+
+    when_i_give_consent
+    and_i_answer_no_to_all_the_medical_questions
+    and_i_submit_the_consent_form
+    and_i_refuse_to_answer_questions_on_ethnicity
+    then_i_see_the_consent_confirmation_page
+    and_i_wait_for_background_jobs_to_complete
+
+    when_the_nurse_checks_the_unmatched_consent_responses
+    then_they_see_the_consent_form
+
+    given_a_patient_with_the_same_nhs_number_is_now_created
+    when_the_nurse_clicks_on_the_consent_form
+    and_the_nurse_clicks_on_create_record
+    then_they_see_the_new_patient_page
+
+    when_the_nurse_submits_the_new_patient
+    when_the_nhs_number_lookup_job_is_performed
+    then_the_patients_are_merged
+    then_the_patient_and_associated_records_are_created
+    and_the_unmatched_consent_responses_page_is_empty
+
+    when_they_check_triage
+    then_the_patient_should_be_safe_to_vaccinate
+  end
+
   def given_the_app_is_setup
     @programme = Programme.hpv
     @team =
@@ -165,6 +202,17 @@ describe "Parental consent create patient" do
     expect(page).to have_link("Archive")
   end
 
+  def given_a_patient_with_the_same_nhs_number_is_now_created
+    @existing_patient =
+      create(
+        :patient,
+        nhs_number: "9435792170",
+        given_name: @child.given_name,
+        family_name: @child.family_name,
+        birth_academic_year: @child.birth_academic_year
+      )
+  end
+
   def when_the_nurse_clicks_on_the_consent_form
     click_link "Jane #{@child.family_name}"
   end
@@ -210,6 +258,15 @@ describe "Parental consent create patient" do
     expect(Patient.last.birth_academic_year).to eq(
       @child.date_of_birth.academic_year
     )
+  end
+
+  def when_the_nhs_number_lookup_job_is_performed
+    perform_enqueued_jobs
+  end
+
+  def then_the_patients_are_merged
+    expect(Patient.count).to eq(1)
+    expect(Patient.last.reload.nhs_number).to eq(@existing_patient.nhs_number)
   end
 
   def and_i_refuse_to_answer_questions_on_ethnicity
