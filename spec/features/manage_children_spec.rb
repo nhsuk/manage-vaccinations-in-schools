@@ -5,7 +5,7 @@ describe "Manage children" do
 
   before { given_my_team_exists }
 
-  scenario "Viewing children" do
+  scenario "viewing children" do
     given_patients_exist
     and_the_patient_is_vaccinated
 
@@ -22,7 +22,7 @@ describe "Manage children" do
     then_i_see_the_activity_log
   end
 
-  scenario "Viewing children paginated" do
+  scenario "viewing children paginated" do
     given_many_patients_exist
 
     when_i_click_on_children
@@ -34,7 +34,7 @@ describe "Manage children" do
     then_i_see_the_last_page
   end
 
-  scenario "Viewing children who have aged out" do
+  scenario "viewing children who have aged out" do
     given_patients_exist
     and_todays_date_is_in_the_far_future
 
@@ -46,7 +46,7 @@ describe "Manage children" do
     then_i_see_the_children
   end
 
-  scenario "Adding an NHS number" do
+  scenario "adding an NHS number" do
     given_patients_exist
     and_sync_vaccination_records_to_nhs_feature_is_enabled
     and_the_patient_is_vaccinated
@@ -82,7 +82,7 @@ describe "Manage children" do
     then_i_see_the_patient_merge_in_the_activity_log
   end
 
-  scenario "Adding an NHS number to an invalidated patient" do
+  scenario "adding an NHS number to an invalidated patient" do
     given_an_invalidated_patient_exists
 
     when_i_click_on_children
@@ -103,7 +103,7 @@ describe "Manage children" do
     and_the_important_notice_is_dismissed
   end
 
-  scenario "Inviting to community clinic" do
+  scenario "inviting to community clinic" do
     given_patients_exist
     and_a_clinic_session_exists
 
@@ -117,6 +117,27 @@ describe "Manage children" do
     then_i_see_a_success_banner
     and_i_see_a_community_clinic_session
     and_i_dont_see_an_invite_to_clinic_session
+  end
+
+  context "with new child record design" do
+    before { Flipper.enable(:child_record_redesign) }
+
+    scenario "inviting to community clinic" do
+      given_patients_exist
+      and_a_clinic_session_exists
+
+      when_i_click_on_children
+      and_i_filter_for_children
+      and_i_click_on_a_child
+      and_i_click_on_a_programme
+      and_i_dont_see_a_community_clinic_session
+
+      when_i_click_on_invite_to_clinic
+      then_i_see_a_success_banner
+      and_i_click_on_a_programme
+      and_i_see_a_community_clinic_session
+      and_i_dont_see_an_invite_to_clinic_session
+    end
   end
 
   scenario "Removing an NHS number" do
@@ -376,6 +397,10 @@ describe "Manage children" do
   end
 
   alias_method :and_i_click_on_a_child, :when_i_click_on_a_child
+
+  def and_i_click_on_a_programme
+    click_on "HPV", match: :first
+  end
 
   def then_i_see_the_child
     expect(page).to have_title("JS")
