@@ -118,10 +118,10 @@ describe ImmunisationImport do
         it "is invalid" do
           expect(immunisation_import).to be_invalid
           expect(immunisation_import.rows.first.errors[:base]).to include(
-            /appears more than once/
+            /The record on this row appears to be a duplicate of row 3\./
           )
           expect(immunisation_import.rows.second.errors[:base]).to include(
-            /appears more than once/
+            /The record on this row appears to be a duplicate of row 2\./
           )
         end
       end
