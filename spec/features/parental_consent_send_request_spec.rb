@@ -346,15 +346,19 @@ describe "Parental consent" do
   end
 
   def and_an_mmr_school_request_email_is_sent_to_the_parent(outbreak: false)
-    template =
-      (
-        if outbreak
-          :consent_school_request_mmr_outbreak
-        else
-          :consent_school_request_mmr
-        end
+    if outbreak
+      expect_email_to(@parent.email, :consent_school_request_mmr_outbreak)
+    else
+      expect(email_deliveries).to include(
+        matching_notify_email(
+          to: @parent.email,
+          template: :consent_school_request_mmr
+        ).with_content_including(
+          "Respond to the consent request now",
+          "## Contact us"
+        )
       )
-    expect_email_to(@parent.email, template)
+    end
   end
 
   def and_an_mmr_school_request_sms_is_sent_to_the_parent(
