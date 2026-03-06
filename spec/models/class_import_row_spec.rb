@@ -120,6 +120,34 @@ describe ClassImportRow do
       end
     end
 
+    context "when more than one exact patient match exists" do
+      let(:data) { valid_data }
+
+      before do
+        create(
+          :patient,
+          given_name: "Jimmy",
+          family_name: "Smith",
+          date_of_birth: Date.new(2010, 1, 1),
+          address_postcode: "SW1A 1AA"
+        )
+        create(
+          :patient,
+          given_name: "Jimmy",
+          family_name: "Smith",
+          date_of_birth: Date.new(2010, 1, 1),
+          address_postcode: "SW1A 1AA"
+        )
+      end
+
+      it "adds a validation error" do
+        expect(class_import_row).to be_invalid
+        expect(class_import_row.errors[:base]).to contain_exactly(
+          "More than one possible patient matches the patient first name, last name, date of birth and postcode."
+        )
+      end
+    end
+
     context "vaccination in a session where name-like fields have length greater than 300" do
       let(:invalid_name_length) { "a" * 301 }
       let(:data) do
