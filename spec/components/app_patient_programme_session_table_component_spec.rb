@@ -16,7 +16,7 @@ describe AppPatientProgrammeSessionTableComponent do
   end
 
   context "with one session" do
-    let(:programmes) { [Programme.hpv, Programme.mmr] }
+    let(:programmes) { [Programme.hpv, Programme.mmr, Programme.flu] }
 
     let(:location) do
       create(:school, name: "Waterloo Road", programmes:, academic_year: 2024)
@@ -33,12 +33,20 @@ describe AppPatientProgrammeSessionTableComponent do
 
     # Can't use year_group here because we need an absolute date, not one
     # relative to the current academic year.
-    let(:patient) { create(:patient, date_of_birth: Date.new(2011, 9, 1)) }
+    let(:patient) { create(:patient, date_of_birth: Date.new(2009, 9, 1)) }
 
     before { create_list(:patient_location, 1, patient:, session:) }
 
     it { should have_link("Waterloo Road") }
     it { should have_content("1 January 2025") }
+
+    context "with an ineligible programme type" do
+      let(:patient) { create(:patient, date_of_birth: Date.new(2017, 9, 1)) }
+
+      it { should have_content("No sessions") }
+      it { should_not have_link("Waterloo Road") }
+      it { should_not have_content("1 January 2025") }
+    end
 
     context "with multiple sessions" do
       let(:other_location) do
@@ -58,7 +66,9 @@ describe AppPatientProgrammeSessionTableComponent do
           date: Date.new(2025, 2, 1)
         )
       end
-      let(:other_programmes) { [Programme.hpv, Programme.menacwy] }
+      let(:other_programmes) do
+        [Programme.hpv, Programme.flu, Programme.menacwy]
+      end
 
       before do
         create(:patient_location, patient:, session: other_session)
