@@ -3,6 +3,14 @@ en:
     zero: No children
     one: 1 child
     other: "%{count} children"
+  children_be:
+    zero: No children are
+    one: 1 child is
+    other: "%{count} children are"
+  children_have:
+    zero: No children have
+    one: 1 child has
+    other: "%{count} children have"
   children_for_programme:
     zero: No children for %{programme}
     one: 1 child for %{programme}

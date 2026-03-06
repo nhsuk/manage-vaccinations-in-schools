@@ -587,6 +587,28 @@ class Patient < ApplicationRecord
       (send_to_archived || not_archived?(team:))
   end
 
+  ##
+  # Check if a patient has been send a clinic invitation for a particular team
+  # and academic year.
+  #
+  # This depends on the `clinic_notifications` association having already been
+  # loaded.
+  #
+  # If multiple programmes are passed in, this method will only return `true`
+  # if the patient has been invited for all the programmes.
+  def invited_to_clinic?(programmes, team:, academic_year:)
+    check_programme_types = programmes.map(&:type).uniq
+
+    invited_programme_types =
+      clinic_notifications
+        .select { it.team_id == team.id && it.academic_year == academic_year }
+        .flat_map(&:programme_types)
+        .sort
+        .uniq
+
+    (check_programme_types - invited_programme_types).empty?
+  end
+
   def update_from_pds!(pds_patient)
     if nhs_number.nil? || nhs_number != pds_patient.nhs_number
       raise NHSNumberMismatch

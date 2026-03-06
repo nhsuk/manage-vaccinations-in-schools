@@ -29,6 +29,20 @@ describe "Schools" do
     then_i_see_the_secondary_sessions
   end
 
+  scenario "Sending clinic invitations to children in no known school" do
+    given_a_team_with_no_known_school_children
+    and_i_am_signed_in
+
+    when_i_visit_the_schools_page
+    and_i_click_on_no_known_school
+    then_i_see_the_send_invitations_button
+
+    when_i_click_send_clinic_invitations
+    and_i_select_programmes_and_send
+    then_i_see_the_invitation_confirmation
+    and_the_parents_receive_invitations
+  end
+
   def given_a_team_exists_with_a_few_schools
     programmes = [Programme.flu, Programme.hpv]
 
@@ -133,5 +147,62 @@ describe "Schools" do
 
   def and_i_click_on_back
     click_on "Back"
+  end
+
+  def given_a_team_with_no_known_school_children
+    programmes = [Programme.hpv]
+    @team = create(:team, :with_generic_clinic, programmes:)
+    @generic_clinic = @team.generic_clinic
+
+    10.times do
+      create(
+        :patient,
+        :consent_no_response,
+        school: nil,
+        parents: [build(:parent)],
+        programmes:,
+        location: @generic_clinic,
+        academic_year: AcademicYear.pending
+      )
+    end
+
+    @nurse = create(:nurse, team: @team)
+  end
+
+  def when_i_visit_the_schools_page
+    visit schools_path
+  end
+
+  def and_i_click_on_no_known_school
+    click_on "No known school"
+  end
+
+  def then_i_see_the_send_invitations_button
+    expect(page).to have_content("Send clinic invitations")
+  end
+
+  def when_i_click_send_clinic_invitations
+    click_on "Send clinic invitations"
+  end
+
+  def and_i_select_programmes_and_send
+    check "HPV"
+    click_on "Send clinic invitations"
+  end
+
+  def then_i_see_the_invitation_confirmation
+    expect(page).to have_content("10 children invited to the clinic")
+  end
+
+  def and_the_parents_receive_invitations
+    perform_enqueued_jobs
+
+    Patient
+      .includes(:parents)
+      .find_each do |patient|
+        patient.parents.each do |parent|
+          expect_email_to parent.email, :clinic_initial_invitation, :any
+        end
+      end
   end
 end
