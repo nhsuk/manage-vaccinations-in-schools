@@ -56,7 +56,7 @@ describe "Parental consent" do
     when_i_click_on_session_activity_and_notes
     then_an_activity_log_entry_is_visible_for_the_email_tagged_as(
       "MMRV",
-      clinic: false
+      setting: :school
     )
   end
 
@@ -76,7 +76,7 @@ describe "Parental consent" do
     when_i_click_on_session_activity_and_notes
     then_an_activity_log_entry_is_visible_for_the_email_tagged_as(
       "MMRV",
-      clinic: false,
+      setting: :school,
       outbreak: true
     )
   end
@@ -97,7 +97,7 @@ describe "Parental consent" do
     when_i_click_on_session_activity_and_notes
     then_an_activity_log_entry_is_visible_for_the_email_tagged_as(
       "MMR",
-      clinic: false
+      setting: :school
     )
   end
 
@@ -232,12 +232,12 @@ describe "Parental consent" do
 
   def then_an_activity_log_entry_is_visible_for_the_email_tagged_as(
     programme_name,
-    clinic: true,
+    setting: :clinic,
     outbreak: false
   )
     outbreak_text = outbreak ? " outbreak" : ""
-    location_text = clinic ? "clinic" : "school"
-    programme_text = clinic ? "" : " #{programme_name.downcase}"
+    location_text = setting.to_s
+    programme_text = setting == :clinic ? "" : " #{programme_name.downcase}"
     title =
       "Consent #{location_text} request#{programme_text}#{outbreak_text} sent"
 
