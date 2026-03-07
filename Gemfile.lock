@@ -33,6 +33,12 @@ GEM
       nio4r (~> 2.0)
       websocket-driver (>= 0.6.1)
       zeitwerk (~> 2.6)
+    actioncable-next (0.3.1)
+      actionpack (>= 7.0, <= 8.2)
+      activesupport (>= 7.0, <= 8.2)
+      nio4r (~> 2.0)
+      websocket-driver (>= 0.6.1)
+      zeitwerk (~> 2.6)
     actionmailbox (8.1.2)
       actionpack (= 8.1.2)
       activejob (= 8.1.2)
@@ -123,6 +129,54 @@ GEM
       asciidoctor (>= 1.5.7, < 3.x)
       rexml
     ast (2.4.3)
+    async (2.36.0)
+      console (~> 1.29)
+      fiber-annotation
+      io-event (~> 1.11)
+      metrics (~> 0.12)
+      traces (~> 0.18)
+    async-cable (0.3.0)
+      actioncable-next
+      async (~> 2.9)
+      async-websocket
+    async-container (0.34.2)
+      async (~> 2.22)
+    async-container-supervisor (0.10.1)
+      async-service
+      io-endpoint
+      memory (~> 0.7)
+      memory-leak (~> 0.10)
+      process-metrics
+    async-http (0.94.2)
+      async (>= 2.10.2)
+      async-pool (~> 0.11)
+      io-endpoint (~> 0.14)
+      io-stream (~> 0.6)
+      metrics (~> 0.12)
+      protocol-http (~> 0.58)
+      protocol-http1 (~> 0.36)
+      protocol-http2 (~> 0.22)
+      protocol-url (~> 0.2)
+      traces (~> 0.10)
+    async-http-cache (0.4.6)
+      async-http (~> 0.56)
+    async-job (0.11.1)
+      async (~> 2.9)
+      string-format (~> 0.2)
+    async-job-adapter-active_job (0.18.3)
+      async-job (~> 0.9)
+      async-service (~> 0.12)
+    async-pool (0.11.1)
+      async (>= 2.0)
+    async-service (0.20.1)
+      async
+      async-container (~> 0.34)
+      string-format (~> 0.2)
+    async-websocket (0.30.0)
+      async-http (~> 0.76)
+      protocol-http (~> 0.34)
+      protocol-rack (~> 0.7)
+      protocol-websocket (~> 0.17)
     attr_required (1.0.2)
     aws-eventstream (1.4.0)
     aws-partitions (1.1222.0)
@@ -159,6 +213,9 @@ GEM
     aws-sigv4 (1.12.1)
       aws-eventstream (~> 1, >= 1.0.2)
     backport (1.2.0)
+    bake (0.24.1)
+      bigdecimal
+      samovar (~> 2.1)
     base64 (0.3.0)
     bcp47 (0.3.3)
       i18n
@@ -200,6 +257,14 @@ GEM
       deep_merge (~> 1.2, >= 1.2.1)
       ostruct
     connection_pool (3.0.2)
+    console (1.34.3)
+      fiber-annotation
+      fiber-local (~> 1.1)
+      json
+    console-adapter-rails (0.5.1)
+      console (~> 1.21)
+      fiber-storage (~> 1.0)
+      rails (>= 7.0)
     crack (1.0.1)
       bigdecimal
       rexml
@@ -249,6 +314,28 @@ GEM
       railties (>= 6.1.0)
     faker (3.6.1)
       i18n (>= 1.8.11, < 2)
+    falcon (0.54.2)
+      async
+      async-container (~> 0.20)
+      async-container-supervisor (~> 0.6)
+      async-http (~> 0.75)
+      async-http-cache (~> 0.4)
+      async-service (~> 0.19)
+      bundler
+      localhost (~> 1.1)
+      openssl (>= 3.0)
+      protocol-http (~> 0.31)
+      protocol-rack (~> 0.7)
+      samovar (~> 2.3)
+    falcon-rails (0.2.4)
+      async-cable
+      async-job-adapter-active_job
+      async-websocket
+      bake
+      console-adapter-rails
+      falcon
+      live
+      rails (>= 8.0)
     faraday (2.14.1)
       faraday-net_http (>= 2.0, < 3.5)
       json
@@ -270,6 +357,10 @@ GEM
       date_time_precision (>= 0.8)
       mime-types (>= 3.0)
       nokogiri (>= 1.11.4)
+    fiber-annotation (0.2.0)
+    fiber-local (1.1.0)
+      fiber-storage
+    fiber-storage (1.0.1)
     flipper (1.4.0)
       concurrent-ruby (< 2)
     flipper-active_record (1.4.0)
@@ -320,6 +411,9 @@ GEM
     indefinite_article (0.2.5)
       activesupport
     io-console (0.8.2)
+    io-endpoint (0.17.2)
+    io-event (1.14.2)
+    io-stream (0.11.1)
     irb (1.17.0)
       pp (>= 0.6.0)
       prism (>= 1.3.0)
@@ -358,6 +452,11 @@ GEM
     listen (3.9.0)
       rb-fsevent (~> 0.10, >= 0.10.3)
       rb-inotify (~> 0.9, >= 0.9.10)
+    live (0.18.0)
+      async-websocket (~> 0.27)
+      protocol-websocket (~> 0.19)
+      xrb (~> 0.10)
+    localhost (1.7.0)
     logger (1.7.0)
     loofah (2.25.0)
       crass (~> 1.0.2)
@@ -368,6 +467,7 @@ GEM
       net-imap
       net-pop
       net-smtp
+    mapping (1.1.3)
     marcel (1.1.0)
     matrix (0.4.3)
     mechanize (2.14.0)
@@ -384,7 +484,14 @@ GEM
       webrick (~> 1.7)
       webrobots (~> 0.1.2)
     memo_wise (1.13.0)
+    memory (0.12.0)
+      bake (~> 0.15)
+      console
+      msgpack
+    memory-leak (0.10.2)
+      process-metrics (>= 0.10.1)
     method_source (1.1.0)
+    metrics (0.15.0)
     mime-types (3.7.0)
       logger
       mime-types-data (~> 3.2025, >= 3.2025.0507)
@@ -444,6 +551,7 @@ GEM
       tzinfo
       validate_url
       webfinger (~> 2.0)
+    openssl (4.0.1)
     orm_adapter (0.5.0)
     ostruct (0.6.3)
     pagy (9.4.0)
@@ -462,10 +570,27 @@ GEM
     prettier_print (1.2.1)
     prettyprint (0.2.0)
     prism (1.9.0)
+    process-metrics (0.11.0)
+      console (~> 1.8)
+      json (~> 2)
     propshaft (1.3.1)
       actionpack (>= 7.0.0)
       activesupport (>= 7.0.0)
       rack
+    protocol-hpack (1.5.1)
+    protocol-http (0.59.0)
+    protocol-http1 (0.37.0)
+      protocol-http (~> 0.58)
+    protocol-http2 (0.24.0)
+      protocol-hpack (~> 1.4)
+      protocol-http (~> 0.47)
+    protocol-rack (0.21.1)
+      io-stream (>= 0.10)
+      protocol-http (~> 0.58)
+      rack (>= 1.0)
+    protocol-url (0.4.0)
+    protocol-websocket (0.20.2)
+      protocol-http (~> 0.2)
     pry (0.16.0)
       coderay (~> 1.1)
       method_source (~> 1.0)
@@ -477,8 +602,6 @@ GEM
       date
       stringio
     public_suffix (7.0.2)
-    puma (7.2.0)
-      nio4r (~> 2.0)
     pundit (2.5.2)
       activesupport (>= 3.0.0)
     raabro (1.4.0)
@@ -644,6 +767,9 @@ GEM
     rufo (0.18.2)
     rufus-scheduler (3.9.2)
       fugit (~> 1.1, >= 1.11.1)
+    samovar (2.4.1)
+      console (~> 1.0)
+      mapping (~> 1.0)
     sanitize (7.0.0)
       crass (~> 1.0.2)
       nokogiri (>= 1.16.8)
@@ -716,6 +842,7 @@ GEM
       solargraph (>= 0.48.0)
     splunk-sdk-ruby (1.0.5)
     stackprof (0.2.28)
+    string-format (0.2.0)
     stringio (3.2.0)
     swd (2.0.3)
       activesupport (>= 3)
@@ -740,10 +867,9 @@ GEM
       unicode-display_width (~> 3.1)
     temple (0.10.4)
     thor (1.5.0)
-    thruster (0.1.18-arm64-darwin)
-    thruster (0.1.18-x86_64-linux)
     tilt (2.7.0)
     timeout (0.6.0)
+    traces (0.18.2)
     tsort (0.2.0)
     turbo-rails (2.0.23)
       actionpack (>= 7.1.0)
@@ -790,6 +916,7 @@ GEM
       zeitwerk (>= 2.7)
     xpath (3.2.0)
       nokogiri (~> 1.8)
+    xrb (0.11.2)
     yard (0.9.38)
     yard-activesupport-concern (0.0.1)
       yard (>= 0.8)
@@ -840,6 +967,8 @@ DEPENDENCIES
   factory_bot_instruments
   factory_bot_rails
   faker
+  falcon
+  falcon-rails
   faraday
   fhir_models
   flipper
@@ -854,6 +983,7 @@ DEPENDENCIES
   jsbundling-rails
   jsonb_accessor
   jwt
+  localhost
   mechanize
   notifications-ruby-client
   okcomputer
@@ -868,7 +998,6 @@ DEPENDENCIES
   propshaft
   pry-rails
   pstore
-  puma
   pundit
   rack_session_access
   rails (= 8.1.2)
@@ -904,7 +1033,6 @@ DEPENDENCIES
   syntax_tree-haml
   syntax_tree-rbs
   table_tennis
-  thruster
   turbo-rails
   tzinfo-data
   uk_postcode

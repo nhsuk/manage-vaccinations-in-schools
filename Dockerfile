@@ -12,7 +12,8 @@ WORKDIR /rails
 
 # Install base packages
 RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y curl libjemalloc2 libvips libicu-dev postgresql-client jq && \
+    apt-get install --no-install-recommends -y curl libjemalloc2 \
+    libvips libicu-dev postgresql-client jq ca-certificates && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
 # Set production environment
@@ -80,6 +81,15 @@ COPY --from=build /rails /rails
 RUN groupadd --system --gid 1000 rails && \
     useradd rails --uid 1000 --gid 1000 --create-home --shell /bin/bash && \
     chown -R rails:rails db log storage tmp
+
+# Generate and install self-signed TLS certificates at build time.
+RUN apt-get update -qq && \
+    apt-get install --no-install-recommends -y sudo && \
+    bundle exec "bake localhost:install" && \
+    SUDO_FORCE_REMOVE=yes apt-get purge -y sudo && \
+    apt-get autoremove -y && \
+    rm -rf /var/lib/apt/lists /var/cache/apt/archives
+
 USER 1000:1000
 
 # Entrypoint prepares the database.
