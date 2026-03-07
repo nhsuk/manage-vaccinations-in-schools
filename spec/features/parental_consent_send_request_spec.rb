@@ -99,7 +99,7 @@ describe "Parental consent" do
     )
   end
 
-  scenario "Send school request where patient is not eligible for MMRV" do
+  scenario "Send school request where patient is eligible for MMR only" do
     given_a_programme_exists(:mmr)
     and_a_school_session_with_mmr_only_patient_exists
     and_i_am_signed_in
@@ -114,6 +114,27 @@ describe "Parental consent" do
 
     when_i_click_on_session_activity_and_notes
     then_an_activity_log_entry_is_visible_for_the_email("MMR", setting: :school)
+  end
+
+  scenario "Send school outbreak request where patient is eligible for MMR only" do
+    given_a_programme_exists(:mmr)
+    and_a_school_session_with_mmr_only_patient_exists(outbreak: true)
+    and_i_am_signed_in
+
+    when_i_go_to_a_patient_without_consent
+    then_i_see_no_requests_sent
+
+    when_i_click_send_consent_request
+    then_i_see_the_confirmation_banner
+    and_an_mmr_school_request_email_is_sent_to_the_parent(outbreak: true)
+    and_an_mmr_school_request_sms_is_sent_to_the_parent(outbreak: true)
+
+    when_i_click_on_session_activity_and_notes
+    then_an_activity_log_entry_is_visible_for_the_email(
+      "MMR",
+      setting: :school,
+      outbreak: true
+    )
   end
 
   def given_a_programme_exists(programme_type)
@@ -158,9 +179,10 @@ describe "Parental consent" do
     )
   end
 
-  def and_a_school_session_with_mmr_only_patient_exists
+  def and_a_school_session_with_mmr_only_patient_exists(outbreak: false)
     create_school_session_with_patient(
-      date_of_birth: Programme::MIN_MMRV_ELIGIBILITY_DATE - 1.month
+      date_of_birth: Programme::MIN_MMRV_ELIGIBILITY_DATE - 1.month,
+      outbreak:
     )
   end
 
@@ -221,8 +243,16 @@ describe "Parental consent" do
     )
   end
 
-  def and_an_mmr_school_request_email_is_sent_to_the_parent
-    expect_email_to(@parent.email, :consent_school_request_mmr)
+  def and_an_mmr_school_request_email_is_sent_to_the_parent(outbreak: false)
+    template =
+      (
+        if outbreak
+          :consent_school_request_mmr_outbreak
+        else
+          :consent_school_request_mmr
+        end
+      )
+    expect_email_to(@parent.email, template)
   end
 
   def and_an_mmr_school_request_sms_is_sent_to_the_parent(
