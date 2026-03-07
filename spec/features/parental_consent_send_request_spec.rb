@@ -133,58 +133,16 @@ describe "Parental consent" do
   end
 
   def and_a_school_session_with_mmrv_eligible_patient_exists(outbreak: false)
-    @team = create(:team, :with_one_nurse, programmes: @programmes)
-    @user = @team.users.first
-
-    location = create(:school, team: @team, programmes: @programmes)
-
-    @session =
-      create(
-        :session,
-        team: @team,
-        programmes: @programmes,
-        location:,
-        date: Date.current + 2.days,
-        outbreak:
-      )
-
-    @parent = create(:parent)
-    @patient =
-      create(
-        :patient,
-        session: @session,
-        parents: [@parent],
-        date_of_birth: Programme::MIN_MMRV_ELIGIBILITY_DATE + 1.month
-      )
-
-    PatientStatusUpdater.call
+    create_school_session_with_patient(
+      date_of_birth: Programme::MIN_MMRV_ELIGIBILITY_DATE + 1.month,
+      outbreak:
+    )
   end
 
   def and_a_school_session_with_mmr_only_patient_exists
-    @team = create(:team, :with_one_nurse, programmes: @programmes)
-    @user = @team.users.first
-
-    location = create(:school, team: @team, programmes: @programmes)
-
-    @session =
-      create(
-        :session,
-        team: @team,
-        programmes: @programmes,
-        location:,
-        date: Date.current + 2.days
-      )
-
-    @parent = create(:parent)
-    @patient =
-      create(
-        :patient,
-        session: @session,
-        parents: [@parent],
-        date_of_birth: Programme::MIN_MMRV_ELIGIBILITY_DATE - 1.month
-      )
-
-    PatientStatusUpdater.call
+    create_school_session_with_patient(
+      date_of_birth: Programme::MIN_MMRV_ELIGIBILITY_DATE - 1.month
+    )
   end
 
   def and_i_am_signed_in
@@ -302,5 +260,30 @@ describe "Parental consent" do
       "Consent clinic request sent\n" \
         "#{programme_name} USER, Test · 1 January 2024 at 12:00am\n#{@parent.phone}"
     )
+  end
+
+  private
+
+  def create_school_session_with_patient(date_of_birth:, outbreak: false)
+    @team = create(:team, :with_one_nurse, programmes: @programmes)
+    @user = @team.users.first
+
+    location = create(:school, team: @team, programmes: @programmes)
+
+    @session =
+      create(
+        :session,
+        team: @team,
+        programmes: @programmes,
+        location:,
+        date: Date.current + 2.days,
+        outbreak:
+      )
+
+    @parent = create(:parent)
+    @patient =
+      create(:patient, session: @session, parents: [@parent], date_of_birth:)
+
+    PatientStatusUpdater.call
   end
 end
