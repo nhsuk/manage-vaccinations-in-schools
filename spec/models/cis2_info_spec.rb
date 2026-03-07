@@ -69,4 +69,112 @@ describe CIS2Info do
       it { should be(false) }
     end
   end
+
+  describe "#is_support?" do
+    subject { cis2_info.is_support? }
+
+    let(:role_code) { CIS2Info::SUPPORT_ROLE }
+
+    context "with PII access activity codes" do
+      let(:activity_codes) do
+        [
+          CIS2Info::ACCESS_SENSITIVE_FLAGGED_RECORDS_ACTIVITY_CODE,
+          CIS2Info::VIEW_DETAILED_HEALTH_RECORDS_ACTIVITY_CODE
+        ]
+      end
+
+      it { should be(true) }
+    end
+
+    context "without PII access activity codes" do
+      let(:activity_codes) do
+        [
+          CIS2Info::VIEW_SHARED_NON_PATIENT_IDENTIFIABLE_INFORMATION_ACTIVITY_CODE
+        ]
+      end
+
+      it { should be(true) }
+    end
+
+    context "with a non-support role code" do
+      let(:role_code) { "S8000:G8000:R8001" }
+      let(:activity_codes) do
+        [
+          CIS2Info::VIEW_SHARED_NON_PATIENT_IDENTIFIABLE_INFORMATION_ACTIVITY_CODE
+        ]
+      end
+
+      it { should be(false) }
+    end
+  end
+
+  describe "#is_support_without_pii_access?" do
+    subject { cis2_info.is_support_without_pii_access? }
+
+    let(:role_code) { CIS2Info::SUPPORT_ROLE }
+
+    context "with non-PII activity code" do
+      let(:activity_codes) do
+        [
+          CIS2Info::VIEW_SHARED_NON_PATIENT_IDENTIFIABLE_INFORMATION_ACTIVITY_CODE
+        ]
+      end
+
+      it { should be(true) }
+    end
+
+    context "without non-PII activity code" do
+      let(:activity_codes) { [] }
+
+      it { should be(false) }
+    end
+
+    context "with a non-support role code" do
+      let(:role_code) { "S8000:G8000:R8001" }
+      let(:activity_codes) do
+        [
+          CIS2Info::VIEW_SHARED_NON_PATIENT_IDENTIFIABLE_INFORMATION_ACTIVITY_CODE
+        ]
+      end
+
+      it { should be(false) }
+    end
+  end
+
+  describe "#is_support_with_pii_access?" do
+    subject { cis2_info.is_support_with_pii_access? }
+
+    let(:role_code) { CIS2Info::SUPPORT_ROLE }
+
+    context "with PII access activity codes" do
+      let(:activity_codes) do
+        [
+          CIS2Info::ACCESS_SENSITIVE_FLAGGED_RECORDS_ACTIVITY_CODE,
+          CIS2Info::VIEW_DETAILED_HEALTH_RECORDS_ACTIVITY_CODE
+        ]
+      end
+
+      it { should be(true) }
+    end
+
+    context "with only one PII activity code" do
+      let(:activity_codes) do
+        [CIS2Info::ACCESS_SENSITIVE_FLAGGED_RECORDS_ACTIVITY_CODE]
+      end
+
+      it { should be(false) }
+    end
+
+    context "with a non-support role code" do
+      let(:role_code) { "S8000:G8000:R8001" }
+      let(:activity_codes) do
+        [
+          CIS2Info::ACCESS_SENSITIVE_FLAGGED_RECORDS_ACTIVITY_CODE,
+          CIS2Info::VIEW_DETAILED_HEALTH_RECORDS_ACTIVITY_CODE
+        ]
+      end
+
+      it { should be(false) }
+    end
+  end
 end

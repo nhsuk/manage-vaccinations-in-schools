@@ -1,6 +1,98 @@
 # frozen_string_literal: true
 
 describe PatientPolicy do
+  subject(:policy) { described_class.new(user, patient) }
+
+  let(:programmes) { [Programme.sample] }
+  let(:organisation) { create(:organisation) }
+  let(:patient) { create(:patient) }
+
+  describe "index?" do
+    subject(:index?) { policy.index? }
+
+    context "with a point of care team" do
+      let(:team) { create(:team, organisation:, programmes:) }
+      let(:user) { create(:user, team:) }
+
+      it { should be(true) }
+    end
+
+    context "with a national reporting team" do
+      let(:team) { create(:team, :national_reporting, organisation:) }
+      let(:user) { create(:user, team:) }
+
+      it { should be(true) }
+    end
+
+    context "with a support team" do
+      let(:support_team) { create(:team, :support, organisation:) }
+      let(:user) { create(:support, team: support_team) }
+
+      it { should be(false) }
+    end
+  end
+
+  describe "show?" do
+    subject(:show?) { policy.show? }
+
+    context "with a point of care team" do
+      let(:team) { create(:team, organisation:, programmes:) }
+      let(:user) { create(:user, team:) }
+
+      it { should be(true) }
+    end
+
+    context "with a support team" do
+      let(:support_team) { create(:team, :support, organisation:) }
+      let(:user) { create(:support, team: support_team) }
+
+      it { should be(false) }
+    end
+  end
+
+  describe "update?" do
+    subject(:update?) { policy.update? }
+
+    context "with a point of care team" do
+      let(:team) { create(:team, organisation:, programmes:) }
+      let(:user) { create(:user, team:) }
+
+      it { should be(true) }
+    end
+
+    context "with a support team" do
+      let(:support_team) { create(:team, :support, organisation:) }
+      let(:user) { create(:support, team: support_team) }
+
+      it { should be(false) }
+    end
+  end
+
+  describe "log?" do
+    subject(:log?) { policy.log? }
+
+    context "with a point of care team" do
+      let(:team) { create(:team, organisation:, programmes:) }
+      let(:user) { create(:user, team:) }
+
+      it { should be(true) }
+    end
+
+    context "with a national reporting team" do
+      let(:team) { create(:team, :national_reporting, organisation:) }
+      let(:user) { create(:user, team:) }
+
+      it { should be(false) }
+    end
+
+    context "with a support team" do
+      let(:support_team) { create(:team, :support, organisation:) }
+      let(:user) { create(:support, team: support_team) }
+
+      it { should be(false) }
+    end
+  end
+
   describe "Scope#resolve" do
     subject { PatientPolicy::Scope.new(user, Patient).resolve }
 

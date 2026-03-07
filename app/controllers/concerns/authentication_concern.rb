@@ -41,11 +41,6 @@ module AuthenticationConcern
           redirect_to users_organisation_not_found_path
         elsif !selected_cis2_workgroup_is_valid?
           redirect_to users_workgroup_not_found_path
-        elsif path_is_support? && !user_is_support?
-          raise ActionController::RoutingError, "Not found"
-        elsif !path_is_support? && user_is_support? &&
-              request.path != new_users_teams_path
-          redirect_to inspect_dashboard_path
         end
       end
     end
@@ -66,22 +61,6 @@ module AuthenticationConcern
       cis2_info.is_medical_secretary? || cis2_info.is_nurse? ||
         cis2_info.is_healthcare_assistant? || cis2_info.is_superuser? ||
         cis2_info.is_prescriber? || cis2_info.is_support?
-    end
-
-    def user_is_support?
-      cis2_info.is_support?
-    end
-
-    def user_is_support_without_pii_access?
-      cis2_info.is_support_without_pii_access?
-    end
-
-    def user_is_support_with_pii_access?
-      cis2_info.is_support_with_pii_access?
-    end
-
-    def path_is_support?
-      request.path.start_with?("/inspect")
     end
 
     def storable_location?
@@ -142,7 +121,7 @@ module AuthenticationConcern
     def after_sign_in_path_for(scope)
       urls = []
 
-      urls << inspect_dashboard_path if user_is_support?
+      urls << inspect_dashboard_path if current_team&.has_support_access?
       if Flipper.enabled?(:reporting_api)
         urls << reporting_app_redirect_uri_with_auth_code_for(current_user)
       end

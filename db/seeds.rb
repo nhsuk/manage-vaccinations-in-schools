@@ -373,10 +373,15 @@ def create_a9a5a_team
 end
 
 def create_support_team
+  workgroup = CIS2Info::SUPPORT_WORKGROUP
+
   support_team =
-    create_team(
-      ods_code: CIS2Info::SUPPORT_ORGANISATION,
-      workgroup: CIS2Info::SUPPORT_WORKGROUP
+    FactoryBot.create(
+      :team,
+      :support,
+      ods_code: CIS2Info.support_organisation,
+      workgroup:,
+      programmes: Programme.all
     )
   create_user(:support, team: support_team, email: "support@example.com")
 end
@@ -385,10 +390,10 @@ set_feature_flags
 
 seed_vaccines
 create_gp_practices
+create_support_team
 
 if Settings.cis2.enabled
   create_a9a5a_team
-  create_support_team
 else
   create_nurse_joy_team
   create_national_reporting_team

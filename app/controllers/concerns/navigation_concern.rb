@@ -55,7 +55,7 @@ module NavigationConcern
       }
     end
 
-    if current_team
+    if current_team&.is_sais_team?
       @navigation_items << {
         title: t("imports.index.title_short"),
         path: imports_path,
@@ -75,6 +75,10 @@ module NavigationConcern
         title: t("patients.index.title"),
         path: patients_path
       }
+    end
+
+    if current_team&.has_support_access?
+      @navigation_items << { title: "Tools", path: inspect_dashboard_path }
     end
   end
 

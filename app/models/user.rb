@@ -115,9 +115,9 @@ class User < ApplicationRecord
     provider.blank? || uid.blank?
   end
 
-  def selected_organisation = cis2_info.organisation
+  def selected_organisation = cis2_info&.organisation
 
-  def selected_team = cis2_info.team
+  def selected_team = cis2_info&.team
 
   def programmes = selected_team&.programmes
 
@@ -162,10 +162,6 @@ class User < ApplicationRecord
     end
   end
 
-  def is_support?
-    cis2_enabled? ? cis2_info.is_support? : fallback_role_support?
-  end
-
   def is_prescriber?
     cis2_enabled? ? cis2_info.is_prescriber? : fallback_role_prescriber?
   end
@@ -173,6 +169,18 @@ class User < ApplicationRecord
   def is_superuser?
     can_access_sensitive_flagged_records? ||
       can_perform_local_system_administration?
+  end
+
+  def is_support?
+    cis2_enabled? ? cis2_info.is_support? : fallback_role_support?
+  end
+
+  def is_support_with_pii_access?
+    if cis2_enabled?
+      cis2_info.is_support_with_pii_access?
+    else
+      fallback_role_support?
+    end
   end
 
   def can_access_sensitive_flagged_records?
