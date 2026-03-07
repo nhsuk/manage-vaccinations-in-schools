@@ -3,7 +3,28 @@
 describe "Parental consent" do
   around { |example| travel_to(Date.new(2024, 1, 1)) { example.run } }
 
-  scenario "Send request" do
+  scenario "Send school request where patient is eligible for HPV" do
+    given_a_programme_exists(:hpv)
+    and_a_school_session_with_hpv_eligible_patient_exists
+    and_i_am_signed_in
+
+    when_i_go_to_a_patient_without_consent
+    then_i_see_no_requests_sent
+
+    when_i_click_send_consent_request
+    then_i_see_the_confirmation_banner
+    and_i_see_a_consent_request_has_been_sent
+    and_an_hpv_school_request_email_is_sent_to_the_parent
+    and_an_hpv_school_request_sms_is_sent_to_the_parent
+
+    when_i_click_on_session_activity_and_notes
+    then_an_activity_log_entry_is_visible_for_the_email_tagged_as(
+      "HPV",
+      setting: :school
+    )
+  end
+
+  scenario "Send clinic request where patient is eligible for HPV" do
     given_a_programme_exists(:hpv)
     and_a_patient_without_consent_exists
     and_i_am_signed_in
@@ -132,6 +153,10 @@ describe "Parental consent" do
     PatientStatusUpdater.call
   end
 
+  def and_a_school_session_with_hpv_eligible_patient_exists(outbreak: false)
+    create_school_session_with_patient(date_of_birth: 12.years.ago, outbreak:)
+  end
+
   def and_a_school_session_with_mmrv_eligible_patient_exists(outbreak: false)
     create_school_session_with_patient(
       date_of_birth: Programme::MIN_MMRV_ELIGIBILITY_DATE + 1.month,
@@ -179,6 +204,14 @@ describe "Parental consent" do
 
   def and_a_clinic_request_sms_is_sent_to_the_parent
     expect_sms_to(@parent.phone, :consent_clinic_request)
+  end
+
+  def and_an_hpv_school_request_email_is_sent_to_the_parent
+    expect_email_to(@parent.email, :consent_school_request_hpv)
+  end
+
+  def and_an_hpv_school_request_sms_is_sent_to_the_parent
+    expect_sms_to(@parent.phone, :consent_school_request)
   end
 
   def and_an_mmrv_school_request_email_is_sent_to_the_parent(outbreak: false)
