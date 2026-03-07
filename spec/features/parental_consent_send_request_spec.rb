@@ -18,10 +18,7 @@ describe "Parental consent" do
     and_an_hpv_school_request_sms_is_sent_to_the_parent
 
     when_i_click_on_session_activity_and_notes
-    then_an_activity_log_entry_is_visible_for_the_email_tagged_as(
-      "HPV",
-      setting: :school
-    )
+    then_an_activity_log_entry_is_visible_for_the_email("HPV", setting: :school)
   end
 
   scenario "Send clinic request where patient is eligible for HPV" do
@@ -75,7 +72,7 @@ describe "Parental consent" do
     and_an_mmrv_school_request_sms_is_sent_to_the_parent
 
     when_i_click_on_session_activity_and_notes
-    then_an_activity_log_entry_is_visible_for_the_email_tagged_as(
+    then_an_activity_log_entry_is_visible_for_the_email(
       "MMRV",
       setting: :school
     )
@@ -95,7 +92,7 @@ describe "Parental consent" do
     and_an_mmrv_school_request_sms_is_sent_to_the_parent(outbreak: true)
 
     when_i_click_on_session_activity_and_notes
-    then_an_activity_log_entry_is_visible_for_the_email_tagged_as(
+    then_an_activity_log_entry_is_visible_for_the_email(
       "MMRV",
       setting: :school,
       outbreak: true
@@ -116,10 +113,7 @@ describe "Parental consent" do
     and_an_mmr_school_request_sms_is_sent_to_the_parent
 
     when_i_click_on_session_activity_and_notes
-    then_an_activity_log_entry_is_visible_for_the_email_tagged_as(
-      "MMR",
-      setting: :school
-    )
+    then_an_activity_log_entry_is_visible_for_the_email("MMR", setting: :school)
   end
 
   def given_a_programme_exists(programme_type)
@@ -263,7 +257,7 @@ describe "Parental consent" do
     click_on "Session activity and notes"
   end
 
-  def then_an_activity_log_entry_is_visible_for_the_email_tagged_as(
+  def then_an_activity_log_entry_is_visible_for_the_email(
     programme_name,
     setting: :clinic,
     outbreak: false
@@ -277,12 +271,6 @@ describe "Parental consent" do
     expect(page).to have_content(
       "#{title}\n" \
         "#{programme_name} USER, Test · 1 January 2024 at 12:00am\n#{@parent.email}"
-    )
-  end
-
-  def then_an_activity_log_entry_is_visible_for_the_email(programme_name)
-    then_an_activity_log_entry_is_visible_for_the_email_tagged_as(
-      programme_name
     )
   end
 
