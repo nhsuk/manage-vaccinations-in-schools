@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class VaccinationRecordPolicy < ApplicationPolicy
-  def index? = true
+  def index? = team.is_sais_team?
 
   def create?
     return true if user.is_nurse? || user.is_prescriber?
@@ -15,7 +15,7 @@ class VaccinationRecordPolicy < ApplicationPolicy
       can_create_with_pgd_supply?(vaccine_criteria)
   end
 
-  def show? = true
+  def show? = team.is_sais_team?
 
   def record_already_vaccinated?
     (user.is_nurse? || user.is_prescriber?) && !session.today? &&
@@ -33,6 +33,8 @@ class VaccinationRecordPolicy < ApplicationPolicy
     elsif team.has_national_reporting_access?
       record.sourced_from_national_reporting? &&
         record.immunisation_imports.any? { it.team_id == team.id }
+    else
+      false
     end
   end
 

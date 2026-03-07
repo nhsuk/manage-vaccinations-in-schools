@@ -5,19 +5,23 @@ describe ImportPolicy do
 
   let(:point_of_care_team) { create(:team, :point_of_care) }
   let(:national_reporting_team) { create(:team, :national_reporting) }
+  let(:support_team) { create(:team, :support) }
   let(:point_of_care_user) { create(:nurse, teams: [point_of_care_team]) }
   let(:national_reporting_user) do
     create(:nurse, teams: [national_reporting_team])
   end
+  let(:support_user) { create(:support, team: support_team) }
   let(:immunisation_import) { create(:immunisation_import) }
 
   permissions :index?, :create?, :edit?, :new?, :records?, :show?, :update? do
     it { should permit(point_of_care_user, immunisation_import) }
     it { should permit(national_reporting_user, immunisation_import) }
+    it { should_not permit(support_user, immunisation_import) }
   end
 
   permissions :destroy? do
     it { should_not permit(point_of_care_user, immunisation_import) }
     it { should_not permit(national_reporting_user, immunisation_import) }
+    it { should_not permit(support_user, immunisation_import) }
   end
 end

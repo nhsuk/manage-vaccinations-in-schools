@@ -17,7 +17,17 @@ class DashboardController < ApplicationController
 
   def set_primary_items
     @primary_items =
-      if current_team.has_national_reporting_access?
+      if current_team.has_support_access?
+        [
+          {
+            title: "Operational support tools",
+            path: inspect_dashboard_path,
+            description:
+              "Inspect and troubleshoot individual records in the system.",
+            width: "one-half"
+          }
+        ]
+      elsif current_team.has_national_reporting_access?
         [
           {
             title: I18n.t("imports.index.title"),

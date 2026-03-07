@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
 class PatientPolicy < ApplicationPolicy
-  def index? = true
+  def index? = team.is_sais_team?
 
-  def show? = true
+  def show? = team.is_sais_team?
 
-  def update? = true
+  def update? = team.is_sais_team?
 
   def log? = team.has_point_of_care_access?
 

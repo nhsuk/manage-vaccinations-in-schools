@@ -69,4 +69,79 @@ describe CIS2Info do
       it { should be(false) }
     end
   end
+
+  describe "#is_support?" do
+    subject { cis2_info.is_support? }
+
+    let(:role_code) { "S8001:G8005:R8015" }
+
+    context "with PII access activity codes" do
+      let(:activity_codes) { %w[B1611 B0360] }
+
+      it { should be(true) }
+    end
+
+    context "without PII access activity codes" do
+      let(:activity_codes) { %w[B1570] }
+
+      it { should be(true) }
+    end
+
+    context "with a non-support role code" do
+      let(:role_code) { "S8000:G8000:R8001" }
+      let(:activity_codes) { %w[B1570] }
+
+      it { should be(false) }
+    end
+  end
+
+  describe "#is_support_without_pii_access?" do
+    subject { cis2_info.is_support_without_pii_access? }
+
+    let(:role_code) { "S8001:G8005:R8015" }
+
+    context "with non-PII activity code" do
+      let(:activity_codes) { %w[B1570] }
+
+      it { should be(true) }
+    end
+
+    context "without non-PII activity code" do
+      let(:activity_codes) { [] }
+
+      it { should be(false) }
+    end
+
+    context "with a non-support role code" do
+      let(:role_code) { "S8000:G8000:R8001" }
+      let(:activity_codes) { %w[B1570] }
+
+      it { should be(false) }
+    end
+  end
+
+  describe "#is_support_with_pii_access?" do
+    subject { cis2_info.is_support_with_pii_access? }
+
+    let(:role_code) { "S8001:G8005:R8015" }
+
+    context "with PII access activity codes" do
+      let(:activity_codes) { %w[B1611 B0360] }
+
+      it { should be(true) }
+    end
+
+    context "with only one PII activity code" do
+      let(:activity_codes) { %w[B1611] }
+
+      it { should be(false) }
+    end
+
+    context "with a non-support role code" do
+      let(:role_code) { "S8000:G8000:R8001" }
+      let(:activity_codes) { %w[B1611 B0360] }
+
+      it { should be(false) }
+    end
+  end
 end

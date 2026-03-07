@@ -3,7 +3,6 @@
 class Inspect::Timeline::PatientsController < ApplicationController
   include InspectAuthenticationConcern
 
-  skip_after_action :verify_authorized
   skip_after_action :verify_policy_scoped
   before_action :ensure_ops_tools_feature_enabled
   before_action :set_patient
@@ -13,6 +12,7 @@ class Inspect::Timeline::PatientsController < ApplicationController
   SHOW_PII_BY_DEFAULT = false
 
   def show
+    authorize :inspect, :timeline?
     set_pii_settings
 
     params[:audit_config] ||= {}
@@ -73,7 +73,7 @@ class Inspect::Timeline::PatientsController < ApplicationController
   private
 
   def set_pii_settings
-    @user_is_allowed_to_access_pii = user_is_support_with_pii_access?
+    @user_is_allowed_to_access_pii = policy(:inspect).show_pii?
     @show_pii =
       @user_is_allowed_to_access_pii &&
         (params[:show_pii] || SHOW_PII_BY_DEFAULT)
