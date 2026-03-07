@@ -188,13 +188,27 @@ describe "Parental consent" do
   end
 
   def and_an_mmrv_school_request_sms_is_sent_to_the_parent(outbreak: false)
+    and_an_mmr_school_request_sms_is_sent_to_the_parent(
+      mmrv_eligible: true,
+      outbreak:
+    )
+  end
+
+  def and_an_mmr_school_request_email_is_sent_to_the_parent
+    expect_email_to(@parent.email, :consent_school_request_mmr)
+  end
+
+  def and_an_mmr_school_request_sms_is_sent_to_the_parent(
+    mmrv_eligible: false,
+    outbreak: false
+  )
+    dose_text = mmrv_eligible ? "MMR or MMRV vaccine?" : "MMR vaccine?"
+
     expect(sms_deliveries).to include(
       matching_notify_sms(
         phone_number: @parent.phone,
         template: :consent_school_request_mmr
-      ).with_content_including(
-        "Has your child had 2 doses of the MMR or MMRV vaccine?"
-      )
+      ).with_content_including("Has your child had 2 doses of the #{dose_text}")
     )
 
     outbreak_matcher =
@@ -210,20 +224,6 @@ describe "Parental consent" do
     else
       expect(sms_deliveries).not_to include(outbreak_matcher)
     end
-  end
-
-  def and_an_mmr_school_request_email_is_sent_to_the_parent
-    expect_email_to(@parent.email, :consent_school_request_mmr)
-  end
-
-  def and_an_mmr_school_request_sms_is_sent_to_the_parent
-    expect_sms_to(@parent.phone, :consent_school_request_mmr)
-    expect(sms_deliveries).to include(
-      matching_notify_sms(
-        phone_number: @parent.phone,
-        template: :consent_school_request_mmr
-      ).with_content_including("Has your child had 2 doses of the MMR vaccine?")
-    )
   end
 
   def when_i_click_on_session_activity_and_notes
