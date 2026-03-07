@@ -14,8 +14,8 @@ describe "Parental consent" do
     when_i_click_send_consent_request
     then_i_see_the_confirmation_banner
     and_i_see_a_consent_request_has_been_sent
-    and_an_email_is_sent_to_the_parent
-    and_a_text_is_sent_to_the_parent
+    and_a_clinic_request_email_is_sent_to_the_parent
+    and_a_clinic_request_sms_is_sent_to_the_parent
 
     when_i_click_on_session_activity_and_notes
     then_an_activity_log_entry_is_visible_for_the_email("HPV")
@@ -32,8 +32,8 @@ describe "Parental consent" do
 
     when_i_click_send_consent_request
     then_i_see_the_confirmation_banner
-    and_an_email_is_sent_to_the_parent
-    and_a_text_is_sent_to_the_parent
+    and_a_clinic_request_email_is_sent_to_the_parent
+    and_a_clinic_request_sms_is_sent_to_the_parent
 
     when_i_click_on_session_activity_and_notes
     then_an_activity_log_entry_is_visible_for_the_email("MMRV")
@@ -50,8 +50,8 @@ describe "Parental consent" do
 
     when_i_click_send_consent_request
     then_i_see_the_confirmation_banner
-    and_the_mmrv_email_template_is_sent_to_the_parent
-    and_the_mmrv_sms_template_is_sent_to_the_parent
+    and_an_mmrv_school_request_email_is_sent_to_the_parent
+    and_an_mmrv_school_request_sms_is_sent_to_the_parent
 
     when_i_click_on_session_activity_and_notes
     then_an_activity_log_entry_is_visible_for_the_email_tagged_as(
@@ -70,8 +70,8 @@ describe "Parental consent" do
 
     when_i_click_send_consent_request
     then_i_see_the_confirmation_banner
-    and_the_mmrv_email_template_is_sent_to_the_parent(outbreak: true)
-    and_the_mmrv_sms_template_is_sent_to_the_parent(outbreak: true)
+    and_an_mmrv_school_request_email_is_sent_to_the_parent(outbreak: true)
+    and_an_mmrv_school_request_sms_is_sent_to_the_parent(outbreak: true)
 
     when_i_click_on_session_activity_and_notes
     then_an_activity_log_entry_is_visible_for_the_email_tagged_as(
@@ -91,8 +91,8 @@ describe "Parental consent" do
 
     when_i_click_send_consent_request
     then_i_see_the_confirmation_banner
-    and_the_mmr_email_template_is_sent_to_the_parent
-    and_the_mmr_sms_templates_is_sent_to_the_parent
+    and_an_mmr_school_request_email_is_sent_to_the_parent
+    and_an_mmr_school_request_sms_is_sent_to_the_parent
 
     when_i_click_on_session_activity_and_notes
     then_an_activity_log_entry_is_visible_for_the_email_tagged_as(
@@ -173,21 +173,21 @@ describe "Parental consent" do
     expect(page).to have_content("A request was sent on")
   end
 
-  def and_an_email_is_sent_to_the_parent
+  def and_a_clinic_request_email_is_sent_to_the_parent
     expect_email_to(@parent.email, :consent_clinic_request)
   end
 
-  def and_a_text_is_sent_to_the_parent
+  def and_a_clinic_request_sms_is_sent_to_the_parent
     expect_sms_to(@parent.phone, :consent_clinic_request)
   end
 
-  def and_the_mmrv_email_template_is_sent_to_the_parent(outbreak: false)
+  def and_an_mmrv_school_request_email_is_sent_to_the_parent(outbreak: false)
     template = "consent_school_request_mmrv"
     template += "_outbreak" if outbreak
     expect_email_to(@parent.email, template)
   end
 
-  def and_the_mmrv_sms_template_is_sent_to_the_parent(outbreak: false)
+  def and_an_mmrv_school_request_sms_is_sent_to_the_parent(outbreak: false)
     expect(sms_deliveries).to include(
       matching_notify_sms(
         phone_number: @parent.phone,
@@ -212,11 +212,11 @@ describe "Parental consent" do
     end
   end
 
-  def and_the_mmr_email_template_is_sent_to_the_parent
+  def and_an_mmr_school_request_email_is_sent_to_the_parent
     expect_email_to(@parent.email, :consent_school_request_mmr)
   end
 
-  def and_the_mmr_sms_templates_is_sent_to_the_parent
+  def and_an_mmr_school_request_sms_is_sent_to_the_parent
     expect_sms_to(@parent.phone, :consent_school_request_mmr)
     expect(sms_deliveries).to include(
       matching_notify_sms(
@@ -248,9 +248,8 @@ describe "Parental consent" do
   end
 
   def then_an_activity_log_entry_is_visible_for_the_email(programme_name)
-    expect(page).to have_content(
-      "Consent clinic request sent\n" \
-        "#{programme_name} USER, Test · 1 January 2024 at 12:00am\n#{@parent.email}"
+    then_an_activity_log_entry_is_visible_for_the_email_tagged_as(
+      programme_name
     )
   end
 
