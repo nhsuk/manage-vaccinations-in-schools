@@ -10,8 +10,6 @@ GOVUK_NOTIFY_EMAIL_TEMPLATES = {
     "ea03aada-0912-4373-91e1-80082071a7aa",
   consent_school_subsequent_reminder_flu:
     "c942ce27-590e-4387-9aa8-5b9b4f2796d1",
-  consent_school_subsequent_reminder_hpv:
-    "5f70d21d-00b6-41e6-bdc9-e64455972b43",
   consent_school_subsequent_reminder_mmr:
     "5462c441-81c0-4ac0-821f-713b4178f8ba",
   consent_school_subsequent_reminder_mmrv:
