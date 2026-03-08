@@ -21,7 +21,7 @@ describe "Triage" do
     then_i_see_the_triage_options
     and_needs_triage_emails_are_sent_to_both_parents
 
-    when_i_do_not_vaccinate
+    when_i_record_the_triage_decision_not_to_vaccinate
     and_vaccination_wont_happen_emails_are_sent_to_both_parents
 
     when_i_record_that_they_are_safe_to_vaccinate
@@ -29,6 +29,20 @@ describe "Triage" do
     and_i_see_the_safe_triage_decision
     and_i_see_the_triage_status_tag
     and_vaccination_will_happen_emails_are_sent_to_both_parents
+  end
+
+  scenario "nurse triages a partially vaccinated MMR patient as safe to vaccinate" do
+    given_an_mmr_programme_with_a_running_session
+    and_a_partially_vaccinated_patient_who_needs_triage_exists
+    and_i_am_signed_in
+
+    when_i_go_to_the_session_triage_tab
+    and_i_go_to_the_patient_that_needs_triage
+    and_i_record_that_they_need_triage
+    and_i_record_the_triage_decision_not_to_vaccinate
+    and_i_record_that_they_are_safe_to_vaccinate
+
+    then_the_mmr_second_dose_will_happen_email_is_sent
   end
 
   scenario "HCAs cannot triage" do
@@ -111,7 +125,7 @@ describe "Triage" do
     then_i_should_see_the_patient_tagged_psd_added
 
     when_i_click_on_the_update_triage_link
-    and_i_do_not_vaccinate
+    and_i_record_the_triage_decision_not_to_vaccinate
     then_i_should_see_the_patient_tagged_psd_not_added
   end
 
@@ -292,12 +306,19 @@ describe "Triage" do
     choose "No"
   end
 
-  def when_i_do_not_vaccinate
+  def when_i_record_the_triage_decision_not_to_vaccinate
     choose "No, do not vaccinate"
     click_button "Save triage"
   end
 
-  alias_method :and_i_do_not_vaccinate, :when_i_do_not_vaccinate
+  alias_method :and_i_record_the_triage_decision_not_to_vaccinate,
+               :when_i_record_the_triage_decision_not_to_vaccinate
+  alias_method :and_i_go_to_the_patient_that_needs_triage,
+               :when_i_go_to_the_patient_that_needs_triage
+  alias_method :and_i_record_that_they_need_triage,
+               :when_i_record_that_they_need_triage
+  alias_method :and_i_record_that_they_are_safe_to_vaccinate,
+               :when_i_record_that_they_are_safe_to_vaccinate
 
   def when_i_save_the_triage_without_choosing_an_option
     click_button "Save triage"
@@ -435,5 +456,26 @@ describe "Triage" do
 
   def when_i_click_on_the_update_triage_link
     click_link "Update triage outcome"
+  end
+
+  def given_an_mmr_programme_with_a_running_session
+    programmes = [Programme.mmr]
+    @team = create(:team, :with_one_nurse, programmes:)
+    @batch =
+      create(:batch, team: @team, vaccine: programmes.first.vaccines.first)
+    @session = create(:session, team: @team, programmes:)
+  end
+
+  def and_a_partially_vaccinated_patient_who_needs_triage_exists
+    @patient_triage_needed =
+      create(:patient, :partially_vaccinated_triage_needed, session: @session)
+  end
+
+  def then_the_mmr_second_dose_will_happen_email_is_sent
+    @patient_triage_needed.parents.each do |parent|
+      expect_email_to parent.email,
+                      :triage_vaccination_will_happen_mmr_second_dose,
+                      :any
+    end
   end
 end
