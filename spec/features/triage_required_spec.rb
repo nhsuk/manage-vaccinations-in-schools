@@ -31,6 +31,20 @@ describe "Triage" do
     and_vaccination_will_happen_emails_are_sent_to_both_parents
   end
 
+  scenario "nurse triages a partially vaccinated MMR patient as safe to vaccinate" do
+    given_an_mmr_programme_with_a_running_session
+    and_a_partially_vaccinated_patient_who_needs_triage_exists
+    and_i_am_signed_in
+
+    when_i_go_to_the_session_triage_tab
+    when_i_go_to_the_patient_that_needs_triage
+    when_i_record_that_they_need_triage
+    when_i_do_not_vaccinate
+    when_i_record_that_they_are_safe_to_vaccinate
+
+    then_the_mmr_second_dose_will_happen_email_is_sent
+  end
+
   scenario "HCAs cannot triage" do
     given_a_flu_programme_with_a_running_session
     and_a_patient_who_needs_triage_exists
@@ -435,5 +449,25 @@ describe "Triage" do
 
   def when_i_click_on_the_update_triage_link
     click_link "Update triage outcome"
+  end
+
+  def given_an_mmr_programme_with_a_running_session
+    programmes = [Programme.mmr]
+    @team = create(:team, :with_one_nurse, programmes:)
+    @batch = create(:batch, team: @team, vaccine: programmes.first.vaccines.first)
+    @session = create(:session, team: @team, programmes:)
+  end
+
+  def and_a_partially_vaccinated_patient_who_needs_triage_exists
+    @patient_triage_needed =
+      create(:patient, :partially_vaccinated_triage_needed, session: @session)
+  end
+
+  def then_the_mmr_second_dose_will_happen_email_is_sent
+    @patient_triage_needed.parents.each do |parent|
+      expect_email_to parent.email,
+                      :triage_vaccination_will_happen_mmr_second_dose,
+                      :any
+    end
   end
 end
