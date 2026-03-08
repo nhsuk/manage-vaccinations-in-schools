@@ -3,8 +3,48 @@
 describe "Scheduled consent requests and reminders" do
   around { |example| travel_to(Time.zone.local(2024, 2, 18)) { example.run } }
 
+  let(:request_templates) do
+    %i[
+      consent_school_request_hpv
+      consent_school_request_flu
+      consent_school_request_mmr
+      consent_school_request_doubles
+    ]
+  end
+
+  let(:initial_reminder_templates) do
+    %i[
+      consent_school_initial_reminder_hpv
+      consent_school_initial_reminder_flu
+      consent_school_initial_reminder_mmr
+      consent_school_initial_reminder_doubles
+    ]
+  end
+
+  let(:subsequent_reminder_templates) do
+    %i[
+      consent_school_subsequent_reminder_hpv
+      consent_school_subsequent_reminder_flu
+      consent_school_subsequent_reminder_mmr
+      consent_school_subsequent_reminder_doubles
+    ]
+  end
+
+  let(:parent_emails) do
+    %w[
+      parent1.child1@example.com
+      parent2.child1@example.com
+      parent1.child2@example.com
+      parent2.child2@example.com
+    ]
+  end
+
+  let(:parent_phones) do
+    ["07700 900000", "07700 900001", "07700 900002", "07700 900003"]
+  end
+
   scenario "Consent requests and reminders are sent automatically" do
-    given_my_team_is_running_an_hpv_vaccination_programme
+    given_my_team_is_running_all_vaccination_programmes
     and_one_unscheduled_session_exists_with_two_children_and_two_parents_each
     and_i_am_signed_in
 
@@ -17,17 +57,23 @@ describe "Scheduled consent requests and reminders" do
     then_no_consent_requests_have_been_sent
 
     when_1_more_day_passes
-    then_all_four_parents_received_consent_requests
+    then_all_four_parents_received_all_programme_consent_requests
 
     when_14_more_days_pass
-    then_initial_reminders_are_sent_to_all_four_parents
+    then_all_four_parents_received_all_programme_initial_reminders
 
     when_7_more_days_pass
-    then_subsequent_reminders_are_sent_to_all_four_parents
+    then_all_four_parents_received_all_programme_subsequent_reminders
   end
 
-  def given_my_team_is_running_an_hpv_vaccination_programme
-    programmes = [Programme.hpv]
+  def given_my_team_is_running_all_vaccination_programmes
+    programmes = [
+      Programme.hpv,
+      Programme.flu,
+      Programme.mmr,
+      Programme.menacwy,
+      Programme.td_ipv
+    ]
     @team = create(:team, :with_one_nurse, :with_generic_clinic, programmes:)
     @location = create(:school, :secondary, team: @team)
     @session =
@@ -42,6 +88,8 @@ describe "Scheduled consent requests and reminders" do
   end
 
   def and_one_unscheduled_session_exists_with_two_children_and_two_parents_each
+    # Year 9 is in the intersection of all programme year groups (HPV 8-11,
+    # flu 0-11, MMR 0-11, MenACWY 9-11, Td/IPV 9-11).
     2.times do |i|
       parents = [
         create(
@@ -59,7 +107,7 @@ describe "Scheduled consent requests and reminders" do
       ]
       create(
         :patient,
-        year_group: 8,
+        year_group: 9,
         session: @session,
         given_name: "Child#{i + 1}",
         family_name: "Test",
@@ -102,6 +150,7 @@ describe "Scheduled consent requests and reminders" do
     fill_in "Year", with: session_date.year
 
     click_button "Continue"
+    click_on "Keep session dates" if has_button?("Keep session dates")
     click_button "Save changes"
   end
 
@@ -122,38 +171,6 @@ describe "Scheduled consent requests and reminders" do
     expect(sms_deliveries).to be_empty
   end
 
-  def then_all_four_parents_received_consent_requests
-    EnqueueSchoolConsentRequestsJob.perform_now
-    perform_enqueued_jobs
-    Sidekiq::Job.drain_all
-
-    expect_email_to(
-      "parent1.child1@example.com",
-      :consent_school_request_hpv,
-      :any
-    )
-    expect_email_to(
-      "parent2.child1@example.com",
-      :consent_school_request_hpv,
-      :any
-    )
-    expect_email_to(
-      "parent1.child2@example.com",
-      :consent_school_request_hpv,
-      :any
-    )
-    expect_email_to(
-      "parent2.child2@example.com",
-      :consent_school_request_hpv,
-      :any
-    )
-
-    expect_sms_to("07700 900000", :consent_school_request, :any)
-    expect_sms_to("07700 900001", :consent_school_request, :any)
-    expect_sms_to("07700 900002", :consent_school_request, :any)
-    expect_sms_to("07700 900003", :consent_school_request, :any)
-  end
-
   def when_14_more_days_pass
     travel 14.days
     # Add a follow-up session date 2 weeks from now so the subsequent reminder
@@ -162,55 +179,67 @@ describe "Scheduled consent requests and reminders" do
     # send_consent_reminders scope requires it to be set.
     @session.reload.update!(
       dates: @session.dates + [Date.current + 2.weeks],
-      days_before_consent_reminders: @session.days_before_consent_reminders || @session.team.days_before_consent_reminders
+      days_before_consent_reminders:
+        @session.days_before_consent_reminders ||
+          @session.team.days_before_consent_reminders
     )
-  end
-
-  def then_initial_reminders_are_sent_to_all_four_parents
-    EnqueueSchoolConsentRemindersJob.perform_now
-    perform_enqueued_jobs
-    Sidekiq::Job.drain_all
-
-    expect(email_deliveries).to include(
-      matching_notify_email(
-        to: "parent1.child1@example.com",
-        template: :consent_school_initial_reminder_hpv
-      ).with_content_including(
-        "We wrote to you recently",
-        "## What the vaccine is for",
-        "Respond to the consent request now",
-        "## Contact us"
-      )
-    )
-
-    expect_email_to("parent2.child1@example.com", :consent_school_initial_reminder_hpv, :any)
-    expect_email_to("parent1.child2@example.com", :consent_school_initial_reminder_hpv, :any)
-    expect_email_to("parent2.child2@example.com", :consent_school_initial_reminder_hpv, :any)
   end
 
   def when_7_more_days_pass
     travel 7.days
   end
 
-  def then_subsequent_reminders_are_sent_to_all_four_parents
+  def then_all_four_parents_received_all_programme_consent_requests
+    EnqueueSchoolConsentRequestsJob.perform_now
+    perform_enqueued_jobs
+    Sidekiq::Job.drain_all
+
+    parent_emails.each do |email|
+      request_templates.each do |template|
+        expect(email_deliveries).to include(
+          matching_notify_email(to: email, template:)
+        )
+      end
+    end
+
+    parent_phones.each do |phone|
+      expect_sms_to(phone, :consent_school_request, :any)
+    end
+  end
+
+  def then_all_four_parents_received_all_programme_initial_reminders
     EnqueueSchoolConsentRemindersJob.perform_now
     perform_enqueued_jobs
     Sidekiq::Job.drain_all
 
-    expect(email_deliveries).to include(
-      matching_notify_email(
-        to: "parent1.child1@example.com",
-        template: :consent_school_subsequent_reminder_hpv
-      ).with_content_including(
-        "If you want your child to be vaccinated, you need to give your consent.",
-        "## What the vaccine is for",
-        "Respond to the consent request now",
-        "## Contact us"
-      )
-    )
+    parent_emails.each do |email|
+      initial_reminder_templates.each do |template|
+        expect(email_deliveries).to include(
+          matching_notify_email(to: email, template:)
+        )
+      end
+    end
 
-    expect_email_to("parent2.child1@example.com", :consent_school_subsequent_reminder_hpv, :any)
-    expect_email_to("parent1.child2@example.com", :consent_school_subsequent_reminder_hpv, :any)
-    expect_email_to("parent2.child2@example.com", :consent_school_subsequent_reminder_hpv, :any)
+    parent_phones.each do |phone|
+      expect_sms_to(phone, :consent_school_reminder, :any)
+    end
+  end
+
+  def then_all_four_parents_received_all_programme_subsequent_reminders
+    EnqueueSchoolConsentRemindersJob.perform_now
+    perform_enqueued_jobs
+    Sidekiq::Job.drain_all
+
+    parent_emails.each do |email|
+      subsequent_reminder_templates.each do |template|
+        expect(email_deliveries).to include(
+          matching_notify_email(to: email, template:)
+        )
+      end
+    end
+
+    parent_phones.each do |phone|
+      expect_sms_to(phone, :consent_school_reminder, :any)
+    end
   end
 end
