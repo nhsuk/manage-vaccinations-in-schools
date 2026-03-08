@@ -99,7 +99,6 @@ describe "Parental consent" do
     and_an_activity_log_entry_is_visible_for_the_text("MenACWY Td/IPV")
   end
 
-
   scenario "Send clinic request where patient is eligible for MMRV" do
     given_a_programme_exists(:mmr)
     and_a_patient_without_consent_exists
@@ -333,20 +332,35 @@ describe "Parental consent" do
   end
 
   def and_an_mmrv_school_request_email_is_sent_to_the_parent(outbreak: false)
-    if outbreak
-      expect_email_to(@parent.email, :consent_school_request_mmrv_outbreak)
-    else
-      expect(email_deliveries).to include(
-        matching_notify_email(
-          to: @parent.email,
-          template: :consent_school_request_mmrv
-        ).with_content_including(
+    template =
+      (
+        if outbreak
+          :consent_school_request_mmrv_outbreak
+        else
+          :consent_school_request_mmrv
+        end
+      )
+    content =
+      if outbreak
+        [
+          "The number of measles cases in your area is high right now.",
+          "## We're offering catch-up vaccinations",
+          "Respond to the consent request now",
+          "## Contact us"
+        ]
+      else
+        [
           "## About the MMRV vaccine",
           "Respond to the consent request now",
           "## Contact us"
-        )
-      )
-    end
+        ]
+      end
+    expect(email_deliveries).to include(
+      matching_notify_email(
+        to: @parent.email,
+        template:
+      ).with_content_including(*content)
+    )
   end
 
   def and_an_mmrv_school_request_sms_is_sent_to_the_parent(outbreak: false)
@@ -357,7 +371,14 @@ describe "Parental consent" do
   end
 
   def and_an_mmr_school_request_email_is_sent_to_the_parent(outbreak: false)
-    template = outbreak ? :consent_school_request_mmr_outbreak : :consent_school_request_mmr
+    template =
+      (
+        if outbreak
+          :consent_school_request_mmr_outbreak
+        else
+          :consent_school_request_mmr
+        end
+      )
     content =
       if outbreak
         [
@@ -370,7 +391,10 @@ describe "Parental consent" do
         ["Respond to the consent request now", "## Contact us"]
       end
     expect(email_deliveries).to include(
-      matching_notify_email(to: @parent.email, template:).with_content_including(*content)
+      matching_notify_email(
+        to: @parent.email,
+        template:
+      ).with_content_including(*content)
     )
   end
 
