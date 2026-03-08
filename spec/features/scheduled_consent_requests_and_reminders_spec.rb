@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-describe "Scheduled consent requests" do
+describe "Scheduled consent requests and reminders" do
   around { |example| travel_to(Time.zone.local(2024, 2, 18)) { example.run } }
 
-  scenario "Consent requests are sent automatically 3 weeks before session, by default" do
+  scenario "Consent requests and reminders are sent automatically" do
     given_my_team_is_running_an_hpv_vaccination_programme
     and_one_unscheduled_session_exists_with_two_children_and_two_parents_each
     and_i_am_signed_in
@@ -18,6 +18,12 @@ describe "Scheduled consent requests" do
 
     when_1_more_day_passes
     then_all_four_parents_received_consent_requests
+
+    when_14_more_days_pass
+    then_initial_reminders_are_sent_to_all_four_parents
+
+    when_7_more_days_pass
+    then_subsequent_reminders_are_sent_to_all_four_parents
   end
 
   def given_my_team_is_running_an_hpv_vaccination_programme
@@ -146,5 +152,65 @@ describe "Scheduled consent requests" do
     expect_sms_to("07700 900001", :consent_school_request, :any)
     expect_sms_to("07700 900002", :consent_school_request, :any)
     expect_sms_to("07700 900003", :consent_school_request, :any)
+  end
+
+  def when_14_more_days_pass
+    travel 14.days
+    # Add a follow-up session date 2 weeks from now so the subsequent reminder
+    # will be due 7 days later (when_7_more_days_pass).
+    # days_before_consent_reminders is nil for sessions created unscheduled; the
+    # send_consent_reminders scope requires it to be set.
+    @session.reload.update!(
+      dates: @session.dates + [Date.current + 2.weeks],
+      days_before_consent_reminders: @session.days_before_consent_reminders || @session.team.days_before_consent_reminders
+    )
+  end
+
+  def then_initial_reminders_are_sent_to_all_four_parents
+    EnqueueSchoolConsentRemindersJob.perform_now
+    perform_enqueued_jobs
+    Sidekiq::Job.drain_all
+
+    expect(email_deliveries).to include(
+      matching_notify_email(
+        to: "parent1.child1@example.com",
+        template: :consent_school_initial_reminder_hpv
+      ).with_content_including(
+        "We wrote to you recently",
+        "## What the vaccine is for",
+        "Respond to the consent request now",
+        "## Contact us"
+      )
+    )
+
+    expect_email_to("parent2.child1@example.com", :consent_school_initial_reminder_hpv, :any)
+    expect_email_to("parent1.child2@example.com", :consent_school_initial_reminder_hpv, :any)
+    expect_email_to("parent2.child2@example.com", :consent_school_initial_reminder_hpv, :any)
+  end
+
+  def when_7_more_days_pass
+    travel 7.days
+  end
+
+  def then_subsequent_reminders_are_sent_to_all_four_parents
+    EnqueueSchoolConsentRemindersJob.perform_now
+    perform_enqueued_jobs
+    Sidekiq::Job.drain_all
+
+    expect(email_deliveries).to include(
+      matching_notify_email(
+        to: "parent1.child1@example.com",
+        template: :consent_school_subsequent_reminder_hpv
+      ).with_content_including(
+        "If you want your child to be vaccinated, you need to give your consent.",
+        "## What the vaccine is for",
+        "Respond to the consent request now",
+        "## Contact us"
+      )
+    )
+
+    expect_email_to("parent2.child1@example.com", :consent_school_subsequent_reminder_hpv, :any)
+    expect_email_to("parent1.child2@example.com", :consent_school_subsequent_reminder_hpv, :any)
+    expect_email_to("parent2.child2@example.com", :consent_school_subsequent_reminder_hpv, :any)
   end
 end
