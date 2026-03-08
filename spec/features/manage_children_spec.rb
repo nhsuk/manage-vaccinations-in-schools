@@ -134,7 +134,6 @@ describe "Manage children" do
 
       when_i_click_on_invite_to_clinic
       then_i_see_a_success_banner
-      and_i_click_on_a_programme
       and_i_see_a_community_clinic_session
       and_i_dont_see_an_invite_to_clinic_session
     end
@@ -253,12 +252,14 @@ describe "Manage children" do
     @new_session =
       create(:session, location: @new_school, team: @team, programmes: [@hpv])
 
+    parent = create(:parent)
     @patient =
       create(
         :patient,
         session: @session,
         given_name: "John",
         family_name: "Smith",
+        parents: [parent],
         school:
       )
     create(:vaccination_record, patient: @patient)
@@ -518,7 +519,7 @@ describe "Manage children" do
   def then_i_see_the_new_parent_is_created
     expect(page).to have_content("Edit child record")
     expect(page).to have_content("Lucille Bluth (Mum)")
-    expect(@patient.parents.count).to eq(1)
+    expect(@patient.parents.count).to eq(2)
   end
 
   def and_the_patient_is_no_longer_invalidated

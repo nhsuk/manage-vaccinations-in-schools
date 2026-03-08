@@ -23,9 +23,9 @@
         @patient, current_team:, programme_type: @programme.type,
       ) %>
 
-  <% unless @in_generic_clinic %>
+  <% unless @invited_to_clinic %>
     <%= govuk_button_to "Invite to community clinic",
-                        invite_to_clinic_patient_path(@patient),
+                        patient_programme_invite_to_clinic_path(@patient, @programme),
                         secondary: true %>
   <% end %>
 <% end %>
