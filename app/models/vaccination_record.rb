@@ -201,9 +201,6 @@ class VaccinationRecord < ApplicationRecord
             if: -> { administered? && !sourced_from_nhs_immunisations_api? }
 
   validates :protocol,
-            :vaccine_id,
-            :batch_number,
-            :batch_expiry,
             presence: true,
             if: -> { administered? && sourced_from_service? }
 
