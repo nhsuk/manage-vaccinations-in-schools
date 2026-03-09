@@ -7,6 +7,8 @@ class ImmunisationImportsController < ApplicationController
 
   skip_after_action :verify_policy_scoped, only: %i[new create]
 
+  helper_method :error_rows_limit
+
   def new
     @immunisation_import = authorize ImmunisationImport.new(team: current_team)
   end
@@ -33,7 +35,7 @@ class ImmunisationImportsController < ApplicationController
 
   def show
     if @immunisation_import.rows_are_invalid?
-      @immunisation_import.load_serialized_errors!
+      @immunisation_import.load_serialized_errors!(limit: error_rows_limit)
     end
 
     vaccination_records =
@@ -74,4 +76,6 @@ class ImmunisationImportsController < ApplicationController
   def immunisation_import_params
     params.fetch(:immunisation_import, {}).permit(:csv)
   end
+
+  def error_rows_limit = 100
 end
