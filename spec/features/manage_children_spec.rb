@@ -116,7 +116,7 @@ describe "Manage children" do
     when_i_click_on_invite_to_clinic
     then_i_see_a_success_banner
     and_i_see_a_community_clinic_session
-    and_i_dont_see_an_invite_to_clinic_session
+    and_i_dont_see_an_invite_to_clinic_button
   end
 
   context "with new child record design" do
@@ -135,7 +135,7 @@ describe "Manage children" do
       when_i_click_on_invite_to_clinic
       then_i_see_a_success_banner
       and_i_see_a_community_clinic_session
-      and_i_dont_see_an_invite_to_clinic_session
+      and_i_dont_see_an_invite_to_clinic_button
     end
   end
 
@@ -588,7 +588,7 @@ describe "Manage children" do
     expect(page).to have_content("Community clinic")
   end
 
-  def and_i_dont_see_an_invite_to_clinic_session
+  def and_i_dont_see_an_invite_to_clinic_button
     expect(page).not_to have_button("Invite to community clinic")
   end
 
