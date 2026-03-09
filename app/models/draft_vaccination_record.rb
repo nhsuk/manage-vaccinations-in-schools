@@ -398,7 +398,7 @@ class DraftVaccinationRecord
 
   def dose_sequence_can_be_modified?
     !reported_as_already_vaccinated? &&
-      (national_reporting_user_and_record? || programme&.td_ipv?)
+      (national_reporting_user_and_record? || programme&.doubles?)
   end
 
   private
