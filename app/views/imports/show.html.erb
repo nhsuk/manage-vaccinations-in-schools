@@ -17,6 +17,13 @@
 
 <% if import.rows_are_invalid? || import.changesets_are_invalid? %>
   <%= render AppImportErrorsComponent.new(errors: import.errors) do %>
+    <% if import.serialized_errors.count > error_rows_limit %>
+      <p class="nhsuk-u-reading-width">
+        Only the first <%= error_rows_limit %> rows with issues are listed here.
+        There are <%= import.serialized_errors.count %> rows with issues in total.
+      </p>
+    <% end %>
+
     <p class="nhsuk-u-reading-width">
       Correct the issues listed, save the changes and upload the file again.
 
