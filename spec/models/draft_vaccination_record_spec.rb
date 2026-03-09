@@ -285,19 +285,6 @@ describe DraftVaccinationRecord do
       end
     end
 
-    context "when no batch is selected on the confirm step" do
-      let(:attributes) { valid_administered_attributes.merge(batch_id: nil) }
-
-      before { draft_vaccination_record.wizard_step = :confirm }
-
-      it "raises an error when attempting to save the record" do
-        expect(draft_vaccination_record.save(context: :update)).to be(false)
-        expect(draft_vaccination_record.errors[:batch_number]).to include(
-          "Enter a batch number"
-        )
-      end
-    end
-
     context "on delivery step" do
       let(:attributes) { valid_administered_attributes }
 

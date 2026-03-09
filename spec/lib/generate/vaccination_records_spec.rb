@@ -5,7 +5,6 @@ describe Generate::VaccinationRecords do
   let(:team) { create(:team, programmes: [programme]) }
   let(:session) { create(:session, team:, programmes: [programme]) }
   let(:user) { create(:user, team:) }
-  let(:vaccine) { programme.vaccines.active.first }
   let(:patient) do
     create(
       :patient,
@@ -14,8 +13,6 @@ describe Generate::VaccinationRecords do
       session:
     )
   end
-
-  before { create(:batch, :not_expired, team:, vaccine:) }
 
   describe "vaccinations administered" do
     subject(:vaccinations_given) { VaccinationRecord.administered }
