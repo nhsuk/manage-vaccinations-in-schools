@@ -243,7 +243,7 @@ class GovukNotifyPersonalisation
   def invitation_to_clinic_custom_mmr_message
     return "" unless mmr_second_dose_required
 
-    case session&.organisation&.ods_code
+    case team&.organisation&.ods_code
     when "RT5" # Leicestershire Partnership Trust (LPT)
       [
         mmr_second_dose_waiting_period_message,
