@@ -61,7 +61,7 @@ describe "Download vaccination reports (single page)" do
 
   def and_an_administered_vaccination_record_exists
     vaccine = @programme.vaccines.first
-    batch = create(:batch, team: @team, vaccine:)
+    batch = create(:batch, :not_expired, team: @team, vaccine:)
 
     create(
       :vaccination_record,

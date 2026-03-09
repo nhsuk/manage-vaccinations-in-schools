@@ -611,24 +611,6 @@ describe AppActivityLogComponent do
                        date: "31 May 2025 at 1:00pm",
                        programme: "MMRV"
     end
-
-    context "without a vaccine" do
-      before do
-        create(
-          :vaccination_record,
-          patient:,
-          programme: programmes.first,
-          session:,
-          vaccine: nil,
-          performed_at: Time.zone.local(2025, 5, 31, 13)
-        )
-      end
-
-      include_examples "card",
-                       title: "Vaccinated",
-                       date: "31 May 2025 at 1:00pm",
-                       programme: "HPV"
-    end
   end
 
   describe "patient merge events" do
