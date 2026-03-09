@@ -23,13 +23,21 @@ jobs:
     with:
       environment: ${{ matrix.environment }}
       server_types: all
+  end-to-end-tests:
+    needs: [deploy]
+    if: ${{ contains(needs.deploy.result, 'success') && github.ref_name == 'next' }}
+    uses: ./.github/workflows/call-end-to-end-tests.yml
+    with:
+      cross_service_tests: true
+      endpoint: https://qa.mavistesting.com
+      github_ref: main
   slack-notification:
-    needs: [deploy, test]
+    needs: [deploy, test, end-to-end-tests]
     runs-on: ubuntu-latest
     permissions: {}
     if: ${{ !cancelled() }}
     steps:
-      - name: Send Slack notification
+      - name: Send Slack notification about failed deployment
         if: needs.test.result == 'failure' || needs.deploy.result == 'failure'
         uses: slackapi/slack-github-action@91efab103c0de0a537f72a35f6b8cda0ee76bf0a
         with:
@@ -43,5 +51,21 @@ jobs:
                 text:
                   type: "mrkdwn"
                   text: ":rotating_light: *Continuous Deployment failed* :rotating_light:\n\n \
+                          <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View workflow run>"
+          # yamllint enable rule:line-length
+      - name: Send Slack notification about failed E2E tests
+        if: needs.end-to-end-tests.result == 'failure'
+        uses: slackapi/slack-github-action@91efab103c0de0a537f72a35f6b8cda0ee76bf0a
+        with:
+          webhook: ${{ secrets.SLACK_MAVIS_ALERTS_WEBHOOK_URL }}
+          webhook-type: incoming-webhook
+          # yamllint disable rule:line-length
+          payload: |
+            text: ":rotating_light: E2E tests failed on next :rotating_light:"
+            blocks:
+              - type: "section"
+                text:
+                  type: "mrkdwn"
+                  text: ":rotating_light: *E2E tests failed on next* :rotating_light:\n\n \
                           <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View workflow run>"
           # yamllint enable rule:line-length
