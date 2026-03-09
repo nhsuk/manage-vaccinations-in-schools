@@ -163,7 +163,7 @@ class DraftVaccinationRecord
     validates :dose_sequence,
               presence: true,
               inclusion: {
-                in: ->(record) { 1..record.programme.maximum_dose_sequence }
+                in: :allowed_dose_sequences
               }
   end
 
@@ -399,6 +399,18 @@ class DraftVaccinationRecord
   def dose_sequence_can_be_modified?
     !reported_as_already_vaccinated? &&
       (national_reporting_user_and_record? || programme&.doubles?)
+  end
+
+  def allowed_dose_sequences
+    # New MenACWY records created in mavis have a dose sequence
+    # Old records may not, but can be edited to have a dose sequence of 1
+    max =
+      if sourced_from_service? && programme&.menacwy?
+        1
+      else
+        programme.maximum_dose_sequence
+      end
+    1..max
   end
 
   private

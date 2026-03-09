@@ -10,7 +10,7 @@
   <%= f.govuk_radio_buttons_fieldset :dose_sequence,
                                      caption: { text: @patient.full_name, size: "l" },
                                      legend: { size: "l", tag: "h1", text: "Dose number" } do %>
-    <% (1..@draft_vaccination_record.programme.maximum_dose_sequence).each do |dose_sequence| %>
+    <% @draft_vaccination_record.allowed_dose_sequences.each do |dose_sequence| %>
       <%= f.govuk_radio_button :dose_sequence, dose_sequence, label: { text: dose_sequence.ordinalize } %>
     <% end %>
   <% end %>
