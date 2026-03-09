@@ -13,6 +13,7 @@
           <% row.with_cell(text: "Age") %>
           <% row.with_cell(text: "Programme") %>
           <% row.with_cell(text: "Source") %>
+          <% row.with_cell(text: "Outcome") %>
         <% end %>
       <% end %>
 
@@ -38,6 +39,11 @@
             <% row.with_cell do %>
               <span class="nhsuk-table-responsive__heading">Source</span>
               <%= vaccination_record_source(vaccination_record) %>
+            <% end %>
+
+            <% row.with_cell do %>
+              <span class="nhsuk-table-responsive__heading">Outcome</span>
+              <%= helpers.vaccination_record_status_tag(vaccination_record) %>
             <% end %>
           <% end %>
         <% end %>
