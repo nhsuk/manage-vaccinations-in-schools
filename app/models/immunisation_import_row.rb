@@ -504,24 +504,23 @@ class ImmunisationImportRow
       return
     end
 
-    if candidates.present?
-      # Match against the in-memory list of patients so far in this upload, before matching against the database
-      candidate_matches =
-        PatientMatcher.from_enumerable(
-          candidates,
-          nhs_number: patient_nhs_number_value,
-          given_name: patient_first_name.to_s,
-          family_name: patient_last_name.to_s,
-          date_of_birth: patient_date_of_birth.to_date,
-          address_postcode: patient_postcode&.to_postcode,
-          include_3_out_of_4_matches: false
-        )
+    database_matches =
+      PatientMatcher.from_relation(
+        Patient,
+        nhs_number: patient_nhs_number_value,
+        given_name: patient_first_name.to_s,
+        family_name: patient_last_name.to_s,
+        date_of_birth: patient_date_of_birth.to_date,
+        address_postcode: patient_postcode&.to_postcode,
+        include_3_out_of_4_matches: false
+      )
 
-      return candidate_matches if candidate_matches.present?
-    end
+    return database_matches if database_matches.present?
 
-    PatientMatcher.from_relation(
-      Patient,
+    return if candidates.blank?
+
+    PatientMatcher.from_enumerable(
+      candidates,
       nhs_number: patient_nhs_number_value,
       given_name: patient_first_name.to_s,
       family_name: patient_last_name.to_s,
