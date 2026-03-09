@@ -764,8 +764,8 @@
 )
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">send_notification?</span>(<span class="ruby-value">team:</span>)
 
-  <span class="ruby-identifier">programme_types</span> =
-    <span class="ruby-identifier">programme_types_to_send_clinic_invitation_for</span>(
+  <span class="ruby-identifier">programmes_to_send_for</span> =
+    <span class="ruby-identifier">programmes_to_send_clinic_invitation_for</span>(
       <span class="ruby-identifier">programmes</span>,
       <span class="ruby-value">team:</span>,
       <span class="ruby-value">academic_year:</span>,
@@ -773,9 +773,20 @@
       <span class="ruby-value">include_already_invited_programmes:</span>
     )
 
-  <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">programme_types</span>.<span class="ruby-identifier">empty?</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">programmes_to_send_for</span>.<span class="ruby-identifier">empty?</span>
 
-  <span class="ruby-identifier">type</span> = <span class="ruby-identifier">clinic_invitation_type</span>(<span class="ruby-identifier">programme_types</span>, <span class="ruby-value">team:</span>, <span class="ruby-value">academic_year:</span>)
+  <span class="ruby-identifier">type</span> =
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">invited_to_clinic?</span>(
+         <span class="ruby-identifier">programmes_to_send_for</span>,
+         <span class="ruby-value">team:</span>,
+         <span class="ruby-value">academic_year:</span>
+       )
+      <span class="ruby-value">:subsequent_invitation</span>
+    <span class="ruby-keyword">else</span>
+      <span class="ruby-value">:initial_invitation</span>
+    <span class="ruby-keyword">end</span>
+
+  <span class="ruby-identifier">programme_types</span> = <span class="ruby-identifier">programmes_to_send_for</span>.<span class="ruby-identifier">map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:type</span>)
 
   <span class="ruby-constant">ClinicNotification</span>.<span class="ruby-identifier">create!</span>(
     <span class="ruby-value">patient:</span>,
