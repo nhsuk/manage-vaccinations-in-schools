@@ -599,6 +599,8 @@
       </summary>
       <ul class="nav-list" role="directory">
 
+        <li ><a href="#method-i-can_send_clinic_invitation-3F">can_send_clinic_invitation?</a></li>
+
         <li ><a href="#method-i-send_clinic_invitation">send_clinic_invitation</a></li>
 
         <li ><a href="#method-i-send_consent_reminder">send_consent_reminder</a></li>
@@ -734,6 +736,65 @@
        </header>
 
 
+      <div id="method-i-can_send_clinic_invitation-3F" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-can_send_clinic_invitation-3F" title="Link to this method">
+                <span class="method-name">can_send_clinic_invitation?</span>
+                <span class="method-args">( programmes, team:, academic_year:, include_vaccinated_programmes: false, include_already_invited_programmes: true )</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="can_send_clinic_invitation-3F-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/notifier/patient.rb, line 43</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">can_send_clinic_invitation?</span>(
+  <span class="ruby-identifier">programmes</span>,
+  <span class="ruby-value">team:</span>,
+  <span class="ruby-value">academic_year:</span>,
+  <span class="ruby-value">include_vaccinated_programmes:</span> <span class="ruby-keyword">false</span>,
+  <span class="ruby-value">include_already_invited_programmes:</span> <span class="ruby-keyword">true</span>
+)
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">send_notification?</span>(<span class="ruby-value">team:</span>)
+
+  <span class="ruby-identifier">programmes_to_send_for</span> =
+    <span class="ruby-identifier">programmes_to_send_clinic_invitation_for</span>(
+      <span class="ruby-identifier">programmes</span>,
+      <span class="ruby-value">team:</span>,
+      <span class="ruby-value">academic_year:</span>,
+      <span class="ruby-value">include_vaccinated_programmes:</span>,
+      <span class="ruby-value">include_already_invited_programmes:</span>
+    )
+
+  <span class="ruby-identifier">programmes_to_send_for</span>.<span class="ruby-identifier">present?</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          <p>Normally this would be <code>true</code>, but it can be <code>false</code> in some scenarios, for example, if the patient has no parent contact details or has already been invited to the clinic.</p>
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
       <div id="method-i-send_clinic_invitation" class="method-detail anchor-link ">
         <div class="method-header">
 
@@ -753,7 +814,7 @@
             </details>
           </div>
           <div class="method-source-code" id="send_clinic_invitation-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/notifier/patient.rb, line 49</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/notifier/patient.rb, line 77</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">send_clinic_invitation</span>(
   <span class="ruby-identifier">programmes</span>,
   <span class="ruby-value">team:</span>,

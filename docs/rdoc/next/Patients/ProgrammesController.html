@@ -660,17 +660,15 @@
             </details>
           </div>
           <div class="method-source-code" id="invite_to_clinic-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/controllers/patients/programmes_controller.rb, line 15</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/controllers/patients/programmes_controller.rb, line 16</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">invite_to_clinic</span>
   <span class="ruby-identifier">authorize</span> <span class="ruby-ivar">@patient</span>
-
-  <span class="ruby-identifier">academic_year</span> = <span class="ruby-constant">AcademicYear</span>.<span class="ruby-identifier">pending</span>
 
   <span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span>.<span class="ruby-identifier">transaction</span> <span class="ruby-keyword">do</span>
     <span class="ruby-constant">PatientLocation</span>.<span class="ruby-identifier">find_or_create_by!</span>(
       <span class="ruby-value">patient:</span> <span class="ruby-ivar">@patient</span>,
       <span class="ruby-value">location:</span> <span class="ruby-identifier">current_team</span>.<span class="ruby-identifier">generic_clinic</span>,
-      <span class="ruby-value">academic_year:</span>
+      <span class="ruby-value">academic_year:</span> <span class="ruby-ivar">@academic_year</span>
     )
 
     <span class="ruby-constant">PatientTeamUpdater</span>.<span class="ruby-identifier">call</span>(<span class="ruby-value">patient:</span> <span class="ruby-ivar">@patient</span>.<span class="ruby-identifier">id</span>, <span class="ruby-value">team:</span> <span class="ruby-identifier">current_team</span>)
@@ -679,7 +677,7 @@
   <span class="ruby-ivar">@patient</span>.<span class="ruby-identifier">notifier</span>.<span class="ruby-identifier">send_clinic_invitation</span>(
     [<span class="ruby-ivar">@programme</span>],
     <span class="ruby-value">team:</span> <span class="ruby-identifier">current_team</span>,
-    <span class="ruby-value">academic_year:</span>,
+    <span class="ruby-value">academic_year:</span> <span class="ruby-ivar">@academic_year</span>,
     <span class="ruby-value">sent_by:</span> <span class="ruby-identifier">current_user</span>
   )
 
@@ -726,7 +724,7 @@
             </details>
           </div>
           <div class="method-source-code" id="show-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/controllers/patients/programmes_controller.rb, line 11</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/controllers/patients/programmes_controller.rb, line 12</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">show</span>
   <span class="ruby-identifier">authorize</span> <span class="ruby-ivar">@patient</span>
 <span class="ruby-keyword">end</span></pre>
