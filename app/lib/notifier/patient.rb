@@ -279,8 +279,11 @@ class Notifier::Patient
     include_already_invited_programmes: true
   )
     filter_programmes_notify_parents(programmes).select do |programme|
-      if !include_vaccinated_programmes &&
-           patient.programme_status(programme, academic_year:).vaccinated?
+      programme_status = patient.programme_status(programme, academic_year:)
+
+      next false if programme_status.not_eligible?
+
+      if !include_vaccinated_programmes && programme_status.vaccinated?
         next false
       end
 
