@@ -775,7 +775,7 @@
             </details>
           </div>
           <div class="method-source-code" id="model_name-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/concerns/csv_importable.rb, line 255</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/concerns/csv_importable.rb, line 257</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">model_name</span>
   <span class="ruby-constant">ActiveModel</span><span class="ruby-operator">::</span><span class="ruby-constant">Name</span>.<span class="ruby-identifier">new</span>(
     <span class="ruby-keyword">self</span>,
@@ -835,7 +835,7 @@
             </details>
           </div>
           <div class="method-source-code" id="count_columns-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/concerns/csv_importable.rb, line 234</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/concerns/csv_importable.rb, line 236</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">count_columns</span>
   <span class="ruby-node">%i[
     new_record_count
@@ -966,7 +966,7 @@
             </details>
           </div>
           <div class="method-source-code" id="csv_has_records-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/concerns/csv_importable.rb, line 198</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/concerns/csv_importable.rb, line 200</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">csv_has_records</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">data</span>
 
@@ -1012,7 +1012,7 @@
             </details>
           </div>
           <div class="method-source-code" id="csv_is_not_too_large-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/concerns/csv_importable.rb, line 190</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/concerns/csv_importable.rb, line 192</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">csv_is_not_too_large</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">data</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-constant">Flipper</span>.<span class="ruby-identifier">enabled?</span>(<span class="ruby-value">:import_row_count_limit</span>)
 
@@ -1058,7 +1058,7 @@
             </details>
           </div>
           <div class="method-source-code" id="csv_is_valid-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/concerns/csv_importable.rb, line 184</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/concerns/csv_importable.rb, line 186</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">csv_is_valid</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">csv_is_malformed</span>
 
@@ -1144,7 +1144,7 @@
             </details>
           </div>
           <div class="method-source-code" id="ensure_processed_with_count_statistics-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/concerns/csv_importable.rb, line 242</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/concerns/csv_importable.rb, line 244</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">ensure_processed_with_count_statistics</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">processed?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">count_columns</span>.<span class="ruby-identifier">any?</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">column</span><span class="ruby-operator">|</span> <span class="ruby-identifier">send</span>(<span class="ruby-identifier">column</span>).<span class="ruby-identifier">nil?</span> }
     <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;Count statistics must be set for a processed import.&quot;</span>
@@ -1230,7 +1230,7 @@
             </details>
           </div>
           <div class="method-source-code" id="join_table_class-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/concerns/csv_importable.rb, line 248</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/concerns/csv_importable.rb, line 250</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">join_table_class</span>(<span class="ruby-identifier">import_type</span>, <span class="ruby-identifier">record_type</span>)
   <span class="ruby-constant">Class</span>.<span class="ruby-identifier">new</span>(<span class="ruby-constant">ApplicationRecord</span>) <span class="ruby-keyword">do</span>
     <span class="ruby-ivar">@import_type</span> = <span class="ruby-identifier">import_type</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">pluralize</span>
@@ -1285,7 +1285,7 @@
             </details>
           </div>
           <div class="method-source-code" id="link_records_by_type-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/concerns/csv_importable.rb, line 265</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/concerns/csv_importable.rb, line 267</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">link_records_by_type</span>(<span class="ruby-identifier">type</span>, <span class="ruby-identifier">records</span>)
   <span class="ruby-identifier">import_type</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">name</span>.<span class="ruby-identifier">underscore</span>
   <span class="ruby-identifier">type</span> = <span class="ruby-identifier">type</span>.<span class="ruby-identifier">to_s</span>
@@ -1368,7 +1368,7 @@
             <div class="method-heading">
               <a href="#method-i-load_serialized_errors-21" title="Link to this method">
                 <span class="method-name">load_serialized_errors!</span>
-                <span class="method-args">()</span>
+                <span class="method-args">(limit: nil)</span>
               </a>
             </div>
 
@@ -1382,12 +1382,14 @@
           </div>
           <div class="method-source-code" id="load_serialized_errors-21-source">
             <pre class="ruby"><span class="ruby-comment"># File app/models/concerns/csv_importable.rb, line 176</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">load_serialized_errors!</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">load_serialized_errors!</span>(<span class="ruby-value">limit:</span> <span class="ruby-keyword">nil</span>)
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">serialized_errors</span>.<span class="ruby-identifier">blank?</span>
 
-  <span class="ruby-identifier">serialized_errors</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">attribute</span>, <span class="ruby-identifier">messages</span><span class="ruby-operator">|</span>
-    <span class="ruby-identifier">messages</span>.<span class="ruby-identifier">each</span> { <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">attribute</span>, <span class="ruby-identifier">_1</span>) }
-  <span class="ruby-keyword">end</span>
+  <span class="ruby-identifier">serialized_errors</span>
+    .<span class="ruby-identifier">then</span> { <span class="ruby-identifier">limit</span> <span class="ruby-operator">?</span> <span class="ruby-identifier">it</span>.<span class="ruby-identifier">first</span>(<span class="ruby-identifier">limit</span>) <span class="ruby-operator">:</span> <span class="ruby-identifier">it</span> }
+    .<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">attribute</span>, <span class="ruby-identifier">messages</span><span class="ruby-operator">|</span>
+      <span class="ruby-identifier">messages</span>.<span class="ruby-identifier">each</span> { <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">attribute</span>, <span class="ruby-identifier">_1</span>) }
+    <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -1570,7 +1572,7 @@
             </details>
           </div>
           <div class="method-source-code" id="remaining_time-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/concerns/csv_importable.rb, line 276</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/concerns/csv_importable.rb, line 278</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">remaining_time</span>
   <span class="ruby-identifier">rows_per_second</span> = <span class="ruby-value">30.0</span> <span class="ruby-comment"># 2024/10/10: Based on a 1000 row upload on test env.</span>
   <span class="ruby-identifier">total_seconds</span> = <span class="ruby-identifier">rows_count</span> <span class="ruby-operator">/</span> <span class="ruby-identifier">rows_per_second</span>
@@ -1770,7 +1772,7 @@
             </details>
           </div>
           <div class="method-source-code" id="rows_are_valid-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/concerns/csv_importable.rb, line 206</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/concerns/csv_importable.rb, line 208</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">rows_are_valid</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">rows</span>
 

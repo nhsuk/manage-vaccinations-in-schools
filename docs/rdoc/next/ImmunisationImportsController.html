@@ -670,7 +670,7 @@
             </details>
           </div>
           <div class="method-source-code" id="create-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/controllers/immunisation_imports_controller.rb, line 14</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/controllers/immunisation_imports_controller.rb, line 16</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">create</span>
   <span class="ruby-ivar">@immunisation_import</span> =
     <span class="ruby-identifier">authorize</span> <span class="ruby-constant">ImmunisationImport</span>.<span class="ruby-identifier">new</span>(
@@ -728,7 +728,7 @@
             </details>
           </div>
           <div class="method-source-code" id="new-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/controllers/immunisation_imports_controller.rb, line 10</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/controllers/immunisation_imports_controller.rb, line 12</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">new</span>
   <span class="ruby-ivar">@immunisation_import</span> = <span class="ruby-identifier">authorize</span> <span class="ruby-constant">ImmunisationImport</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value">team:</span> <span class="ruby-identifier">current_team</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -770,10 +770,10 @@
             </details>
           </div>
           <div class="method-source-code" id="show-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/controllers/immunisation_imports_controller.rb, line 34</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/controllers/immunisation_imports_controller.rb, line 36</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">show</span>
   <span class="ruby-keyword">if</span> <span class="ruby-ivar">@immunisation_import</span>.<span class="ruby-identifier">rows_are_invalid?</span>
-    <span class="ruby-ivar">@immunisation_import</span>.<span class="ruby-identifier">load_serialized_errors!</span>
+    <span class="ruby-ivar">@immunisation_import</span>.<span class="ruby-identifier">load_serialized_errors!</span>(<span class="ruby-value">limit:</span> <span class="ruby-identifier">error_rows_limit</span>)
   <span class="ruby-keyword">end</span>
 
   <span class="ruby-identifier">vaccination_records</span> =
@@ -831,7 +831,7 @@
             </details>
           </div>
           <div class="method-source-code" id="update-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/controllers/immunisation_imports_controller.rb, line 57</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/controllers/immunisation_imports_controller.rb, line 59</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">update</span>
   <span class="ruby-ivar">@immunisation_import</span>.<span class="ruby-identifier">process!</span>
 
