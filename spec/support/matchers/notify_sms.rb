@@ -11,17 +11,12 @@ RSpec::Matchers.define :matching_notify_sms do |phone_number:, template:|
   match do |actual|
     next false unless actual.is_a?(Hash)
 
-    renderer = NotifyTemplateRenderer.for(:sms)
-    template_id =
-      renderer.template_id_for(template) ||
-        GOVUK_NOTIFY_SMS_TEMPLATES.fetch(template)
-
-    next false unless actual[:phone_number] == phone_number
-    unless [template_id, renderer.passthrough_template_id].include?(
-             actual[:template_id]
-           )
-      next false
+    notify_template = NotifyTemplate.find(template, channel: :sms)
+    unless notify_template
+      raise ArgumentError, "Unknown SMS template :#{template}"
     end
+    next false unless actual[:phone_number] == phone_number
+    next false unless actual[:template_id] == notify_template.delivery_id
     next true if @expected_content_strings.blank?
 
     personalisation = actual[:personalisation] || {}

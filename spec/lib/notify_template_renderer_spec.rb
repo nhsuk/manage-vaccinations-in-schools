@@ -21,72 +21,6 @@ describe NotifyTemplateRenderer do
   describe "email channel" do
     let(:renderer) { described_class.for(:email) }
 
-    describe "#template_exists?" do
-      subject(:template_exists?) { renderer.template_exists?(template) }
-
-      context "when the template file exists" do
-        let(:template) { :consent_confirmation_given }
-
-        it { should be true }
-      end
-
-      context "when the template file does not exist" do
-        let(:template) { :non_existent_template }
-
-        it { should be false }
-      end
-    end
-
-    describe "#template_id_for" do
-      subject(:template_id_for) { renderer.template_id_for(template) }
-
-      context "when the local template file exists" do
-        let(:template) { :consent_confirmation_given }
-
-        it { should eq("c6c8dbfc-b429-4468-bd0b-176e771b5a8e") }
-      end
-
-      context "when the Notify template is configured" do
-        let(:template) { :clinic_initial_invitation }
-
-        it do
-          expect(template_id_for).to eq(
-            GOVUK_NOTIFY_EMAIL_TEMPLATES[:clinic_initial_invitation]
-          )
-        end
-      end
-
-      context "when the template name is unknown" do
-        let(:template) { :nonexistent }
-
-        it { should be_nil }
-      end
-    end
-
-    describe "#template_name_for" do
-      subject(:template_name_for) { renderer.template_name_for(template_id) }
-
-      context "when the template_id matches a local template" do
-        let(:template_id) { "c6c8dbfc-b429-4468-bd0b-176e771b5a8e" }
-
-        it { should eq(:consent_confirmation_given) }
-      end
-
-      context "when the template_id matches a Notify template" do
-        let(:template_id) do
-          GOVUK_NOTIFY_EMAIL_TEMPLATES[:clinic_initial_invitation]
-        end
-
-        it { should eq(:clinic_initial_invitation) }
-      end
-
-      context "when the template_id is unknown" do
-        let(:template_id) { "00000000-0000-0000-0000-000000000000" }
-
-        it { should be_nil }
-      end
-    end
-
     describe "#render" do
       subject(:rendered) do
         renderer.render(:consent_confirmation_given, personalisation)
@@ -134,76 +68,10 @@ describe NotifyTemplateRenderer do
         end
       end
     end
-
-    describe "#passthrough_configured?" do
-      it { expect(renderer.passthrough_configured?).to be true }
-    end
   end
 
   describe "SMS channel" do
     let(:renderer) { described_class.for(:sms) }
-
-    describe "#template_exists?" do
-      subject(:template_exists?) { renderer.template_exists?(template) }
-
-      context "when the template file exists" do
-        let(:template) { :consent_confirmation_given }
-
-        it { should be true }
-      end
-
-      context "when the template file does not exist" do
-        let(:template) { :non_existent_template }
-
-        it { should be false }
-      end
-    end
-
-    describe "#template_id_for" do
-      subject(:template_id_for) { renderer.template_id_for(template) }
-
-      context "when the local template file exists" do
-        let(:template) { :consent_confirmation_given }
-
-        it { should eq("8eb8d05e-b8d8-4bf9-8a38-c009ae989a4e") }
-      end
-
-      context "when the Notify template is configured" do
-        let(:template) { :clinic_initial_invitation }
-
-        it { should eq(GOVUK_NOTIFY_SMS_TEMPLATES[:clinic_initial_invitation]) }
-      end
-
-      context "when the template name is unknown" do
-        let(:template) { :nonexistent }
-
-        it { should be_nil }
-      end
-    end
-
-    describe "#template_name_for" do
-      subject(:template_name_for) { renderer.template_name_for(template_id) }
-
-      context "when the template_id matches a local template" do
-        let(:template_id) { "8eb8d05e-b8d8-4bf9-8a38-c009ae989a4e" }
-
-        it { should eq(:consent_confirmation_given) }
-      end
-
-      context "when the template_id matches a Notify template" do
-        let(:template_id) do
-          GOVUK_NOTIFY_SMS_TEMPLATES[:clinic_initial_invitation]
-        end
-
-        it { should eq(:clinic_initial_invitation) }
-      end
-
-      context "when the template_id is unknown" do
-        let(:template_id) { "00000000-0000-0000-0000-000000000000" }
-
-        it { should be_nil }
-      end
-    end
 
     describe "#render" do
       subject(:rendered) do
@@ -242,10 +110,6 @@ describe NotifyTemplateRenderer do
           )
         end
       end
-    end
-
-    describe "#passthrough_configured?" do
-      it { expect(renderer.passthrough_configured?).to be true }
     end
   end
 end

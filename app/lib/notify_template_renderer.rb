@@ -4,10 +4,6 @@ class NotifyTemplateRenderer
   class TemplateNotFound < StandardError
   end
 
-  PASSTHROUGH_TEMPLATE_IDS = {
-    email: "305a53f8-86eb-485e-85a5-328c9aabba45",
-    sms: "c242b359-73d6-4b74-bda2-136093550636"
-  }.freeze
   TEMPLATE_FRONTMATTER_DELIMITER = "---\n"
   TEMPLATE_BODY_SEPARATOR = "\n---\n"
 
@@ -15,63 +11,6 @@ class NotifyTemplateRenderer
 
   def initialize(channel:)
     @channel = channel
-  end
-
-  def passthrough_template_id = PASSTHROUGH_TEMPLATE_IDS[@channel]
-
-  def passthrough_configured? = passthrough_template_id.present?
-
-  def template_path(template_name)
-    Rails.root.join(
-      "app/views/notify_templates",
-      @channel.to_s,
-      "#{template_name}.text.erb"
-    )
-  end
-
-  def template_exists?(template_name, source: :local)
-    case source
-    when :local
-      template_path(template_name).exist?
-    when :govuk_notify
-      config_hash[template_name.to_sym].present?
-    when :any
-      template_exists?(template_name, source: :local) ||
-        template_exists?(template_name, source: :govuk_notify)
-    else
-      raise ArgumentError, "Unknown template_exists? source: #{source}"
-    end
-  end
-
-  # Resolve template UUID: from frontmatter when local file exists, else from config hash.
-  def template_id_for(template_name)
-    path = template_path(template_name)
-    if path.exist?
-      content = File.read(path)
-      frontmatter, = parse_frontmatter(content)
-      if frontmatter["template_id"].present?
-        return frontmatter["template_id"].to_s
-      end
-    end
-    config_hash[template_name.to_sym]
-  end
-
-  # Reverse lookup: template_id -> template name. Checks local frontmatter then config hash.
-  def template_name_for(template_id)
-    return nil if template_id.blank?
-
-    dir = Rails.root.join("app/views/notify_templates", @channel.to_s)
-    if Dir.exist?(dir)
-      Dir.each_child(dir) do |filename|
-        next unless filename.end_with?(".text.erb")
-
-        name = filename.delete_suffix(".text.erb").to_sym
-        content = File.read(File.join(dir, filename))
-        frontmatter, = parse_frontmatter(content)
-        return name if frontmatter["template_id"].to_s == template_id.to_s
-      end
-    end
-    config_hash.key(template_id)
   end
 
   def render(template_name, personalisation)
@@ -102,13 +41,12 @@ class NotifyTemplateRenderer
 
   private
 
-  def config_hash
-    case @channel
-    when :sms
-      GOVUK_NOTIFY_SMS_TEMPLATES
-    else
-      GOVUK_NOTIFY_EMAIL_TEMPLATES
-    end
+  def template_path(template_name)
+    Rails.root.join(
+      "app/views/notify_templates",
+      @channel.to_s,
+      "#{template_name}.text.erb"
+    )
   end
 
   def parse_frontmatter(content)

@@ -143,10 +143,8 @@ class NotifyLogEntry < ApplicationRecord
   private
 
   def template_name
-    if GOVUK_NOTIFY_UNUSED_TEMPLATES.include?(template_id)
-      GOVUK_NOTIFY_UNUSED_TEMPLATES.fetch(template_id)
-    elsif email? || sms?
-      NotifyTemplateRenderer.for(type.to_sym).template_name_for(template_id)
-    end
+    return unless email? || sms?
+
+    NotifyTemplate.find_by_id(template_id, channel: type.to_sym)&.name
   end
 end

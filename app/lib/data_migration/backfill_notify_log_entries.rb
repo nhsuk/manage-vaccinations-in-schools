@@ -1,11 +1,5 @@
 # frozen_string_literal: true
 
-TEMPLATE_NAME_BY_TEMPLATE_ID = {
-  **GOVUK_NOTIFY_UNUSED_TEMPLATES,
-  **GOVUK_NOTIFY_EMAIL_TEMPLATES.invert,
-  **GOVUK_NOTIFY_SMS_TEMPLATES.invert
-}.freeze
-
 class DataMigration::BackfillNotifyLogEntries
   def call
     progress_bar =
@@ -20,8 +14,7 @@ class DataMigration::BackfillNotifyLogEntries
 
     NotifyLogEntry.find_in_batches do |notify_log_entries|
       notify_log_entries.filter_map do |notify_log_entry|
-        template_name =
-          TEMPLATE_NAME_BY_TEMPLATE_ID.fetch(notify_log_entry.template_id, nil)
+        template_name = resolved_template_name(notify_log_entry)
 
         next unless template_name
 
@@ -44,4 +37,13 @@ class DataMigration::BackfillNotifyLogEntries
   def self.call(...) = new(...).call
 
   private_class_method :new
+
+  private
+
+  def resolved_template_name(notify_log_entry)
+    NotifyTemplate.find_by_id(
+      notify_log_entry.template_id,
+      channel: notify_log_entry.type.to_sym
+    )&.name
+  end
 end
