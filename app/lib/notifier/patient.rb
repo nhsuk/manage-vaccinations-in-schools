@@ -34,6 +34,34 @@ class Notifier::Patient
   end
 
   ##
+  # Determine whether a clinic invitation can be sent to the parents of this
+  # patient.
+
+  # Normally this would be +true+, but it can be +false+ in some scenarios,
+  # for example, if the patient has no parent contact details or has already
+  # been invited to the clinic.
+  def can_send_clinic_invitation?(
+    programmes,
+    team:,
+    academic_year:,
+    include_vaccinated_programmes: false,
+    include_already_invited_programmes: true
+  )
+    return false unless send_notification?(team:)
+
+    programmes_to_send_for =
+      programmes_to_send_clinic_invitation_for(
+        programmes,
+        team:,
+        academic_year:,
+        include_vaccinated_programmes:,
+        include_already_invited_programmes:
+      )
+
+    programmes_to_send_for.present?
+  end
+
+  ##
   # Send a clinic initiation email and SMS to the parents of this patient.
   #
   # This determines the correct type of invitation to use (either an initial
@@ -251,8 +279,11 @@ class Notifier::Patient
     include_already_invited_programmes: true
   )
     filter_programmes_notify_parents(programmes).select do |programme|
-      if !include_vaccinated_programmes &&
-           patient.programme_status(programme, academic_year:).vaccinated?
+      programme_status = patient.programme_status(programme, academic_year:)
+
+      next false if programme_status.not_eligible?
+
+      if !include_vaccinated_programmes && programme_status.vaccinated?
         next false
       end
 

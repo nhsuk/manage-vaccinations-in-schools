@@ -712,31 +712,143 @@ describe Notifier::Patient do
     end
   end
 
-  describe "#send_clinic_invitation" do
-    subject(:send_clinic_invitation) do
-      travel_to(today) do
-        notifier.send_clinic_invitation(
-          programmes,
-          team:,
-          academic_year:,
-          sent_by:,
-          include_vaccinated_programmes:,
-          include_already_invited_programmes:
-        )
-      end
+  describe "#can_send_clinic_invitation?" do
+    subject(:can_send_clinic_invitation?) do
+      notifier.can_send_clinic_invitation?(
+        programmes,
+        team:,
+        academic_year:,
+        include_vaccinated_programmes:,
+        include_already_invited_programmes:
+      )
     end
+
+    around { |example| travel_to(today) { example.run } }
 
     let(:today) { Date.new(2024, 1, 1) }
 
     let(:parents) { create_list(:parent, 2) }
-    let(:patient) { create(:patient, parents:, year_group: 10) }
+    let(:patient) { create(:patient, session:, parents:, year_group: 10) }
     let(:programmes) { [Programme.td_ipv] }
     let(:programme_types) { programmes.map(&:type) }
     let(:team) { create(:team, programmes:) }
     let(:location) { create(:school, team:) }
+    let(:session) { create(:session, location:, programmes:, team:) }
     let(:academic_year) { AcademicYear.current }
     let(:include_vaccinated_programmes) { false }
     let(:include_already_invited_programmes) { true }
+
+    before { PatientStatusUpdater.call(patient:) }
+
+    context "for an ineligible programme" do
+      let(:patient) { create(:patient, parents:, year_group: 2) }
+
+      it { should be(false) }
+    end
+
+    context "without an invitation already" do
+      it { should be(true) }
+
+      context "if the child received their first dose under self-consent and doesn't want parents notified" do
+        let(:programmes) { [Programme.mmr] }
+
+        before do
+          create(
+            :vaccination_record,
+            programme: Programme.mmr,
+            patient:,
+            notify_parents: false
+          )
+        end
+
+        it { should be(false) }
+      end
+
+      context "when the session administers two programmes but the patient only needs one" do
+        let(:programmes) { [Programme.flu, Programme.hpv] }
+
+        before do
+          create(:vaccination_record, patient:, programme: programmes.first)
+          PatientStatusUpdater.call(patient:)
+        end
+
+        it { should be(true) }
+      end
+    end
+
+    context "when already invited" do
+      before do
+        create(
+          :clinic_notification,
+          :initial_invitation,
+          patient:,
+          team:,
+          academic_year:,
+          programmes:
+        )
+      end
+
+      it { should be(true) }
+
+      context "and not including already invited programmes" do
+        let(:include_already_invited_programmes) { false }
+
+        it { should be(false) }
+      end
+    end
+
+    context "when already invited to one of two possible programmes" do
+      let(:programmes) { [Programme.flu, Programme.hpv] }
+
+      before do
+        create(
+          :clinic_notification,
+          :initial_invitation,
+          patient:,
+          team:,
+          academic_year:,
+          programmes: [Programme.flu]
+        )
+      end
+
+      it { should be(true) }
+
+      context "and not including already invited programmes" do
+        let(:include_already_invited_programmes) { false }
+
+        it { should be(true) }
+      end
+    end
+  end
+
+  describe "#send_clinic_invitation" do
+    subject(:send_clinic_invitation) do
+      notifier.send_clinic_invitation(
+        programmes,
+        team:,
+        academic_year:,
+        sent_by:,
+        include_vaccinated_programmes:,
+        include_already_invited_programmes:
+      )
+    end
+
+    around { |example| travel_to(today) { example.run } }
+
+    let(:today) { Date.new(2024, 1, 1) }
+
+    let(:parents) { create_list(:parent, 2) }
+    let(:patient) { create(:patient, session:, parents:, year_group: 10) }
+    let(:programmes) { [Programme.td_ipv] }
+    let(:programme_types) { programmes.map(&:type) }
+    let(:team) { create(:team, programmes:) }
+    let(:location) { create(:school, team:) }
+    let(:session) { create(:session, location:, programmes:, team:) }
+    let(:academic_year) { AcademicYear.current }
+    let(:include_vaccinated_programmes) { false }
+    let(:include_already_invited_programmes) { true }
+
+    before { PatientStatusUpdater.call(patient:) }
 
     context "without an invitation already" do
       it "creates a record" do

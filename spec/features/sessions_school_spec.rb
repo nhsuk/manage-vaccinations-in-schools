@@ -79,25 +79,23 @@ describe "School sessions" do
   def given_my_team_is_running_an_hpv_vaccination_programme
     @programme = Programme.hpv
     @other_programme = Programme.flu
-    @team =
-      create(
-        :team,
-        :with_one_nurse,
-        :with_generic_clinic,
-        programmes: [@programme, @other_programme]
-      )
-    @location =
-      create(
-        :school,
-        :secondary,
-        team: @team,
-        programmes: [@programme, @other_programme]
-      )
+
+    programmes = [@programme, @other_programme]
+
+    @team = create(:team, :with_one_nurse, :with_generic_clinic, programmes:)
+    @location = create(:school, :secondary, team: @team, programmes:)
 
     @parent = create(:parent)
 
     @patient =
-      create(:patient, year_group: 8, location: @location, parents: [@parent])
+      create(
+        :patient,
+        :consent_no_response,
+        year_group: 8,
+        location: @location,
+        parents: [@parent],
+        programmes:
+      )
 
     clinic_session =
       create(

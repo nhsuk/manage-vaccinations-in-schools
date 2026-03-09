@@ -72,9 +72,11 @@ describe "Clinic sessions" do
     @patient =
       create(
         :patient,
+        :consent_no_response,
         year_group: 8,
         location: @team.generic_clinic,
-        parents: [@parent]
+        parents: [@parent],
+        programmes: [@programme]
       )
   end
 
