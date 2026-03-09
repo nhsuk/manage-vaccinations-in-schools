@@ -26,26 +26,24 @@ module TriagesHelper
       if triage.invalidated?
         "grey"
       elsif triage.safe_to_vaccinate?
-        "aqua-green"
+        "green"
       elsif triage.do_not_vaccinate?
         "red"
       elsif triage.delay_vaccination?
-        "dark-orange"
+        "orange"
       else
         "blue"
       end
 
-    # We can’t use the colour param as NHS.UK frontend uses different colour
-    # names (aqua-green) than those supported by GOV.UK Frontend (turquoise)
     if triage.invalidated?
       safe_join(
         [
-          govuk_tag(text: tag.s(text), classes: "nhsuk-tag--#{colour}"),
+          govuk_tag(text: tag.s(text), colour:),
           tag.span("Invalid", class: "nhsuk-u-secondary-text-colour")
         ]
       )
     else
-      govuk_tag(text:, classes: "nhsuk-tag--#{colour}")
+      govuk_tag(text:, colour:)
     end
   end
 

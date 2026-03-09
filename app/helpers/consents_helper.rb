@@ -62,18 +62,15 @@ module ConsentsHelper
       if consent.withdrawn? || consent.invalidated?
         "grey"
       elsif consent.response_given?
-        "aqua-green"
+        "green"
       elsif consent.response_refused?
         "red"
       else
         "blue"
       end
 
-    # We can’t use the colour param as NHS.UK frontend uses different colour
-    # names (aqua-green) than those supported by GOV.UK Frontend (turquoise)
     if consent.invalidated? || consent.withdrawn?
-      primary_tag =
-        govuk_tag(text: tag.s(text), classes: "nhsuk-tag--#{colour}")
+      primary_tag = govuk_tag(text: tag.s(text), colour:)
 
       secondary_text =
         tag.span(class: "nhsuk-u-secondary-text-colour") do
@@ -91,7 +88,7 @@ module ConsentsHelper
 
       safe_join([primary_tag, secondary_text])
     else
-      govuk_tag(text:, classes: "nhsuk-tag--#{colour}")
+      govuk_tag(text:, colour:)
     end
   end
 
