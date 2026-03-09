@@ -23,5 +23,5 @@ jobs:
       - run: yarn install --immutable --immutable-cache --check-cache
       - uses: jdx/mise-action@v3
         with:
-          install_args: actionlint hk pkl shellcheck
+          install_args: actionlint hk pkl shellcheck yamllint
       - run: hk check --all
