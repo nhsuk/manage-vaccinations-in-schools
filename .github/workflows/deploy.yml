@@ -16,7 +16,8 @@ on:
         description:
           | # Use blank unicode character (U+2800) to force line-break
           Use code from: ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-          (Git ref to deploy, for example, a tag, branch name or commit SHA. Will use workflow ref if not provided.)
+          (Git ref to deploy, for example, a tag, branch name or commit SHA. Will use workflow ref
+          if not provided.)
         type: string
       environment:
         description: Deployment environment
@@ -82,22 +83,25 @@ jobs:
         id: get-git-sha
         run: echo "git-sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
   build-and-push-images:
-      permissions:
-        id-token: write
-      needs: determine-git-sha
-      uses: ./.github/workflows/build-and-push-image.yml
-      with:
-        git_sha: ${{ needs.determine-git-sha.outputs.git-sha }}
+    permissions:
+      id-token: write
+    needs: determine-git-sha
+    uses: ./.github/workflows/build-and-push-image.yml
+    with:
+      git_sha: ${{ needs.determine-git-sha.outputs.git-sha }}
   prepare-deployment:
     name: Prepare deployment
     runs-on: ubuntu-latest
-    needs: [ determine-git-sha, build-and-push-images ]
+    needs: [determine-git-sha, build-and-push-images]
     permissions:
       id-token: write
     strategy:
       fail-fast: true
       matrix:
-        service: ${{ inputs.server_types == 'all' && fromJSON('["web", "sidekiq", "ops"]') || fromJSON(format('["{0}"]', inputs.server_types)) }}
+        service: >-
+          ${{ inputs.server_types == 'all' &&
+          fromJSON('["web", "sidekiq", "ops"]') ||
+          fromJSON(format('["{0}"]', inputs.server_types)) }}
     env:
       repository_name: ${{ matrix.service == 'ops' && 'mavis/ops' || 'mavis/webapp' }}
     steps:
@@ -126,13 +130,18 @@ jobs:
         id: create-task-definition
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
-          task-definition-family: "mavis-${{ matrix.service }}-task-definition-${{ inputs.environment }}-template"
-          container-name: "application"
-          image: "${{ env.aws_account_id }}.dkr.ecr.eu-west-2.amazonaws.com/${{ env.repository_name }}@${{ steps.get-image-digest.outputs.digest }}"
+          task-definition-family:
+            mavis-${{ matrix.service }}-task-definition-${{ inputs.environment }}-template
+          container-name: application
+          # yamllint disable-line rule:line-length
+          image: ${{ env.aws_account_id }}.dkr.ecr.eu-west-2.amazonaws.com/${{ env.repository_name }}@${{ steps.get-image-digest.outputs.digest }}
           environment-variables: |
             APP_VERSION=${{ env.app_version }}
       - name: Rename task definition file
-        run: mv ${{ steps.create-task-definition.outputs.task-definition }} ${{ runner.temp }}/${{ matrix.service }}-task-definition.json
+        run: >-
+          mv
+          ${{ steps.create-task-definition.outputs.task-definition }}
+          ${{ runner.temp }}/${{ matrix.service }}-task-definition.json
       - name: Upload artifact for ${{ matrix.service }} task definition
         uses: actions/upload-artifact@v7
         with:
@@ -150,6 +159,7 @@ jobs:
         with:
           webhook: ${{ secrets.SLACK_MAVIS_RELEASES_WEBHOOK_URL }}
           webhook-type: incoming-webhook
+          # yamllint disable rule:line-length
           payload: |
             text: ":hourglass: Approval required :hourglass:"
             blocks:
@@ -161,6 +171,7 @@ jobs:
                 fields:
                   - type: "mrkdwn"
                     text: "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View workflow run>"
+          # yamllint enable rule:line-length
 
   approve-deployments:
     name: Wait for approval if required
@@ -173,7 +184,7 @@ jobs:
   run-migrations:
     name: Run migrations
     runs-on: ubuntu-latest
-    needs: [ approve-deployments ]
+    needs: approve-deployments
     if: ${{ inputs.server_types == 'all' || inputs.server_types == 'ops' }}
     permissions:
       id-token: write
@@ -195,7 +206,8 @@ jobs:
         run: |
           family_name="mavis-migration-task-definition-$environment"
           file_path="${{ runner.temp }}/migration-task-definition.json"
-          jq --arg f "$family_name" '.family = $f' "${{ runner.temp }}/ops-task-definition.json" > "$file_path"
+          jq --arg f "$family_name" '.family = $f' \
+            "${{ runner.temp }}/ops-task-definition.json" > "$file_path"
           task_definition_arn=$(aws ecs register-task-definition \
                                   --cli-input-json file://$file_path \
                                   --query 'taskDefinition.taskDefinitionArn' \
@@ -206,6 +218,7 @@ jobs:
         id: run-schema-migrations
         env:
           SLACK_MAVIS_RELEASES_WEBHOOK_URL: ${{ secrets.SLACK_MAVIS_RELEASES_WEBHOOK_URL }}
+        # yamllint disable rule:line-length
         run: |
           TASK_DEFINITION_ARN=${{ steps.register-migration-task-definition.outputs.task_definition_arn }}
           SUBNET_ID=$(aws ec2 describe-subnets --filters "Name=tag:Name,Values=private-subnet-$environment-a" --query 'Subnets[0].SubnetId' --output text)
@@ -284,6 +297,7 @@ jobs:
               ATTEMPT=$((ATTEMPT+1))
             fi
           done
+        # yamllint enable rule:line-length
       - name: Notify migrations completed
         if: ${{ env.environment == 'production' }}
         uses: slackapi/slack-github-action@91efab103c0de0a537f72a35f6b8cda0ee76bf0a
@@ -300,14 +314,17 @@ jobs:
   deploy-service:
     name: Deploy service
     runs-on: ubuntu-latest
-    needs: [ prepare-deployment, approve-deployments, run-migrations ]
+    needs: [prepare-deployment, approve-deployments, run-migrations]
     if: ${{ !cancelled() && needs.run-migrations.result != 'failure' }}
     permissions:
       id-token: write
     strategy:
       fail-fast: false
       matrix:
-        service: ${{ inputs.server_types == 'all' && fromJSON('["web", "sidekiq", "ops"]') || fromJSON(format('["{0}"]', inputs.server_types)) }}
+        service: >-
+          ${{ inputs.server_types == 'all' &&
+          fromJSON('["web", "sidekiq", "ops"]') ||
+          fromJSON(format('["{0}"]', inputs.server_types)) }}
     steps:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v6
@@ -334,6 +351,7 @@ jobs:
           force-new-deployment: true
           wait-for-service-stability: true
       - name: Check if deployment was successful
+        # yamllint disable rule:line-length
         run: |
           current_task_definition_arn=$(aws ecs describe-services --cluster "mavis-$environment" --services "mavis-$environment-${{ matrix.service }}" --query services[0].deployments[0].taskDefinition | jq -r ".")
           new_task_definition_arn=${{ steps.ecs-deploy.outputs.task-definition-arn }}
@@ -343,10 +361,11 @@ jobs:
             echo "Task definition arns don't match, likely due to a rollback to the previous version. Deployment failed."
             exit 1
           fi
+        # yamllint enable rule:line-length
   notify-deployment-complete:
     name: Notify deployment status
     runs-on: ubuntu-latest
-    needs: [ deploy-service, run-migrations ]
+    needs: [deploy-service, run-migrations]
     if: ${{ !cancelled() && inputs.environment == 'production' }}
     steps:
       - name: Notify deployment success
@@ -363,11 +382,14 @@ jobs:
                   type: "mrkdwn"
                   text: "*${{ env.app_version }}* is deployed :ship:"
       - name: Notify deployment failure
-        if: ${{ needs.deploy-service.result == 'failure' || needs.run-migrations.result == 'failure' }}
+        if: >-
+          ${{ needs.deploy-service.result == 'failure' ||
+          needs.run-migrations.result == 'failure' }}
         uses: slackapi/slack-github-action@91efab103c0de0a537f72a35f6b8cda0ee76bf0a
         with:
           webhook: ${{ secrets.SLACK_MAVIS_RELEASES_WEBHOOK_URL }}
           webhook-type: incoming-webhook
+          # yamllint disable rule:line-length
           payload: |
             text: "Deployment of *${{ env.app_version }}* failed :x:"
             blocks:
@@ -381,3 +403,4 @@ jobs:
                     text: "*Failed job:*\n${{ needs.deploy-service.result == 'failure' && 'deploy-service' || 'run-migrations' }}"
                   - type: "mrkdwn"
                     text: "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View workflow run>"
+          # yamllint enable rule:line-length

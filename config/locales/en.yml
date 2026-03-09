@@ -28,9 +28,12 @@ en:
             new_or_existing_contact:
               blank: Choose who you are trying to get consent from
             notify_parent_on_refusal:
-              inclusion: Choose whether you want to send an email and text message confirming their decision
+              inclusion:
+                Choose whether you want to send an email and text message confirming their decision
             notify_parents_on_vaccination:
-              inclusion: Choose whether the child wants their parent or guardian to get confirmation of the vaccination
+              inclusion: >-
+                Choose whether the child wants their parent or guardian to get confirmation of
+                the vaccination
             reason_for_refusal:
               inclusion: Choose a reason
             notes:
@@ -99,14 +102,17 @@ en:
               missing_day: Enter a day
               missing_month: Enter a month
               missing_year: Enter a year
-              greater_than_or_equal_to: Enter a date at most 3 months before the first session date (%{count})
-              less_than_or_equal_to: Enter a date before the first session date and first reminder (%{count})
+              greater_than_or_equal_to:
+                Enter a date at most 3 months before the first session date (%{count})
+              less_than_or_equal_to:
+                Enter a date before the first session date and first reminder (%{count})
             send_invitations_at:
               blank: Enter a date
               missing_day: Enter a day
               missing_month: Enter a month
               missing_year: Enter a year
-              greater_than_or_equal_to: Enter a date at most 3 months before the first session date (%{count})
+              greater_than_or_equal_to:
+                Enter a date at most 3 months before the first session date (%{count})
               less_than: Enter a date before the first session date (%{count})
             weeks_before_consent_reminders:
               blank: Enter weeks before a session takes place
@@ -122,8 +128,10 @@ en:
               missing_month: Enter a month
               missing_year: Enter a year
               taken: Enter a different date to the other session dates
-              greater_than_or_equal_to: Enter a date on or after the start of the school year (%{count})
-              less_than_or_equal_to: Enter a date on or before the end of the current school year (%{count})
+              greater_than_or_equal_to:
+                Enter a date on or after the start of the school year (%{count})
+              less_than_or_equal_to:
+                Enter a date on or before the end of the current school year (%{count})
         draft_vaccination_record:
           attributes:
             batch_id:
@@ -145,7 +153,8 @@ en:
               blank: Choose a delivery site
               inclusion: Choose a delivery site
               nasal_spray_must_be_nose: Site must be nose if the nasal spray was given
-              injection_cannot_be_nose: Site cannot be nose for intramuscular or subcutaneous injections
+              injection_cannot_be_nose:
+                Site cannot be nose for intramuscular or subcutaneous injections
             full_dose:
               inclusion: Choose whether they got the full dose
             identity_check_confirmed_by_other_name:
@@ -244,7 +253,8 @@ en:
             pre_screening_notes:
               too_long: Enter notes that are less than %{count} characters long
             supplied_by_user_id:
-              inclusion: Choose which nurse identified and pre-screened the child and supplied the vaccine
+              inclusion:
+                Choose which nurse identified and pre-screened the child and supplied the vaccine
             vaccine_method:
               inclusion: Choose if they are ready to vaccinate
         vaccination_report:
@@ -264,7 +274,8 @@ en:
           contains_gelatine: Vaccine contains gelatine
           contains_gelatine_flu: Nasal vaccine contains gelatine
           contains_gelatine_mmr: Do not want my child to have the MMR vaccine that contains gelatine
-          contains_gelatine_mmrv: Do not want my child to have the MMRV vaccine that contains gelatine
+          contains_gelatine_mmrv:
+            Do not want my child to have the MMRV vaccine that contains gelatine
           medical: Medical reasons
           other: Other
           personal_choice: Personal choice
@@ -309,17 +320,17 @@ en:
           mother: mum
       pds_search_result:
         steps:
-          no_fuzzy_with_history: "Non-fuzzy search (with history)"
-          no_fuzzy_with_history_daily: "Non-fuzzy search (with history)"
-          no_fuzzy_without_history: "Non-fuzzy search (without history)"
-          no_fuzzy_with_wildcard_postcode: "Non-fuzzy search (with history and wildcard postcode)"
-          no_fuzzy_with_wildcard_given_name: "Non-fuzzy search (with history and wildcard first name)"
-          no_fuzzy_with_wildcard_family_name: "Non-fuzzy search (with history and wildcard surname)"
-          fuzzy: "Fuzzy search"
+          no_fuzzy_with_history: Non-fuzzy search (with history)
+          no_fuzzy_with_history_daily: Non-fuzzy search (with history)
+          no_fuzzy_without_history: Non-fuzzy search (without history)
+          no_fuzzy_with_wildcard_postcode: Non-fuzzy search (with history and wildcard postcode)
+          no_fuzzy_with_wildcard_given_name: Non-fuzzy search (with history and wildcard first name)
+          no_fuzzy_with_wildcard_family_name: Non-fuzzy search (with history and wildcard surname)
+          fuzzy: Fuzzy search
         results:
-          no_matches: "No matches found"
-          one_match: "Found %{nhs_number}"
-          too_many_matches: "Too many matches found"
+          no_matches: No matches found
+          one_match: Found %{nhs_number}
+          too_many_matches: Too many matches found
       school_move:
         sources:
           class_list_import: Class list
@@ -386,12 +397,16 @@ en:
           irritable: feeling irritable
           loss_of_appetite: loss of appetite
           pain_in_arms: pain in the arms, hands, fingers
-          raised_blotchy_rash: a raised, blotchy rash (similar to a measles rash), feeling unwell, and a high temperature around 7 to 11 days after the vaccination
+          raised_blotchy_rash: >-
+            a raised, blotchy rash (similar to a measles rash), feeling unwell, and a high
+            temperature around 7 to 11 days after the vaccination
           raised_temperature: a slightly raised temperature
           rash: a rash
           runny_blocked_nose: a runny or blocked nose
           swelling: swelling or pain where the injection was given
-          swollen_glands: swollen glands around the cheeks, neck and jaw, and aching joints (similar to a mild form of mumps) around 2 to 3 weeks after the vaccination
+          swollen_glands: >-
+            swollen glands around the cheeks, neck and jaw, and aching joints (similar to a mild
+            form of mumps) around 2 to 3 weeks after the vaccination
           tiredness: general tiredness
           unwell: generally feeling unwell
     errors:
@@ -402,14 +417,18 @@ en:
               blank: Choose a file
               empty: Choose a CSV file with at least one record
               invalid: Choose a CSV file in the correct format
-              too_many_rows: The row limit for CSV uploads is %{count}. Split your CSV file into smaller files of less than %{count} rows
+              too_many_rows: >-
+                The row limit for CSV uploads is %{count}.
+                Split your CSV file into smaller files of less than %{count} rows
         cohort_import:
           attributes:
             csv:
               blank: Choose a file
               empty: Choose a CSV file with at least one record
               invalid: Choose a CSV file in the correct format
-              too_many_rows: The row limit for CSV uploads is %{count}. Split your CSV file into smaller files of less than %{count} rows
+              too_many_rows: >-
+                The row limit for CSV uploads is %{count}.
+                Split your CSV file into smaller files of less than %{count} rows
         consent:
           attributes:
             notes:
@@ -443,9 +462,11 @@ en:
               blank: Choose which programme you agree to
             date_of_birth:
               blank: Enter their date of birth
-              greater_than_or_equal_to: The child cannot be older than 22. Enter a date after %{count}.
+              greater_than_or_equal_to:
+                The child cannot be older than 22. Enter a date after %{count}.
               less_than: The date is in the future. Enter a date in the past.
-              less_than_or_equal_to: The child cannot be younger than 3. Enter a date before %{count}.
+              less_than_or_equal_to:
+                The child cannot be younger than 3. Enter a date before %{count}.
               missing_day: Enter a day
               missing_month: Enter a month
               missing_year: Enter a year
@@ -511,7 +532,8 @@ en:
             knows_vaccination:
               inclusion: Choose whether the child knows which vaccination they will have
             knows_disease:
-              inclusion: Choose whether the child knows which disease the vaccination protects against
+              inclusion:
+                Choose whether the child knows which disease the vaccination protects against
             knows_consequences:
               inclusion: Choose whether the child knows what could happen if they got the disease
             knows_delivery:
@@ -526,7 +548,9 @@ en:
               blank: Choose a file
               empty: Choose a CSV file with at least one record
               invalid: Choose a CSV file in the correct format
-              too_many_rows: The row limit for CSV uploads is %{count}. Split your CSV file into smaller files of less than %{count} rows
+              too_many_rows: >-
+                The row limit for CSV uploads is %{count}.
+                Split your CSV file into smaller files of less than %{count} rows
         note:
           attributes:
             body:
@@ -670,7 +694,9 @@ en:
         "no": "No"
       without_gelatine:
         legend: Do they want their child to have a vaccine without gelatine?
-        hint: One type of %{programme_name} vaccine contains gelatine from pigs. An alternative %{programme_name} vaccine is available that does not contain gelatine.
+        hint: >-
+          One type of %{programme_name} vaccine contains gelatine from pigs.
+          An alternative %{programme_name} vaccine is available that does not contain gelatine.
         "yes": Yes, they want their child to have a vaccine that does not contain gelatine
         "no": Their child can have either type of vaccine
     notes:
@@ -697,36 +723,45 @@ en:
           discard: The existing record will be kept and the uploaded record will be deleted
           keep_both: The existing record will stay in Mavis and the uploaded record will be added
         archived:
-          apply: The uploaded record will replace the archived record, which will be reinstated with any changes
+          apply: >-
+            The uploaded record will replace the archived record, which will be reinstated with
+            any changes
           discard: The archived record will remain archived and the uploaded record will be deleted
   hosting_environment: This is a %{name} environment. Do not use it to make clinical decisions.
   imports:
     index:
       title: Imports
       title_short: Imports
-      description: Import child, cohort and vaccination records and see important notices
-      description_national_reporting: Upload flu and HPV vaccination records and share them with NHS England
+      description:
+        Import child, cohort and vaccination records and see important notices
+      description_national_reporting:
+        Upload flu and HPV vaccination records and share them with NHS England
     notices:
       index:
         no_results: There are currently no important notices.
     bulk_remove_parents:
       new:
-        title: Are you sure you want to remove all parent-child relationships included in this import?
+        title:
+          Are you sure you want to remove all parent-child relationships included in this import?
         caption: Import
         consents_warning: |
-          One or more parents in this import have given consent responses for children in this import.
+          One or more parents in this import have given consent responses for children in this
+          import.
 
           Removing those parent-child relationships will invalidate those consent responses.
 
-          You can choose to only remove relationships where no consent response has been given by the parent for that child.
+          You can choose to only remove relationships where no consent response has been given by
+          the parent for that child.
 
-          If you remove all parent-child relationships, the consent responses shown below will be invalidated.
+          If you remove all parent-child relationships, the consent responses shown below will be
+          invalidated.
         buttons:
           continue: Continue
           cancel: Cancel
       create:
         success_flash:
-          unconsented_only: Parent–child relationships without a submitted consent response are being removed.
+          unconsented_only:
+            Parent–child relationships without a submitted consent response are being removed.
           all: All parent-child relationships included in this import are being removed.
   mailers:
     consent_form_mailer:
@@ -766,7 +801,8 @@ en:
     index:
       title: Children
       description: Find children and view their vaccination history
-      description_national_reporting: Find children, view their vaccination history and edit their details
+      description_national_reporting:
+        Find children, view their vaccination history and edit their details
   programmes:
     index:
       title: Programmes
@@ -846,7 +882,8 @@ en:
             zero: There are no more automatic consent reminders to be sent
             one: The next automatic consent reminder will be sent on %{date}
         session_dates: Session dates
-        pre_confirm: Mavis will skip the next automatic reminder if it's scheduled to be sent within 3 days.
+        pre_confirm:
+          Mavis will skip the next automatic reminder if it's scheduled to be sent within 3 days.
         confirm: Send manual consent reminders
     patient_specific_directions:
       show:

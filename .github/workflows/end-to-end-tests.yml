@@ -12,7 +12,7 @@ on:
         description: The environment to build the base image against
         type: string
         required: false
-        default: "next"
+        default: next
     secrets:
       HTTP_AUTH_TOKEN_FOR_TESTS:
         description: HTTP Basic Auth token for the environment under test
@@ -30,9 +30,9 @@ on:
         description: The environment to build the base image against
         type: string
         required: false
-        default: "next"
+        default: next
 
-permissions: { }
+permissions: {}
 
 jobs:
   check-development-image-presence:
@@ -56,11 +56,15 @@ jobs:
       - name: Check if image exists
         id: check-image
         env:
-          GIT_REF: ${{ inputs.git_reference_for_application_image && format('origin/{0}', inputs.git_reference_for_application_image) || github.event.pull_request.head.sha || github.sha }}
+          GIT_REF: >-
+            ${{ inputs.git_reference_for_application_image &&
+            format('origin/{0}', inputs.git_reference_for_application_image) ||
+            github.event.pull_request.head.sha || github.sha }}
         run: |
           GIT_REF_SHA=$(git rev-parse "$GIT_REF")
           echo "GIT_REF_SHA=$GIT_REF_SHA" >> "$GITHUB_OUTPUT"
-          if aws ecr describe-images --repository-name mavis/development --image-ids "imageTag=$GIT_REF_SHA" > /dev/null 2>&1; then
+          if aws ecr describe-images --repository-name mavis/development \
+              --image-ids "imageTag=$GIT_REF_SHA" > /dev/null 2>&1; then
             echo "Docker image with given tag already exists"
             echo "build-needed=false" >> "$GITHUB_OUTPUT"
           else
@@ -68,7 +72,7 @@ jobs:
             echo "build-needed=true" >> "$GITHUB_OUTPUT"
           fi
   build-and-push-development-image:
-    needs: [ check-development-image-presence ]
+    needs: [check-development-image-presence]
     if: ${{ !cancelled() && needs.check-development-image-presence.outputs.build-needed == 'true' }}
     runs-on: ubuntu-latest
     permissions:
@@ -88,6 +92,7 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
       - name: Build and push mavis/development docker image
+        # yamllint disable rule:line-length
         run: |
           docker build \
             --build-arg BUNDLE_WITHOUT=test \
@@ -95,6 +100,7 @@ jobs:
             -t "393416225559.dkr.ecr.eu-west-2.amazonaws.com/mavis/development:${{ needs.check-development-image-presence.outputs.application-image-git-ref }}" \
             .
           docker push "393416225559.dkr.ecr.eu-west-2.amazonaws.com/mavis/development:${{ needs.check-development-image-presence.outputs.application-image-git-ref }}"
+        # yamllint enable rule:line-length
   check-database-image-presence:
     name: Check if database docker image already exists
     runs-on: ubuntu-latest
@@ -116,11 +122,15 @@ jobs:
       - name: Check if image exists
         id: check-image
         env:
-          GIT_REF: ${{ inputs.git_reference_for_database_image && format('origin/{0}', inputs.git_reference_for_database_image) || github.event.pull_request.base.sha || github.sha }}
+          GIT_REF: >-
+            ${{ inputs.git_reference_for_database_image &&
+            format('origin/{0}', inputs.git_reference_for_database_image) ||
+            github.event.pull_request.base.sha || github.sha }}
         run: |
           GIT_REF_SHA=$(git rev-parse "$GIT_REF")
           echo "GIT_REF_SHA=$GIT_REF_SHA" >> "$GITHUB_OUTPUT"
-          if aws ecr describe-images --repository-name mavis/development/postgres_db --image-ids "imageTag=$GIT_REF_SHA" > /dev/null 2>&1; then
+          if aws ecr describe-images --repository-name mavis/development/postgres_db \
+              --image-ids "imageTag=$GIT_REF_SHA" > /dev/null 2>&1; then
             echo "Docker image with given tag already exists"
             echo "build-needed=false" >> "$GITHUB_OUTPUT"
           else
@@ -128,7 +138,7 @@ jobs:
             echo "build-needed=true" >> "$GITHUB_OUTPUT"
           fi
   build-and-push-database-image:
-    needs: [ check-database-image-presence]
+    needs: [check-database-image-presence]
     if: ${{ !cancelled() && needs.check-database-image-presence.outputs.build-needed == 'true' }}
     permissions:
       id-token: write
@@ -137,17 +147,19 @@ jobs:
     with:
       github_ref: ${{ needs.check-database-image-presence.outputs.db_git_ref_sha }}
   launch-dockerized-devimage:
-    needs: [ check-development-image-presence,
-             build-and-push-development-image,
-             check-database-image-presence,
-             build-and-push-database-image
-            ]
-    if: ${{ !cancelled() &&
+    needs:
+      - check-development-image-presence
+      - build-and-push-development-image
+      - check-database-image-presence
+      - build-and-push-database-image
+    if: >-
+      ${{ !cancelled() &&
       (needs.build-and-push-development-image.result == 'success' ||
-      (needs.check-development-image-presence.result == 'success' && needs.build-and-push-development-image.result == 'skipped')) &&
+      (needs.check-development-image-presence.result == 'success' &&
+      needs.build-and-push-development-image.result == 'skipped')) &&
       (needs.build-and-push-database-image.result == 'success' ||
-      (needs.check-database-image-presence.result == 'success' && needs.build-and-push-database-image.result == 'skipped'))
-      }}
+      (needs.check-database-image-presence.result == 'success' &&
+      needs.build-and-push-database-image.result == 'skipped')) }}
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -163,32 +175,40 @@ jobs:
         id: render-task-definition-web
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
-          task-definition-family: "assurance-testing-mavis-development-task-definition-template"
-          container-name: "mavis-development-web"
-          image: "393416225559.dkr.ecr.eu-west-2.amazonaws.com/mavis/development:${{ needs.check-development-image-presence.outputs.application-image-git-ref }}"
+          task-definition-family: assurance-testing-mavis-development-task-definition-template
+          container-name: mavis-development-web
+          # yamllint disable-line rule:line-length
+          image: 393416225559.dkr.ecr.eu-west-2.amazonaws.com/mavis/development:${{ needs.check-development-image-presence.outputs.application-image-git-ref }}
       - name: Render task definition database
         id: render-task-definition-database
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
           task-definition: ${{ steps.render-task-definition-web.outputs.task-definition }}
-          container-name: "mavis-development-db"
-          image: "393416225559.dkr.ecr.eu-west-2.amazonaws.com/mavis/development/postgres_db:${{ needs.check-database-image-presence.outputs.db_git_ref_sha }}"
+          container-name: mavis-development-db
+          # yamllint disable-line rule:line-length
+          image: 393416225559.dkr.ecr.eu-west-2.amazonaws.com/mavis/development/postgres_db:${{ needs.check-database-image-presence.outputs.db_git_ref_sha }}
       - name: Render task definition sidekiq
         id: render-task-definition-sidekiq
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
           task-definition: ${{ steps.render-task-definition-database.outputs.task-definition }}
-          container-name: "mavis-development-sidekiq"
-          image: "393416225559.dkr.ecr.eu-west-2.amazonaws.com/mavis/development:${{ needs.check-development-image-presence.outputs.application-image-git-ref }}"
+          container-name: mavis-development-sidekiq
+          # yamllint disable-line rule:line-length
+          image: 393416225559.dkr.ecr.eu-west-2.amazonaws.com/mavis/development:${{ needs.check-development-image-presence.outputs.application-image-git-ref }}
       - name: Prepare deployment
         id: prepare-deployment
         run: |
           file_path="assurance-testing-mavis-development-task-definition.json"
           family_name="assurance-testing-mavis-development-task-definition"
-          jq --arg f "$family_name" '.family = $f' "${{ steps.render-task-definition-sidekiq.outputs.task-definition }}" > "$file_path"
+          jq --arg f "$family_name" '.family = $f' \
+            "${{ steps.render-task-definition-sidekiq.outputs.task-definition }}" > "$file_path"
 
-          subnet_id=$(aws ec2 describe-subnets --filters Name=tag:Name,Values=assurance-testing-subnet --query 'Subnets[0].SubnetId' --output text)
-          security_group_id=$(aws ec2 describe-security-groups --filters Name=group-name,Values=assurance-testing-mavis-development-sg --query 'SecurityGroups[0].GroupId' --output text)
+          subnet_id=$(aws ec2 describe-subnets \
+            --filters Name=tag:Name,Values=assurance-testing-subnet \
+            --query 'Subnets[0].SubnetId' --output text)
+          security_group_id=$(aws ec2 describe-security-groups \
+            --filters Name=group-name,Values=assurance-testing-mavis-development-sg \
+            --query 'SecurityGroups[0].GroupId' --output text)
 
           echo "run-task-subnets=$subnet_id" >> "$GITHUB_OUTPUT"
           echo "run-task-security-groups=$security_group_id" >> "$GITHUB_OUTPUT"
@@ -218,6 +238,7 @@ jobs:
         with:
           role-to-assume: arn:aws:iam::393416225559:role/GitHubAssuranceTestRole
           aws-region: eu-west-2
+      # yamllint disable rule:line-length
       - name: Get container logs
         run: |
           TASK_ARN=$(echo '${{ needs.launch-dockerized-devimage.outputs.run_task_arn }}' | jq -r '.[0]')
@@ -286,7 +307,11 @@ jobs:
 
           echo "Timeout reached (300 seconds) while waiting for task to become HEALTHY"
           echo "Final status:"
-          aws ecs describe-tasks --cluster "assurance-testing" --tasks "$TASK_ARN" --query 'tasks[0]' --output json || true
+          aws ecs describe-tasks \
+            --cluster "assurance-testing" \
+            --tasks "$TASK_ARN" \
+            --query 'tasks[0]' \
+            --output json || true
           exit 1
       - name: Compile outputs
         id: compile-outputs
@@ -303,9 +328,10 @@ jobs:
           echo "container_ip=$CONTAINER_IP" >> "$GITHUB_OUTPUT"
           echo "task_arn=$TASK_ARN" >> "$GITHUB_OUTPUT"
           echo "Started task: $TASK_ARN"
+        # yamllint enable rule:line-length
   find-correct-test-branch:
-    needs: [ wait-for-task-stability ]
-    if: ${{ !cancelled() && needs.wait-for-task-stability.result == 'success'}}
+    needs: [wait-for-task-stability]
+    if: ${{ !cancelled() && needs.wait-for-task-stability.result == 'success' }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -315,7 +341,9 @@ jobs:
       - name: Check if branch exists
         id: check-branch
         run: |
-          if git ls-remote --exit-code --heads https://github.com/NHSDigital/manage-vaccinations-in-schools-testing.git "$BRANCH_TO_CHECK" > /dev/null 2>&1; then
+          if git ls-remote --exit-code \
+              --heads https://github.com/NHSDigital/manage-vaccinations-in-schools-testing.git \
+              "$BRANCH_TO_CHECK" > /dev/null 2>&1; then
             echo "test_branch=$BRANCH_TO_CHECK" >> "$GITHUB_OUTPUT"
           else
             echo "test_branch=main" >> "$GITHUB_OUTPUT"
@@ -323,9 +351,13 @@ jobs:
         env:
           BRANCH_TO_CHECK: ${{ github.head_ref }}
   call-end-to-end-tests:
-    needs: [ launch-dockerized-devimage, wait-for-task-stability, find-correct-test-branch ]
-    if: ${{ !cancelled() && needs.launch-dockerized-devimage.result == 'success' && needs.wait-for-task-stability.result == 'success'}}
-    uses: NHSDigital/manage-vaccinations-in-schools-testing/.github/workflows/end-to-end-tests.yaml@main
+    needs: [launch-dockerized-devimage, wait-for-task-stability, find-correct-test-branch]
+    if: >-
+      !cancelled() &&
+      needs.launch-dockerized-devimage.result == 'success' &&
+      needs.wait-for-task-stability.result == 'success'
+    uses:
+      NHSDigital/manage-vaccinations-in-schools-testing/.github/workflows/end-to-end-tests.yaml@main
     permissions:
       contents: write
       id-token: write
@@ -337,7 +369,7 @@ jobs:
       HTTP_AUTH_TOKEN_FOR_TESTS: ${{ secrets.HTTP_AUTH_TOKEN_FOR_TESTS }}
       MAVIS_TESTING_REPO_ACCESS_TOKEN: ${{ secrets.MAVIS_TESTING_REPO_ACCESS_TOKEN }}
   stop-docker-environment:
-    needs: [ call-end-to-end-tests, launch-dockerized-devimage, wait-for-task-stability ]
+    needs: [call-end-to-end-tests, launch-dockerized-devimage, wait-for-task-stability]
     if: ${{ always() && needs.launch-dockerized-devimage.result != 'skipped'}}
     runs-on: ubuntu-latest
     permissions:
@@ -349,4 +381,7 @@ jobs:
           role-to-assume: arn:aws:iam::393416225559:role/GitHubAssuranceTestRole
           aws-region: eu-west-2
       - name: Stop dockerized dev image
-        run: aws ecs stop-task --cluster assurance-testing --task ${{ needs.wait-for-task-stability.outputs.task_arn }}
+        run: >-
+          aws ecs stop-task
+          --cluster assurance-testing
+          --task ${{ needs.wait-for-task-stability.outputs.task_arn }}

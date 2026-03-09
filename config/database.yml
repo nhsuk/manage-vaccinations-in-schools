@@ -31,4 +31,4 @@ production:
   <<: *default
   database: manage_vaccinations_production
   sslmode: verify-full
-  sslrootcert: config/aws-eu-west-2-root-ca.crt # This certificate is valid until 2061
+  sslrootcert: config/aws-eu-west-2-root-ca.crt  # This certificate is valid until 2061

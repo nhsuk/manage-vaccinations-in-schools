@@ -1,7 +1,9 @@
 ---
 extends: default
 
-ignore-from-file: .gitignore
+ignore:
+  - config/settings.yml
+  - node_modules
 
 rules:
   document-start: disable

@@ -3,7 +3,7 @@ run-name: Nightly redeploy of data replication environment
 
 on:
   schedule:
-    - cron: '0 3 * * *' # At 01:00 infrastructure is refreshed, so redeploy at 03:00 UTC
+    - cron: '0 3 * * *'  # At 01:00 infrastructure is refreshed, so redeploy at 03:00 UTC
 
 permissions: {}
 
