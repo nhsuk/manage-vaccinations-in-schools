@@ -48,21 +48,18 @@ describe AppPatientProgrammeVaccinationCardComponent do
 
     it { should have_css(".nhsuk-tag", text: "Not eligible") }
     it { should have_css(".nhsuk-table__header", text: "Vaccination date") }
-    it { should have_css(".nhsuk-table__header", text: "Age") }
-    it { should have_css(".nhsuk-table__header", text: "Programme") }
-    it { should have_css(".nhsuk-table__header", text: "Source") }
-
     it { should have_link("1 January 2024") }
 
     it do
       expect(rendered).to have_css(
         ".nhsuk-table",
-        text: "#{patient.age_years(now: performed_at)} years"
+        text: /Age\s+#{patient.age_years(now: performed_at)} years/
       )
     end
 
-    it { should have_css(".nhsuk-table", text: "HPV") }
-    it { should have_css(".nhsuk-table", text: "Recorded in Mavis") }
+    it { should have_css(".nhsuk-table", text: /Programme\s+HPV/) }
+    it { should have_css(".nhsuk-table", text: /Source\s+Recorded in Mavis/) }
+    it { should have_css(".nhsuk-table", text: /Outcome\s+Vaccinated/) }
 
     context "with a vaccination record from a different programme" do
       let(:programme) { Programme.hpv }
