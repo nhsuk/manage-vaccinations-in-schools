@@ -222,14 +222,14 @@ describe "Manage children" do
   end
 
   def given_my_team_exists
-    @hpv = Programme.hpv
     @flu = Programme.flu
+    @hpv = Programme.hpv
     @team =
       create(
         :team,
         :with_generic_clinic,
         :with_one_nurse,
-        programmes: [@hpv, @flu]
+        programmes: [@flu, @hpv]
       )
   end
 
@@ -262,7 +262,7 @@ describe "Manage children" do
         parents: [parent],
         school:
       )
-    create(:vaccination_record, patient: @patient)
+    create(:vaccination_record, patient: @patient, programme: @hpv)
     create_list(:patient, 9, session: @session)
 
     another_session = create(:session, team: @team, programmes: [@hpv])
@@ -400,7 +400,7 @@ describe "Manage children" do
   alias_method :and_i_click_on_a_child, :when_i_click_on_a_child
 
   def and_i_click_on_a_programme
-    click_on "HPV", match: :first
+    click_on "Flu", match: :first
   end
 
   def then_i_see_the_child
