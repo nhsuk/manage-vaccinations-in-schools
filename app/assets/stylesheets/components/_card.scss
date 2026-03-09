@@ -54,11 +54,6 @@
   &--offset {
     background-color: rgba(nhsuk-colour("grey-5"), 0.5);
   }
-
-  &--disabled {
-    pointer-events: none;
-    opacity: 0.5;
-  }
 }
 
 .app-card--compact {
