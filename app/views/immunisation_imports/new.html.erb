@@ -6,6 +6,16 @@
 
 <% content_for :page_title, title %>
 
+<% if (cutoff_date = current_team.national_reporting_cut_off_date) && cutoff_date.today? %>
+  <%= govuk_notification_banner(title_text: "#{cutoff_date.to_fs(:long)} - Check where to upload records") do |notification_banner| %>
+    <% notification_banner.with_heading(text: "Vaccinations given:") %>
+    <ul>
+      <li>before <%= cutoff_date.to_fs(:long) %> must be uploaded to NIVS by the end of today</li>
+      <li>on or after <%= cutoff_date.to_fs(:long) %> must be uploaded to Mavis national reporting only</li>
+    </ul>
+  <% end %>
+<% end %>
+
 <%= form_with model: @immunisation_import, url: immunisation_imports_path do |f| %>
   <%= f.govuk_error_summary %>
 

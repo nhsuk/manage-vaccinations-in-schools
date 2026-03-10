@@ -1,58 +1,105 @@
 # frozen_string_literal: true
 
 describe("National reporting immunisation imports") do
-  around { |example| travel_to(Date.new(2025, 12, 20)) { example.run } }
+  context "at a specified date" do
+    around { |example| travel_to(Date.new(2025, 12, 20)) { example.run } }
 
-  scenario "User uploads a mixed flu and HPV file, views cohort and vaccination records" do
-    given_mavis_logins_are_configured
-    given_i_am_signed_in_as_a_national_reporting_user
-    given_a_patient_already_exists
-    and_sending_to_nhs_immunisations_api_is_enabled
+    scenario "User uploads a mixed flu and HPV file, views cohort and vaccination records" do
+      given_mavis_logins_are_configured
+      given_i_am_signed_in_as_a_national_reporting_user
+      given_a_patient_already_exists
+      and_sending_to_nhs_immunisations_api_is_enabled
 
-    when_i_go_to_the_import_page
-    then_i_should_see_the_upload_link
-    and_i_should_not_see_any_reference_to_import_issues
+      when_i_go_to_the_import_page
+      then_i_should_see_the_upload_link
+      and_i_should_not_see_any_reference_to_import_issues
 
-    when_i_click_on_the_upload_link
-    then_i_should_see_the_upload_page
+      when_i_click_on_the_upload_link
+      then_i_should_see_the_upload_page
 
-    when_i_continue_without_uploading_a_file
-    then_i_should_see_an_error
+      when_i_continue_without_uploading_a_file
+      then_i_should_see_an_error
 
-    when_i_upload_an_invalid_file
-    then_i_should_see_the_errors_page
+      when_i_upload_an_invalid_file
+      then_i_should_see_the_errors_page
 
-    travel_to 1.minute.from_now # to ensure the created_at is different for the import jobs
+      travel_to 1.minute.from_now # to ensure the created_at is different for the import jobs
 
-    when_i_go_back_to_the_upload_page
-    and_i_upload_a_valid_mixed_file
-    then_i_should_see_the_upload
-    and_i_should_see_some_stats_about_the_import
-    and_i_should_see_the_vaccination_records
-    and_the_patients_should_now_be_associated_with_the_team
-    and_the_newly_created_patients_should_be_archived
-    and_the_existing_patients_should_not_be_archived
-    and_the_vaccination_records_are_sent_to_the_imms_api
+      when_i_go_back_to_the_upload_page
+      and_i_upload_a_valid_mixed_file
+      then_i_should_see_the_upload
+      and_i_should_see_some_stats_about_the_import
+      and_i_should_see_the_vaccination_records
+      and_the_patients_should_now_be_associated_with_the_team
+      and_the_newly_created_patients_should_be_archived
+      and_the_existing_patients_should_not_be_archived
+      and_the_vaccination_records_are_sent_to_the_imms_api
 
-    when_i_click_on_a_vaccination_record
-    then_i_should_see_the_vaccination_record
+      when_i_click_on_a_vaccination_record
+      then_i_should_see_the_vaccination_record
 
-    when_i_go_to_the_children_page
-    and_i_search_for_existing_patient
-    then_i_should_see_the_existing_patient
-    when_i_search_for_new_patient
-    then_i_should_see_the_new_patient
+      when_i_go_to_the_children_page
+      and_i_search_for_existing_patient
+      then_i_should_see_the_existing_patient
+      when_i_search_for_new_patient
+      then_i_should_see_the_new_patient
 
-    travel_to 1.minute.from_now
+      travel_to 1.minute.from_now
 
-    when_i_navigate_to_the_upload_page
-    and_i_upload_a_valid_mixed_file # The exact same file again
-    then_i_should_see_the_upload
-    and_no_new_vaccination_records_were_created
+      when_i_navigate_to_the_upload_page
+      and_i_upload_a_valid_mixed_file # The exact same file again
+      then_i_should_see_the_upload
+      and_no_new_vaccination_records_were_created
+    end
   end
 
-  def given_mavis_logins_are_configured
-    @team = create(:team, :national_reporting, :with_one_nurse, ods_code: "R1L")
+  context "cutoff date banner" do
+    let(:cutoff_date) { Date.new(2026, 4, 20) }
+
+    context "when today is not the cutoff date" do
+      around { |example| travel_to(cutoff_date - 1.day) { example.run } }
+
+      scenario "banner is not shown" do
+        given_mavis_logins_are_configured(
+          national_reporting_cut_off_date: cutoff_date
+        )
+        given_i_am_signed_in_as_a_national_reporting_user
+        when_i_navigate_to_the_upload_page
+        expect(page).not_to have_css(".nhsuk-notification-banner")
+      end
+    end
+
+    context "when today is the cutoff date" do
+      around { |example| travel_to(cutoff_date) { example.run } }
+
+      scenario "banner is shown" do
+        given_mavis_logins_are_configured(
+          national_reporting_cut_off_date: cutoff_date
+        )
+        given_i_am_signed_in_as_a_national_reporting_user
+        when_i_navigate_to_the_upload_page
+        expect(page).to have_css(".nhsuk-notification-banner")
+        expect(page).to have_content("20 April 2026")
+        expect(page).to have_content("Check where to upload records")
+        expect(page).to have_content(
+          "before 20 April 2026 must be uploaded to NIVS by the end of today"
+        )
+        expect(page).to have_content(
+          "on or after 20 April 2026 must be uploaded to Mavis national reporting only"
+        )
+      end
+    end
+  end
+
+  def given_mavis_logins_are_configured(national_reporting_cut_off_date: nil)
+    @team =
+      create(
+        :team,
+        :national_reporting,
+        :with_one_nurse,
+        ods_code: "R1L",
+        national_reporting_cut_off_date:
+      )
     @school = create(:school, team: @team, urn: 100_000)
   end
 
