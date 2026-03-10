@@ -64,6 +64,10 @@
       cron: "0 2 * * *"
       class: TrimActiveRecordSessionsJob
       description: Remove ActiveRecord sessions older than 30 days
+    cleanup_vaccination_report_exports:
+      cron: "0 4 * * *"
+      class: CleanupVaccinationReportExportsJob
+      description: Purge old vaccination report exports and mark expired
     update_patients_from_pds:
       cron: "0 0,6,12,18 * * *"
       class: EnqueueUpdatePatientsFromPDSJob
