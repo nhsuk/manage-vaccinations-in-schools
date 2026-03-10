@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class API::Reporting::BaseController < ActionController::API
+  include Pundit::Authorization
+
   # we need to still include the AuthenticationConcern even though
   # we're not using the authenticate_user! callback, because we call it
   # explicitly after validating the users' JWT in order to use the
@@ -17,7 +19,23 @@ class API::Reporting::BaseController < ActionController::API
 
   before_action :authenticate_user_by_jwt!
 
+  rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
+
+  def current_user
+    @current_user
+  end
+
   private
+
+  def user_not_authorized
+    render json: { errors: "Not authorized" }, status: :forbidden
+  end
+
+  # JWT-authenticated requests have no Devise session, so override the
+  # Devise-based user_signed_in? to treat @current_user presence as sufficient.
+  def user_signed_in?
+    @current_user.present?
+  end
 
   def render_paginated_json(records:)
     pagy, this_page_records = pagy(records, jsonapi: true)
