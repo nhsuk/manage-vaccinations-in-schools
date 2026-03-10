@@ -262,16 +262,7 @@ class Session < ApplicationRecord
   end
 
   def can_send_clinic_invitations?
-    if clinic?
-      next_date(include_today: true) && !completed?
-    else
-      completed? &&
-        GenericClinicSessionFinder.call(
-          team:,
-          academic_year:,
-          programmes:
-        )&.next_date(include_today: true)
-    end
+    clinic? ? next_date(include_today: true) && !completed? : completed?
   end
 
   def patients_with_no_consent_response_count

@@ -2,7 +2,6 @@
 
 class Sessions::InviteToClinicController < Sessions::BaseController
   before_action :check_can_send_clinic_invitations
-  before_action :set_generic_clinic_session
   before_action :set_patients_to_invite
   before_action :set_invitations_to_send
 
@@ -39,19 +38,6 @@ class Sessions::InviteToClinicController < Sessions::BaseController
 
   def check_can_send_clinic_invitations
     render status: :not_found unless @session.can_send_clinic_invitations?
-  end
-
-  def set_generic_clinic_session
-    @generic_clinic_session =
-      if @session.clinic?
-        @session
-      else
-        GenericClinicSessionFinder.call(
-          team: @session.team,
-          academic_year: @session.academic_year,
-          programmes: @session.programmes
-        )
-      end
   end
 
   def set_patients_to_invite
