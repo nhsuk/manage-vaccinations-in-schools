@@ -15,6 +15,10 @@ class SessionPolicy < ApplicationPolicy
     update? && record.school? && record.completed?
   end
 
+  def manage_consent_reminders?
+    update? && record.school?
+  end
+
   def make_in_progress? = update?
 
   class Scope < ApplicationPolicy::Scope

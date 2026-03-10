@@ -20,7 +20,7 @@ class AppSessionActionsComponent < ViewComponent::Base
 
   attr_reader :session
 
-  delegate :govuk_summary_list, to: :helpers
+  delegate :govuk_summary_list, :policy, to: :helpers
   delegate :academic_year, :programmes, :team, to: :session
 
   def patients = session.patients
@@ -62,11 +62,14 @@ class AppSessionActionsComponent < ViewComponent::Base
       )
 
     actions = [
-      {
-        text: "Send reminders",
-        href: session_manage_consent_reminders_path(session)
-      }
-    ]
+      if policy(session).manage_consent_reminders?
+        {
+          text: "Send reminders",
+          href: session_manage_consent_reminders_path(session)
+        }
+      end
+    ].compact
+
     generate_row(:children_with_no_consent_response, count:, href:, actions:)
   end
 
