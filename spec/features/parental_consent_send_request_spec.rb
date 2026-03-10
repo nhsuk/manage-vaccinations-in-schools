@@ -344,7 +344,7 @@ describe "Parental consent" do
       if outbreak
         [
           "The number of measles cases in your area is high right now.",
-          "## We're offering catch-up vaccinations",
+          "## We’re offering catch-up vaccinations",
           "Respond to the consent request now",
           "## Contact us"
         ]
@@ -383,7 +383,7 @@ describe "Parental consent" do
       if outbreak
         [
           "The number of measles cases in your area is high right now.",
-          "## We're offering catch-up vaccinations",
+          "## We’re offering catch-up vaccinations",
           "Respond to the consent request now",
           "## Contact us"
         ]
