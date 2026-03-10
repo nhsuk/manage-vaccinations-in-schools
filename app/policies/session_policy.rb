@@ -11,6 +11,10 @@ class SessionPolicy < ApplicationPolicy
 
   def import? = show?
 
+  def invite_to_clinic?
+    update? && record.school? && record.completed?
+  end
+
   def make_in_progress? = update?
 
   class Scope < ApplicationPolicy::Scope

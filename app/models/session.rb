@@ -261,8 +261,6 @@ class Session < ApplicationRecord
       attendance_records.any? { it.date == date }
   end
 
-  def can_send_clinic_invitations? = school? && completed?
-
   def patients_with_no_consent_response_count
     patients.has_programme_status(
       "needs_consent_no_response",

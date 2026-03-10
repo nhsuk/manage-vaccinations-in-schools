@@ -1,11 +1,9 @@
 # frozen_string_literal: true
 
 class Sessions::InviteToClinicController < Sessions::BaseController
-  before_action :check_can_send_clinic_invitations
+  before_action :authorize_session
   before_action :set_patients_to_invite
   before_action :set_invitations_to_send
-
-  skip_after_action :verify_policy_scoped
 
   def edit
   end
@@ -31,8 +29,8 @@ class Sessions::InviteToClinicController < Sessions::BaseController
 
   private
 
-  def check_can_send_clinic_invitations
-    render status: :not_found unless @session.can_send_clinic_invitations?
+  def authorize_session
+    authorize @session, :invite_to_clinic?
   end
 
   def set_patients_to_invite

@@ -8,7 +8,7 @@ class AppSessionButtonsComponent < ViewComponent::Base
 
         <%= link_to "Record offline", session_path(session, format: :xlsx) %>
 
-        <% if session.school? && session.can_send_clinic_invitations? %>
+        <% if policy(session).invite_to_clinic? %>
           <%= link_to "Send clinic invitations", edit_session_invite_to_clinic_path(@session) %>
         <% end %>
       <% end %>
