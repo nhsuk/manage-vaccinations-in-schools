@@ -15,7 +15,6 @@ class FeatureFlagFactory
   end
 
   FEATURES_FOR_DEVELOPMENT = %i[
-    child_record_redesign
     dev_tools
     import_review_screen
     testing_api

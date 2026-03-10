@@ -9,17 +9,13 @@
 
 <%= render AppPatientNavigationComponent.new(@patient, current_user.programmes, active: :show) %>
 
-<% vaccinations_card = capture do %>
+<% if current_team.has_national_reporting_access? %>
   <%= render AppCardComponent.new(section: true) do |card| %>
     <% card.with_heading { "Vaccinations" } %>
     <%= render AppPatientVaccinationTableComponent.new(
           @patient, academic_year: AcademicYear.current, show_caption: false,
         ) %>
   <% end %>
-<% end %>
-
-<% if current_team.has_national_reporting_access? %>
-  <%= vaccinations_card %>
 <% end %>
 
 <%= render AppPatientCardComponent.new(
@@ -34,27 +30,11 @@
 <% end %>
 
 <% unless current_team.has_national_reporting_access? %>
-
   <%= render AppCardComponent.new(section: true) do |card| %>
     <%= render AppPatientProgrammesTableComponent.new(
           @patient,
           programmes: current_user.programmes,
           current_team:,
         ) %>
-  <% end %>
-
-  <% unless Flipper.enabled?(:child_record_redesign) %>
-    <%= render AppCardComponent.new(section: true) do |card| %>
-      <% card.with_heading { "Sessions" } %>
-      <%= render AppPatientSessionTableComponent.new(@patient, current_team:) %>
-
-      <% unless @in_generic_clinic %>
-        <%= govuk_button_to "Invite to community clinic", invite_to_clinic_patient_path(@patient), secondary: true %>
-      <% end %>
-    <% end %>
-  <% end %>
-
-  <% unless Flipper.enabled?(:child_record_redesign) %>
-    <%= vaccinations_card %>
   <% end %>
 <% end %>

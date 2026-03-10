@@ -705,6 +705,9 @@ describe "Edit vaccination record" do
     find("button.app-search-input__button").click
 
     click_on @patient.full_name
+    unless @team.has_national_reporting_access?
+      within(".app-secondary-navigation") { click_on @programme.name }
+    end
     click_on Date.current.to_fs(:long)
   end
 
@@ -918,10 +921,6 @@ describe "Edit vaccination record" do
 
   def and_i_should_see_the_updated_location
     expect(page).to have_content("LocationA New School")
-  end
-
-  def when_i_click_on_change_batch
-    click_on "Change batch"
   end
 
   def then_i_should_not_see_the_similar_batch

@@ -9,8 +9,7 @@ class PatientsController < ApplicationController
   before_action :set_programme_statuses, only: :index
   before_action :set_visibility_flags, only: :index
   before_action :set_patient, except: :index
-  before_action :set_in_generic_clinic, only: :show
-  before_action :record_access_log_entry, only: %i[show log]
+  before_action :record_access_log_entry, only: :show
 
   layout "full"
 
@@ -30,12 +29,6 @@ class PatientsController < ApplicationController
   end
 
   def show
-  end
-
-  def log
-    # This action and the corresponding view can be deleted when the
-    # `child_record_redesign` feature flag is removed.
-    render status: :not_found if Flipper.enabled?(:child_record_redesign)
   end
 
   def edit
@@ -62,32 +55,6 @@ class PatientsController < ApplicationController
         description: time&.to_date&.to_fs(:long)
       }
     end
-  end
-
-  def invite_to_clinic
-    academic_year = AcademicYear.pending
-
-    ActiveRecord::Base.transaction do
-      PatientLocation.find_or_create_by!(
-        patient: @patient,
-        location: current_team.generic_clinic,
-        academic_year:
-      )
-
-      PatientTeamUpdater.call(patient: @patient.id, team: current_team)
-    end
-
-    @patient.notifier.send_clinic_invitation(
-      current_team.programmes,
-      team: current_team,
-      academic_year:,
-      sent_by: current_user
-    )
-
-    redirect_to patient_path(@patient),
-                flash: {
-                  success: "#{@patient.full_name} invited to the clinic"
-                }
   end
 
   private
@@ -143,14 +110,6 @@ class PatientsController < ApplicationController
                   consents: %i[parent patient],
                   parent_relationships: :parent
                 ).find(params[:id])
-  end
-
-  def set_in_generic_clinic
-    @in_generic_clinic =
-      @patient.patient_locations.exists?(
-        location: current_team.generic_clinic,
-        academic_year: AcademicYear.pending
-      )
   end
 
   def record_access_log_entry
