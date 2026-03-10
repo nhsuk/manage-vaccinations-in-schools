@@ -16,12 +16,56 @@ class Reports::CareplusExporter
     }
   }.freeze
 
-  def initialize(team:, programme:, academic_year:, start_date:, end_date:)
+  VACCINE_COLUMN_HEADINGS = {
+    vaccine: "Vaccine",
+    vaccine_code: "Vaccine Code",
+    dose: "Dose",
+    reason_not_given: "Reason Not Given",
+    site: "Site",
+    manufacturer: "Manufacturer",
+    batch_number: "Batch No"
+  }.freeze
+
+  EXPORT_TYPES = {
+    manual: {
+      include_gender: true,
+      vaccine_columns: %i[
+        vaccine
+        vaccine_code
+        dose
+        reason_not_given
+        site
+        manufacturer
+        batch_number
+      ]
+    },
+    automated: {
+      include_gender: false,
+      vaccine_columns: %i[
+        vaccine
+        dose
+        reason_not_given
+        site
+        manufacturer
+        batch_number
+      ]
+    }
+  }.freeze
+
+  def initialize(
+    team:,
+    programme:,
+    academic_year:,
+    start_date:,
+    end_date:,
+    export_type:
+  )
     @team = team
     @programme = programme
     @academic_year = academic_year
     @start_date = start_date
     @end_date = end_date
+    @export_config = EXPORT_TYPES.fetch(export_type)
   end
 
   def call
@@ -48,7 +92,12 @@ class Reports::CareplusExporter
     not_specified: "I"
   }.with_indifferent_access.freeze
 
-  attr_reader :team, :programme, :academic_year, :start_date, :end_date
+  attr_reader :team,
+              :programme,
+              :academic_year,
+              :start_date,
+              :end_date,
+              :export_config
 
   def headers
     [
@@ -73,20 +122,26 @@ class Reports::CareplusExporter
       *vaccine_columns(3),
       *vaccine_columns(4),
       *vaccine_columns(5),
-      "Gender"
+      *gender_headers
     ]
   end
 
   def vaccine_columns(number)
-    [
-      "Vaccine #{number}",
-      "Vaccine Code #{number}",
-      "Dose #{number}",
-      "Reason Not Given #{number}",
-      "Site #{number}",
-      "Manufacturer #{number}",
-      "Batch No #{number}"
-    ]
+    vaccine_column_keys.map do |column|
+      "#{VACCINE_COLUMN_HEADINGS.fetch(column)} #{number}"
+    end
+  end
+
+  def gender_headers
+    return [] unless export_config[:include_gender]
+
+    ["Gender"]
+  end
+
+  def gender_row_value(patient)
+    return [] unless export_config[:include_gender]
+
+    [GENDER_CODE_MAPPINGS[patient.gender_code]]
   end
 
   def vaccination_records
@@ -175,29 +230,46 @@ class Reports::CareplusExporter
               *vaccine_fields(records, 2),
               *vaccine_fields(records, 3),
               *vaccine_fields(records, 4),
-              GENDER_CODE_MAPPINGS[patient.gender_code]
+              *gender_row_value(patient)
             ]
           end
       end
   end
 
   def blank_vaccine_fields
-    ["", "", "", "", "", "", ""]
+    Array.new(vaccine_column_keys.length, "")
   end
 
   def vaccine_fields(vaccination_records, index)
     record = vaccination_records[index]
     return blank_vaccine_fields unless record
 
-    [
-      record.vaccine.snomed_product_code, # Vaccine X
-      vaccine_code(record), # Code X field
-      dose_sequence_code(record), # Dose X field
-      "", # Reason Not Given X
-      coded_site(record.delivery_site), # Site X; Coded value
-      record.vaccine.manufacturer, # Manufacturer X
-      record.batch_number # Batch No X
-    ]
+    vaccine_column_keys.map { |column| vaccine_field_value(column, record) }
+  end
+
+  def vaccine_column_keys
+    export_config[:vaccine_columns]
+  end
+
+  def vaccine_field_value(column, record)
+    case column
+    when :vaccine
+      record.vaccine.snomed_product_code
+    when :vaccine_code
+      vaccine_code(record)
+    when :dose
+      dose_sequence_code(record)
+    when :reason_not_given
+      ""
+    when :site
+      coded_site(record.delivery_site)
+    when :manufacturer
+      record.vaccine.manufacturer
+    when :batch_number
+      record.batch_number
+    else
+      raise "Unknown vaccine column: #{column}"
+    end
   end
 
   # Official list of Careplus codes
