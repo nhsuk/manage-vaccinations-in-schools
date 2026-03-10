@@ -11,17 +11,12 @@ RSpec::Matchers.define :matching_notify_email do |to:, template:|
   match do |actual|
     next false unless actual.is_a?(Hash)
 
-    renderer = NotifyTemplateRenderer.for(:email)
-    template_id =
-      renderer.template_id_for(template) ||
-        GOVUK_NOTIFY_EMAIL_TEMPLATES.fetch(template)
-
-    next false unless actual[:email_address] == to
-    unless [template_id, renderer.passthrough_template_id].include?(
-             actual[:template_id]
-           )
-      next false
+    notify_template = NotifyTemplate.find(template, channel: :email)
+    unless notify_template
+      raise ArgumentError, "Unknown email template :#{template}"
     end
+    next false unless actual[:email_address] == to
+    next false unless actual[:template_id] == notify_template.delivery_id
     next true if @expected_content_strings.blank?
 
     personalisation = actual[:personalisation] || {}

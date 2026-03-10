@@ -200,7 +200,8 @@ describe AppActivityLogComponent do
       create(
         :notify_log_entry,
         :email,
-        template_id: GOVUK_NOTIFY_EMAIL_TEMPLATES[:consent_school_request_hpv],
+        template_id:
+          NotifyTemplate.find(:consent_school_request_hpv, channel: :email).id,
         consent_form: nil,
         patient:,
         programme_types: %w[hpv],

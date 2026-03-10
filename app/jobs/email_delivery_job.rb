@@ -42,20 +42,18 @@ class EmailDeliveryJob < NotifyDeliveryJob
 
     return if email_address.nil?
 
-    email_renderer = NotifyTemplateRenderer.for(:email)
-    api_template_id, personalisation_hash, log_template_id =
-      if use_local_template?(template_name_sym)
-        rendered = email_renderer.render(template_name_sym, personalisation)
-        [
-          email_renderer.passthrough_template_id,
-          { subject: rendered[:subject], body: rendered[:body] },
-          email_renderer.template_id_for(template_name_sym)
-        ]
+    template = NotifyTemplate.find(template_name_sym, channel: :email)
+    raise UnknownTemplate if template.nil?
+
+    personalisation_hash =
+      if template.local?
+        rendered = template.render(personalisation)
+        { subject: rendered[:subject], body: rendered[:body] }
       else
-        tid = email_renderer.template_id_for(template_name_sym)
-        raise UnknownTemplate if tid.nil?
-        [tid, personalisation.to_h, tid]
+        personalisation.to_h
       end
+    api_template_id = template.delivery_id
+    log_template_id = template.id
 
     args = {
       email_address:,
@@ -107,15 +105,5 @@ class EmailDeliveryJob < NotifyDeliveryJob
           { programme_type: it.type, disease_types: it.disease_types }
         end
     )
-  end
-
-  def use_local_template?(template_name_sym)
-    return false unless passthrough_email_configured?
-
-    NotifyTemplateRenderer.for(:email).template_exists?(template_name_sym)
-  end
-
-  def passthrough_email_configured?
-    NotifyTemplateRenderer.for(:email).passthrough_configured?
   end
 end

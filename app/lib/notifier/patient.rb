@@ -256,7 +256,6 @@ class Notifier::Patient
     session:,
     channel:
   )
-    renderer = NotifyTemplateRenderer.for(channel)
     is_outbreak = session.outbreak
 
     combinations = [([group, :outbreak] if is_outbreak), [group]]
@@ -268,7 +267,7 @@ class Notifier::Patient
     combinations
       .lazy
       .map { |parts| :"#{base_template}_#{parts.join("_")}" }
-      .detect { renderer.template_exists?(it, source: :any) }
+      .detect { NotifyTemplate.exists?(it, channel:, source: :any) }
   end
 
   def programmes_to_send_clinic_invitation_for(
