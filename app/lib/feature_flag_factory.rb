@@ -18,7 +18,6 @@ class FeatureFlagFactory
     already_vaccinated
     dev_tools
     import_review_screen
-    reporting_api
     testing_api
   ].freeze
 

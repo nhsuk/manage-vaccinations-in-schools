@@ -15,7 +15,6 @@ class API::Reporting::BaseController < ActionController::API
   include Pagy::Backend
   include Pagy::JsonApiExtra
 
-  before_action :ensure_reporting_api_feature_enabled
   before_action :authenticate_user_by_jwt!
 
   private
@@ -48,10 +47,6 @@ class API::Reporting::BaseController < ActionController::API
 
   def csv_filename(prefix: "data", timestamp: Time.current)
     "#{prefix}-#{@filters}-#{timestamp.iso8601.gsub(/[^[:alnum:]]+/, "")}.csv"
-  end
-
-  def ensure_reporting_api_feature_enabled
-    render status: :forbidden and return unless Flipper.enabled?(:reporting_api)
   end
 
   # convert a relation to a csv file,

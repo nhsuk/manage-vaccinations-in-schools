@@ -15,12 +15,10 @@ module ReportingAPI::TokenAuthenticationConcern
     end
 
     def authenticate_app_by_client_id!
-      if Flipper.enabled?(:reporting_api)
-        # ...as per the spec at https://datatracker.ietf.org/doc/html/rfc6749#section-4.1.3
-        given_client_id = params.fetch("client_id", nil)
-        unless given_client_id == Settings.reporting_api.client_app.client_id
-          client_id_error!(given_client_id)
-        end
+      # ...as per the spec at https://datatracker.ietf.org/doc/html/rfc6749#section-4.1.3
+      given_client_id = params.fetch("client_id", nil)
+      unless given_client_id == Settings.reporting_api.client_app.client_id
+        client_id_error!(given_client_id)
       end
     end
 

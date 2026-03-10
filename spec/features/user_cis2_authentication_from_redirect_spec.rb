@@ -13,23 +13,13 @@ describe "User CIS2 authentication", :cis2 do
     and_i_am_logged_in
   end
 
-  scenario "being redirected to sign-in from the reporting UI" do
+  scenario "from reporting" do
     given_a_test_team_is_setup_in_mavis_and_cis2
-    and_the_reporting_api_feature_flag_is_enabled
     when_i_go_to_the_start_page_with_a_redirect_uri_param_that_matches_the_reporting_app
 
     when_i_click_the_cis2_login_button
     then_i_am_redirected_to_the_previously_stored_redirect_uri_param
     and_the_return_url_has_a_token_param_added_to_it
-  end
-
-  scenario "being redirected after sign-in when the reporting app feature flag is disabled" do
-    given_a_test_team_is_setup_in_mavis_and_cis2
-    and_the_reporting_api_feature_flag_is_not_enabled
-    when_i_go_to_the_start_page_with_a_redirect_uri_param_that_matches_the_reporting_app
-
-    when_i_click_the_cis2_login_button
-    then_i_see_the_dashboard
   end
 
   scenario "someone has supplied their own external redirect url" do
@@ -52,14 +42,6 @@ describe "User CIS2 authentication", :cis2 do
       org_name: @team.name,
       workgroups: [@team.workgroup]
     )
-  end
-
-  def and_the_reporting_api_feature_flag_is_enabled
-    Flipper.enable(:reporting_api)
-  end
-
-  def and_the_reporting_api_feature_flag_is_not_enabled
-    Flipper.disable(:reporting_api)
   end
 
   def return_url_on_reporting_app

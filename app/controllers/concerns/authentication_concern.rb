@@ -114,7 +114,6 @@ module AuthenticationConcern
     end
 
     def reporting_app_redirect_uri_with_auth_code_for(user)
-      return unless Flipper.enabled?(:reporting_api)
       return if cis2_info.team_workgroup.blank?
 
       url = session.delete("redirect_uri")
@@ -143,9 +142,9 @@ module AuthenticationConcern
       urls = []
 
       urls << inspect_dashboard_path if user_is_support?
-      if Flipper.enabled?(:reporting_api)
-        urls << reporting_app_redirect_uri_with_auth_code_for(current_user)
-      end
+
+      urls << reporting_app_redirect_uri_with_auth_code_for(current_user)
+
       urls += [
         stored_location_for(scope),
         session[:user_return_to],

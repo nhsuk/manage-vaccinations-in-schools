@@ -1,10 +1,7 @@
 # frozen_string_literal: true
 
 describe API::Reporting::TotalsController do
-  before do
-    Flipper.enable(:reporting_api)
-    request.headers["Authorization"] = "Bearer #{valid_jwt}"
-  end
+  before { request.headers["Authorization"] = "Bearer #{valid_jwt}" }
 
   include ReportingAPIHelper
 
