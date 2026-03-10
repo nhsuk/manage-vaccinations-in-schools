@@ -35,6 +35,7 @@ jobs:
         with:
           webhook: ${{ secrets.SLACK_MAVIS_ALERTS_WEBHOOK_URL }}
           webhook-type: incoming-webhook
+          # yamllint disable rule:line-length
           payload: |
             text: ":rotating_light: Continuous Deployment failed :rotating_light:"
             blocks:
@@ -43,3 +44,4 @@ jobs:
                   type: "mrkdwn"
                   text: ":rotating_light: *Continuous Deployment failed* :rotating_light:\n\n \
                           <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View workflow run>"
+          # yamllint enable rule:line-length

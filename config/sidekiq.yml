@@ -33,7 +33,9 @@
     patients_refused_consent_already_vaccinated:
       cron: "30 5 * * *"
       class: PatientsRefusedConsentAlreadyVaccinatedJob
-      description: Record already vaccinated for patients who refused consent in the previous academic year for that reason
+      description: >-
+        Record already vaccinated for patients who refused consent
+        in the previous academic year for that reason
     refresh_reporting_data:
       cron: "0 * * * *"
       class: ReportingAPI::RefreshJob

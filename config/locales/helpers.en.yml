@@ -16,7 +16,8 @@ en:
     label:
       bulk_remove_parents_form:
         remove_option_options:
-          unconsented_only: Only remove parent–child relationships where no consent response has been submitted
+          unconsented_only:
+            Only remove parent–child relationships where no consent response has been submitted
           all: Remove all parent–child relationships included in this import
       consent_form:
         response_options:
@@ -38,7 +39,8 @@ en:
           safe_to_vaccinate: Yes, it’s safe to vaccinate
           safe_to_vaccinate_injection: Yes, it’s safe to vaccinate with injected vaccine
           safe_to_vaccinate_nasal: Yes, it’s safe to vaccinate with nasal spray
-          safe_to_vaccinate_without_gelatine: Yes, it’s safe to vaccinate with the gelatine-free injection
+          safe_to_vaccinate_without_gelatine:
+            Yes, it’s safe to vaccinate with the gelatine-free injection
       vaccination_report:
         file_format_options:
           mavis: CSV

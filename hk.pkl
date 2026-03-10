@@ -37,6 +37,8 @@ local linters = new Mapping<String, Group> {
                 check = "bin/stylelint {{ files }}"
                 fix = "bin/stylelint --fix {{ files }}"
             }
+
+            ["yamllint"] = Builtins.yamllint
         }
     }
 
@@ -49,7 +51,7 @@ local linters = new Mapping<String, Group> {
     }
 
     ["pre-commit"] = new Group {
-        steps = steps_with_staged_fixes.toMap().remove("actionlint").remove("brakeman").toMapping()
+        steps = steps_with_staged_fixes.toMap().remove("actionlint").remove("brakeman").remove("yamllint").toMapping()
     }
 }
 

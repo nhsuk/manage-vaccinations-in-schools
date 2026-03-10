@@ -33,4 +33,3 @@ jobs:
             --title "Draft release $release_tag" \
             --notes-file release_notes.md \
             --draft
-

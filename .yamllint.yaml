@@ -1,0 +1,13 @@
+---
+extends: default
+
+ignore:
+  - config/settings.yml
+  - node_modules
+
+rules:
+  document-start: disable
+  line-length:
+    max: 100
+  truthy:
+    ignore: .github/workflows/*

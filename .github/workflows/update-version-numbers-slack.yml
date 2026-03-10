@@ -30,7 +30,8 @@ jobs:
                 echo "Branch $branch does not exist."
                 continue
             fi
-            latest_tag=$(git tag --merged "$full_branch" | grep -P '^v\d+\.\d+\.\d+' | sort -V | tail -1)
+            latest_tag=$(git tag --merged "$full_branch" | \
+              grep -P '^v\d+\.\d+\.\d+' | sort -V | tail -1)
             if [ -n "$latest_tag" ]; then
                 echo "Latest tag on branch $branch: $latest_tag"
                 echo "${branch}_tag=$latest_tag" >> "$GITHUB_OUTPUT"
@@ -54,9 +55,11 @@ jobs:
           NEXT_VERSION=v"$major"."$new_minor"."$patch"
           echo "next_tag=$NEXT_VERSION" >> "$GITHUB_ENV"
       - name: Create channel topic
+        # yamllint disable rule:line-length
         run: |
           TOPIC="release: ${{ needs.get-tags.outputs.release_tag }} - main: ${{ needs.get-tags.outputs.main_tag }} - next: $next_tag"
           echo "MAVIS_TECH_TOPIC=$TOPIC" >> "$GITHUB_ENV"
+        # yamllint enable rule:line-length
       - name: Update mavis tech channel topic
         uses: slackapi/slack-github-action@91efab103c0de0a537f72a35f6b8cda0ee76bf0a
         with:

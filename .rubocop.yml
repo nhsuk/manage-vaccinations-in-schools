@@ -21,7 +21,7 @@ Layout/EmptyLineAfterMagicComment:
   Enabled: true
 
 Layout/LineLength:
-  AllowedPatterns: [idx_on,index_,idx_]
+  AllowedPatterns: [idx_on, index_, idx_]
   Exclude:
     - db/schema.rb
 
