@@ -89,10 +89,7 @@ describe PatientTeamUpdater do
 
       it "adds the patient to the team" do
         expect(patient.teams).to be_empty
-        expect { call }.to change(PatientTeam, :count).by(1)
-        expect(PatientTeam.last.sources).to contain_exactly(
-          "vaccination_record_organisation"
-        )
+        expect { call }.not_to change(PatientTeam, :count)
       end
     end
 

@@ -180,14 +180,14 @@ trap cleanup EXIT INT TERM
 # Wait for Rails health
 
 echo "[e2e] Waiting for Rails to become healthy on $HEALTH_CHECK_URL"
-for i in {1..6}; do
+for i in {1..10}; do
   printf "."
   if curl -fsS "$HEALTH_CHECK_URL" > /dev/null 2>&1; then
     printf "\n[e2e] Rails is up.\n"
     break
   fi
   sleep 1
-  if [ "$i" -eq 6 ]; then
+  if [ "$i" -eq 10 ]; then
     printf "\n[e2e] ERROR: Rails server did not become ready in time.\n" >&2
     echo "[e2e] Contents of /tmp/e2e-foreman.log:"
     cat /tmp/e2e-foreman.log

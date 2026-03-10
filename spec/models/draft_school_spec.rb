@@ -2,7 +2,12 @@
 
 describe DraftSchool do
   subject(:draft_school) do
-    described_class.new(request_session:, current_user:, **attributes)
+    described_class.new(
+      request_session:,
+      current_user:,
+      current_team: team,
+      **attributes
+    )
   end
 
   let(:team) { create(:team, :with_one_nurse) }
@@ -13,7 +18,8 @@ describe DraftSchool do
 
   let(:valid_attributes) do
     {
-      urn_and_site: school.urn_and_site,
+      context: "add_site",
+      parent_urn_and_site: school.urn_and_site,
       name: "New Site Name",
       address_line_1: "123 Main Street",
       address_line_2: "Floor 2",
@@ -24,13 +30,17 @@ describe DraftSchool do
 
   describe "validations" do
     context "on the school step" do
-      let(:attributes) { { wizard_step: :school } }
+      let(:attributes) { { wizard_step: :school, context: "add_site" } }
 
-      it { should validate_presence_of(:urn_and_site).on(:update) }
+      it { should validate_presence_of(:parent_urn_and_site).on(:update) }
 
       context "with valid urn_and_site" do
         let(:attributes) do
-          { wizard_step: :school, urn_and_site: school.urn_and_site }
+          {
+            wizard_step: :school,
+            context: "add_site",
+            parent_urn_and_site: school.urn_and_site
+          }
         end
 
         it { should be_valid(:update) }
@@ -120,50 +130,95 @@ describe DraftSchool do
   end
 
   describe "#wizard_steps" do
-    let(:attributes) { {} }
+    context "when creating a new site" do
+      let(:attributes) { { context: "add_site" } }
 
-    it "returns the correct steps" do
-      expect(draft_school.wizard_steps).to eq(%i[school details confirm])
+      it "returns all steps including school selection" do
+        expect(draft_school.wizard_steps).to eq(%i[school details confirm])
+      end
+    end
+
+    context "when adding a school" do
+      let(:attributes) { { context: "add_school" } }
+
+      it "returns URN flow steps" do
+        expect(draft_school.wizard_steps).to eq(%i[urn confirm_urn confirm])
+      end
+    end
+
+    context "when editing an existing site" do
+      let(:attributes) { { editing_id: school.id, context: "add_site" } }
+
+      it "skips the school selection step" do
+        expect(draft_school.wizard_steps).to eq(%i[details confirm])
+      end
     end
   end
 
-  describe "#parent_school" do
-    context "when urn_and_site is nil" do
-      let(:attributes) { { urn_and_site: nil } }
+  describe "#source_location" do
+    context "when adding a new site" do
+      context "when parent_urn_and_site is nil" do
+        let(:attributes) { { parent_urn_and_site: nil } }
 
-      it { expect(draft_school.parent_school).to be_nil }
+        it { expect(draft_school.source_location).to be_nil }
+      end
+
+      context "when parent_urn_and_site is set" do
+        let(:attributes) { { parent_urn_and_site: school.urn_and_site } }
+
+        it { expect(draft_school.source_location).to eq(school) }
+      end
+
+      context "when parent_urn_and_site does not match any school" do
+        let(:attributes) { { parent_urn_and_site: "999999" } }
+
+        it { expect(draft_school.source_location).to be_nil }
+      end
+
+      context "when school belongs to a different team" do
+        let(:other_team) { create(:team) }
+        let(:other_school) { create(:school, :secondary, team: other_team) }
+        let(:attributes) { { parent_urn_and_site: other_school.urn_and_site } }
+
+        it { expect(draft_school.source_location).to be_nil }
+      end
     end
 
-    context "when urn_and_site is set" do
-      let(:attributes) { { urn_and_site: school.urn_and_site } }
+    context "when editing an existing site" do
+      let(:existing_site) do
+        create(:school, urn: school.urn, site: "A", name: "Site A")
+      end
+      let(:attributes) { { editing_id: existing_site.id } }
 
-      it { expect(draft_school.parent_school).to eq(school) }
+      it "returns the location being edited" do
+        expect(draft_school.source_location).to eq(existing_site)
+      end
     end
 
-    context "when urn_and_site does not match any school" do
-      let(:attributes) { { urn_and_site: "999999" } }
+    context "when adding a new school" do
+      context "when urn is nil" do
+        let(:attributes) { { context: "add_school", urn: nil } }
 
-      it { expect(draft_school.parent_school).to be_nil }
-    end
+        it { expect(draft_school.source_location).to be_nil }
+      end
 
-    context "when school belongs to a different team" do
-      let(:other_team) { create(:team) }
-      let(:other_school) { create(:school, :secondary, team: other_team) }
-      let(:attributes) { { urn_and_site: other_school.urn_and_site } }
+      context "when urn is set" do
+        let(:attributes) { { context: "add_school", urn: school.urn } }
 
-      it { expect(draft_school.parent_school).to be_nil }
+        it { expect(draft_school.source_location).to eq(school) }
+      end
     end
   end
 
   describe "#existing_names" do
     context "when urn_and_site is blank" do
-      let(:attributes) { { urn_and_site: nil } }
+      let(:attributes) { { parent_urn_and_site: nil } }
 
       it { expect(draft_school.existing_names).to eq([]) }
     end
 
     context "when urn_and_site is set" do
-      let(:attributes) { { urn_and_site: school.urn_and_site } }
+      let(:attributes) { { parent_urn_and_site: school.urn_and_site } }
 
       it "returns names of schools with the same URN" do
         expect(draft_school.existing_names).to include(school.name)
@@ -188,7 +243,7 @@ describe DraftSchool do
         )
       end
 
-      let(:attributes) { { urn_and_site: school.urn_and_site } }
+      let(:attributes) { { parent_urn_and_site: school.urn_and_site } }
 
       it "returns all site names" do
         expect(draft_school.existing_names).to include(
@@ -299,9 +354,12 @@ describe DraftSchool do
           "address_line_2" => "Floor 2",
           "address_postcode" => "SW1A 1AA",
           "address_town" => "London",
+          "confirm_school" => nil,
+          "context" => "add_site",
           "editing_id" => nil,
           "name" => "New Site Name",
-          "urn_and_site" => school.urn_and_site
+          "parent_urn_and_site" => school.urn_and_site,
+          "urn" => nil
         }
       )
     end
@@ -315,10 +373,190 @@ describe DraftSchool do
           "address_line_2" => nil,
           "address_postcode" => nil,
           "address_town" => nil,
+          "confirm_school" => nil,
+          "context" => nil,
           "editing_id" => nil,
           "name" => nil,
-          "urn_and_site" => nil
+          "parent_urn_and_site" => nil,
+          "urn" => nil
         }
+      )
+    end
+  end
+
+  describe "#urn_and_site" do
+    context "when creating a new site" do
+      let(:attributes) { valid_attributes }
+
+      it "returns the URN with the next site letter" do
+        expect(draft_school.urn_and_site).to eq("#{school.urn}B")
+      end
+
+      context "when sites already exist" do
+        before do
+          create(:school, urn: school.urn, site: "A", name: "Site A")
+          create(:school, urn: school.urn, site: "B", name: "Site B")
+        end
+
+        it "returns the URN with the next available site letter" do
+          expect(draft_school.urn_and_site).to eq("#{school.urn}C")
+        end
+      end
+    end
+
+    context "when editing an existing site" do
+      let(:existing_site) do
+        create(:school, urn: school.urn, site: "A", name: "Site A")
+      end
+      let(:attributes) { { editing_id: existing_site.id } }
+
+      it "returns the location's urn_and_site" do
+        expect(draft_school.urn_and_site).to eq(existing_site.urn_and_site)
+      end
+    end
+  end
+
+  describe "#resolved_urn" do
+    context "when creating a new site" do
+      let(:attributes) { valid_attributes.merge(context: "add_site") }
+
+      it "returns the parent school's URN" do
+        expect(draft_school.resolved_urn).to eq(school.urn)
+      end
+    end
+
+    context "when editing an existing site" do
+      let(:existing_site) do
+        create(:school, urn: "654321", site: "A", name: "Site A")
+      end
+      let(:attributes) { { editing_id: existing_site.id, context: "add_site" } }
+
+      it "returns the location's URN" do
+        expect(draft_school.resolved_urn).to eq("654321")
+      end
+    end
+  end
+
+  describe "#next_site_letter" do
+    let(:attributes) { valid_attributes }
+
+    context "when no sites exist" do
+      it "returns B" do
+        expect(draft_school.next_site_letter).to eq("B")
+      end
+    end
+
+    context "when site A exists" do
+      before { create(:school, urn: school.urn, site: "A") }
+
+      it "returns B" do
+        expect(draft_school.next_site_letter).to eq("B")
+      end
+    end
+
+    context "when sites A and B exist" do
+      before do
+        create(:school, urn: school.urn, site: "A")
+        create(:school, urn: school.urn, site: "B")
+      end
+
+      it "returns C" do
+        expect(draft_school.next_site_letter).to eq("C")
+      end
+    end
+
+    context "when site Z exists" do
+      before { create(:school, urn: school.urn, site: "Z") }
+
+      it "returns AA" do
+        expect(draft_school.next_site_letter).to eq("AA")
+      end
+    end
+  end
+
+  describe "#year_groups" do
+    context "when creating a new site" do
+      let(:attributes) { valid_attributes }
+
+      it "returns the parent school's year groups" do
+        expect(draft_school.year_groups).to eq(school.year_groups)
+      end
+    end
+
+    context "when editing an existing site" do
+      let(:existing_site) do
+        create(:school, urn: school.urn, site: "A", gias_year_groups: [10, 11])
+      end
+      let(:attributes) { { editing_id: existing_site.id } }
+
+      it "returns the location's year groups" do
+        expect(draft_school.year_groups).to eq(existing_site.year_groups)
+      end
+    end
+  end
+
+  describe "#programmes" do
+    context "when creating a new site" do
+      let(:programmes) { [Programme.hpv] }
+      let(:attributes) { valid_attributes }
+
+      it "returns the parent school's programmes" do
+        expect(draft_school.programmes).to match_array(school.programmes)
+      end
+    end
+
+    context "when editing an existing site" do
+      let(:programmes) { [Programme.hpv, Programme.flu] }
+      let(:existing_site) do
+        create(:school, urn: school.urn, site: "A", team:, programmes:)
+      end
+      let(:attributes) { { editing_id: existing_site.id } }
+
+      it "returns the location's programmes" do
+        expect(draft_school.programmes).to match_array(programmes)
+      end
+    end
+  end
+
+  describe "#human_enum_name" do
+    context "when creating a new site" do
+      let(:attributes) { valid_attributes }
+
+      it "delegates to the parent school" do
+        expect(draft_school.human_enum_name(:phase)).to eq(
+          school.human_enum_name(:phase)
+        )
+      end
+    end
+
+    context "when editing an existing site" do
+      let(:existing_site) do
+        create(:school, :primary, urn: school.urn, site: "A")
+      end
+      let(:attributes) { { editing_id: existing_site.id } }
+
+      it "delegates to the location being edited" do
+        expect(draft_school.human_enum_name(:phase)).to eq("Primary")
+      end
+    end
+  end
+
+  describe "#readable_attribute_names" do
+    let(:attributes) { {} }
+
+    it "returns the list of readable attributes" do
+      expect(draft_school.readable_attribute_names).to eq(
+        %w[name address_line_1 address_line_2 address_town address_postcode]
+      )
+    end
+  end
+
+  describe "#writable_attribute_names" do
+    let(:attributes) { {} }
+
+    it "returns the list of writable attributes" do
+      expect(draft_school.writable_attribute_names).to eq(
+        %w[name address_line_1 address_line_2 address_town address_postcode]
       )
     end
   end

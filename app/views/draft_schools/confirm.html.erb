@@ -1,33 +1,41 @@
 <% content_for :before_main do %>
-  <%= govuk_back_link(href: wizard_path(:details)) %>
+  <%= govuk_back_link(href: @back_link_path) %>
 <% end %>
 
-<%= h1 "Check and confirm" %>
+<% if @draft_school.editing? %>
+  <%= h1 "Edit school site" %>
+<% else %>
+  <%= h1 "Check and confirm" %>
+<% end %>
 
 <%= render AppCardComponent.new do |card| %>
-  <% card.with_heading { "Site details" } %>
-  
-  <%= govuk_summary_list(actions: true) do |list| %>
-    <% list.with_row do |row| %>
-      <% row.with_key { "Site URN" } %>
-      <% row.with_value(classes: ["app-u-code"]) { "#{@draft_school.urn}#{@site_letter}" } %>
-      <% row.with_action(text: "Change parent school", href: wizard_path(:school)) %>
-    <% end %>
-
-    <% list.with_row do |row| %>
-      <% row.with_key { "Name" } %>
-      <% row.with_value { @draft_school.name } %>
-    <% end %>
-    
-    <% list.with_row do |row| %>
-      <% row.with_key { "Address" } %>
-      <% row.with_value do %>
-        <%= format_address_single_line(@draft_school) %>
-      <% end %>
-    <% end %>
+  <% if @draft_school.add_school_context? %>
+    <% card.with_heading { "School details" } %>
+  <% else %>
+    <% card.with_heading { "Site details" } %>
   <% end %>
+
+  <% change_links = if @draft_school.editing?
+         {
+           name: { link: wizard_path(:details) },
+           address: { link: wizard_path(:details) },
+         }
+       elsif @draft_school.add_site_context?
+         { urn: { link: wizard_path(:school), text: "Change parent school" } }
+       else
+         { urn: { link: wizard_path(:urn), text: "Change" } }
+       end %>
+
+  <%= render AppSchoolSummaryComponent.new(@draft_school, change_links:) %>
 <% end %>
 
 <%= form_with(model: @draft_school, url: wizard_path, method: :put) do |form| %>
-  <%= form.govuk_submit "Add site" %>
+  <% submit_text = if @draft_school.editing?
+         "Save changes"
+       elsif @draft_school.add_school_context?
+         "Add school"
+       else
+         "Add site"
+       end %>
+  <%= form.govuk_submit submit_text %>
 <% end %>

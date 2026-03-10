@@ -10,6 +10,8 @@ class ClassImportsController < ApplicationController
 
   skip_after_action :verify_policy_scoped, only: %i[new create]
 
+  helper_method :error_rows_limit
+
   def new
     @class_import = authorize ClassImport.new(team: current_team)
   end
@@ -38,7 +40,7 @@ class ClassImportsController < ApplicationController
 
   def show
     if @class_import.rows_are_invalid? || @class_import.changesets_are_invalid?
-      @class_import.load_serialized_errors!
+      @class_import.load_serialized_errors!(limit: error_rows_limit)
     end
 
     set_review_records if @class_import.in_review?
@@ -214,4 +216,6 @@ class ClassImportsController < ApplicationController
         .ready_for_review
         .with_school_moves - @inter_team
   end
+
+  def error_rows_limit = 100
 end

@@ -53,15 +53,20 @@ describe AppActivityLogComponent do
       card =
         if index
           page.all(".app-timeline__item")[index]
+        elsif programme
+          page
+            .all(".app-timeline__item")
+            .find do |card_element|
+              card_element.has_css?("h3", text: title) &&
+                card_element.has_css?(
+                  "p.app-timeline__description",
+                  text: programme
+                )
+            end
         else
-          text = (programme ? "#{programme} #{title}" : title)
-
-          page.find(
-            ".app-timeline__header",
-            text:,
-            normalize_ws: true,
-            match: :first
-          ).ancestor(".app-timeline__item")
+          page.find(".app-timeline__header", text: title).ancestor(
+            ".app-timeline__item"
+          )
         end
 
       expect(card).to have_css("p.app-timeline__description", text: date)

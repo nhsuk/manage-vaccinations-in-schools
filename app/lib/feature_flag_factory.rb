@@ -15,14 +15,16 @@ class FeatureFlagFactory
   end
 
   FEATURES_FOR_DEVELOPMENT = %i[
+    already_vaccinated
+    child_record_redesign
     dev_tools
     import_review_screen
     reporting_api
     testing_api
   ].freeze
 
-  def self.enable_for_development!
-    unless Rails.env.development? || Rails.env.end_to_end?
+  def self.enable_for_development!(check_rails_env: true)
+    if check_rails_env && !(Rails.env.development? || Rails.env.end_to_end?)
       raise "These flags should only be enabled in development or end_to_end."
     end
 

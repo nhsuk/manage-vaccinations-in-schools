@@ -7,7 +7,8 @@ class AppImportReviewComponent < ViewComponent::Base
     new_records:,
     auto_matched_records:,
     import_issues:,
-    school_moves:
+    school_moves:,
+    skipped_school_moves: []
   )
     @import = import
     @inter_team = inter_team.sort_by(&:row_number)
@@ -18,6 +19,7 @@ class AppImportReviewComponent < ViewComponent::Base
     @import_issues = import_issues.sort_by(&:row_number)
     @school_moves = school_moves
     @school_moves_from_file = @school_moves.reject { it.row_number.nil? }
+    @skipped_school_moves = skipped_school_moves.sort_by(&:row_number)
   end
 
   private
@@ -67,6 +69,13 @@ class AppImportReviewComponent < ViewComponent::Base
         "the one on their Mavis record. If you approve the upload, you will need to resolve " \
         "#{count > 1 ? "these records" : "this record"} in the School moves area of Mavis."
     end
+  end
+
+  def skipped_school_moves_message
+    count = @skipped_school_moves.count
+    "#{count} #{count > 1 ? "children" : "child"} #{count > 1 ? "are" : "is"} already " \
+      "registered at a school in another team's area. #{count > 1 ? "These children" : "This child"} " \
+      "#{count > 1 ? "remain" : "remains"} at their current school."
   end
 
   def show_cancel_button?

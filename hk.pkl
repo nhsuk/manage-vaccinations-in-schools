@@ -1,9 +1,11 @@
-amends "package://github.com/jdx/hk/releases/download/v1.25.0/hk@1.25.0#/Config.pkl"
-import "package://github.com/jdx/hk/releases/download/v1.25.0/hk@1.25.0#/Builtins.pkl"
+amends "package://github.com/jdx/hk/releases/download/v1.37.0/hk@1.37.0#/Config.pkl"
+import "package://github.com/jdx/hk/releases/download/v1.37.0/hk@1.37.0#/Builtins.pkl"
 
 local linters = new Mapping<String, Group> {
     ["all"] = new Group {
         steps = new Mapping<String, Step> {
+            ["actionlint"] = Builtins.actionlint
+
             ["brakeman"] = new Step {
                 check = "bin/brakeman --quiet --no-summary --no-pager"
             }
@@ -47,7 +49,7 @@ local linters = new Mapping<String, Group> {
     }
 
     ["pre-commit"] = new Group {
-        steps = steps_with_staged_fixes.toMap().remove("brakeman").toMapping()
+        steps = steps_with_staged_fixes.toMap().remove("actionlint").remove("brakeman").toMapping()
     }
 }
 

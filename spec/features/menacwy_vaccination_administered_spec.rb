@@ -74,8 +74,10 @@ describe "MenACWY vaccination" do
         :patient,
         :consent_given_triage_not_needed,
         :in_attendance,
+        programmes: [programme],
         session: @session
       )
+    PatientStatusUpdater.call(patient: @patient)
 
     sign_in team.users.first
   end
@@ -185,7 +187,7 @@ describe "MenACWY vaccination" do
     click_on Date.current.to_fs(:long)
 
     expect(page).to have_content("Vaccination details")
-    expect(page).not_to have_content("Dose number")
+    expect(page).to have_content("Dose number1st")
   end
 
   def when_vaccination_confirmations_are_sent

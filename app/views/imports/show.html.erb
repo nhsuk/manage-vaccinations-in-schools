@@ -17,6 +17,13 @@
 
 <% if import.rows_are_invalid? || import.changesets_are_invalid? %>
   <%= render AppImportErrorsComponent.new(errors: import.errors) do %>
+    <% if import.serialized_errors.count > error_rows_limit %>
+      <p class="nhsuk-u-reading-width">
+        Only the first <%= error_rows_limit %> rows with issues are listed here.
+        There are <%= import.serialized_errors.count %> rows with issues in total.
+      </p>
+    <% end %>
+
     <p class="nhsuk-u-reading-width">
       Correct the issues listed, save the changes and upload the file again.
 
@@ -65,6 +72,7 @@
         auto_matched_records: @auto_matched_records,
         import_issues: @import_issues,
         school_moves: @school_moves,
+        skipped_school_moves: @skipped_school_moves || [],
       ) %>
 <% end %>
 
@@ -82,6 +90,27 @@
       </summary>
       <div class="nhsuk-details__text">
         <%= render AppImportReviewRecordsSummaryComponent.new(changesets: @cancelled) %>
+      </div>
+    </details>
+  <% end %>
+
+  <% if @skipped_school_moves.present? %>
+    <h3 class="nhsuk-u-reading-width">
+      Records not imported - children at schools in other team areas
+    </h3>
+    <p class="nhsuk-hint">
+      This upload included <%= @skipped_school_moves.count > 1 ? "children" : "a child" %> who <%= @skipped_school_moves.count == 1 ? "was" : "were" %> already
+      registered at a school in another team's area. <%= @skipped_school_moves.count == 1 ? "This child remains" : "These children remain" %>
+      at their current school.
+    </p>
+    <details class="nhsuk-details nhsuk-expander">
+      <summary class="nhsuk-details__summary" data-module="app-sticky">
+        <span class="nhsuk-details__summary-text">
+          <%= pluralize(@skipped_school_moves.count, "record") %> not imported
+        </span>
+      </summary>
+      <div class="nhsuk-details__text">
+        <%= render AppImportReviewRecordsSummaryComponent.new(changesets: @skipped_school_moves) %>
       </div>
     </details>
   <% end %>

@@ -259,7 +259,7 @@ describe StatusGenerator::Programme do
     its(:consent_vaccine_methods) { should contain_exactly("injection") }
     its(:date) { should eq(Date.tomorrow) }
     its(:disease_types) { should eq(programme.disease_types) }
-    its(:dose_sequence) { should be_nil }
+    its(:dose_sequence) { should eq(1) }
     its(:location_id) { should be_nil }
     its(:status) { should be(:cannot_vaccinate_delay_vaccination) }
     its(:vaccine_methods) { should contain_exactly("injection") }
@@ -362,7 +362,7 @@ describe StatusGenerator::Programme do
     its(:consent_vaccine_methods) { should be_empty }
     its(:date) { should be_nil }
     its(:disease_types) { should be_nil }
-    its(:dose_sequence) { should be_nil }
+    its(:dose_sequence) { should eq(1) }
     its(:location_id) { should be_nil }
     its(:status) { should be(:needs_consent_no_response) }
     its(:vaccine_methods) { should be_nil }

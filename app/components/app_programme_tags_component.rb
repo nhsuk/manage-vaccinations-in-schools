@@ -13,5 +13,6 @@ class AppProgrammeTagsComponent < ViewComponent::Base
 
   def names = programmes.map(&:name).sort
 
-  def tags = names.map { tag.strong(it, class: "nhsuk-tag nhsuk-tag--white") }
+  def tags =
+    names.map { tag.strong(it, class: "nhsuk-tag app-tag--transparent") }
 end

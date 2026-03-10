@@ -154,7 +154,7 @@ describe AppVaccinateFormComponent do
     context "with MenACWY programme" do
       let(:programme) { Programme.menacwy }
 
-      it { should be_nil }
+      it { should eq(1) }
     end
 
     context "with flu programme" do

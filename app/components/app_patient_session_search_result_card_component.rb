@@ -1,56 +1,6 @@
 # frozen_string_literal: true
 
 class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
-  erb_template <<-ERB
-    <%= render AppCardComponent.new(link_to: card_link, compact: true) do |card| %>
-      <% if card_link.nil? %>
-        <% card.with_heading(level: 4) { link_to(patient.full_name_with_known_as, patient_path) } %>
-      <% else %>
-        <% card.with_heading(level: 4) { patient.full_name_with_known_as } %>
-      <% end %>
-
-      <%= govuk_summary_list(actions: false) do |summary_list|
-            summary_list.with_row do |row|
-              row.with_key { "Date of birth" }
-              row.with_value { patient_date_of_birth(patient) }
-            end
-
-            summary_list.with_row do |row|
-              row.with_key { "Year group" }
-              row.with_value { patient_year_group(patient, academic_year:) }
-            end
-
-            if vaccine_type
-              summary_list.with_row do |row|
-                row.with_key { "Vaccine type" }
-                row.with_value { vaccine_type }
-              end
-            end
-
-            status_tags.each do |status_tag|
-              summary_list.with_row do |row|
-                row.with_key { I18n.t(status_tag[:key], scope: %i[status label]) }
-                row.with_value { status_tag[:value] }
-              end
-            end
-
-            if show_notes && latest_note
-              summary_list.with_row do |row|
-                row.with_key { "Notes" }
-                row.with_value { note_blockquote(latest_note) }
-              end
-            end
-          end %>
-
-      <% if show_registration_status && can_register_attendance? %>
-        <div class="nhsuk-button-group">
-          <%= govuk_button_to "Attending", register_session_patients_path(session, patient, "present"), secondary: true, class: "nhsuk-button--small" %>
-          <%= govuk_button_to "Absent", register_session_patients_path(session, patient, "absent"), class: "app-button--secondary-warning nhsuk-button--small" %>
-        </div>
-      <% end %>
-    <% end %>
-  ERB
-
   def initialize(
     patient:,
     session:,
@@ -82,6 +32,13 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
     @show_vaccine_type = show_vaccine_type
   end
 
+  def call
+    render AppCardComponent.new(link_to: card_link, compact: true) do |card|
+      card.with_heading(level: 4) { heading }
+      safe_join([summary_list, registration_buttons].compact)
+    end
+  end
+
   private
 
   attr_reader :patient,
@@ -103,17 +60,16 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
 
   delegate :academic_year, :team, to: :session
 
-  def can_register_attendance?
-    attendance_record =
-      AttendanceRecord.new(
-        patient:,
-        location: session.location,
-        date: Date.current
-      )
+  def programme_types = programmes.map(&:type)
 
-    attendance_record.session = session
+  def card_link = show_registration_status ? nil : patient_path
 
-    policy(attendance_record).new?
+  def heading
+    if card_link.nil?
+      link_to(patient.full_name_with_known_as, patient_path)
+    else
+      patient.full_name_with_known_as
+    end
   end
 
   def patient_path
@@ -125,11 +81,58 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
     )
   end
 
-  def card_link = show_registration_status ? nil : patient_path
+  def summary_list = govuk_summary_list(rows:)
 
-  def vaccine_type
-    return unless show_vaccine_type
+  def rows
+    [
+      date_of_birth_row,
+      year_group_row,
+      vaccine_type_row,
+      registration_status_row,
+      programme_status_row,
+      patient_specific_direction_status_row,
+      notes_row
+    ].compact
+  end
 
+  def date_of_birth_row
+    {
+      key: {
+        text: "Date of birth"
+      },
+      value: {
+        text: patient_date_of_birth(patient)
+      }
+    }
+  end
+
+  def year_group_row
+    {
+      key: {
+        text: "Year group"
+      },
+      value: {
+        text: patient_year_group(patient, academic_year:)
+      }
+    }
+  end
+
+  def vaccine_type_row
+    return unless show_vaccine_type && (labels = vaccine_type_labels).present?
+
+    text =
+      if labels.size == 1
+        labels.first
+      else
+        tag.ul(class: "nhsuk-list nhsuk-list--bullet") do
+          safe_join(labels.map { tag.li(it) })
+        end
+      end
+
+    { key: { text: "Vaccine type" }, value: { text: } }
+  end
+
+  def vaccine_type_labels
     programmes_to_check =
       programmes.select do
         it.has_multiple_vaccine_methods? || it.vaccine_may_contain_gelatine?
@@ -145,35 +148,42 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
         programme.variant_for(disease_types:)
       end
 
-    labels =
-      programmes_with_variants.filter_map do |programme|
-        if patient.consent_given_and_safe_to_vaccinate?(
-             programme:,
-             academic_year:
-           )
-          vaccine_criteria =
-            patient.vaccine_criteria(programme:, academic_year:)
+    programmes_with_variants.filter_map do |programme|
+      if patient.consent_given_and_safe_to_vaccinate?(
+           programme:,
+           academic_year:
+         )
+        vaccine_criteria = patient.vaccine_criteria(programme:, academic_year:)
 
-          render AppVaccineCriteriaLabelComponent.new(
-                   vaccine_criteria,
-                   programme:,
-                   context: :vaccine_type
-                 )
-        end
+        render AppVaccineCriteriaLabelComponent.new(
+                 vaccine_criteria,
+                 programme:,
+                 context: :vaccine_type
+               )
       end
-
-    render_bullet_list_or_single(labels)
+    end
   end
 
-  def status_tags
-    [
-      registration_status_tag,
-      programme_status_tag,
-      patient_specific_direction_status_tag
-    ].compact
+  def registration_status_row
+    return unless show_registration_status
+
+    {
+      key: {
+        text: I18n.t("status.label.registration")
+      },
+      value: {
+        text:
+          render(
+            AppStatusTagComponent.new(
+              patient.registration_status(session:)&.status || "unknown",
+              context: :registration
+            )
+          )
+      }
+    }
   end
 
-  def programme_status_tag
+  def programme_status_row
     return unless show_programme_status
 
     status_by_programme =
@@ -190,51 +200,45 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
       end
 
     {
-      key: :programme,
-      value: render(AppAttachedTagsComponent.new(status_by_programme))
+      key: {
+        text: I18n.t("status.label.programme")
+      },
+      value: {
+        text: render(AppAttachedTagsComponent.new(status_by_programme))
+      }
     }
   end
 
-  def registration_status_tag
-    return unless show_registration_status
-
-    {
-      key: :registration,
-      value:
-        render(
-          AppStatusTagComponent.new(
-            patient.registration_status(session:)&.status || "unknown",
-            context: :registration
-          )
-        )
-    }
-  end
-
-  def patient_specific_direction_status_tag
+  def patient_specific_direction_status_row
     return unless show_patient_specific_direction_status
 
     {
-      key: :patient_specific_direction,
-      value:
-        render(
-          AppStatusTagComponent.new(
-            has_patient_specific_direction? ? :added : :not_added,
-            context: :patient_specific_direction
+      key: {
+        text: I18n.t("status.label.patient_specific_direction")
+      },
+      value: {
+        text:
+          render(
+            AppStatusTagComponent.new(
+              has_patient_specific_direction? ? :added : :not_added,
+              context: :patient_specific_direction
+            )
           )
-        )
+      }
     }
   end
 
-  def latest_note
-    patient
-      .notes
-      .sort_by(&:created_at)
-      .reverse
-      .find { it.session_id == session.id }
+  def has_patient_specific_direction?
+    patient.patient_specific_directions.any? do
+      it.programme_type.in?(programme_types) &&
+        it.academic_year == academic_year && !it.invalidated?
+    end
   end
 
-  def note_blockquote(note)
-    truncated_body = tag.p(note.body.truncate_words(80, omission: "…"))
+  def notes_row
+    return unless show_notes && latest_note
+
+    truncated_body = tag.p(latest_note.body.truncate_words(80, omission: "…"))
 
     continue_reading =
       if truncated_body.include?("…")
@@ -254,30 +258,61 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
 
     subtitle =
       tag.p(
-        "#{note.created_by.full_name} &middot; #{note.created_at.to_fs(:long)}".html_safe,
+        "#{latest_note.created_by.full_name} &middot; #{latest_note.created_at.to_fs(:long)}".html_safe,
         class: "nhsuk-body-s nhsuk-u-margin-0 nhsuk-u-secondary-text-colour"
       )
 
-    safe_join([blockquote, subtitle])
+    {
+      key: {
+        text: "Notes"
+      },
+      value: {
+        text: safe_join([blockquote, subtitle])
+      }
+    }
   end
 
-  def has_patient_specific_direction?
-    programme_types = programmes.map(&:type)
-    patient.patient_specific_directions.any? do
-      it.programme_type.in?(programme_types) &&
-        it.academic_year == academic_year && !it.invalidated?
+  def latest_note
+    @latest_note ||=
+      patient
+        .notes
+        .sort_by(&:created_at)
+        .reverse
+        .find { it.session_id == session.id }
+  end
+
+  def registration_buttons
+    return unless show_registration_status && can_register_attendance?
+
+    tag.div(class: "nhsuk-button-group") do
+      safe_join(
+        [
+          govuk_button_to(
+            "Attending",
+            register_session_patients_path(session, patient, "present"),
+            secondary: true,
+            class: "nhsuk-button--small"
+          ),
+          govuk_button_to(
+            "Absent",
+            register_session_patients_path(session, patient, "absent"),
+            class: "app-button--secondary-warning nhsuk-button--small"
+          )
+        ]
+      )
     end
   end
 
-  def render_bullet_list_or_single(items)
-    return if items.empty?
+  def can_register_attendance?
+    attendance_record =
+      AttendanceRecord.new(
+        patient:,
+        location: session.location,
+        date: Date.current
+      )
 
-    if items.size == 1
-      items.first
-    else
-      tag.ul(class: "nhsuk-list nhsuk-list--bullet") do
-        safe_join(items.map { tag.li(it) })
-      end
-    end
+    attendance_record.session = session
+
+    policy(attendance_record).new?
   end
 end

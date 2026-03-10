@@ -22,6 +22,7 @@ gem "stackprof"
 # 3rd party gems
 gem "activerecord-import"
 gem "activerecord-session_store"
+gem "active_record_union"
 gem "amazing_print"
 gem "array_enum"
 gem "audited", github: "tvararu/audited", branch: "encryption"
@@ -40,9 +41,7 @@ gem "flipper"
 gem "flipper-active_record"
 gem "flipper-ui"
 gem "govuk-components"
-gem "govuk_design_system_formbuilder",
-    github: "x-govuk/govuk-form-builder",
-    ref: "main" #TODO: replace with version > 5.13.0 when released
+gem "govuk_design_system_formbuilder"
 gem "govuk_markdown"
 gem "indefinite_article"
 gem "jsonb_accessor"

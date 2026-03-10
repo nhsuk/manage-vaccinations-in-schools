@@ -9,13 +9,7 @@ class SendAutomaticSchoolConsentRemindersJob < ApplicationJob
     ) do |patient, programmes|
       next unless should_send_notification?(patient:, session:, programmes:)
 
-      ConsentNotification.create_and_send!(
-        patient:,
-        session:,
-        programmes:,
-        type: notification_type(patient:, programmes:),
-        current_user: nil
-      )
+      patient.notifier.send_consent_reminder(programmes, session:, sent_by: nil)
     end
   end
 
@@ -72,10 +66,6 @@ class SendAutomaticSchoolConsentRemindersJob < ApplicationJob
     end
 
     scheduled_automatic_reminder_dates[date_index_to_send_reminder_for]
-  end
-
-  def notification_type(patient:, programmes:)
-    reminder_notification_type(patient:, programmes:)
   end
 
   def already_sent_automatic_consent_reminders_count(patient:, programme:)

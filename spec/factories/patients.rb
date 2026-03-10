@@ -167,6 +167,17 @@ FactoryBot.define do
     trait :home_educated do
       school { nil }
       home_educated { true }
+
+      after(:create) do |patient, evaluator|
+        clinic = create(:generic_clinic, team: evaluator.team)
+
+        create(
+          :patient_location,
+          patient:,
+          location: clinic,
+          academic_year: evaluator.academic_year
+        )
+      end
     end
 
     trait :deceased do

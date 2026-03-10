@@ -1,9 +1,11 @@
 # frozen_string_literal: true
 
 class AppImportsTableComponent < ViewComponent::Base
-  def initialize(team:, uploaded_files: true)
+  def initialize(team:, uploaded_files:, mixnmatch_imports:, pagy:)
     @team = team
     @uploaded_files = uploaded_files
+    @mixnmatch_imports = mixnmatch_imports
+    @pagy = pagy
   end
 
   def render? = imports.present?
@@ -16,19 +18,18 @@ class AppImportsTableComponent < ViewComponent::Base
 
   def imports
     @imports ||=
-      if @uploaded_files
-        (
-          class_import_records.status_for_uploaded_files +
-            cohort_import_records.status_for_uploaded_files +
-            immunisation_import_records.status_for_uploaded_files
-        ).sort_by(&:created_at).reverse
-      else
-        (
-          class_import_records.status_for_imported_records +
-            cohort_import_records.status_for_imported_records +
-            immunisation_import_records.status_for_imported_records
-        ).sort_by(&:created_at).reverse
-      end
+      @mixnmatch_imports
+        .pluck(:id, :model_name)
+        .map do |id, model_name|
+          case model_name
+          when "ClassImport"
+            class_import_records.find(id)
+          when "CohortImport"
+            cohort_import_records.find(id)
+          when "ImmunisationImport"
+            immunisation_import_records.find(id)
+          end
+        end
   end
 
   def class_import_records

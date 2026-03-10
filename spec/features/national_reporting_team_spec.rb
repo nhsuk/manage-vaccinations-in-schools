@@ -35,8 +35,7 @@ describe "National reporting team homepage and navigation" do
     and_i_search_for_a_child(search_term: "Harry")
     and_i_click_on_the_childs_card(given_name: "Harry", family_name: "Potter")
     then_i_should_see_vaccinations_then_child_details
-    and_the_activity_log_is_hidden
-    and_child_cannot_be_archived
+    and_child_can_be_edited_but_not_be_archived
     and_child_does_not_look_archived
   end
 
@@ -63,7 +62,7 @@ describe "National reporting team homepage and navigation" do
         programmes: [Programme.flu, Programme.hpv],
         ods_code: "XX99"
       )
-    create(:school, team: @team, urn: 100_000)
+    @school = create(:school, team: @team, urn: 100_000)
     sign_in @team.users.first
   end
 
@@ -80,6 +79,7 @@ describe "National reporting team homepage and navigation" do
       :vaccination_record,
       programme: Programme.flu,
       patient: @child_with_parents,
+      session: create(:session, team: @team, location: @school),
       team: @team
     )
   end
@@ -191,9 +191,13 @@ describe "National reporting team homepage and navigation" do
     expect(app_cards[1]).to have_content("Child record")
   end
 
-  def and_child_cannot_be_archived
-    app_card_buttons = page.all(".app-card .nhsuk-button")
+  def and_child_can_be_edited_but_not_be_archived
+    app_card_buttons = page.all(".nhsuk-card .nhsuk-card__action")
     expect(app_card_buttons.count).to eq(1)
+    expect(page).to have_css(
+      ".nhsuk-card .nhsuk-card__action",
+      text: "Edit child record"
+    )
     expect(page).not_to have_content("Archive child record")
   end
 
@@ -211,10 +215,6 @@ describe "National reporting team homepage and navigation" do
 
   def and_i_should_not_see_add_parent_button
     expect(page).not_to have_content("Add parent or guardian")
-  end
-
-  def and_the_activity_log_is_hidden
-    expect(page).not_to have_content("Activity log")
   end
 
   def and_i_should_see_the_national_reporting_service_guide_link

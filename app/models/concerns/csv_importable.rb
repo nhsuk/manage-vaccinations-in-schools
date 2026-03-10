@@ -173,12 +173,14 @@ module CSVImportable
     update!(csv_data: nil, csv_removed_at: Time.zone.now)
   end
 
-  def load_serialized_errors!
+  def load_serialized_errors!(limit: nil)
     return if serialized_errors.blank?
 
-    serialized_errors.each do |attribute, messages|
-      messages.each { errors.add(attribute, _1) }
-    end
+    serialized_errors
+      .then { limit ? it.first(limit) : it }
+      .each do |attribute, messages|
+        messages.each { errors.add(attribute, _1) }
+      end
   end
 
   def csv_is_valid

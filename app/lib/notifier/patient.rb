@@ -7,29 +7,106 @@ class Notifier::Patient
     @patient = patient
   end
 
-  def send_clinic_invitation(programme_types:, team:, academic_year:, sent_by:)
-    return unless send_notification?(team:)
+  ##
+  # Send a consent request email and SMS to the parents of this patient.
+  def send_consent_request(programmes, session:, sent_by:)
+    send_consent_notification(programmes, type: :request, session:, sent_by:)
+  end
 
-    programme_types.reject! do |programme_type|
-      patient.programme_status(
-        Programme.find(programme_type),
-        academic_year:
-      ).vaccinated_fully?
-    end
-
-    return if programme_types.empty?
-
-    already_sent =
-      patient.clinic_notifications.any? do
-        it.team_id == team.id && it.academic_year == academic_year &&
-          (programme_types - it.programme_types).empty? # is subset
+  ##
+  # Send a consent reminder email and SMS to the parents of this patient.
+  #
+  # This determines whether to send the initial reminder or subsequent
+  # reminder based on what has already been sent to this patient.
+  def send_consent_reminder(programmes, session:, sent_by:)
+    already_sent_initial_reminder =
+      programmes.all? do |programme|
+        patient
+          .consent_notifications
+          .select { it.programmes.include?(programme) }
+          .any?(&:initial_reminder?)
       end
 
-    type = already_sent ? :subsequent_invitation : :initial_invitation
+    type =
+      already_sent_initial_reminder ? :subsequent_reminder : :initial_reminder
 
-    # We create a record in the database first to avoid sending duplicate emails/texts.
-    # If a problem occurs while the emails/texts are sent, they will be in the job
-    # queue and restarted at a later date.
+    send_consent_notification(programmes, type:, session:, sent_by:)
+  end
+
+  ##
+  # Determine whether a clinic invitation can be sent to the parents of this
+  # patient.
+
+  # Normally this would be +true+, but it can be +false+ in some scenarios,
+  # for example, if the patient has no parent contact details or has already
+  # been invited to the clinic.
+  def can_send_clinic_invitation?(
+    programmes,
+    team:,
+    academic_year:,
+    include_vaccinated_programmes: false,
+    include_already_invited_programmes: true
+  )
+    return false unless send_notification?(team:)
+
+    programmes_to_send_for =
+      programmes_to_send_clinic_invitation_for(
+        programmes,
+        team:,
+        academic_year:,
+        include_vaccinated_programmes:,
+        include_already_invited_programmes:
+      )
+
+    programmes_to_send_for.present?
+  end
+
+  ##
+  # Send a clinic initiation email and SMS to the parents of this patient.
+  #
+  # This determines the correct type of invitation to use (either an initial
+  # invitation or a subsequent invitation) based on the previous invitations
+  # which have been sent:
+  #
+  # +include_vaccinated_programmes+ allows for the sending of invitations for
+  # programmes where the patient has already been vaccinated.
+  #
+  # +include_already_invited_programmes+ allows for the sending of invitations
+  # for programmes where the patient has already been invited for in the past.
+  #
+  def send_clinic_invitation(
+    programmes,
+    team:,
+    academic_year:,
+    sent_by:,
+    include_vaccinated_programmes: false,
+    include_already_invited_programmes: true
+  )
+    return unless send_notification?(team:)
+
+    programmes_to_send_for =
+      programmes_to_send_clinic_invitation_for(
+        programmes,
+        team:,
+        academic_year:,
+        include_vaccinated_programmes:,
+        include_already_invited_programmes:
+      )
+
+    return if programmes_to_send_for.empty?
+
+    type =
+      if patient.invited_to_clinic?(
+           programmes_to_send_for,
+           team:,
+           academic_year:
+         )
+        :subsequent_invitation
+      else
+        :initial_invitation
+      end
+
+    programme_types = programmes_to_send_for.map(&:type)
 
     ClinicNotification.create!(
       patient:,
@@ -41,7 +118,7 @@ class Notifier::Patient
       sent_by:
     )
 
-    template_name = determine_template_name(type, team:)
+    template_name = find_clinic_template_name(type, team:)
 
     params = { academic_year:, patient:, programme_types:, sent_by:, team: }
 
@@ -56,15 +133,170 @@ class Notifier::Patient
   attr_reader :patient
 
   def send_notification?(team:)
-    patient.send_notifications?(team:, send_to_archived: true) &&
-      parents.present?
+    patient.send_notifications?(team:) && parents.present?
   end
 
   def parents
     @parents ||= patient.parents.select(&:contactable?).uniq
   end
 
-  def determine_template_name(type, team:)
+  def filter_programmes_notify_parents(programmes)
+    programmes.select do |programme|
+      patient.vaccination_records.none? do
+        it.notify_parents == false && it.programme == programme
+      end
+    end
+  end
+
+  def send_consent_notification(programmes, type:, session:, sent_by:)
+    return unless send_notification?(team: session.team)
+
+    programmes_to_send_for = filter_programmes_notify_parents(programmes)
+
+    return if programmes_to_send_for.empty?
+
+    ConsentNotification.create!(
+      programmes: programmes_to_send_for,
+      patient:,
+      session:,
+      type:,
+      sent_at: Time.current,
+      sent_by:
+    )
+
+    email_template, sms_template =
+      generate_consent_templates(
+        programmes: programmes_to_send_for,
+        patient:,
+        session:,
+        type:
+      )
+
+    programme_types = programmes_to_send_for.map(&:type)
+    disease_types = programmes_to_send_for.flat_map(&:disease_types).presence
+
+    parents.each do |parent|
+      EmailDeliveryJob.perform_later(
+        email_template,
+        disease_types:,
+        parent:,
+        patient:,
+        programme_types:,
+        session:,
+        sent_by:
+      )
+
+      SMSDeliveryJob.perform_later(
+        sms_template,
+        disease_types:,
+        parent:,
+        patient:,
+        programme_types:,
+        session:,
+        sent_by:
+      )
+    end
+  end
+
+  def generate_consent_templates(programmes:, patient:, session:, type:)
+    is_school = session.location.school?
+    base_template = :"consent_#{is_school ? "school" : "clinic"}_#{type}"
+
+    # We can only handle a single programme group or variant in the template.
+    group = ProgrammeGrouper.call(programmes).keys.sole
+    variant =
+      if programmes.count == 1
+        programmes.sole.variant_for(patient:).variant_type
+      end
+
+    email_template =
+      if is_school
+        template =
+          resolve_consent_template(
+            base_template:,
+            group:,
+            variant:,
+            session:,
+            channel: :email
+          )
+        if template.blank?
+          raise(
+            "Missing email template for consent notification: #{base_template} " \
+              "with group=#{group.inspect} variant=#{variant.inspect} " \
+              "outbreak=#{is_outbreak.inspect}"
+          )
+        end
+        template
+      else
+        base_template
+      end
+
+    sms_template =
+      if type == :request
+        template =
+          resolve_consent_template(
+            base_template:,
+            group:,
+            variant:,
+            session:,
+            channel: :sms
+          )
+        template || base_template
+      elsif is_school
+        :consent_school_reminder
+      end
+
+    [email_template, sms_template]
+  end
+
+  def resolve_consent_template(
+    base_template:,
+    group:,
+    variant:,
+    session:,
+    channel:
+  )
+    renderer = NotifyTemplateRenderer.for(channel)
+    is_outbreak = session.outbreak
+
+    combinations = [([group, :outbreak] if is_outbreak), [group]]
+    if variant.present? && variant != group
+      combinations.prepend(([variant, :outbreak] if is_outbreak), [variant])
+    end
+    combinations.compact!
+
+    combinations
+      .lazy
+      .map { |parts| :"#{base_template}_#{parts.join("_")}" }
+      .detect { renderer.template_exists?(it, source: :any) }
+  end
+
+  def programmes_to_send_clinic_invitation_for(
+    programmes,
+    team:,
+    academic_year:,
+    include_vaccinated_programmes: false,
+    include_already_invited_programmes: true
+  )
+    filter_programmes_notify_parents(programmes).select do |programme|
+      programme_status = patient.programme_status(programme, academic_year:)
+
+      next false if programme_status.not_eligible?
+
+      if !include_vaccinated_programmes && programme_status.vaccinated?
+        next false
+      end
+
+      if !include_already_invited_programmes &&
+           patient.invited_to_clinic?([programme], team:, academic_year:)
+        next false
+      end
+
+      true
+    end
+  end
+
+  def find_clinic_template_name(type, team:)
     template_names = [
       :"clinic_#{type}_#{team.organisation.ods_code.downcase}",
       :"clinic_#{type}"

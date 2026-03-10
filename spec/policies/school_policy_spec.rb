@@ -11,18 +11,12 @@ describe SchoolPolicy do
   end
   let(:location) { create(:school) }
 
-  permissions :index?,
-              :create?,
-              :import?,
-              :new?,
-              :patients?,
-              :sessions?,
-              :show? do
+  permissions :index?, :create?, :edit?, :new?, :show?, :update? do
     it { should permit(point_of_care_user, location) }
     it { should_not permit(national_reporting_user, location) }
   end
 
-  permissions :edit?, :destroy?, :update? do
+  permissions :destroy? do
     it { should_not permit(point_of_care_user, location) }
     it { should_not permit(national_reporting_user, location) }
   end

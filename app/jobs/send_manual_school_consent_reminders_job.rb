@@ -7,17 +7,11 @@ class SendManualSchoolConsentRemindersJob < ApplicationJob
     patient_programmes_eligible_for_notification(
       session:
     ) do |patient, programmes|
-      ConsentNotification.create_and_send!(
-        patient:,
+      patient.notifier.send_consent_reminder(
+        programmes,
         session:,
-        programmes:,
-        type: notification_type(patient:, programmes:),
-        current_user:
+        sent_by: current_user
       )
     end
-  end
-
-  def notification_type(patient:, programmes:)
-    reminder_notification_type(patient:, programmes:)
   end
 end

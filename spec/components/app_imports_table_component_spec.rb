@@ -1,15 +1,38 @@
 # frozen_string_literal: true
 
 describe AppImportsTableComponent do
+  include Pagy::Backend
+
   subject(:rendered) { render_inline(component) }
 
-  let(:component) { described_class.new(team:, uploaded_files:) }
+  let(:component) do
+    described_class.new(team:, uploaded_files:, mixnmatch_imports:, pagy:)
+  end
 
   let(:programmes) { [Programme.sample] }
   let(:team) { create(:team, programmes:) }
   let(:school) { create(:school, team:, name: "Test School") }
   let(:session) { create(:session, programmes:, location: school) }
   let(:uploaded_files) { false }
+  let(:mixnmatch_imports) do
+    CohortImport
+      .select(:id, :created_at, "'CohortImport' as model_name")
+      .union(
+        ClassImport.select(:id, :created_at, "'ClassImport' as model_name")
+      )
+      .union(
+        ImmunisationImport.select(
+          :id,
+          :created_at,
+          "'ImmunisationImport' as model_name"
+        )
+      )
+  end
+  let(:pagination_result) { pagy_array(all_import_records, page: 1) }
+  let(:all_import_records) do
+    CohortImport.all + ClassImport.all + ImmunisationImport.all
+  end
+  let(:pagy) { pagination_result[0] }
 
   before do
     cohort_imports =
@@ -93,28 +116,18 @@ describe AppImportsTableComponent do
     expect(rendered).to have_content("Test School")
   end
 
-  context "when uploaded_files is false" do
+  context "when uploaded_files is true" do
     let(:uploaded_files) { true }
 
-    before do
-      CohortImport.destroy_all
-      ImmunisationImport.destroy_all
-      ClassImport.destroy_all
-      create(:cohort_import, status: "pending_import", team:)
-    end
-
     it "does not show the Records column header" do
-      rendered =
-        render_inline(described_class.new(team:, uploaded_files: false))
       expect(rendered).not_to have_css(".nhsuk-table__header", text: "Records")
     end
 
     it "does not show record counts" do
-      expect(rendered).to have_css(
-        ".nhsuk-table__body .nhsuk-table__row",
-        count: 1
+      expect(rendered).not_to have_css(
+        ".nhsuk-table__cell",
+        text: /Records\s+\d+/m
       )
-      expect(rendered).not_to have_css(".nhsuk-table__cell", text: /^\d+$/)
     end
   end
 end

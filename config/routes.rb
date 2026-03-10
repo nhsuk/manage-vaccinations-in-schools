@@ -208,6 +208,13 @@ Rails.application.routes.draw do
       get "destroy", action: :confirm_destroy, on: :member, as: "destroy"
     end
 
+    resources :programmes,
+              only: :show,
+              param: :type,
+              controller: "patients/programmes" do
+      post "invite-to-clinic"
+    end
+
     member do
       post "invite-to-clinic"
       get "log"
@@ -261,9 +268,9 @@ Rails.application.routes.draw do
   end
 
   resources :schools, only: :index, param: :urn_and_site do
-    get "import"
-    get "patients"
-    get "sessions"
+    resources :import, only: :new, controller: "schools/import"
+    resources :patients, only: :index, controller: "schools/patients"
+    resources :sessions, only: :index, controller: "schools/sessions"
   end
 
   resources :sessions, only: %i[index new show edit], param: :slug do
@@ -337,7 +344,8 @@ Rails.application.routes.draw do
       get :clinics
     end
     resources :schools,
-              only: %i[create edit update],
+              only: %i[new create edit update],
+              param: :urn_and_site,
               controller: "teams/schools" do
       collection { get :new_site }
     end

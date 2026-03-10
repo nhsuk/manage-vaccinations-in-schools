@@ -84,7 +84,6 @@ class PatientTeamUpdater < PatientScopedUpdater
       school_move_school_relation,
       school_move_team_relation,
       vaccination_record_import_relation,
-      vaccination_record_organisation_relation,
       vaccination_record_session_relation
     ]
   end
@@ -178,25 +177,6 @@ class PatientTeamUpdater < PatientScopedUpdater
     scope.select(
       :patient_id,
       Arel.sql("immunisation_imports.team_id AS team_id"),
-      Arel.sql("#{source} AS source")
-    )
-  end
-
-  def vaccination_record_organisation_relation
-    source = PatientTeam.sources.fetch("vaccination_record_organisation")
-
-    scope =
-      merge_patient_scope(
-        VaccinationRecord.where(
-          session_id: nil
-        ).joins_teams_on_performed_ods_code
-      )
-
-    scope = scope.merge(team_scope) if team_scope
-
-    scope.select(
-      :patient_id,
-      Arel.sql("teams.id AS team_id"),
       Arel.sql("#{source} AS source")
     )
   end

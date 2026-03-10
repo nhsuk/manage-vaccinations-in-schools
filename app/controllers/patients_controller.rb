@@ -33,6 +33,9 @@ class PatientsController < ApplicationController
   end
 
   def log
+    # This action and the corresponding view can be deleted when the
+    # `child_record_redesign` feature flag is removed.
+    render status: :not_found if Flipper.enabled?(:child_record_redesign)
   end
 
   def edit
@@ -75,7 +78,7 @@ class PatientsController < ApplicationController
     end
 
     @patient.notifier.send_clinic_invitation(
-      programme_types: current_team.programme_types,
+      current_team.programmes,
       team: current_team,
       academic_year:,
       sent_by: current_user

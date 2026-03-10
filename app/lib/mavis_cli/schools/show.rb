@@ -142,7 +142,8 @@ module MavisCLI
 
           puts ""
 
-          if Location.where(urn: location.urn).count > 1
+          if location.urn.present? &&
+               Location.where(urn: location.urn).count > 1
             puts "#{Rainbow("other locations with the same URN").bright}:"
             Location
               .where(urn: location.urn)

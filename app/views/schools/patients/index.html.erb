@@ -5,10 +5,10 @@
                                         ]) %>
 <% end %>
 
-<%= render "header" %>
+<%= render "schools/header" %>
 
 <% if @location.school? %>
-  <%= govuk_button_link_to "Import class lists", school_import_path(@location), secondary: true %>
+  <%= govuk_button_link_to "Import class lists", new_school_import_path(@location), secondary: true %>
 <% end %>
 
 <div class="nhsuk-grid-row">
@@ -20,6 +20,7 @@
           programmes: current_team.programmes,
           programme_statuses: @programme_statuses,
           year_groups: @location.year_groups,
+          show_invited_to_clinic: true,
         ) %>
   </div>
 
@@ -31,6 +32,7 @@
               link_to: patient_path(patient),
               current_team:,
               programmes: @form.programmes,
+              show_clinic_invitations: true,
             ) %>
       <% end %>
     <% end %>

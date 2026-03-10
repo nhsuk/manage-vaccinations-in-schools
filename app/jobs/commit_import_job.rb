@@ -39,12 +39,19 @@ class CommitImportJob
       changesets
         .from_file
         .includes(:school)
-        .find_in_batches(batch_size: 100) do |changesets|
-          increment_column_counts!(import, counts, changesets)
+        .find_in_batches(batch_size: 100) do |batch|
+          to_skip, to_process =
+            batch.partition(&:school_move_to_unknown_school_from_another_team?)
 
-          import_patients_and_parents(changesets, import)
-          import_school_moves(changesets, import)
-          import_pds_search_results(changesets, import)
+          if to_process.any?
+            increment_column_counts!(import, counts, to_process)
+
+            import_patients_and_parents(to_process, import)
+            import_school_moves(to_process, import)
+            import_pds_search_results(to_process, import)
+          end
+
+          to_skip.each(&:processed!)
         end
 
       PatientTeamUpdater.call(patient_scope: import.patients)

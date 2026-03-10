@@ -5,6 +5,10 @@ already_vaccinated: |
 basic_auth: Require users to sign in with basic authentication before they
   can use the service.
 
+child_record_redesign: |
+  Child record pages will be updated to show a tab for each vaccination programme,
+  with detailed information shown within each tab.
+
 dev_tools: Developer tools useful for testing and debugging.
 
 ethnicity_capture: Enable optional ethnicity capture after parent consent

@@ -21,6 +21,19 @@
       <% end %>
     <% end %>
 
+    <% if show_invited_to_clinic %>
+      <%= f.govuk_check_boxes_fieldset :clinic_invitations,
+                                       multiple: false,
+                                       legend: { text: "Clinic invitations", size: "s" },
+                                       small: true do %>
+        <%= f.govuk_check_box :invited_to_clinic,
+                              1, 0,
+                              multiple: false,
+                              checked: form.invited_to_clinic,
+                              label: { text: "Invited to clinic" } %>
+      <% end %>
+    <% end %>
+
     <% if show_vaccine_criteria && has_vaccine_criteria? %>
       <% programmes.each do |programme| %>
         <% if (programme_vaccine_criteria = vaccine_criteria_for(programme:)).present? %>

@@ -1,0 +1,40 @@
+<% content_for :before_main do %>
+  <%= render AppBreadcrumbComponent.new(items: [
+                                          { text: t("dashboard.index.title"), href: dashboard_path },
+                                          { text: t("patients.index.title"), href: patients_path },
+                                        ]) %>
+<% end %>
+
+<%= render "patients/header" %>
+
+<%= render AppPatientNavigationComponent.new(@patient, current_user.programmes, active: @programme.type.to_sym) %>
+
+<%= render AppPatientProgrammeVaccinationCardComponent.new(
+      @patient,
+      academic_year: AcademicYear.current,
+      show_caption: false,
+      programme: @programme,
+    ) %>
+
+<%= render AppCardComponent.new(section: true) do |card| %>
+  <% card.with_heading { "Sessions" } %>
+
+  <%= render AppPatientProgrammeSessionTableComponent.new(
+        @patient, current_team:, programme_type: @programme.type,
+      ) %>
+
+  <% if @can_invite_to_clinic %>
+    <%= govuk_button_to "Invite to community clinic",
+                        patient_programme_invite_to_clinic_path(@patient, @programme),
+                        secondary: true %>
+  <% end %>
+<% end %>
+
+<%= render AppCardComponent.new(section: true) do |card| %>
+  <% card.with_heading { "Programme activity" } %>
+  <%= render AppActivityLogComponent.new(
+        patient: @patient,
+        programme_type: @programme.type,
+        team: current_team,
+      ) %>
+<% end %>
