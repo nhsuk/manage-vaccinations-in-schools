@@ -128,9 +128,10 @@ class PatientsController < ApplicationController
 
     @show_aged_out_of_programmes = !national_reporting_access
     @show_archived_records = !national_reporting_access
+    @show_clinic_invitations = !national_reporting_access
+    @show_patient_postcode = national_reporting_access
     @show_patient_school = !national_reporting_access
     @show_vaccinated_programme_status_only = national_reporting_access
-    @show_patient_postcode = national_reporting_access
   end
 
   def set_patient
