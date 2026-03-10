@@ -121,27 +121,15 @@ describe AuthenticationConcern do
         }
       end
 
-      context "and the reporting_api feature flag is enabled" do
-        before { Flipper.enable(:reporting_api) }
-
-        it "returns that URL with a code added to it for the given user" do
-          expect(result).to eq(
-            "http://reporting.mavis:5555/path?code=mytoken&some_param=some%20value"
-          )
-        end
-
-        it "deletes the redirect_uri from the session" do
-          result
-          expect(sample_class.session["redirect_uri"]).to be_nil
-        end
+      it "returns that URL with a code added to it for the given user" do
+        expect(result).to eq(
+          "http://reporting.mavis:5555/path?code=mytoken&some_param=some%20value"
+        )
       end
 
-      context "and the reporting_api feature flag is disabled" do
-        before { Flipper.disable(:reporting_api) }
-
-        it "returns nil" do
-          expect(result).to be_nil
-        end
+      it "deletes the redirect_uri from the session" do
+        result
+        expect(sample_class.session["redirect_uri"]).to be_nil
       end
     end
 
@@ -157,7 +145,6 @@ describe AuthenticationConcern do
       let(:session_cis2_info) { {} }
 
       before do
-        Flipper.enable(:reporting_api)
         sample_class.session = {
           "redirect_uri" => "http://reporting.mavis:5555/path",
           "cis2_info" => session_cis2_info

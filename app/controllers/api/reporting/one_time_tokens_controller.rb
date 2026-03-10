@@ -1,10 +1,7 @@
 # frozen_string_literal: true
 
 class API::Reporting::OneTimeTokensController < API::Reporting::BaseController
-  # skip_before_action :authenticate_user!
-  before_action :ensure_reporting_api_feature_enabled,
-                :authenticate_app_by_client_id!,
-                :verify_grant_type!
+  before_action :authenticate_app_by_client_id!, :verify_grant_type!
 
   def authorize
     @token = ReportingAPI::OneTimeToken.find_by!(token: params[:code])

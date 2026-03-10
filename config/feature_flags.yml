@@ -57,10 +57,6 @@ ops_tools: Enable the operational support tools; timeline and graph.
 
 pds_cascading_search: Enable cascading PDS searches for patients without an NHS number.
 
-reporting_api: Enables the Commissioner reporting component to authenticate to Mavis via OAUTH 2.0
-  Authorization Code Flow (https://datatracker.ietf.org/doc/html/rfc6749#section-4.1), and retrieve
-  statistics from /api/reporting/
-
 sync_national_reporting_to_imms_api: |
   Sync immunisations records uploaded as part of national reporting to the NHS
   Immunisations API.

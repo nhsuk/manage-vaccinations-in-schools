@@ -77,38 +77,34 @@ describe ReportingAPI::TokenAuthenticationConcern do
   describe "#authenticate_app_by_client_id!" do
     let(:client_id) { "something" }
 
-    context "when the :reporting_api feature flag is enabled" do
-      before { Flipper.enable(:reporting_api) }
+    context "and the client_id param is provided" do
+      before do
+        allow(an_object_which_includes_the_concern).to receive(
+          :params
+        ).and_return({ client_id: client_id }.with_indifferent_access)
+      end
 
-      context "and the client_id param is provided" do
-        before do
-          allow(an_object_which_includes_the_concern).to receive(
-            :params
-          ).and_return({ client_id: client_id }.with_indifferent_access)
+      context "and the client_id param contains the reporting app's client_id" do
+        let(:client_id) { Settings.reporting_api.client_app.client_id }
+
+        it "does not cause a token error" do
+          expect(an_object_which_includes_the_concern).not_to receive(
+            :client_id_error!
+          )
+          an_object_which_includes_the_concern.send(
+            :authenticate_app_by_client_id!
+          )
         end
+      end
 
-        context "and the client_id param contains the reporting app's client_id" do
-          let(:client_id) { Settings.reporting_api.client_app.client_id }
-
-          it "does not cause a token error" do
-            expect(an_object_which_includes_the_concern).not_to receive(
-              :client_id_error!
-            )
-            an_object_which_includes_the_concern.send(
-              :authenticate_app_by_client_id!
-            )
-          end
-        end
-
-        context "and the client_id param does not contain the reporting app client_id" do
-          it "causes a token error" do
-            expect(an_object_which_includes_the_concern).to receive(
-              :client_id_error!
-            )
-            an_object_which_includes_the_concern.send(
-              :authenticate_app_by_client_id!
-            )
-          end
+      context "and the client_id param does not contain the reporting app client_id" do
+        it "causes a token error" do
+          expect(an_object_which_includes_the_concern).to receive(
+            :client_id_error!
+          )
+          an_object_which_includes_the_concern.send(
+            :authenticate_app_by_client_id!
+          )
         end
       end
     end
