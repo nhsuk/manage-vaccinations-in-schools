@@ -660,8 +660,6 @@
           <div class="method-source-code" id="perform-source">
             <pre class="ruby"><span class="ruby-comment"># File app/jobs/reporting_api/refresh_job.rb, line 4</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">perform</span>
-  <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-constant">Flipper</span>.<span class="ruby-identifier">enabled?</span>(<span class="ruby-value">:reporting_api</span>)
-
   <span class="ruby-constant">ReportingAPI</span><span class="ruby-operator">::</span><span class="ruby-constant">PatientProgrammeStatus</span>.<span class="ruby-identifier">refresh!</span>
   <span class="ruby-constant">ReportingAPI</span><span class="ruby-operator">::</span><span class="ruby-constant">Total</span>.<span class="ruby-identifier">refresh!</span>
 <span class="ruby-keyword">end</span></pre>

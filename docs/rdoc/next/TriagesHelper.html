@@ -639,26 +639,24 @@
     <span class="ruby-keyword">if</span> <span class="ruby-identifier">triage</span>.<span class="ruby-identifier">invalidated?</span>
       <span class="ruby-string">&quot;grey&quot;</span>
     <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">triage</span>.<span class="ruby-identifier">safe_to_vaccinate?</span>
-      <span class="ruby-string">&quot;aqua-green&quot;</span>
+      <span class="ruby-string">&quot;green&quot;</span>
     <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">triage</span>.<span class="ruby-identifier">do_not_vaccinate?</span>
       <span class="ruby-string">&quot;red&quot;</span>
     <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">triage</span>.<span class="ruby-identifier">delay_vaccination?</span>
-      <span class="ruby-string">&quot;dark-orange&quot;</span>
+      <span class="ruby-string">&quot;orange&quot;</span>
     <span class="ruby-keyword">else</span>
       <span class="ruby-string">&quot;blue&quot;</span>
     <span class="ruby-keyword">end</span>
 
-  <span class="ruby-comment"># We can’t use the colour param as NHS.UK frontend uses different colour</span>
-  <span class="ruby-comment"># names (aqua-green) than those supported by GOV.UK Frontend (turquoise)</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">triage</span>.<span class="ruby-identifier">invalidated?</span>
     <span class="ruby-identifier">safe_join</span>(
       [
-        <span class="ruby-identifier">govuk_tag</span>(<span class="ruby-value">text:</span> <span class="ruby-identifier">tag</span>.<span class="ruby-identifier">s</span>(<span class="ruby-identifier">text</span>), <span class="ruby-value">classes:</span> <span class="ruby-node">&quot;nhsuk-tag--#{colour}&quot;</span>),
+        <span class="ruby-identifier">govuk_tag</span>(<span class="ruby-value">text:</span> <span class="ruby-identifier">tag</span>.<span class="ruby-identifier">s</span>(<span class="ruby-identifier">text</span>), <span class="ruby-value">colour:</span>),
         <span class="ruby-identifier">tag</span>.<span class="ruby-identifier">span</span>(<span class="ruby-string">&quot;Invalid&quot;</span>, <span class="ruby-value">class:</span> <span class="ruby-string">&quot;nhsuk-u-secondary-text-colour&quot;</span>)
       ]
     )
   <span class="ruby-keyword">else</span>
-    <span class="ruby-identifier">govuk_tag</span>(<span class="ruby-value">text:</span>, <span class="ruby-value">classes:</span> <span class="ruby-node">&quot;nhsuk-tag--#{colour}&quot;</span>)
+    <span class="ruby-identifier">govuk_tag</span>(<span class="ruby-value">text:</span>, <span class="ruby-value">colour:</span>)
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
@@ -755,7 +753,7 @@
             </details>
           </div>
           <div class="method-source-code" id="triage_summary-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/helpers/triages_helper.rb, line 52</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/helpers/triages_helper.rb, line 50</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">triage_summary</span>(<span class="ruby-identifier">triage</span>)
   <span class="ruby-identifier">prefix</span> =
     <span class="ruby-keyword">if</span> (<span class="ruby-identifier">performed_by</span> = <span class="ruby-identifier">triage</span>.<span class="ruby-identifier">performed_by</span>)

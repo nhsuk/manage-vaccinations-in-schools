@@ -664,7 +664,7 @@
             </details>
           </div>
           <div class="method-source-code" id="authorize-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/controllers/api/reporting/one_time_tokens_controller.rb, line 9</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/controllers/api/reporting/one_time_tokens_controller.rb, line 6</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">authorize</span>
   <span class="ruby-ivar">@token</span> = <span class="ruby-constant">ReportingAPI</span><span class="ruby-operator">::</span><span class="ruby-constant">OneTimeToken</span>.<span class="ruby-identifier">find_by!</span>(<span class="ruby-value">token:</span> <span class="ruby-identifier">params</span>[<span class="ruby-value">:code</span>])
   <span class="ruby-ivar">@token</span>.<span class="ruby-identifier">delete</span> <span class="ruby-comment"># &lt;- Tokens are one-time use</span>
