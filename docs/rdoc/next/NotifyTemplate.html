@@ -5,17 +5,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>module PerformableBy - Mavis Documentation</title>
+<title>class NotifyTemplate - Mavis Documentation</title>
 
 
   <meta
     name="keywords"
-    content="ruby,module,PerformableBy"
+    content="ruby,class,NotifyTemplate"
   >
 
     <meta
       name="description"
-      content="Documentation for the PerformableBy module"
+      content="Documentation for the NotifyTemplate class"
     >
 
 
@@ -24,13 +24,13 @@
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content="website">
-<meta property="og:title" content="module PerformableBy - Mavis Documentation">
+<meta property="og:title" content="class NotifyTemplate - Mavis Documentation">
 
 
 
     <meta
       property="og:description"
-      content="Documentation for PerformableBy module - API reference and code examples"
+      content="Documentation for NotifyTemplate class - API reference and code examples"
     >
 
 
@@ -39,13 +39,13 @@
 
 <!-- Twitter -->
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="module PerformableBy - Mavis Documentation">
+<meta name="twitter:title" content="class NotifyTemplate - Mavis Documentation">
 
 
 
     <meta
       name="twitter:description"
-      content="Documentation for PerformableBy module - API reference and code examples"
+      content="Documentation for NotifyTemplate class - API reference and code examples"
     >
 
 
@@ -102,7 +102,7 @@
 
 
 
-<body role="document" class="module has-toc">
+<body role="document" class="class has-toc">
 <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
   <!-- Chevron (right arrow) - used for expand/collapse -->
   <symbol
@@ -522,34 +522,52 @@
   
 
   
-
-  
-
-  
-<div id="extends-section" class="nav-section">
+<div id="parent-class-section" class="nav-section">
   <details class="nav-section-collapsible" open>
     <summary class="nav-section-header">
       <span class="nav-section-icon">
-        <svg><use href="#icon-extends"></use></svg>
+        <svg><use href="#icon-ancestors"></use></svg>
       </span>
-      <span class="nav-section-title">Extended With Modules</span>
+      <span class="nav-section-title">Ancestors</span>
       <span class="nav-section-chevron">
         <svg><use href="#icon-chevron"></use></svg>
       </span>
     </summary>
-
-    <ul class="nav-list">
-
-
-      <li><span class="extend">ActiveSupport::Concern</span></li>
-
-
-    </ul>
+    <ul><li>Object</li></ul>
   </details>
 </div>
 
 
   
+
+  
+
+  
+  <div class="nav-section">
+    <details class="nav-section-collapsible" open>
+      <summary class="nav-section-header">
+        <span class="nav-section-icon">
+          <svg><use href="#icon-class-methods"></use></svg>
+        </span>
+        <span class="nav-section-title">Class Methods</span>
+        <span class="nav-section-chevron">
+          <svg><use href="#icon-chevron"></use></svg>
+        </span>
+      </summary>
+      <ul class="nav-list" role="directory">
+
+        <li ><a href="#method-c-exists-3F">exists?</a></li>
+
+        <li ><a href="#method-c-find">find</a></li>
+
+        <li ><a href="#method-c-find_by_id">find_by_id</a></li>
+
+        <li ><a href="#method-c-new">new</a></li>
+
+      </ul>
+    </details>
+  </div>
+
 
 
   <div class="nav-section">
@@ -565,9 +583,13 @@
       </summary>
       <ul class="nav-list" role="directory">
 
-        <li ><a href="#method-i-performed_by">performed_by</a></li>
+        <li ><a href="#method-i-delivery_id">delivery_id</a></li>
 
-        <li ><a href="#method-i-performed_by-3D">performed_by=</a></li>
+        <li ><a href="#method-i-local-3F">local?</a></li>
+
+        <li ><a href="#method-i-passthrough_id">passthrough_id</a></li>
+
+        <li ><a href="#method-i-render">render</a></li>
 
       </ul>
     </details>
@@ -592,13 +614,13 @@
 
 </nav>
 
-<main role="main" aria-labelledby="module-performableby">
+<main role="main" aria-labelledby="class-notifytemplate">
   
   
 
-  <span id="module-PerformableBy" class="legacy-anchor"></span>
-  <h1 id="module-performableby" class="anchor-link module">
-    module PerformableBy
+  <span id="class-NotifyTemplate" class="legacy-anchor"></span>
+  <h1 id="class-notifytemplate" class="anchor-link class">
+    class NotifyTemplate
   </h1>
 
   <section class="description">
@@ -619,7 +641,7 @@
       </header>
       <dl>
 
-        <dt id="PerformedBy">PerformedBy</dt>
+        <dt id="PASSTHROUGH_TEMPLATE_IDS">PASSTHROUGH_TEMPLATE_IDS</dt>
 
         <dd>
 
@@ -632,30 +654,80 @@
 
 
 
+    <section class="attribute-method-details method-section">
+      <header>
+        <h3 id="untitled-attributes"><a href="#untitled-attributes">Attributes</a></h3>
+      </header>
+
+
+      <div id="attribute-i-channel" class="method-detail anchor-link">
+        <div class="method-heading attribute-method-heading">
+          <a href="#attribute-i-channel" title="Link to this attribute">
+            <span class="method-name">channel</span>
+            <span class="attribute-access-type">[R]</span>
+          </a>
+        </div>
+
+        <div class="method-description">
+
+
+        
+
+        </div>
+      </div>
+
+      <div id="attribute-i-id" class="method-detail anchor-link">
+        <div class="method-heading attribute-method-heading">
+          <a href="#attribute-i-id" title="Link to this attribute">
+            <span class="method-name">id</span>
+            <span class="attribute-access-type">[R]</span>
+          </a>
+        </div>
+
+        <div class="method-description">
+
+
+        
+
+        </div>
+      </div>
+
+      <div id="attribute-i-name" class="method-detail anchor-link">
+        <div class="method-heading attribute-method-heading">
+          <a href="#attribute-i-name" title="Link to this attribute">
+            <span class="method-name">name</span>
+            <span class="attribute-access-type">[R]</span>
+          </a>
+        </div>
+
+        <div class="method-description">
+
+
+        
+
+        </div>
+      </div>
+
+    </section>
 
 
 
 
 
 
-
-
-
-
-
-     <section id="public-instance-untitled-method-details" class="method-section anchor-link">
+     <section id="public-class-untitled-method-details" class="method-section anchor-link">
        <header>
-         <h3 id="public-instance-untitled-methods"><a href="#public-instance-untitled-methods">Public Instance Methods</a></h3>
+         <h3 id="public-class-untitled-methods"><a href="#public-class-untitled-methods">Public Class Methods</a></h3>
        </header>
 
 
-      <div id="method-i-performed_by" class="method-detail anchor-link ">
+      <div id="method-c-exists-3F" class="method-detail anchor-link ">
         <div class="method-header">
 
             <div class="method-heading">
-              <a href="#method-i-performed_by" title="Link to this method">
-                <span class="method-name">performed_by</span>
-                <span class="method-args">()</span>
+              <a href="#method-c-exists-3F" title="Link to this method">
+                <span class="method-name">exists?</span>
+                <span class="method-args">(name, channel:, source: :any)</span>
               </a>
             </div>
 
@@ -667,16 +739,20 @@
               <summary>Source</summary>
             </details>
           </div>
-          <div class="method-source-code" id="performed_by-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/concerns/performable_by.rb, line 21</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">performed_by</span>
-  <span class="ruby-keyword">return</span> <span class="ruby-identifier">performed_by_user</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">performed_by_user</span>
-
-  <span class="ruby-keyword">if</span> <span class="ruby-identifier">performed_by_given_name</span>.<span class="ruby-identifier">present?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">performed_by_family_name</span>.<span class="ruby-identifier">present?</span>
-    <span class="ruby-constant">PerformedBy</span>.<span class="ruby-identifier">new</span>(
-      <span class="ruby-value">given_name:</span> <span class="ruby-identifier">performed_by_given_name</span>,
-      <span class="ruby-value">family_name:</span> <span class="ruby-identifier">performed_by_family_name</span>
-    )
+          <div class="method-source-code" id="exists-3F-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/notify_template.rb, line 37</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">exists?</span>(<span class="ruby-identifier">name</span>, <span class="ruby-value">channel:</span>, <span class="ruby-value">source:</span> <span class="ruby-value">:any</span>)
+  <span class="ruby-identifier">channel</span> = <span class="ruby-identifier">channel</span>.<span class="ruby-identifier">to_sym</span>
+  <span class="ruby-identifier">path</span> = <span class="ruby-identifier">template_path</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">channel</span>)
+  <span class="ruby-keyword">case</span> <span class="ruby-identifier">source</span>
+  <span class="ruby-keyword">when</span> <span class="ruby-value">:local</span>
+    <span class="ruby-identifier">path</span>.<span class="ruby-identifier">exist?</span>
+  <span class="ruby-keyword">when</span> <span class="ruby-value">:govuk_notify</span>
+    <span class="ruby-identifier">config_hash</span>(<span class="ruby-identifier">channel</span>)[<span class="ruby-identifier">name</span>.<span class="ruby-identifier">to_sym</span>].<span class="ruby-identifier">present?</span>
+  <span class="ruby-keyword">when</span> <span class="ruby-value">:any</span>
+    <span class="ruby-identifier">path</span>.<span class="ruby-identifier">exist?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">config_hash</span>(<span class="ruby-identifier">channel</span>)[<span class="ruby-identifier">name</span>.<span class="ruby-identifier">to_sym</span>].<span class="ruby-identifier">present?</span>
+  <span class="ruby-keyword">else</span>
+    <span class="ruby-identifier">raise</span> <span class="ruby-constant">ArgumentError</span>, <span class="ruby-node">&quot;Unknown source: #{source}&quot;</span>
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
@@ -698,13 +774,13 @@
       </div>
 
 
-      <div id="method-i-performed_by-3D" class="method-detail anchor-link ">
+      <div id="method-c-find" class="method-detail anchor-link ">
         <div class="method-header">
 
             <div class="method-heading">
-              <a href="#method-i-performed_by-3D" title="Link to this method">
-                <span class="method-name">performed_by=</span>
-                <span class="method-args">(user)</span>
+              <a href="#method-c-find" title="Link to this method">
+                <span class="method-name">find</span>
+                <span class="method-args">(name, channel:)</span>
               </a>
             </div>
 
@@ -716,10 +792,490 @@
               <summary>Source</summary>
             </details>
           </div>
-          <div class="method-source-code" id="performed_by-3D-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/concerns/performable_by.rb, line 32</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">performed_by=</span>(<span class="ruby-identifier">user</span>)
-  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">performed_by_user</span> = <span class="ruby-identifier">user</span>
+          <div class="method-source-code" id="find-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/notify_template.rb, line 11</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">find</span>(<span class="ruby-identifier">name</span>, <span class="ruby-value">channel:</span>)
+  <span class="ruby-identifier">name</span> = <span class="ruby-identifier">name</span>.<span class="ruby-identifier">to_sym</span>
+  <span class="ruby-identifier">channel</span> = <span class="ruby-identifier">channel</span>.<span class="ruby-identifier">to_sym</span>
+  <span class="ruby-identifier">id</span> = <span class="ruby-identifier">template_id_for</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">channel</span>)
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">id</span>
+
+  <span class="ruby-identifier">new</span>(<span class="ruby-value">name:</span>, <span class="ruby-value">channel:</span>, <span class="ruby-value">id:</span>, <span class="ruby-value">local:</span> <span class="ruby-identifier">template_path</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">channel</span>).<span class="ruby-identifier">exist?</span>)
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-c-find_by_id" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-c-find_by_id" title="Link to this method">
+                <span class="method-name">find_by_id</span>
+                <span class="method-args">(template_id, channel:)</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="find_by_id-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/notify_template.rb, line 20</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">find_by_id</span>(<span class="ruby-identifier">template_id</span>, <span class="ruby-value">channel:</span>)
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">template_id</span>.<span class="ruby-identifier">blank?</span>
+
+  <span class="ruby-identifier">channel</span> = <span class="ruby-identifier">channel</span>.<span class="ruby-identifier">to_sym</span>
+  <span class="ruby-identifier">name</span> =
+    <span class="ruby-identifier">template_name_for</span>(<span class="ruby-identifier">template_id</span>, <span class="ruby-identifier">channel</span>) <span class="ruby-operator">||</span>
+      <span class="ruby-constant">GOVUK_NOTIFY_UNUSED_TEMPLATES</span>[<span class="ruby-identifier">template_id</span>.<span class="ruby-identifier">to_s</span>]
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">name</span>
+
+  <span class="ruby-identifier">new</span>(
+    <span class="ruby-value">name:</span>,
+    <span class="ruby-value">channel:</span>,
+    <span class="ruby-value">id:</span> <span class="ruby-identifier">template_id</span>.<span class="ruby-identifier">to_s</span>,
+    <span class="ruby-value">local:</span> <span class="ruby-identifier">template_path</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">channel</span>).<span class="ruby-identifier">exist?</span>
+  )
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-c-new" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-c-new" title="Link to this method">
+                <span class="method-name">new</span>
+                <span class="method-args">(name:, channel:, id:, local:)</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="new-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/notify_template.rb, line 52</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-value">name:</span>, <span class="ruby-value">channel:</span>, <span class="ruby-value">id:</span>, <span class="ruby-value">local:</span>)
+  <span class="ruby-ivar">@name</span> = <span class="ruby-identifier">name</span>.<span class="ruby-identifier">to_sym</span>
+  <span class="ruby-ivar">@channel</span> = <span class="ruby-identifier">channel</span>.<span class="ruby-identifier">to_sym</span>
+  <span class="ruby-ivar">@id</span> = <span class="ruby-identifier">id</span>
+  <span class="ruby-ivar">@local</span> = <span class="ruby-identifier">local</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+    </section>
+
+
+
+
+
+
+
+     <section id="public-instance-untitled-method-details" class="method-section anchor-link">
+       <header>
+         <h3 id="public-instance-untitled-methods"><a href="#public-instance-untitled-methods">Public Instance Methods</a></h3>
+       </header>
+
+
+      <div id="method-i-delivery_id" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-delivery_id" title="Link to this method">
+                <span class="method-name">delivery_id</span>
+                <span class="method-args">(= local? ? passthrough_id : id)</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="delivery_id-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/notify_template.rb, line 60</span>
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">delivery_id</span> = <span class="ruby-identifier">local?</span> <span class="ruby-operator">?</span> <span class="ruby-identifier">passthrough_id</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">id</span>
+
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">render</span>(<span class="ruby-identifier">personalisation</span>)
+    <span class="ruby-constant">NotifyTemplateRenderer</span>.<span class="ruby-identifier">for</span>(<span class="ruby-ivar">@channel</span>).<span class="ruby-identifier">render</span>(<span class="ruby-ivar">@name</span>, <span class="ruby-identifier">personalisation</span>)
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">class</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-keyword">self</span>
+    <span class="ruby-identifier">private</span>
+
+    <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">template_id_for</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">channel</span>)
+      <span class="ruby-identifier">path</span> = <span class="ruby-identifier">template_path</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">channel</span>)
+      <span class="ruby-keyword">if</span> <span class="ruby-identifier">path</span>.<span class="ruby-identifier">exist?</span>
+        <span class="ruby-identifier">content</span> = <span class="ruby-constant">File</span>.<span class="ruby-identifier">read</span>(<span class="ruby-identifier">path</span>)
+        <span class="ruby-identifier">frontmatter</span>, = <span class="ruby-identifier">parse_frontmatter</span>(<span class="ruby-identifier">content</span>)
+        <span class="ruby-keyword">if</span> <span class="ruby-identifier">frontmatter</span>[<span class="ruby-string">&quot;template_id&quot;</span>].<span class="ruby-identifier">present?</span>
+          <span class="ruby-keyword">return</span> <span class="ruby-identifier">frontmatter</span>[<span class="ruby-string">&quot;template_id&quot;</span>].<span class="ruby-identifier">to_s</span>
+        <span class="ruby-keyword">end</span>
+      <span class="ruby-keyword">end</span>
+      <span class="ruby-identifier">config_hash</span>(<span class="ruby-identifier">channel</span>)[<span class="ruby-identifier">name</span>.<span class="ruby-identifier">to_sym</span>]
+    <span class="ruby-keyword">end</span>
+
+    <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">template_name_for</span>(<span class="ruby-identifier">template_id</span>, <span class="ruby-identifier">channel</span>)
+      <span class="ruby-identifier">dir</span> = <span class="ruby-constant">Rails</span>.<span class="ruby-identifier">root</span>.<span class="ruby-identifier">join</span>(<span class="ruby-string">&quot;app/views/notify_templates&quot;</span>, <span class="ruby-identifier">channel</span>.<span class="ruby-identifier">to_s</span>)
+      <span class="ruby-keyword">if</span> <span class="ruby-constant">Dir</span>.<span class="ruby-identifier">exist?</span>(<span class="ruby-identifier">dir</span>)
+        <span class="ruby-constant">Dir</span>.<span class="ruby-identifier">each_child</span>(<span class="ruby-identifier">dir</span>) <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">filename</span><span class="ruby-operator">|</span>
+          <span class="ruby-keyword">next</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">filename</span>.<span class="ruby-identifier">end_with?</span>(<span class="ruby-string">&quot;.text.erb&quot;</span>)
+
+          <span class="ruby-identifier">name</span> = <span class="ruby-identifier">filename</span>.<span class="ruby-identifier">delete_suffix</span>(<span class="ruby-string">&quot;.text.erb&quot;</span>).<span class="ruby-identifier">to_sym</span>
+          <span class="ruby-identifier">content</span> = <span class="ruby-constant">File</span>.<span class="ruby-identifier">read</span>(<span class="ruby-constant">File</span>.<span class="ruby-identifier">join</span>(<span class="ruby-identifier">dir</span>, <span class="ruby-identifier">filename</span>))
+          <span class="ruby-identifier">frontmatter</span>, = <span class="ruby-identifier">parse_frontmatter</span>(<span class="ruby-identifier">content</span>)
+          <span class="ruby-keyword">return</span> <span class="ruby-identifier">name</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">frontmatter</span>[<span class="ruby-string">&quot;template_id&quot;</span>].<span class="ruby-identifier">to_s</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">template_id</span>.<span class="ruby-identifier">to_s</span>
+        <span class="ruby-keyword">end</span>
+      <span class="ruby-keyword">end</span>
+      <span class="ruby-identifier">config_hash</span>(<span class="ruby-identifier">channel</span>).<span class="ruby-identifier">key</span>(<span class="ruby-identifier">template_id</span>)
+    <span class="ruby-keyword">end</span>
+
+    <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">template_path</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">channel</span>)
+      <span class="ruby-constant">Rails</span>.<span class="ruby-identifier">root</span>.<span class="ruby-identifier">join</span>(
+        <span class="ruby-string">&quot;app/views/notify_templates&quot;</span>,
+        <span class="ruby-identifier">channel</span>.<span class="ruby-identifier">to_s</span>,
+        <span class="ruby-node">&quot;#{name}.text.erb&quot;</span>
+      )
+    <span class="ruby-keyword">end</span>
+
+    <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">parse_frontmatter</span>(<span class="ruby-identifier">content</span>)
+      <span class="ruby-identifier">delimiter</span> = <span class="ruby-string">&quot;---\n&quot;</span>
+      <span class="ruby-identifier">separator</span> = <span class="ruby-string">&quot;\n---\n&quot;</span>
+      <span class="ruby-keyword">return</span> {}, <span class="ruby-identifier">content</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">content</span>.<span class="ruby-identifier">start_with?</span>(<span class="ruby-identifier">delimiter</span>)
+
+      <span class="ruby-identifier">frontmatter_block</span>, <span class="ruby-identifier">body_content</span> = <span class="ruby-identifier">content</span>.<span class="ruby-identifier">split</span>(<span class="ruby-identifier">separator</span>, <span class="ruby-value">2</span>)
+      <span class="ruby-keyword">return</span> {}, <span class="ruby-identifier">content</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">body_content</span>.<span class="ruby-identifier">nil?</span>
+
+      <span class="ruby-identifier">frontmatter_str</span> = <span class="ruby-identifier">frontmatter_block</span>.<span class="ruby-identifier">delete_prefix</span>(<span class="ruby-identifier">delimiter</span>)
+      <span class="ruby-identifier">frontmatter</span> = <span class="ruby-constant">YAML</span>.<span class="ruby-identifier">safe_load</span>(<span class="ruby-identifier">frontmatter_str</span>) <span class="ruby-operator">||</span> {}
+      [<span class="ruby-identifier">frontmatter</span>, <span class="ruby-identifier">body_content</span>]
+    <span class="ruby-keyword">end</span>
+
+    <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">config_hash</span>(<span class="ruby-identifier">channel</span>)
+      <span class="ruby-keyword">case</span> <span class="ruby-identifier">channel</span>
+      <span class="ruby-keyword">when</span> <span class="ruby-value">:sms</span>
+        <span class="ruby-constant">GOVUK_NOTIFY_SMS_TEMPLATES</span>
+      <span class="ruby-keyword">else</span>
+        <span class="ruby-constant">GOVUK_NOTIFY_EMAIL_TEMPLATES</span>
+      <span class="ruby-keyword">end</span>
+    <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-i-local-3F" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-local-3F" title="Link to this method">
+                <span class="method-name">local?</span>
+                <span class="method-args">(= @local)</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="local-3F-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/notify_template.rb, line 58</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">local?</span> = <span class="ruby-ivar">@local</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">passthrough_id</span> = <span class="ruby-constant">PASSTHROUGH_TEMPLATE_IDS</span>[<span class="ruby-ivar">@channel</span>]
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">delivery_id</span> = <span class="ruby-identifier">local?</span> <span class="ruby-operator">?</span> <span class="ruby-identifier">passthrough_id</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">id</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">render</span>(<span class="ruby-identifier">personalisation</span>)
+  <span class="ruby-constant">NotifyTemplateRenderer</span>.<span class="ruby-identifier">for</span>(<span class="ruby-ivar">@channel</span>).<span class="ruby-identifier">render</span>(<span class="ruby-ivar">@name</span>, <span class="ruby-identifier">personalisation</span>)
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">class</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-keyword">self</span>
+  <span class="ruby-identifier">private</span>
+
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">template_id_for</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">channel</span>)
+    <span class="ruby-identifier">path</span> = <span class="ruby-identifier">template_path</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">channel</span>)
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">path</span>.<span class="ruby-identifier">exist?</span>
+      <span class="ruby-identifier">content</span> = <span class="ruby-constant">File</span>.<span class="ruby-identifier">read</span>(<span class="ruby-identifier">path</span>)
+      <span class="ruby-identifier">frontmatter</span>, = <span class="ruby-identifier">parse_frontmatter</span>(<span class="ruby-identifier">content</span>)
+      <span class="ruby-keyword">if</span> <span class="ruby-identifier">frontmatter</span>[<span class="ruby-string">&quot;template_id&quot;</span>].<span class="ruby-identifier">present?</span>
+        <span class="ruby-keyword">return</span> <span class="ruby-identifier">frontmatter</span>[<span class="ruby-string">&quot;template_id&quot;</span>].<span class="ruby-identifier">to_s</span>
+      <span class="ruby-keyword">end</span>
+    <span class="ruby-keyword">end</span>
+    <span class="ruby-identifier">config_hash</span>(<span class="ruby-identifier">channel</span>)[<span class="ruby-identifier">name</span>.<span class="ruby-identifier">to_sym</span>]
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">template_name_for</span>(<span class="ruby-identifier">template_id</span>, <span class="ruby-identifier">channel</span>)
+    <span class="ruby-identifier">dir</span> = <span class="ruby-constant">Rails</span>.<span class="ruby-identifier">root</span>.<span class="ruby-identifier">join</span>(<span class="ruby-string">&quot;app/views/notify_templates&quot;</span>, <span class="ruby-identifier">channel</span>.<span class="ruby-identifier">to_s</span>)
+    <span class="ruby-keyword">if</span> <span class="ruby-constant">Dir</span>.<span class="ruby-identifier">exist?</span>(<span class="ruby-identifier">dir</span>)
+      <span class="ruby-constant">Dir</span>.<span class="ruby-identifier">each_child</span>(<span class="ruby-identifier">dir</span>) <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">filename</span><span class="ruby-operator">|</span>
+        <span class="ruby-keyword">next</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">filename</span>.<span class="ruby-identifier">end_with?</span>(<span class="ruby-string">&quot;.text.erb&quot;</span>)
+
+        <span class="ruby-identifier">name</span> = <span class="ruby-identifier">filename</span>.<span class="ruby-identifier">delete_suffix</span>(<span class="ruby-string">&quot;.text.erb&quot;</span>).<span class="ruby-identifier">to_sym</span>
+        <span class="ruby-identifier">content</span> = <span class="ruby-constant">File</span>.<span class="ruby-identifier">read</span>(<span class="ruby-constant">File</span>.<span class="ruby-identifier">join</span>(<span class="ruby-identifier">dir</span>, <span class="ruby-identifier">filename</span>))
+        <span class="ruby-identifier">frontmatter</span>, = <span class="ruby-identifier">parse_frontmatter</span>(<span class="ruby-identifier">content</span>)
+        <span class="ruby-keyword">return</span> <span class="ruby-identifier">name</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">frontmatter</span>[<span class="ruby-string">&quot;template_id&quot;</span>].<span class="ruby-identifier">to_s</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">template_id</span>.<span class="ruby-identifier">to_s</span>
+      <span class="ruby-keyword">end</span>
+    <span class="ruby-keyword">end</span>
+    <span class="ruby-identifier">config_hash</span>(<span class="ruby-identifier">channel</span>).<span class="ruby-identifier">key</span>(<span class="ruby-identifier">template_id</span>)
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">template_path</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">channel</span>)
+    <span class="ruby-constant">Rails</span>.<span class="ruby-identifier">root</span>.<span class="ruby-identifier">join</span>(
+      <span class="ruby-string">&quot;app/views/notify_templates&quot;</span>,
+      <span class="ruby-identifier">channel</span>.<span class="ruby-identifier">to_s</span>,
+      <span class="ruby-node">&quot;#{name}.text.erb&quot;</span>
+    )
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">parse_frontmatter</span>(<span class="ruby-identifier">content</span>)
+    <span class="ruby-identifier">delimiter</span> = <span class="ruby-string">&quot;---\n&quot;</span>
+    <span class="ruby-identifier">separator</span> = <span class="ruby-string">&quot;\n---\n&quot;</span>
+    <span class="ruby-keyword">return</span> {}, <span class="ruby-identifier">content</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">content</span>.<span class="ruby-identifier">start_with?</span>(<span class="ruby-identifier">delimiter</span>)
+
+    <span class="ruby-identifier">frontmatter_block</span>, <span class="ruby-identifier">body_content</span> = <span class="ruby-identifier">content</span>.<span class="ruby-identifier">split</span>(<span class="ruby-identifier">separator</span>, <span class="ruby-value">2</span>)
+    <span class="ruby-keyword">return</span> {}, <span class="ruby-identifier">content</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">body_content</span>.<span class="ruby-identifier">nil?</span>
+
+    <span class="ruby-identifier">frontmatter_str</span> = <span class="ruby-identifier">frontmatter_block</span>.<span class="ruby-identifier">delete_prefix</span>(<span class="ruby-identifier">delimiter</span>)
+    <span class="ruby-identifier">frontmatter</span> = <span class="ruby-constant">YAML</span>.<span class="ruby-identifier">safe_load</span>(<span class="ruby-identifier">frontmatter_str</span>) <span class="ruby-operator">||</span> {}
+    [<span class="ruby-identifier">frontmatter</span>, <span class="ruby-identifier">body_content</span>]
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">config_hash</span>(<span class="ruby-identifier">channel</span>)
+    <span class="ruby-keyword">case</span> <span class="ruby-identifier">channel</span>
+    <span class="ruby-keyword">when</span> <span class="ruby-value">:sms</span>
+      <span class="ruby-constant">GOVUK_NOTIFY_SMS_TEMPLATES</span>
+    <span class="ruby-keyword">else</span>
+      <span class="ruby-constant">GOVUK_NOTIFY_EMAIL_TEMPLATES</span>
+    <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">end</span>
+</pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-i-passthrough_id" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-passthrough_id" title="Link to this method">
+                <span class="method-name">passthrough_id</span>
+                <span class="method-args">(= PASSTHROUGH_TEMPLATE_IDS[@channel])</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="passthrough_id-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/notify_template.rb, line 59</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">passthrough_id</span> = <span class="ruby-constant">PASSTHROUGH_TEMPLATE_IDS</span>[<span class="ruby-ivar">@channel</span>]
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">delivery_id</span> = <span class="ruby-identifier">local?</span> <span class="ruby-operator">?</span> <span class="ruby-identifier">passthrough_id</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">id</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">render</span>(<span class="ruby-identifier">personalisation</span>)
+  <span class="ruby-constant">NotifyTemplateRenderer</span>.<span class="ruby-identifier">for</span>(<span class="ruby-ivar">@channel</span>).<span class="ruby-identifier">render</span>(<span class="ruby-ivar">@name</span>, <span class="ruby-identifier">personalisation</span>)
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">class</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-keyword">self</span>
+  <span class="ruby-identifier">private</span>
+
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">template_id_for</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">channel</span>)
+    <span class="ruby-identifier">path</span> = <span class="ruby-identifier">template_path</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">channel</span>)
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">path</span>.<span class="ruby-identifier">exist?</span>
+      <span class="ruby-identifier">content</span> = <span class="ruby-constant">File</span>.<span class="ruby-identifier">read</span>(<span class="ruby-identifier">path</span>)
+      <span class="ruby-identifier">frontmatter</span>, = <span class="ruby-identifier">parse_frontmatter</span>(<span class="ruby-identifier">content</span>)
+      <span class="ruby-keyword">if</span> <span class="ruby-identifier">frontmatter</span>[<span class="ruby-string">&quot;template_id&quot;</span>].<span class="ruby-identifier">present?</span>
+        <span class="ruby-keyword">return</span> <span class="ruby-identifier">frontmatter</span>[<span class="ruby-string">&quot;template_id&quot;</span>].<span class="ruby-identifier">to_s</span>
+      <span class="ruby-keyword">end</span>
+    <span class="ruby-keyword">end</span>
+    <span class="ruby-identifier">config_hash</span>(<span class="ruby-identifier">channel</span>)[<span class="ruby-identifier">name</span>.<span class="ruby-identifier">to_sym</span>]
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">template_name_for</span>(<span class="ruby-identifier">template_id</span>, <span class="ruby-identifier">channel</span>)
+    <span class="ruby-identifier">dir</span> = <span class="ruby-constant">Rails</span>.<span class="ruby-identifier">root</span>.<span class="ruby-identifier">join</span>(<span class="ruby-string">&quot;app/views/notify_templates&quot;</span>, <span class="ruby-identifier">channel</span>.<span class="ruby-identifier">to_s</span>)
+    <span class="ruby-keyword">if</span> <span class="ruby-constant">Dir</span>.<span class="ruby-identifier">exist?</span>(<span class="ruby-identifier">dir</span>)
+      <span class="ruby-constant">Dir</span>.<span class="ruby-identifier">each_child</span>(<span class="ruby-identifier">dir</span>) <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">filename</span><span class="ruby-operator">|</span>
+        <span class="ruby-keyword">next</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">filename</span>.<span class="ruby-identifier">end_with?</span>(<span class="ruby-string">&quot;.text.erb&quot;</span>)
+
+        <span class="ruby-identifier">name</span> = <span class="ruby-identifier">filename</span>.<span class="ruby-identifier">delete_suffix</span>(<span class="ruby-string">&quot;.text.erb&quot;</span>).<span class="ruby-identifier">to_sym</span>
+        <span class="ruby-identifier">content</span> = <span class="ruby-constant">File</span>.<span class="ruby-identifier">read</span>(<span class="ruby-constant">File</span>.<span class="ruby-identifier">join</span>(<span class="ruby-identifier">dir</span>, <span class="ruby-identifier">filename</span>))
+        <span class="ruby-identifier">frontmatter</span>, = <span class="ruby-identifier">parse_frontmatter</span>(<span class="ruby-identifier">content</span>)
+        <span class="ruby-keyword">return</span> <span class="ruby-identifier">name</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">frontmatter</span>[<span class="ruby-string">&quot;template_id&quot;</span>].<span class="ruby-identifier">to_s</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">template_id</span>.<span class="ruby-identifier">to_s</span>
+      <span class="ruby-keyword">end</span>
+    <span class="ruby-keyword">end</span>
+    <span class="ruby-identifier">config_hash</span>(<span class="ruby-identifier">channel</span>).<span class="ruby-identifier">key</span>(<span class="ruby-identifier">template_id</span>)
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">template_path</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">channel</span>)
+    <span class="ruby-constant">Rails</span>.<span class="ruby-identifier">root</span>.<span class="ruby-identifier">join</span>(
+      <span class="ruby-string">&quot;app/views/notify_templates&quot;</span>,
+      <span class="ruby-identifier">channel</span>.<span class="ruby-identifier">to_s</span>,
+      <span class="ruby-node">&quot;#{name}.text.erb&quot;</span>
+    )
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">parse_frontmatter</span>(<span class="ruby-identifier">content</span>)
+    <span class="ruby-identifier">delimiter</span> = <span class="ruby-string">&quot;---\n&quot;</span>
+    <span class="ruby-identifier">separator</span> = <span class="ruby-string">&quot;\n---\n&quot;</span>
+    <span class="ruby-keyword">return</span> {}, <span class="ruby-identifier">content</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">content</span>.<span class="ruby-identifier">start_with?</span>(<span class="ruby-identifier">delimiter</span>)
+
+    <span class="ruby-identifier">frontmatter_block</span>, <span class="ruby-identifier">body_content</span> = <span class="ruby-identifier">content</span>.<span class="ruby-identifier">split</span>(<span class="ruby-identifier">separator</span>, <span class="ruby-value">2</span>)
+    <span class="ruby-keyword">return</span> {}, <span class="ruby-identifier">content</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">body_content</span>.<span class="ruby-identifier">nil?</span>
+
+    <span class="ruby-identifier">frontmatter_str</span> = <span class="ruby-identifier">frontmatter_block</span>.<span class="ruby-identifier">delete_prefix</span>(<span class="ruby-identifier">delimiter</span>)
+    <span class="ruby-identifier">frontmatter</span> = <span class="ruby-constant">YAML</span>.<span class="ruby-identifier">safe_load</span>(<span class="ruby-identifier">frontmatter_str</span>) <span class="ruby-operator">||</span> {}
+    [<span class="ruby-identifier">frontmatter</span>, <span class="ruby-identifier">body_content</span>]
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">config_hash</span>(<span class="ruby-identifier">channel</span>)
+    <span class="ruby-keyword">case</span> <span class="ruby-identifier">channel</span>
+    <span class="ruby-keyword">when</span> <span class="ruby-value">:sms</span>
+      <span class="ruby-constant">GOVUK_NOTIFY_SMS_TEMPLATES</span>
+    <span class="ruby-keyword">else</span>
+      <span class="ruby-constant">GOVUK_NOTIFY_EMAIL_TEMPLATES</span>
+    <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-i-render" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-render" title="Link to this method">
+                <span class="method-name">render</span>
+                <span class="method-args">(personalisation)</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="render-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/notify_template.rb, line 62</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">render</span>(<span class="ruby-identifier">personalisation</span>)
+  <span class="ruby-constant">NotifyTemplateRenderer</span>.<span class="ruby-identifier">for</span>(<span class="ruby-ivar">@channel</span>).<span class="ruby-identifier">render</span>(<span class="ruby-ivar">@name</span>, <span class="ruby-identifier">personalisation</span>)
 <span class="ruby-keyword">end</span></pre>
           </div>
 
