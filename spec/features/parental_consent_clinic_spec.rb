@@ -243,6 +243,7 @@ describe "Parental consent" do
     expect(page).not_to have_content("at school")
 
     perform_enqueued_jobs # match consent form with patient
+    expect_email_to "jane@example.com", :consent_confirmation_clinic
   end
 
   def when_the_nurse_checks_the_school_moves
