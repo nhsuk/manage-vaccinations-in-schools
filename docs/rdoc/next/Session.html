@@ -592,8 +592,6 @@
 
         <li ><a href="#method-i-birth_academic_years">birth_academic_years</a></li>
 
-        <li ><a href="#method-i-can_send_clinic_invitations-3F">can_send_clinic_invitations?</a></li>
-
         <li ><a href="#method-i-completed-3F">completed?</a></li>
 
         <li ><a href="#method-i-future_dates">future_dates</a></li>
@@ -775,57 +773,6 @@ index_sessions_on_team_location_id  (team_location_id)</pre>
       </div>
 
 
-      <div id="method-i-can_send_clinic_invitations-3F" class="method-detail anchor-link ">
-        <div class="method-header">
-
-            <div class="method-heading">
-              <a href="#method-i-can_send_clinic_invitations-3F" title="Link to this method">
-                <span class="method-name">can_send_clinic_invitations?</span>
-                <span class="method-args">()</span>
-              </a>
-            </div>
-
-        </div>
-
-
-          <div class="method-controls">
-            <details class="method-source-toggle">
-              <summary>Source</summary>
-            </details>
-          </div>
-          <div class="method-source-code" id="can_send_clinic_invitations-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/session.rb, line 264</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">can_send_clinic_invitations?</span>
-  <span class="ruby-keyword">if</span> <span class="ruby-identifier">clinic?</span>
-    <span class="ruby-identifier">next_date</span>(<span class="ruby-value">include_today:</span> <span class="ruby-keyword">true</span>) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">completed?</span>
-  <span class="ruby-keyword">else</span>
-    <span class="ruby-identifier">completed?</span> <span class="ruby-operator">&amp;&amp;</span>
-      <span class="ruby-constant">GenericClinicSessionFinder</span>.<span class="ruby-identifier">call</span>(
-        <span class="ruby-value">team:</span>,
-        <span class="ruby-value">academic_year:</span>,
-        <span class="ruby-value">programmes:</span>
-      )&amp;.<span class="ruby-identifier">next_date</span>(<span class="ruby-value">include_today:</span> <span class="ruby-keyword">true</span>)
-  <span class="ruby-keyword">end</span>
-<span class="ruby-keyword">end</span></pre>
-          </div>
-
-
-
-        <div class="method-description">
-
-
-          
-
-
-        </div>
-
-
-
-
-
-      </div>
-
-
       <div id="method-i-completed-3F" class="method-detail anchor-link ">
         <div class="method-header">
 
@@ -899,19 +846,6 @@ index_sessions_on_team_location_id  (team_location_id)</pre>
     <span class="ruby-identifier">gillick_assessments</span>.<span class="ruby-identifier">any?</span> { <span class="ruby-identifier">it</span>.<span class="ruby-identifier">date</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">date</span> } <span class="ruby-operator">||</span>
       <span class="ruby-identifier">pre_screenings</span>.<span class="ruby-identifier">any?</span> { <span class="ruby-identifier">it</span>.<span class="ruby-identifier">date</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">date</span> } <span class="ruby-operator">||</span>
       <span class="ruby-identifier">attendance_records</span>.<span class="ruby-identifier">any?</span> { <span class="ruby-identifier">it</span>.<span class="ruby-identifier">date</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">date</span> }
-  <span class="ruby-keyword">end</span>
-
-  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">can_send_clinic_invitations?</span>
-    <span class="ruby-keyword">if</span> <span class="ruby-identifier">clinic?</span>
-      <span class="ruby-identifier">next_date</span>(<span class="ruby-value">include_today:</span> <span class="ruby-keyword">true</span>) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">completed?</span>
-    <span class="ruby-keyword">else</span>
-      <span class="ruby-identifier">completed?</span> <span class="ruby-operator">&amp;&amp;</span>
-        <span class="ruby-constant">GenericClinicSessionFinder</span>.<span class="ruby-identifier">call</span>(
-          <span class="ruby-value">team:</span>,
-          <span class="ruby-value">academic_year:</span>,
-          <span class="ruby-value">programmes:</span>
-        )&amp;.<span class="ruby-identifier">next_date</span>(<span class="ruby-value">include_today:</span> <span class="ruby-keyword">true</span>)
-    <span class="ruby-keyword">end</span>
   <span class="ruby-keyword">end</span>
 
   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">patients_with_no_consent_response_count</span>
@@ -1065,19 +999,6 @@ index_sessions_on_team_location_id  (team_location_id)</pre>
   <span class="ruby-identifier">gillick_assessments</span>.<span class="ruby-identifier">any?</span> { <span class="ruby-identifier">it</span>.<span class="ruby-identifier">date</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">date</span> } <span class="ruby-operator">||</span>
     <span class="ruby-identifier">pre_screenings</span>.<span class="ruby-identifier">any?</span> { <span class="ruby-identifier">it</span>.<span class="ruby-identifier">date</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">date</span> } <span class="ruby-operator">||</span>
     <span class="ruby-identifier">attendance_records</span>.<span class="ruby-identifier">any?</span> { <span class="ruby-identifier">it</span>.<span class="ruby-identifier">date</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">date</span> }
-<span class="ruby-keyword">end</span>
-
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">can_send_clinic_invitations?</span>
-  <span class="ruby-keyword">if</span> <span class="ruby-identifier">clinic?</span>
-    <span class="ruby-identifier">next_date</span>(<span class="ruby-value">include_today:</span> <span class="ruby-keyword">true</span>) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">completed?</span>
-  <span class="ruby-keyword">else</span>
-    <span class="ruby-identifier">completed?</span> <span class="ruby-operator">&amp;&amp;</span>
-      <span class="ruby-constant">GenericClinicSessionFinder</span>.<span class="ruby-identifier">call</span>(
-        <span class="ruby-value">team:</span>,
-        <span class="ruby-value">academic_year:</span>,
-        <span class="ruby-value">programmes:</span>
-      )&amp;.<span class="ruby-identifier">next_date</span>(<span class="ruby-value">include_today:</span> <span class="ruby-keyword">true</span>)
-  <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">patients_with_no_consent_response_count</span>
@@ -1248,7 +1169,7 @@ index_sessions_on_team_location_id  (team_location_id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="patients_with_no_consent_response_count-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/session.rb, line 277</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/session.rb, line 264</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">patients_with_no_consent_response_count</span>
   <span class="ruby-identifier">patients</span>.<span class="ruby-identifier">has_programme_status</span>(
     <span class="ruby-string">&quot;needs_consent_no_response&quot;</span>,
@@ -1431,19 +1352,6 @@ index_sessions_on_team_location_id  (team_location_id)</pre>
     <span class="ruby-identifier">attendance_records</span>.<span class="ruby-identifier">any?</span> { <span class="ruby-identifier">it</span>.<span class="ruby-identifier">date</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">date</span> }
 <span class="ruby-keyword">end</span>
 
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">can_send_clinic_invitations?</span>
-  <span class="ruby-keyword">if</span> <span class="ruby-identifier">clinic?</span>
-    <span class="ruby-identifier">next_date</span>(<span class="ruby-value">include_today:</span> <span class="ruby-keyword">true</span>) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">completed?</span>
-  <span class="ruby-keyword">else</span>
-    <span class="ruby-identifier">completed?</span> <span class="ruby-operator">&amp;&amp;</span>
-      <span class="ruby-constant">GenericClinicSessionFinder</span>.<span class="ruby-identifier">call</span>(
-        <span class="ruby-value">team:</span>,
-        <span class="ruby-value">academic_year:</span>,
-        <span class="ruby-value">programmes:</span>
-      )&amp;.<span class="ruby-identifier">next_date</span>(<span class="ruby-value">include_today:</span> <span class="ruby-keyword">true</span>)
-  <span class="ruby-keyword">end</span>
-<span class="ruby-keyword">end</span>
-
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">patients_with_no_consent_response_count</span>
   <span class="ruby-identifier">patients</span>.<span class="ruby-identifier">has_programme_status</span>(
     <span class="ruby-string">&quot;needs_consent_no_response&quot;</span>,
@@ -1610,19 +1518,6 @@ index_sessions_on_team_location_id  (team_location_id)</pre>
     <span class="ruby-identifier">attendance_records</span>.<span class="ruby-identifier">any?</span> { <span class="ruby-identifier">it</span>.<span class="ruby-identifier">date</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">date</span> }
 <span class="ruby-keyword">end</span>
 
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">can_send_clinic_invitations?</span>
-  <span class="ruby-keyword">if</span> <span class="ruby-identifier">clinic?</span>
-    <span class="ruby-identifier">next_date</span>(<span class="ruby-value">include_today:</span> <span class="ruby-keyword">true</span>) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">completed?</span>
-  <span class="ruby-keyword">else</span>
-    <span class="ruby-identifier">completed?</span> <span class="ruby-operator">&amp;&amp;</span>
-      <span class="ruby-constant">GenericClinicSessionFinder</span>.<span class="ruby-identifier">call</span>(
-        <span class="ruby-value">team:</span>,
-        <span class="ruby-value">academic_year:</span>,
-        <span class="ruby-value">programmes:</span>
-      )&amp;.<span class="ruby-identifier">next_date</span>(<span class="ruby-value">include_today:</span> <span class="ruby-keyword">true</span>)
-  <span class="ruby-keyword">end</span>
-<span class="ruby-keyword">end</span>
-
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">patients_with_no_consent_response_count</span>
   <span class="ruby-identifier">patients</span>.<span class="ruby-identifier">has_programme_status</span>(
     <span class="ruby-string">&quot;needs_consent_no_response&quot;</span>,
@@ -1702,7 +1597,7 @@ index_sessions_on_team_location_id  (team_location_id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="set_slug-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/session.rb, line 315</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/session.rb, line 302</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">set_slug</span>
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">slug</span> = <span class="ruby-constant">SecureRandom</span>.<span class="ruby-identifier">alphanumeric</span>(<span class="ruby-value">10</span>) <span class="ruby-keyword">if</span> <span class="ruby-identifier">slug</span>.<span class="ruby-identifier">nil?</span>
 <span class="ruby-keyword">end</span></pre>
@@ -1787,7 +1682,7 @@ index_sessions_on_team_location_id  (team_location_id)</pre>
             </details>
           </div>
           <div class="method-source-code" id="sync_location_programme_year_groups-21-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/session.rb, line 285</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/session.rb, line 272</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">sync_location_programme_year_groups!</span>(<span class="ruby-value">programmes:</span>)
   <span class="ruby-identifier">location_programme_year_groups</span> =
     <span class="ruby-constant">Location</span><span class="ruby-operator">::</span><span class="ruby-constant">ProgrammeYearGroup</span>
@@ -1956,19 +1851,6 @@ index_sessions_on_team_location_id  (team_location_id)</pre>
     <span class="ruby-identifier">attendance_records</span>.<span class="ruby-identifier">any?</span> { <span class="ruby-identifier">it</span>.<span class="ruby-identifier">date</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">date</span> }
 <span class="ruby-keyword">end</span>
 
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">can_send_clinic_invitations?</span>
-  <span class="ruby-keyword">if</span> <span class="ruby-identifier">clinic?</span>
-    <span class="ruby-identifier">next_date</span>(<span class="ruby-value">include_today:</span> <span class="ruby-keyword">true</span>) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">completed?</span>
-  <span class="ruby-keyword">else</span>
-    <span class="ruby-identifier">completed?</span> <span class="ruby-operator">&amp;&amp;</span>
-      <span class="ruby-constant">GenericClinicSessionFinder</span>.<span class="ruby-identifier">call</span>(
-        <span class="ruby-value">team:</span>,
-        <span class="ruby-value">academic_year:</span>,
-        <span class="ruby-value">programmes:</span>
-      )&amp;.<span class="ruby-identifier">next_date</span>(<span class="ruby-value">include_today:</span> <span class="ruby-keyword">true</span>)
-  <span class="ruby-keyword">end</span>
-<span class="ruby-keyword">end</span>
-
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">patients_with_no_consent_response_count</span>
   <span class="ruby-identifier">patients</span>.<span class="ruby-identifier">has_programme_status</span>(
     <span class="ruby-string">&quot;needs_consent_no_response&quot;</span>,
@@ -2094,19 +1976,6 @@ index_sessions_on_team_location_id  (team_location_id)</pre>
   <span class="ruby-identifier">gillick_assessments</span>.<span class="ruby-identifier">any?</span> { <span class="ruby-identifier">it</span>.<span class="ruby-identifier">date</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">date</span> } <span class="ruby-operator">||</span>
     <span class="ruby-identifier">pre_screenings</span>.<span class="ruby-identifier">any?</span> { <span class="ruby-identifier">it</span>.<span class="ruby-identifier">date</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">date</span> } <span class="ruby-operator">||</span>
     <span class="ruby-identifier">attendance_records</span>.<span class="ruby-identifier">any?</span> { <span class="ruby-identifier">it</span>.<span class="ruby-identifier">date</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">date</span> }
-<span class="ruby-keyword">end</span>
-
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">can_send_clinic_invitations?</span>
-  <span class="ruby-keyword">if</span> <span class="ruby-identifier">clinic?</span>
-    <span class="ruby-identifier">next_date</span>(<span class="ruby-value">include_today:</span> <span class="ruby-keyword">true</span>) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">completed?</span>
-  <span class="ruby-keyword">else</span>
-    <span class="ruby-identifier">completed?</span> <span class="ruby-operator">&amp;&amp;</span>
-      <span class="ruby-constant">GenericClinicSessionFinder</span>.<span class="ruby-identifier">call</span>(
-        <span class="ruby-value">team:</span>,
-        <span class="ruby-value">academic_year:</span>,
-        <span class="ruby-value">programmes:</span>
-      )&amp;.<span class="ruby-identifier">next_date</span>(<span class="ruby-value">include_today:</span> <span class="ruby-keyword">true</span>)
-  <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">patients_with_no_consent_response_count</span>
@@ -2274,19 +2143,6 @@ index_sessions_on_team_location_id  (team_location_id)</pre>
   <span class="ruby-identifier">gillick_assessments</span>.<span class="ruby-identifier">any?</span> { <span class="ruby-identifier">it</span>.<span class="ruby-identifier">date</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">date</span> } <span class="ruby-operator">||</span>
     <span class="ruby-identifier">pre_screenings</span>.<span class="ruby-identifier">any?</span> { <span class="ruby-identifier">it</span>.<span class="ruby-identifier">date</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">date</span> } <span class="ruby-operator">||</span>
     <span class="ruby-identifier">attendance_records</span>.<span class="ruby-identifier">any?</span> { <span class="ruby-identifier">it</span>.<span class="ruby-identifier">date</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">date</span> }
-<span class="ruby-keyword">end</span>
-
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">can_send_clinic_invitations?</span>
-  <span class="ruby-keyword">if</span> <span class="ruby-identifier">clinic?</span>
-    <span class="ruby-identifier">next_date</span>(<span class="ruby-value">include_today:</span> <span class="ruby-keyword">true</span>) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">completed?</span>
-  <span class="ruby-keyword">else</span>
-    <span class="ruby-identifier">completed?</span> <span class="ruby-operator">&amp;&amp;</span>
-      <span class="ruby-constant">GenericClinicSessionFinder</span>.<span class="ruby-identifier">call</span>(
-        <span class="ruby-value">team:</span>,
-        <span class="ruby-value">academic_year:</span>,
-        <span class="ruby-value">programmes:</span>
-      )&amp;.<span class="ruby-identifier">next_date</span>(<span class="ruby-value">include_today:</span> <span class="ruby-keyword">true</span>)
-  <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">patients_with_no_consent_response_count</span>
