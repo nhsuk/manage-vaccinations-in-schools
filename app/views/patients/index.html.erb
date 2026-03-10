@@ -12,6 +12,7 @@
           year_groups: current_team.year_groups,
           show_aged_out_of_programmes: @show_aged_out_of_programmes,
           show_archived_records: @show_archived_records,
+          show_invited_to_clinic: @show_clinic_invitations,
         ) %>
   </div>
 
@@ -24,16 +25,21 @@
                 link_to: patient_path(patient),
                 current_team:,
                 programmes: @form.programmes,
+                show_clinic_invitations: @show_clinic_invitations,
                 show_nhs_number: true,
-                show_school: @show_patient_school,
-                show_programme_status: true,
-                show_vaccinated_programme_status_only: @show_vaccinated_programme_status_only,
                 show_postcode: @show_patient_postcode,
+                show_programme_status: true,
+                show_school: @show_patient_school,
+                show_vaccinated_programme_status_only: @show_vaccinated_programme_status_only,
               ) %>
         <% end %>
       <% end %>
     <% else %>
-       <%= render AppSearchResultsComponent.new(@pagy, label: "children", no_results_text: "Search for a child or use filters to see children matching your selection.") %>
+       <%= render AppSearchResultsComponent.new(
+             @pagy,
+             label: "children",
+             no_results_text: "Search for a child or use filters to see children matching your selection.",
+           ) %>
     <% end %>
   </div>
 </div>

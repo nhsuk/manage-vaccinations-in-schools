@@ -117,6 +117,10 @@ describe "Manage children" do
     then_i_see_a_success_banner
     and_i_see_a_community_clinic_session
     and_i_dont_see_an_invite_to_clinic_button
+
+    when_i_click_on_children
+    and_i_check_invited_to_clinic
+    then_i_see_the_child_has_been_invited
   end
 
   context "with new child record design" do
@@ -136,6 +140,10 @@ describe "Manage children" do
       then_i_see_a_success_banner
       and_i_see_a_community_clinic_session
       and_i_dont_see_an_invite_to_clinic_button
+
+      when_i_click_on_children
+      and_i_check_invited_to_clinic
+      then_i_see_the_child_has_been_invited
     end
   end
 
@@ -364,6 +372,11 @@ describe "Manage children" do
 
   alias_method :and_i_filter_for_children, :when_i_filter_for_children
 
+  def and_i_check_invited_to_clinic
+    check "Invited to clinic"
+    click_on "Update results"
+  end
+
   def then_i_see_the_children
     expect(page).to have_content(/\d+ children/)
   end
@@ -407,6 +420,11 @@ describe "Manage children" do
     expect(page).to have_title("JS")
     expect(page).to have_content("SMITH, John")
     expect(page).to have_content("Sessions")
+  end
+
+  def then_i_see_the_child_has_been_invited
+    expect(page).to have_content("SMITH, John")
+    expect(page).to have_content("Clinic invitationsFlu")
   end
 
   def when_i_click_on_activity_log
