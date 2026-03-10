@@ -78,24 +78,12 @@ class AlreadyHadNotificationSender
   end
 
   def was_already_vaccinated?
-    # We're not using the existing `Patient::ProgrammeStatus` instance here
-    # because we want to know if the patient would still be vaccinated if we
-    # took away the vaccination record in question, to know whether to send
-    # the notification.
-
-    # Because we only care about whether the patient is vaccinated, and
-    # although we're using the same status generator logic as elsewhere, we
-    # don't need to pass  in the consents and triage as an optimisation.
-    StatusGenerator::Vaccination.new(
+    VaccinationCriteria.new(
       programme_type:,
       academic_year:,
       patient:,
-      vaccination_records: previous_vaccination_records,
-      patient_locations: [],
-      consents: [],
-      triages: [],
-      attendance_record: nil
-    ).status == :vaccinated
+      vaccination_records: previous_vaccination_records
+    ).vaccinated?
   end
 
   def is_still_eligible_for_vaccination?

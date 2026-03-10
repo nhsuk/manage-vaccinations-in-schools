@@ -26,15 +26,13 @@ class StatusGenerator::Vaccination
     @triages = triages
     @attendance_record = attendance_record
 
-    @vaccination_records =
-      vaccination_records.select do
-        it.patient_id == patient.id && it.programme_type == programme_type &&
-          if seasonal?
-            it.academic_year == academic_year
-          else
-            it.academic_year <= academic_year
-          end
-      end
+    @vaccination_criteria =
+      VaccinationCriteria.new(
+        programme_type:,
+        academic_year:,
+        patient:,
+        vaccination_records:
+      )
   end
 
   def programme
@@ -105,7 +103,12 @@ class StatusGenerator::Vaccination
               :consents,
               :triages,
               :attendance_record,
-              :vaccination_records
+              :vaccination_criteria
+
+  delegate :vaccinated_vaccination_record,
+           :valid_vaccination_records,
+           :vaccination_records,
+           to: :vaccination_criteria
 
   def status_should_be_vaccinated?
     vaccinated_vaccination_record != nil
@@ -143,92 +146,6 @@ class StatusGenerator::Vaccination
 
   def year_group = patient.year_group(academic_year:)
 
-  def valid_vaccination_records
-    @valid_vaccination_records ||=
-      if seasonal?
-        vaccination_records.select { it.administered? || it.already_had? }
-      else
-        if (
-             already_had_records = vaccination_records.select(&:already_had?)
-           ).present?
-          return already_had_records
-        end
-
-        administered_records = vaccination_records.select(&:administered?)
-
-        if doubles?
-          filter_doubles_vaccination_records(administered_records)
-        elsif hpv?
-          filter_hpv_vaccination_records(administered_records)
-        elsif mmr?
-          filter_mmr_vaccination_records(administered_records)
-        else
-          raise UnsupportedProgrammeType, programme.type
-        end
-      end
-  end
-
-  def filter_mmr_vaccination_records(vaccination_records)
-    # Any child who hasn't had two doses of MMR with the first dose above 1
-    # year of age and the second above 15 months and the doses at least 4
-    # weeks apart is eligible for catch up vaccinations by SAIS until they
-    # have had two valid doses.
-
-    sorted_vaccination_records = vaccination_records.sort_by(&:performed_at)
-
-    first_dose =
-      sorted_vaccination_records.find do
-        patient.age_months(now: it.performed_at) >= 12
-      end
-
-    return [] if first_dose.nil?
-
-    # The second dose must be at least 28 days after the most recent dose
-    second_dose =
-      sorted_vaccination_records.find do |record|
-        next if record.performed_at <= first_dose.performed_at
-
-        previous_dose =
-          sorted_vaccination_records
-            .select { it.performed_at < record.performed_at }
-            .last
-
-        record.performed_at >= previous_dose.performed_at + 28.days &&
-          patient.age_months(now: record.performed_at) >= 15
-      end
-
-    [second_dose, first_dose].compact
-  end
-
-  def filter_hpv_vaccination_records(vaccination_records)
-    vaccination_records
-  end
-
-  def filter_doubles_vaccination_records(vaccination_records)
-    vaccination_records.select { patient.age_years(now: it.performed_at) >= 10 }
-  end
-
-  def vaccinated_vaccination_record
-    @vaccinated_vaccination_record ||=
-      begin
-        if (already_had_record = valid_vaccination_records.find(&:already_had?))
-          return already_had_record
-        end
-
-        if mmr?
-          if valid_vaccination_records.count >= maximum_dose_sequence
-            valid_vaccination_records.first
-          end
-        elsif td_ipv?
-          valid_vaccination_records.find do
-            it.dose_sequence == 5 || it.sourced_from_service?
-          end
-        else
-          valid_vaccination_records.first
-        end
-      end
-  end
-
   def is_eligible?
     @is_eligible ||=
       patient_locations
@@ -239,21 +156,6 @@ class StatusGenerator::Vaccination
               it.academic_year == academic_year && it.year_group == year_group
           end
         end
-  end
-
-  Programme::TYPES.each do |type|
-    define_method("#{type}?") { programme_type == type }
-  end
-
-  def doubles? = menacwy? || td_ipv?
-
-  def seasonal?
-    @seasonal ||= Programme.find(programme_type).seasonal?
-  end
-
-  def maximum_dose_sequence
-    @maximum_dose_sequence ||=
-      Programme.find(programme_type).maximum_dose_sequence
   end
 
   def consent_generator
