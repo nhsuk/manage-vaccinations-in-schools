@@ -16,9 +16,9 @@
 #  ethnic_background          :integer
 #  ethnic_background_other    :string
 #  ethnic_group               :integer
-#  family_name                :string           not null
+#  family_name                :citext           not null
 #  gender_code                :integer          default("not_known"), not null
-#  given_name                 :string           not null
+#  given_name                 :citext           not null
 #  home_educated              :boolean
 #  invalidated_at             :datetime
 #  local_authority_mhclg_code :string
@@ -227,22 +227,22 @@ class Patient < ApplicationRecord
                         )
             end
 
-          ilike_scope =
+          like_scope =
             terms.reduce(self) do |scope, term|
               if term.length < 3
                 scope.and where(
-                            "family_name ILIKE :term || '%' OR given_name ILIKE :term || '%'",
+                            "family_name LIKE :term || '%' OR given_name LIKE :term || '%'",
                             term:
                           )
               else
                 scope.and where(
-                            "family_name ILIKE '%' || :term || '%' OR given_name ILIKE '%' || :term || '%'",
+                            "family_name LIKE '%' || :term || '%' OR given_name LIKE '%' || :term || '%'",
                             term:
                           )
               end
             end
 
-          similarity_scope.or(ilike_scope).order(
+          similarity_scope.or(like_scope).order(
             Arel.sql(
               "(STRICT_WORD_SIMILARITY(given_name, :query) + STRICT_WORD_SIMILARITY(family_name, :query)) DESC",
               query:
