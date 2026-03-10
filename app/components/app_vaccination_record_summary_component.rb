@@ -166,17 +166,15 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
           end
         end
 
-        if show_dose_number?
-          summary_list.with_row do |row|
-            row.with_key { "Dose number" }
-            row.with_value { dose_number_value }
-            if (href = @change_links[:dose_sequence])
-              row.with_action(
-                text: "Change",
-                href:,
-                visually_hidden_text: "dose number"
-              )
-            end
+        summary_list.with_row do |row|
+          row.with_key { "Dose number" }
+          row.with_value { dose_number_value }
+          if (href = @change_links[:dose_sequence])
+            row.with_action(
+              text: "Change",
+              href:,
+              visually_hidden_text: "dose number"
+            )
           end
         end
       end
@@ -461,11 +459,6 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
 
   def notes_value
     highlight_if(@vaccination_record.notes, @vaccination_record.notes_changed?)
-  end
-
-  def show_dose_number?
-    @vaccination_record.dose_sequence.present? ||
-      @programme.default_dose_sequence.present?
   end
 
   def dose_number_value
