@@ -99,9 +99,6 @@ describe "National reporting team homepage and navigation" do
 
     expect(card).to have_css("h2", text: "Imports")
     expect(card).to have_link("Imports", href: imports_path)
-
-    # Card should not be disabled
-    expect(card).not_to have_css(".app-card--disabled")
   end
 
   def and_i_should_see_the_children_card

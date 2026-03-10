@@ -32,7 +32,7 @@ describe AppPatientSessionTriageComponent do
 
     it do
       expect(rendered).to have_css(
-        ".app-card__heading--aqua-green",
+        ".app-card__heading--green",
         text: "Safe to vaccinate"
       )
     end
