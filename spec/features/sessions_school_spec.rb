@@ -422,5 +422,6 @@ describe "School sessions" do
     perform_enqueued_jobs
 
     expect_email_to @parent.email, :clinic_initial_invitation
+    expect_sms_to @parent.phone, :clinic_initial_invitation, :any
   end
 end
