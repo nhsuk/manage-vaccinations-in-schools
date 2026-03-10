@@ -32,15 +32,6 @@ describe "Clinic sessions" do
     when_i_go_to_scheduled_sessions
     then_i_see_the_community_clinic
 
-    when_the_patient_has_been_invited
-    and_i_click_on_the_community_clinic
-    and_i_click_on_send_reminders
-    then_i_see_the_send_reminders_page
-
-    when_i_click_on_send_reminders
-    then_i_see_the_reminder_confirmation
-    and_the_parent_receives_a_reminder
-
     when_i_go_to_todays_sessions_as_a_nurse
     and_i_go_to_completed_sessions
     then_i_see_no_sessions
@@ -209,41 +200,6 @@ describe "Clinic sessions" do
   def then_i_see_the_community_clinic
     expect(page).to have_content("Community clinic")
     expect(page).not_to have_content("Import class list")
-  end
-
-  def when_the_patient_has_been_invited
-    create(
-      :clinic_notification,
-      :initial_invitation,
-      patient: @patient,
-      session: Session.last
-    )
-  end
-
-  def and_i_click_on_the_community_clinic
-    click_on "Community clinic"
-  end
-
-  def when_i_click_on_send_reminders
-    click_on "Send booking reminders"
-  end
-
-  alias_method :and_i_click_on_send_reminders, :when_i_click_on_send_reminders
-
-  def then_i_see_the_send_reminders_page
-    expect(page).to have_content("Remind parents to book a clinic appointment")
-    expect(page).to have_content(
-      "This will send booking reminders to the parents of 1 child who has not yet been sent a reminder."
-    )
-  end
-
-  def then_i_see_the_reminder_confirmation
-    expect(page).to have_content("Booking reminders sent for 1 child")
-  end
-
-  def and_the_parent_receives_a_reminder
-    perform_enqueued_jobs
-    expect_email_to @parent.email, :clinic_subsequent_invitation
   end
 
   def when_the_parent_visits_the_consent_form
