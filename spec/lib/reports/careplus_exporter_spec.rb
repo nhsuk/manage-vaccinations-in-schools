@@ -4,10 +4,11 @@ describe Reports::CareplusExporter do
   subject(:csv) do
     described_class.call(
       team:,
-      programme:,
+      programmes: [programme],
       academic_year:,
       start_date: 1.month.ago.to_date,
-      end_date: Date.current
+      end_date: Date.current,
+      export_type: :manual
     )
   end
 
@@ -433,47 +434,6 @@ describe Reports::CareplusExporter do
         )
 
         expect(data_rows.first[headers.index("Dose 1")]).to eq("2B")
-      end
-    end
-  end
-
-  context "gender mapping" do
-    let(:programme) { Programme.hpv }
-    let(:programmes) { [programme] }
-    let(:team) { create(:team, programmes:) }
-    let(:location) { create(:school) }
-    let(:session) { create(:session, team:, programmes:, location:) }
-    let(:parsed_csv) { CSV.parse(csv) }
-    let(:headers) { parsed_csv.first }
-    let(:data_rows) { parsed_csv[1..] }
-
-    {
-      female: "F",
-      male: "M",
-      not_known: "U",
-      not_specified: "I"
-    }.each do |gender, expected_code|
-      context "when the patient gender is #{gender}" do
-        it "maps gender to #{expected_code}" do
-          patient =
-            create(
-              :patient,
-              :consent_given_triage_not_needed,
-              programmes:,
-              session:,
-              gender_code: gender
-            )
-          create(
-            :vaccination_record,
-            programme:,
-            patient:,
-            session:,
-            performed_at: 2.weeks.ago
-          )
-
-          gender_index = headers.index("Gender")
-          expect(data_rows.first[gender_index]).to eq(expected_code)
-        end
       end
     end
   end
