@@ -77,7 +77,7 @@ describe "Parental consent" do
 
     when_i_go_to_the_consent_form
     and_i_fill_in_my_childs_name_and_birthday
-    when_i_choose_yes  # home educated
+    when_i_choose_yes # home educated
     then_i_see_the_parent_step
 
     when_i_give_consent
@@ -331,18 +331,26 @@ describe "Parental consent" do
   end
 
   def and_the_patient_has_a_parent_with_known_contact_details
-    @existing_parent = create(
-      :parent,
-      email: "original@example.com",
-      phone: "07700 900100",
-      phone_receive_updates: true
+    @existing_parent =
+      create(
+        :parent,
+        email: "original@example.com",
+        phone: "07700 900100",
+        phone_receive_updates: true
+      )
+    create(
+      :parent_relationship,
+      :mother,
+      patient: @child,
+      parent: @existing_parent
     )
-    create(:parent_relationship, :mother, patient: @child, parent: @existing_parent)
   end
 
   def then_the_existing_parent_receives_a_contact_details_mismatch_warning
     perform_enqueued_jobs
-    expect_email_to "original@example.com", :consent_unknown_contact_details_warning, :any
+    expect_email_to "original@example.com",
+                    :consent_unknown_contact_details_warning,
+                    :any
     expect_sms_to "07700 900100", :consent_unknown_contact_details_warning, :any
   end
 end
