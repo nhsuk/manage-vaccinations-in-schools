@@ -24,3 +24,6 @@ splunk:
 reporting_api:
   client_app:
     root_url: http://localhost:5001/
+
+vaccination_report_export:
+  retention_hours: 168

@@ -42,6 +42,34 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_10_195113) do
     t.index ["updated_at"], name: "index_active_record_sessions_on_updated_at"
   end
 
+  create_table "active_storage_attachments", force: :cascade do |t|
+    t.bigint "blob_id", null: false
+    t.datetime "created_at", null: false
+    t.string "name", null: false
+    t.bigint "record_id", null: false
+    t.string "record_type", null: false
+    t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
+    t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
+  end
+
+  create_table "active_storage_blobs", force: :cascade do |t|
+    t.bigint "byte_size", null: false
+    t.string "checksum"
+    t.string "content_type"
+    t.datetime "created_at", null: false
+    t.string "filename", null: false
+    t.string "key", null: false
+    t.text "metadata"
+    t.string "service_name", null: false
+    t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
+  end
+
+  create_table "active_storage_variant_records", force: :cascade do |t|
+    t.bigint "blob_id", null: false
+    t.string "variation_digest", null: false
+    t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
   create_table "archive_reasons", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.bigint "created_by_user_id"
@@ -1042,6 +1070,24 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_10_195113) do
 
   add_check_constraint "vaccination_records", "session_id IS NULL AND source <> 0 AND source <> 5 OR session_id IS NOT NULL AND (source = 0 OR source = 5)", name: "source_check", validate: false
 
+  create_table "vaccination_report_exports", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "academic_year", null: false
+    t.datetime "created_at", null: false
+    t.date "date_from"
+    t.date "date_to"
+    t.datetime "expired_at"
+    t.string "file_format", null: false
+    t.string "programme_type", null: false
+    t.string "status", default: "pending", null: false
+    t.bigint "team_id", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["created_at"], name: "index_vaccination_report_exports_on_created_at"
+    t.index ["status"], name: "index_vaccination_report_exports_on_status"
+    t.index ["team_id"], name: "index_vaccination_report_exports_on_team_id"
+    t.index ["user_id"], name: "index_vaccination_report_exports_on_user_id"
+  end
+
   create_table "vaccines", force: :cascade do |t|
     t.text "brand", null: false
     t.boolean "contains_gelatine", null: false
@@ -1067,6 +1113,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_10_195113) do
 
   add_foreign_key "access_log_entries", "patients"
   add_foreign_key "access_log_entries", "users"
+  add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "archive_reasons", "patients"
   add_foreign_key "archive_reasons", "teams"
   add_foreign_key "archive_reasons", "users", column: "created_by_user_id"
@@ -1193,6 +1241,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_10_195113) do
   add_foreign_key "vaccination_records", "users", column: "reported_by_id"
   add_foreign_key "vaccination_records", "users", column: "supplied_by_user_id"
   add_foreign_key "vaccination_records", "vaccines"
+  add_foreign_key "vaccination_report_exports", "teams"
+  add_foreign_key "vaccination_report_exports", "users"
 
   create_view "reporting_api_patient_programme_statuses", materialized: true, sql_definition: <<-SQL
       WITH vaccination_summary AS (
