@@ -629,6 +629,8 @@
 
         <li ><a href="#method-i-administered-3F">administered?</a></li>
 
+        <li ><a href="#method-i-allowed_dose_sequences">allowed_dose_sequences</a></li>
+
         <li ><a href="#method-i-already_had-3F">already_had?</a></li>
 
         <li ><a href="#method-i-batch">batch</a></li>
@@ -882,7 +884,7 @@
             </details>
           </div>
           <div class="method-source-code" id="academic_year-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 462</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 474</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">academic_year</span> = <span class="ruby-identifier">session</span>&amp;.<span class="ruby-identifier">academic_year</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">batch</span>
@@ -1078,6 +1080,56 @@
       </div>
 
 
+      <div id="method-i-allowed_dose_sequences" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-allowed_dose_sequences" title="Link to this method">
+                <span class="method-name">allowed_dose_sequences</span>
+                <span class="method-args">()</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="allowed_dose_sequences-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 403</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">allowed_dose_sequences</span>
+  <span class="ruby-comment"># New MenACWY records created in mavis have a dose sequence</span>
+  <span class="ruby-comment"># Old records may not, but can be edited to have a dose sequence of 1</span>
+  <span class="ruby-identifier">max</span> =
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">sourced_from_service?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">programme</span>&amp;.<span class="ruby-identifier">menacwy?</span>
+      <span class="ruby-value">1</span>
+    <span class="ruby-keyword">else</span>
+      <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">maximum_dose_sequence</span>
+    <span class="ruby-keyword">end</span>
+  <span class="ruby-value">1</span><span class="ruby-operator">..</span><span class="ruby-identifier">max</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
       <div id="method-i-already_had-3F" class="method-detail anchor-link ">
         <div class="method-header">
 
@@ -1140,7 +1192,7 @@
             </details>
           </div>
           <div class="method-source-code" id="batch-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 464</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 476</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">batch</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">batch_id</span>.<span class="ruby-identifier">nil?</span>
   <span class="ruby-constant">Batch</span>.<span class="ruby-identifier">find</span>(<span class="ruby-identifier">batch_id</span>)
@@ -1277,7 +1329,7 @@
             </details>
           </div>
           <div class="method-source-code" id="can_be_half_dose-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 501</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 513</span>
   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">can_be_half_dose?</span> = <span class="ruby-identifier">vaccine_method</span> <span class="ruby-operator">==</span> <span class="ruby-string">&quot;nasal&quot;</span>
 
   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">can_change_outcome?</span>
@@ -1373,7 +1425,7 @@
             </details>
           </div>
           <div class="method-source-code" id="can_change_outcome-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 503</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 515</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">can_change_outcome?</span>
   (
     (<span class="ruby-identifier">outcome</span> <span class="ruby-operator">!=</span> <span class="ruby-string">&quot;already_had&quot;</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">reported_at</span>.<span class="ruby-identifier">nil?</span>) <span class="ruby-operator">||</span> <span class="ruby-identifier">editing?</span> <span class="ruby-operator">||</span>
@@ -1472,7 +1524,7 @@
             </details>
           </div>
           <div class="method-source-code" id="delivery_site_matches_delivery_method-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 514</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 526</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">delivery_site_matches_delivery_method</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">delivery_method</span>.<span class="ruby-identifier">blank?</span>
 
@@ -1537,7 +1589,7 @@
             <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 398</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">dose_sequence_can_be_modified?</span>
   <span class="ruby-operator">!</span><span class="ruby-identifier">reported_as_already_vaccinated?</span> <span class="ruby-operator">&amp;&amp;</span>
-    (<span class="ruby-identifier">national_reporting_user_and_record?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">programme</span>&amp;.<span class="ruby-identifier">td_ipv?</span>)
+    (<span class="ruby-identifier">national_reporting_user_and_record?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">programme</span>&amp;.<span class="ruby-identifier">doubles?</span>)
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -1577,7 +1629,7 @@
             </details>
           </div>
           <div class="method-source-code" id="earliest_possible_date-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 469</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 481</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">earliest_possible_date</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">programme</span>&amp;.<span class="ruby-identifier">flu?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">national_reporting_user_and_record?</span>
     <span class="ruby-identifier">academic_year</span>.<span class="ruby-identifier">to_academic_year_date_range</span>.<span class="ruby-identifier">first</span>
@@ -1765,7 +1817,7 @@
             </details>
           </div>
           <div class="method-source-code" id="latest_possible_date-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 477</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 489</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">latest_possible_date</span>
   [<span class="ruby-identifier">academic_year</span>.<span class="ruby-identifier">to_academic_year_date_range</span>.<span class="ruby-identifier">last</span>, <span class="ruby-constant">Date</span>.<span class="ruby-identifier">current</span>].<span class="ruby-identifier">min</span>
 <span class="ruby-keyword">end</span></pre>
@@ -2066,7 +2118,7 @@
             </details>
           </div>
           <div class="method-source-code" id="performed_at_date_within_range-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 481</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 493</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">performed_at_date_within_range</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">performed_at_date</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">session</span>.<span class="ruby-identifier">nil?</span>
 
@@ -2205,7 +2257,7 @@
             </details>
           </div>
           <div class="method-source-code" id="readable_attribute_names-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 405</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 417</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">readable_attribute_names</span>
   <span class="ruby-identifier">writable_attribute_names</span>
 <span class="ruby-keyword">end</span></pre>
@@ -2332,7 +2384,7 @@
             </details>
           </div>
           <div class="method-source-code" id="request_session_key-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 442</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 454</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">request_session_key</span> = <span class="ruby-string">&quot;vaccination_record&quot;</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">reset_unused_attributes</span>
@@ -2486,7 +2538,7 @@
             </details>
           </div>
           <div class="method-source-code" id="requires_supplied_by-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 510</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 522</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">requires_supplied_by?</span>
   <span class="ruby-identifier">performed_by_user</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">performed_by_user</span>&amp;.<span class="ruby-identifier">show_in_suppliers</span>
 <span class="ruby-keyword">end</span></pre>
@@ -2528,7 +2580,7 @@
             </details>
           </div>
           <div class="method-source-code" id="reset_unused_attributes-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 444</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 456</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">reset_unused_attributes</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">administered?</span>
     <span class="ruby-keyword">self</span>.<span class="ruby-identifier">full_dose</span> = <span class="ruby-keyword">true</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">can_be_half_dose?</span>
@@ -2684,7 +2736,19 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">dose_sequence_can_be_modified?</span>
   <span class="ruby-operator">!</span><span class="ruby-identifier">reported_as_already_vaccinated?</span> <span class="ruby-operator">&amp;&amp;</span>
-    (<span class="ruby-identifier">national_reporting_user_and_record?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">programme</span>&amp;.<span class="ruby-identifier">td_ipv?</span>)
+    (<span class="ruby-identifier">national_reporting_user_and_record?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">programme</span>&amp;.<span class="ruby-identifier">doubles?</span>)
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">allowed_dose_sequences</span>
+  <span class="ruby-comment"># New MenACWY records created in mavis have a dose sequence</span>
+  <span class="ruby-comment"># Old records may not, but can be edited to have a dose sequence of 1</span>
+  <span class="ruby-identifier">max</span> =
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">sourced_from_service?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">programme</span>&amp;.<span class="ruby-identifier">menacwy?</span>
+      <span class="ruby-value">1</span>
+    <span class="ruby-keyword">else</span>
+      <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">maximum_dose_sequence</span>
+    <span class="ruby-keyword">end</span>
+  <span class="ruby-value">1</span><span class="ruby-operator">..</span><span class="ruby-identifier">max</span>
 <span class="ruby-keyword">end</span>
 
 <span class="ruby-identifier">private</span>
@@ -2895,7 +2959,19 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">dose_sequence_can_be_modified?</span>
   <span class="ruby-operator">!</span><span class="ruby-identifier">reported_as_already_vaccinated?</span> <span class="ruby-operator">&amp;&amp;</span>
-    (<span class="ruby-identifier">national_reporting_user_and_record?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">programme</span>&amp;.<span class="ruby-identifier">td_ipv?</span>)
+    (<span class="ruby-identifier">national_reporting_user_and_record?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">programme</span>&amp;.<span class="ruby-identifier">doubles?</span>)
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">allowed_dose_sequences</span>
+  <span class="ruby-comment"># New MenACWY records created in mavis have a dose sequence</span>
+  <span class="ruby-comment"># Old records may not, but can be edited to have a dose sequence of 1</span>
+  <span class="ruby-identifier">max</span> =
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">sourced_from_service?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">programme</span>&amp;.<span class="ruby-identifier">menacwy?</span>
+      <span class="ruby-value">1</span>
+    <span class="ruby-keyword">else</span>
+      <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">maximum_dose_sequence</span>
+    <span class="ruby-keyword">end</span>
+  <span class="ruby-value">1</span><span class="ruby-operator">..</span><span class="ruby-identifier">max</span>
 <span class="ruby-keyword">end</span>
 
 <span class="ruby-identifier">private</span>
@@ -3097,7 +3173,19 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">dose_sequence_can_be_modified?</span>
   <span class="ruby-operator">!</span><span class="ruby-identifier">reported_as_already_vaccinated?</span> <span class="ruby-operator">&amp;&amp;</span>
-    (<span class="ruby-identifier">national_reporting_user_and_record?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">programme</span>&amp;.<span class="ruby-identifier">td_ipv?</span>)
+    (<span class="ruby-identifier">national_reporting_user_and_record?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">programme</span>&amp;.<span class="ruby-identifier">doubles?</span>)
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">allowed_dose_sequences</span>
+  <span class="ruby-comment"># New MenACWY records created in mavis have a dose sequence</span>
+  <span class="ruby-comment"># Old records may not, but can be edited to have a dose sequence of 1</span>
+  <span class="ruby-identifier">max</span> =
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">sourced_from_service?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">programme</span>&amp;.<span class="ruby-identifier">menacwy?</span>
+      <span class="ruby-value">1</span>
+    <span class="ruby-keyword">else</span>
+      <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">maximum_dose_sequence</span>
+    <span class="ruby-keyword">end</span>
+  <span class="ruby-value">1</span><span class="ruby-operator">..</span><span class="ruby-identifier">max</span>
 <span class="ruby-keyword">end</span>
 
 <span class="ruby-identifier">private</span>
@@ -3303,7 +3391,19 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">dose_sequence_can_be_modified?</span>
   <span class="ruby-operator">!</span><span class="ruby-identifier">reported_as_already_vaccinated?</span> <span class="ruby-operator">&amp;&amp;</span>
-    (<span class="ruby-identifier">national_reporting_user_and_record?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">programme</span>&amp;.<span class="ruby-identifier">td_ipv?</span>)
+    (<span class="ruby-identifier">national_reporting_user_and_record?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">programme</span>&amp;.<span class="ruby-identifier">doubles?</span>)
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">allowed_dose_sequences</span>
+  <span class="ruby-comment"># New MenACWY records created in mavis have a dose sequence</span>
+  <span class="ruby-comment"># Old records may not, but can be edited to have a dose sequence of 1</span>
+  <span class="ruby-identifier">max</span> =
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">sourced_from_service?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">programme</span>&amp;.<span class="ruby-identifier">menacwy?</span>
+      <span class="ruby-value">1</span>
+    <span class="ruby-keyword">else</span>
+      <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">maximum_dose_sequence</span>
+    <span class="ruby-keyword">end</span>
+  <span class="ruby-value">1</span><span class="ruby-operator">..</span><span class="ruby-identifier">max</span>
 <span class="ruby-keyword">end</span>
 
 <span class="ruby-identifier">private</span>
@@ -3512,7 +3612,19 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">dose_sequence_can_be_modified?</span>
   <span class="ruby-operator">!</span><span class="ruby-identifier">reported_as_already_vaccinated?</span> <span class="ruby-operator">&amp;&amp;</span>
-    (<span class="ruby-identifier">national_reporting_user_and_record?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">programme</span>&amp;.<span class="ruby-identifier">td_ipv?</span>)
+    (<span class="ruby-identifier">national_reporting_user_and_record?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">programme</span>&amp;.<span class="ruby-identifier">doubles?</span>)
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">allowed_dose_sequences</span>
+  <span class="ruby-comment"># New MenACWY records created in mavis have a dose sequence</span>
+  <span class="ruby-comment"># Old records may not, but can be edited to have a dose sequence of 1</span>
+  <span class="ruby-identifier">max</span> =
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">sourced_from_service?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">programme</span>&amp;.<span class="ruby-identifier">menacwy?</span>
+      <span class="ruby-value">1</span>
+    <span class="ruby-keyword">else</span>
+      <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">maximum_dose_sequence</span>
+    <span class="ruby-keyword">end</span>
+  <span class="ruby-value">1</span><span class="ruby-operator">..</span><span class="ruby-identifier">max</span>
 <span class="ruby-keyword">end</span>
 
 <span class="ruby-identifier">private</span>
@@ -3724,7 +3836,19 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">dose_sequence_can_be_modified?</span>
   <span class="ruby-operator">!</span><span class="ruby-identifier">reported_as_already_vaccinated?</span> <span class="ruby-operator">&amp;&amp;</span>
-    (<span class="ruby-identifier">national_reporting_user_and_record?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">programme</span>&amp;.<span class="ruby-identifier">td_ipv?</span>)
+    (<span class="ruby-identifier">national_reporting_user_and_record?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">programme</span>&amp;.<span class="ruby-identifier">doubles?</span>)
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">allowed_dose_sequences</span>
+  <span class="ruby-comment"># New MenACWY records created in mavis have a dose sequence</span>
+  <span class="ruby-comment"># Old records may not, but can be edited to have a dose sequence of 1</span>
+  <span class="ruby-identifier">max</span> =
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">sourced_from_service?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">programme</span>&amp;.<span class="ruby-identifier">menacwy?</span>
+      <span class="ruby-value">1</span>
+    <span class="ruby-keyword">else</span>
+      <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">maximum_dose_sequence</span>
+    <span class="ruby-keyword">end</span>
+  <span class="ruby-value">1</span><span class="ruby-operator">..</span><span class="ruby-identifier">max</span>
 <span class="ruby-keyword">end</span>
 
 <span class="ruby-identifier">private</span>
@@ -4222,7 +4346,7 @@
             </details>
           </div>
           <div class="method-source-code" id="vaccine_method-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 497</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 509</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccine_method</span>
   <span class="ruby-constant">Vaccine</span>.<span class="ruby-identifier">delivery_method_to_vaccine_method</span>(<span class="ruby-identifier">delivery_method</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -4342,7 +4466,7 @@
             </details>
           </div>
           <div class="method-source-code" id="validate_patient_attendance-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 538</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 550</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_patient_attendance</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">new_record?</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">session</span>&amp;.<span class="ruby-identifier">today?</span>
@@ -4472,7 +4596,7 @@
             </details>
           </div>
           <div class="method-source-code" id="writable_attribute_names-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 409</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/models/draft_vaccination_record.rb, line 421</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">writable_attribute_names</span>
   <span class="ruby-node">%w[
     batch_number

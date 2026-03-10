@@ -873,17 +873,15 @@
         <span class="ruby-keyword">end</span>
       <span class="ruby-keyword">end</span>
 
-      <span class="ruby-keyword">if</span> <span class="ruby-identifier">show_dose_number?</span>
-        <span class="ruby-identifier">summary_list</span>.<span class="ruby-identifier">with_row</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">row</span><span class="ruby-operator">|</span>
-          <span class="ruby-identifier">row</span>.<span class="ruby-identifier">with_key</span> { <span class="ruby-string">&quot;Dose number&quot;</span> }
-          <span class="ruby-identifier">row</span>.<span class="ruby-identifier">with_value</span> { <span class="ruby-identifier">dose_number_value</span> }
-          <span class="ruby-keyword">if</span> (<span class="ruby-identifier">href</span> = <span class="ruby-ivar">@change_links</span>[<span class="ruby-value">:dose_sequence</span>])
-            <span class="ruby-identifier">row</span>.<span class="ruby-identifier">with_action</span>(
-              <span class="ruby-value">text:</span> <span class="ruby-string">&quot;Change&quot;</span>,
-              <span class="ruby-value">href:</span>,
-              <span class="ruby-value">visually_hidden_text:</span> <span class="ruby-string">&quot;dose number&quot;</span>
-            )
-          <span class="ruby-keyword">end</span>
+      <span class="ruby-identifier">summary_list</span>.<span class="ruby-identifier">with_row</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">row</span><span class="ruby-operator">|</span>
+        <span class="ruby-identifier">row</span>.<span class="ruby-identifier">with_key</span> { <span class="ruby-string">&quot;Dose number&quot;</span> }
+        <span class="ruby-identifier">row</span>.<span class="ruby-identifier">with_value</span> { <span class="ruby-identifier">dose_number_value</span> }
+        <span class="ruby-keyword">if</span> (<span class="ruby-identifier">href</span> = <span class="ruby-ivar">@change_links</span>[<span class="ruby-value">:dose_sequence</span>])
+          <span class="ruby-identifier">row</span>.<span class="ruby-identifier">with_action</span>(
+            <span class="ruby-value">text:</span> <span class="ruby-string">&quot;Change&quot;</span>,
+            <span class="ruby-value">href:</span>,
+            <span class="ruby-value">visually_hidden_text:</span> <span class="ruby-string">&quot;dose number&quot;</span>
+          )
         <span class="ruby-keyword">end</span>
       <span class="ruby-keyword">end</span>
     <span class="ruby-keyword">end</span>
