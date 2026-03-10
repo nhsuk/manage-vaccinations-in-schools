@@ -28,7 +28,13 @@ class AccessLogEntry < ApplicationRecord
   belongs_to :patient
 
   enum :controller,
-       { patients: 0, patient_sessions: 1, timeline: 2, graph: 3 },
+       {
+         patients: 0,
+         patient_sessions: 1,
+         timeline: 2,
+         graph: 3,
+         patients_programmes: 4
+       },
        validate: true
 
   enum :action, { show: 0, log: 1, show_pii: 2 }, validate: true
