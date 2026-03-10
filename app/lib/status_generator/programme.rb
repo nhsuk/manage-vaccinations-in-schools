@@ -25,7 +25,14 @@ class StatusGenerator::Programme
     @consents = consents
     @triages = triages
     @attendance_record = attendance_record
-    @vaccination_records = vaccination_records
+
+    @vaccination_criteria =
+      VaccinationCriteria.new(
+        programme_type:,
+        academic_year:,
+        patient:,
+        vaccination_records:
+      )
   end
 
   def programme
@@ -72,10 +79,27 @@ class StatusGenerator::Programme
     end
   end
 
-  delegate :dose_sequence, to: :vaccination_generator
+  def disease_types
+    return nil if not_eligible?
+
+    if vaccinated_vaccination_record
+      vaccinated_vaccination_record.disease_types
+    elsif consent_status.in?(%i[given refused conflicts])
+      consent_generator.disease_types
+    end
+  end
+
+  def dose_sequence
+    return unless is_eligible?
+
+    # Patients receive dose 5 of Td/IPV by default, regardless of vaccination history
+    return 5 if programme.td_ipv?
+
+    valid_vaccination_records.count + 1
+  end
 
   def without_gelatine
-    if vaccination_generator.status == :not_eligible ||
+    if not_eligible? ||
          triage_generator.status.in?(
            %i[required invite_to_clinic do_not_vaccinate]
          ) || consent_status.in?(%i[no_response conflicts refused])
@@ -86,7 +110,7 @@ class StatusGenerator::Programme
   end
 
   def vaccine_methods
-    if vaccination_generator.status == :not_eligible ||
+    if not_eligible? ||
          triage_generator.status.in?(
            %i[required invite_to_clinic do_not_vaccinate]
          ) || consent_status.in?(%i[no_response conflicts refused])
@@ -100,23 +124,23 @@ class StatusGenerator::Programme
     end
   end
 
-  def disease_types
-    return nil if vaccination_generator.status == :not_eligible
-
-    if vaccination_generator.disease_types
-      vaccination_generator.disease_types
-    elsif consent_status.in?(%i[given refused conflicts])
-      consent_generator.disease_types
+  def date
+    if (
+         delay_vaccination_until_date =
+           triage_generator.delay_vaccination_until_date
+       )
+      delay_vaccination_until_date
+    elsif vaccinated_vaccination_record
+      vaccinated_vaccination_record.performed_at_date
+    elsif is_absent?
+      attendance_record.date
+    else
+      vaccination_records.map(&:performed_at_date).max
     end
   end
 
-  def date
-    triage_generator.delay_vaccination_until_date ||
-      vaccination_generator.latest_date
-  end
-
   def location_id
-    vaccination_generator.latest_location_id
+    vaccinated_vaccination_record&.location_id
   end
 
   def consent_status
@@ -136,54 +160,49 @@ class StatusGenerator::Programme
               :consents,
               :triages,
               :attendance_record,
-              :vaccination_records
+              :vaccination_criteria
+
+  delegate :vaccinated?,
+           :vaccinated_vaccination_record,
+           :valid_vaccination_records,
+           :vaccination_records,
+           to: :vaccination_criteria
 
   def should_be_vaccinated_already?
-    vaccination_generator.status == :vaccinated &&
-      vaccination_generator.latest_session_status == :already_had
+    vaccinated_vaccination_record&.already_had?
   end
 
-  def should_be_vaccinated_fully?
-    vaccination_generator.status == :vaccinated
-  end
+  def should_be_vaccinated_fully? = vaccinated?
 
   def should_be_cannot_vaccinate_unwell?
-    vaccination_generator.status.in?(%i[eligible due]) &&
-      vaccination_generator.latest_session_status == :unwell &&
-      vaccination_generator.latest_date.today?
+    is_eligible? && vaccination_records&.first&.unwell? && date.today?
   end
 
   def should_be_cannot_vaccinate_refused?
-    vaccination_generator.status.in?(%i[eligible due]) &&
-      vaccination_generator.latest_session_status == :refused &&
-      vaccination_generator.latest_date.today?
+    is_eligible? && vaccination_records&.first&.refused? && date.today?
   end
 
   def should_be_cannot_vaccinate_contraindicated?
-    vaccination_generator.status.in?(%i[eligible due]) &&
-      vaccination_generator.latest_session_status == :contraindicated &&
-      vaccination_generator.latest_date.today?
+    is_eligible? && vaccination_records&.first&.contraindicated? && date.today?
   end
 
   def should_be_cannot_vaccinate_absent?
-    vaccination_generator.status.in?(%i[eligible due]) &&
-      vaccination_generator.latest_session_status == :absent &&
-      vaccination_generator.latest_date.today?
-  end
-
-  def should_be_cannot_vaccinate_delay_vaccination?
-    vaccination_generator.status.in?(%i[eligible due]) &&
-      triage_generator.status == :delay_vaccination
+    is_eligible? && is_absent? && date.today?
   end
 
   def should_be_cannot_vaccinate_do_not_vaccinate?
-    vaccination_generator.status.in?(%i[eligible due]) &&
-      triage_generator.status == :do_not_vaccinate
+    is_eligible? && triage_generator.status == :do_not_vaccinate
   end
 
-  def should_be_due?
-    vaccination_generator.status == :due
+  def should_be_needs_consent_no_response?
+    is_eligible? && consent_status == :no_response
   end
+
+  def should_be_cannot_vaccinate_delay_vaccination?
+    is_eligible? && triage_generator.status == :delay_vaccination
+  end
+
+  def should_be_due? = is_due?
 
   def should_be_needs_triage?
     triage_generator.status.in?(%i[required invite_to_clinic])
@@ -201,10 +220,6 @@ class StatusGenerator::Programme
     false # TODO: Implement this status.
   end
 
-  def should_be_needs_consent_no_response?
-    vaccination_generator.status == :eligible && consent_status == :no_response
-  end
-
   def should_be_needs_consent_request_failed?
     false # TODO: Implement this status.
   end
@@ -216,6 +231,35 @@ class StatusGenerator::Programme
   def should_be_needs_consent_request_not_scheduled?
     false # TODO: Implement this status.
   end
+
+  def year_group = patient.year_group(academic_year:)
+
+  def is_eligible?
+    return @is_eligible if defined?(@is_eligible)
+
+    @is_eligible =
+      patient_locations
+        .select { it.academic_year == academic_year }
+        .any? do |patient_location|
+          patient_location.location.location_programme_year_groups.any? do
+            it.programme_type == programme_type &&
+              it.academic_year == academic_year && it.year_group == year_group
+          end
+        end
+  end
+
+  def not_eligible?
+    # This is more than just checking whether the patient is not eligible, in
+    # case somehow they were vaccinated anyway.
+    !vaccinated? && !is_eligible?
+  end
+
+  def is_due?
+    is_eligible? && consent_generator.status == :given &&
+      triage_generator.status.in?(%i[safe_to_vaccinate not_required])
+  end
+
+  def is_absent? = attendance_record&.attending == false
 
   def consent_generator
     @consent_generator ||=
@@ -236,20 +280,6 @@ class StatusGenerator::Programme
         patient:,
         consents:,
         triages:,
-        vaccination_records:
-      )
-  end
-
-  def vaccination_generator
-    @vaccination_generator ||=
-      StatusGenerator::Vaccination.new(
-        programme_type:,
-        academic_year:,
-        patient:,
-        patient_locations:,
-        consents:,
-        triages:,
-        attendance_record:,
         vaccination_records:
       )
   end
