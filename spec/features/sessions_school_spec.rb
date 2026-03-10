@@ -90,6 +90,20 @@ describe "School sessions" do
     then_the_parent_receives_an_rt5_clinic_invitation
   end
 
+  scenario "sending clinic invitations to unvaccinated children uses RYG-specific template for RYG teams" do
+    given_my_team_is_running_an_hpv_vaccination_programme_for_ods_code("RYG")
+    and_i_am_signed_in
+
+    when_i_go_to_todays_sessions_as_a_nurse
+    and_i_go_to_completed_sessions
+    when_i_click_on_the_school
+    and_i_click_on_send_invitations
+    then_i_see_the_send_invitations_page
+    when_i_click_on_send_invitations
+    then_i_see_the_invitation_confirmation
+    then_the_parent_receives_a_ryg_clinic_invitation
+  end
+
   def given_my_team_is_running_an_hpv_vaccination_programme
     @programme = Programme.hpv
     @other_programme = Programme.flu
@@ -521,5 +535,11 @@ describe "School sessions" do
     perform_enqueued_jobs
     expect_email_to @parent.email, :clinic_initial_invitation_rt5
     expect_sms_to @parent.phone, :clinic_initial_invitation_rt5, :any
+  end
+
+  def then_the_parent_receives_a_ryg_clinic_invitation
+    perform_enqueued_jobs
+    expect_email_to @parent.email, :clinic_initial_invitation_ryg
+    expect_sms_to @parent.phone, :clinic_initial_invitation_ryg, :any
   end
 end
