@@ -119,6 +119,14 @@ Rails.application.routes.draw do
     namespace :reporting do
       post "authorize", to: "one_time_tokens#authorize"
       get "totals", controller: :totals, action: :index
+      resources :exports, only: %i[index create show], param: :id do
+        collection do
+          get "form_options"
+        end
+        member do
+          get "download"
+        end
+      end
     end
   end
 

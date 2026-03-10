@@ -43,6 +43,8 @@ module ReportingAPI::TokenAuthenticationConcern
         if @current_user
           session["user"] = data["user"]
           session["cis2_info"] = data["cis2_info"]
+          @current_user.cis2_info =
+            CIS2Info.new(request_session: { "cis2_info" => data["cis2_info"] })
           authenticate_user!
           touch_sessions!(@current_user)
         else
