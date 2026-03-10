@@ -8,11 +8,10 @@ class Sessions::InviteToClinicController < Sessions::BaseController
   skip_after_action :verify_policy_scoped
 
   def edit
-    @initial_invitations = @session.school?
   end
 
   def update
-    factory.create_patient_locations! if @session.school?
+    factory.create_patient_locations!
 
     @patients_to_invite.each do |patient|
       patient.notifier.send_clinic_invitation(
@@ -23,13 +22,9 @@ class Sessions::InviteToClinicController < Sessions::BaseController
       )
     end
 
-    children_count = I18n.t("children", count: @invitations_to_send)
-
-    flash[:success] = if @session.school?
-      "#{children_count} invited to the clinic"
-    else
-      "Booking reminders sent for #{children_count}"
-    end
+    flash[
+      :success
+    ] = "#{I18n.t("children", count: @invitations_to_send)} invited to the clinic"
 
     redirect_to session_path(@session)
   end
@@ -41,12 +36,7 @@ class Sessions::InviteToClinicController < Sessions::BaseController
   end
 
   def set_patients_to_invite
-    @patients_to_invite =
-      if @session.school?
-        factory.patient_locations_to_create.map(&:patient)
-      else
-        @session.patients
-      end
+    @patients_to_invite = factory.patient_locations_to_create.map(&:patient)
   end
 
   def set_invitations_to_send
@@ -54,9 +44,6 @@ class Sessions::InviteToClinicController < Sessions::BaseController
   end
 
   def factory
-    @factory ||=
-      if @session.school?
-        ClinicPatientLocationsFactory.new(school_session: @session)
-      end
+    @factory ||= ClinicPatientLocationsFactory.new(school_session: @session)
   end
 end
