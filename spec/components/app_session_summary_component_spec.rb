@@ -42,8 +42,19 @@ describe AppSessionSummaryComponent do
     context "for MMR(V) programme" do
       let(:programmes) { [Programme.mmr] }
 
-      it { should have_link("Download the MMR consent form (PDF)") }
-      it { should have_link("Download the MMRV consent form (PDF)") }
+      it do
+        expect(rendered).to have_link(
+          "Download the MMR consent form (PDF)",
+          href: /mmr/
+        )
+      end
+
+      it do
+        expect(rendered).to have_link(
+          "Download the MMRV consent form (PDF)",
+          href: /mmrv/
+        )
+      end
     end
 
     context "when consent is open" do

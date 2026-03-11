@@ -202,7 +202,7 @@ class AppSessionSummaryComponent < ViewComponent::Base
     session.programmes.flat_map do |programme|
       programme.variants.map do |programme_variant|
         label = "Download the #{programme_variant.name} consent form (PDF)"
-        link_to(label, consent_form_download_path(programme_variant.type))
+        link_to(label, consent_form_download_path(programme_variant.to_param))
       end
     end
   end
