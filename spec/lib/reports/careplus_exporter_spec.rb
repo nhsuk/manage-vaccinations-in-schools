@@ -8,7 +8,16 @@ describe Reports::CareplusExporter do
       academic_year:,
       start_date: 1.month.ago.to_date,
       end_date: Date.current,
-      export_type: :manual
+      include_gender: true,
+      vaccine_columns: %i[
+        vaccine
+        vaccine_code
+        dose
+        reason_not_given
+        site
+        manufacturer
+        batch_number
+      ]
     )
   end
 

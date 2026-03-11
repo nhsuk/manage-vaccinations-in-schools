@@ -26,46 +26,22 @@ class Reports::CareplusExporter
     batch_number: "Batch No"
   }.freeze
 
-  EXPORT_TYPE_CONFIGS = {
-    manual: {
-      include_gender: true,
-      vaccine_columns: %i[
-        vaccine
-        vaccine_code
-        dose
-        reason_not_given
-        site
-        manufacturer
-        batch_number
-      ]
-    },
-    automated: {
-      include_gender: false,
-      vaccine_columns: %i[
-        vaccine
-        dose
-        reason_not_given
-        site
-        manufacturer
-        batch_number
-      ]
-    }
-  }.freeze
-
   def initialize(
     team:,
     programmes:,
     academic_year:,
     start_date:,
     end_date:,
-    export_type:
+    include_gender:,
+    vaccine_columns:
   )
     @team = team
     @programmes = programmes
     @academic_year = academic_year
     @start_date = start_date
     @end_date = end_date
-    @export_config = EXPORT_TYPE_CONFIGS.fetch(export_type)
+    @include_gender = include_gender
+    @vaccine_columns = vaccine_columns
   end
 
   def call
@@ -97,7 +73,8 @@ class Reports::CareplusExporter
               :academic_year,
               :start_date,
               :end_date,
-              :export_config
+              :include_gender,
+              :vaccine_columns
 
   def headers
     [
@@ -117,17 +94,17 @@ class Reports::CareplusExporter
       "Attended",
       "Reason Not Attended",
       "Suspension End Date",
-      *vaccine_columns(1),
-      *vaccine_columns(2),
-      *vaccine_columns(3),
-      *vaccine_columns(4),
-      *vaccine_columns(5),
+      *vaccine_column_headers(1),
+      *vaccine_column_headers(2),
+      *vaccine_column_headers(3),
+      *vaccine_column_headers(4),
+      *vaccine_column_headers(5),
       *gender_headers
     ]
   end
 
-  def vaccine_columns(number)
-    vaccine_column_keys.map do |column|
+  def vaccine_column_headers(number)
+    vaccine_columns.map do |column|
       "#{VACCINE_COLUMN_HEADINGS.fetch(column)} #{number}"
     end
   end
@@ -141,7 +118,7 @@ class Reports::CareplusExporter
   end
 
   def include_gender?
-    export_config[:include_gender]
+    include_gender
   end
 
   def vaccination_records
@@ -237,18 +214,14 @@ class Reports::CareplusExporter
   end
 
   def blank_vaccine_fields
-    Array.new(vaccine_column_keys.length, "")
+    Array.new(vaccine_columns.length, "")
   end
 
   def vaccine_fields(vaccination_records, index)
     record = vaccination_records[index]
     return blank_vaccine_fields unless record
 
-    vaccine_column_keys.map { |column| vaccine_field_value(column, record) }
-  end
-
-  def vaccine_column_keys
-    export_config[:vaccine_columns]
+    vaccine_columns.map { |column| vaccine_field_value(column, record) }
   end
 
   def vaccine_field_value(column, record)

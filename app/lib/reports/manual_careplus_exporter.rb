@@ -8,7 +8,16 @@ class Reports::ManualCareplusExporter
       academic_year:,
       start_date:,
       end_date:,
-      export_type: :manual
+      include_gender: true,
+      vaccine_columns: %i[
+        vaccine
+        vaccine_code
+        dose
+        reason_not_given
+        site
+        manufacturer
+        batch_number
+      ]
     )
   end
 

@@ -8,7 +8,15 @@ class Reports::AutomatedCareplusExporter
       academic_year:,
       start_date:,
       end_date:,
-      export_type: :automated
+      include_gender: false,
+      vaccine_columns: %i[
+        vaccine
+        dose
+        reason_not_given
+        site
+        manufacturer
+        batch_number
+      ]
     )
   end
 
