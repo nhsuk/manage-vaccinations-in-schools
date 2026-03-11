@@ -4,7 +4,9 @@ import "package://github.com/jdx/hk/releases/download/v1.37.0/hk@1.37.0#/Builtin
 local linters = new Mapping<String, Group> {
     ["all"] = new Group {
         steps = new Mapping<String, Step> {
-            ["actionlint"] = Builtins.actionlint
+            ["actionlint"] = (Builtins.actionlint) {
+                fix = "actionlint {{ files }}"
+            }
 
             ["brakeman"] = new Step {
                 check = "bin/brakeman --quiet --no-summary --no-pager"
@@ -38,7 +40,9 @@ local linters = new Mapping<String, Group> {
                 fix = "bin/stylelint --fix {{ files }}"
             }
 
-            ["yamllint"] = Builtins.yamllint
+            ["yamllint"] = (Builtins.yamllint) {
+                fix = "yamllint {{ files }}"
+            }
         }
     }
 
@@ -51,7 +55,7 @@ local linters = new Mapping<String, Group> {
     }
 
     ["pre-commit"] = new Group {
-        steps = steps_with_staged_fixes.toMap().remove("actionlint").remove("brakeman").remove("yamllint").toMapping()
+        steps = steps_with_staged_fixes.toMap().remove("brakeman").toMapping()
     }
 }
 
