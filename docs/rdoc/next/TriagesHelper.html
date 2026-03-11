@@ -642,7 +642,7 @@
       <span class="ruby-string">&quot;green&quot;</span>
     <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">triage</span>.<span class="ruby-identifier">do_not_vaccinate?</span>
       <span class="ruby-string">&quot;red&quot;</span>
-    <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">triage</span>.<span class="ruby-identifier">delay_vaccination?</span>
+    <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">triage</span>.<span class="ruby-identifier">delay_vaccination?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">triage</span>.<span class="ruby-identifier">invite_to_clinic?</span>
       <span class="ruby-string">&quot;orange&quot;</span>
     <span class="ruby-keyword">else</span>
       <span class="ruby-string">&quot;blue&quot;</span>
