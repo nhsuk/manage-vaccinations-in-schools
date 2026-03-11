@@ -179,6 +179,8 @@ describe AppSessionVaccinationsComponent do
     discarded: false
   )
     patient = create(:patient, session:, year_group:)
+    vaccine ||= programme.vaccines.active.first
+    batch = create(:batch, :not_expired, vaccine:)
     delivery_method = vaccine&.nasal? ? "nasal_spray" : "intramuscular"
     discarded_at = discarded ? Time.current : nil
 
@@ -190,7 +192,8 @@ describe AppSessionVaccinationsComponent do
       performed_at:,
       programme:,
       session:,
-      vaccine:
+      vaccine:,
+      batch:
     )
   end
 end
