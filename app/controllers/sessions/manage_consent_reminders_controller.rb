@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class Sessions::ManageConsentRemindersController < Sessions::BaseController
+  before_action :authorize_session
+
   def show
   end
 
@@ -11,5 +13,11 @@ class Sessions::ManageConsentRemindersController < Sessions::BaseController
                 flash: {
                   success: "Manual consent reminders sent"
                 }
+  end
+
+  private
+
+  def authorize_session
+    authorize @session, :manage_consent_reminders?
   end
 end

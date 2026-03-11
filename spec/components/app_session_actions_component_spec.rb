@@ -14,6 +14,8 @@ describe AppSessionActionsComponent do
     create(:patient, nhs_number: nil, year_group:)
   end
 
+  let(:allowed_managed_consent_reminders) { true }
+
   before do
     create(
       :patient,
@@ -46,6 +48,12 @@ describe AppSessionActionsComponent do
     create(:patient, :vaccinated, :in_attendance, session:, year_group:)
     create(:patient, nhs_number: nil, session:, year_group:)
     create(:consent_form, :recorded, session:)
+
+    stub_authorization(
+      allowed: allowed_managed_consent_reminders,
+      klass: SessionPolicy,
+      methods: %i[manage_consent_reminders?]
+    )
   end
 
   it { should have_text("No NHS number1 child") }
@@ -63,6 +71,14 @@ describe AppSessionActionsComponent do
   it { should have_link("1 child requiring triage") }
   it { should have_link("3 children to register") }
   it { should have_link("1 child for HPV") }
+
+  it { should have_link("Send reminders") }
+
+  context "when not allowed to manage consent reminders" do
+    let(:allowed_managed_consent_reminders) { false }
+
+    it { should_not have_link("Send reminders") }
+  end
 
   context "session requires no registration" do
     let(:session) { create(:session, :requires_no_registration, programmes:) }
