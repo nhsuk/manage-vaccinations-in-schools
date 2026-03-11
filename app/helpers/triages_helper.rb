@@ -29,7 +29,7 @@ module TriagesHelper
         "green"
       elsif triage.do_not_vaccinate?
         "red"
-      elsif triage.delay_vaccination?
+      elsif triage.delay_vaccination? || triage.invite_to_clinic?
         "orange"
       else
         "blue"
