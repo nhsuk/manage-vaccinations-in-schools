@@ -10,9 +10,13 @@ class AppPatientProgrammeVaccinationCardComponent < ViewComponent::Base
 
   private
 
-  delegate :govuk_table, :vaccination_record_source, to: :helpers
-
   attr_reader :patient, :academic_year, :programme, :show_caption
+
+  delegate :govuk_button_to,
+           :govuk_table,
+           :policy,
+           :vaccination_record_source,
+           to: :helpers
 
   def vaccination_records
     patient
@@ -39,5 +43,15 @@ class AppPatientProgrammeVaccinationCardComponent < ViewComponent::Base
     AppAttachedTagsComponent.new(
       resolved_status.fetch(:prefix) => resolved_status
     )
+  end
+
+  def can_record_new_vaccination?
+    programme_status = patient.programme_status(programme, academic_year:)
+
+    if programme_status.not_eligible? || programme_status.vaccinated?
+      return false
+    end
+
+    policy(VaccinationRecord.new).new?
   end
 end

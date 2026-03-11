@@ -40,6 +40,42 @@ class Patients::ProgrammesController < Patients::BaseController
                 }
   end
 
+  def record_new_vaccination
+    authorize VaccinationRecord.new(patient: @patient), :create?
+
+    @session =
+      ActiveRecord::Base.transaction do
+        session =
+          ClinicSessionFactory.call(
+            team: current_team,
+            academic_year: @academic_year,
+            programme_type: @programme.type
+          )
+
+        patient_location =
+          PatientLocation.find_or_initialize_by(
+            patient: @patient,
+            location: session.location,
+            academic_year: @academic_year
+          )
+
+        if patient_location.new_record?
+          patient_location.begin_date = Date.current
+          patient_location.end_date = Date.current
+        else
+          patient_location.extend_date_range_to(Date.current)
+        end
+
+        patient_location.save!
+
+        PatientTeamUpdater.call(patient: @patient, team: current_team)
+
+        session
+      end
+
+    redirect_to session_patient_programme_path(@session, @patient, @programme)
+  end
+
   private
 
   def set_programme

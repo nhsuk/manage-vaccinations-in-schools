@@ -212,7 +212,10 @@ Rails.application.routes.draw do
               only: :show,
               param: :type,
               controller: "patients/programmes" do
-      post "invite-to-clinic"
+      member do
+        post "invite-to-clinic", action: :invite_to_clinic
+        post "record-new-vaccination", action: :record_new_vaccination
+      end
     end
 
     member do
