@@ -675,18 +675,27 @@
 
     <span class="ruby-identifier">invalidate_consents!</span>(<span class="ruby-identifier">user</span>, <span class="ruby-identifier">consents</span>) <span class="ruby-keyword">if</span> <span class="ruby-identifier">remove_option</span> <span class="ruby-operator">==</span> <span class="ruby-string">&quot;all&quot;</span>
 
-    <span class="ruby-identifier">parents_to_check</span> = <span class="ruby-identifier">parent_relationships_to_remove</span>.<span class="ruby-identifier">map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:parent</span>)
+    <span class="ruby-identifier">parent_ids_to_check</span> = <span class="ruby-identifier">parent_relationships_to_remove</span>.<span class="ruby-identifier">map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:parent_id</span>).<span class="ruby-identifier">uniq</span>
     <span class="ruby-identifier">patient_ids</span> = <span class="ruby-identifier">parent_relationships_to_remove</span>.<span class="ruby-identifier">map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:patient_id</span>)
 
+    <span class="ruby-identifier">parent_relationship_ids</span> = <span class="ruby-identifier">parent_relationships_to_remove</span>.<span class="ruby-identifier">map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:id</span>)
+    <span class="ruby-constant">ClassImportsParentRelationship</span>.<span class="ruby-identifier">where</span>(
+      <span class="ruby-value">parent_relationship_id:</span> <span class="ruby-identifier">parent_relationship_ids</span>
+    ).<span class="ruby-identifier">delete_all</span>
+    <span class="ruby-constant">CohortImportsParentRelationship</span>.<span class="ruby-identifier">where</span>(
+      <span class="ruby-value">parent_relationship_id:</span> <span class="ruby-identifier">parent_relationship_ids</span>
+    ).<span class="ruby-identifier">delete_all</span>
     <span class="ruby-identifier">parent_relationships_to_remove</span>.<span class="ruby-identifier">each</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:destroy!</span>)
 
-    <span class="ruby-identifier">parents_to_check</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">parent</span><span class="ruby-operator">|</span>
-      <span class="ruby-keyword">next</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">parent</span>.<span class="ruby-identifier">destroyed?</span>
-      <span class="ruby-keyword">next</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">parent</span>.<span class="ruby-identifier">parent_relationships</span>.<span class="ruby-identifier">exists?</span>
-      <span class="ruby-keyword">next</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">parent</span>.<span class="ruby-identifier">consents</span>.<span class="ruby-identifier">exists?</span>
+    <span class="ruby-constant">Parent</span>
+      .<span class="ruby-identifier">where</span>(<span class="ruby-value">id:</span> <span class="ruby-identifier">parent_ids_to_check</span>)
+      .<span class="ruby-identifier">find_each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">parent</span><span class="ruby-operator">|</span>
+        <span class="ruby-keyword">next</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">parent</span>.<span class="ruby-identifier">destroyed?</span>
+        <span class="ruby-keyword">next</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">parent</span>.<span class="ruby-identifier">parent_relationships</span>.<span class="ruby-identifier">exists?</span>
+        <span class="ruby-keyword">next</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">parent</span>.<span class="ruby-identifier">consents</span>.<span class="ruby-identifier">exists?</span>
 
-      <span class="ruby-identifier">parent</span>.<span class="ruby-identifier">destroy!</span>
-    <span class="ruby-keyword">end</span>
+        <span class="ruby-identifier">parent</span>.<span class="ruby-identifier">destroy!</span>
+      <span class="ruby-keyword">end</span>
 
     <span class="ruby-constant">PatientStatusUpdaterJob</span>.<span class="ruby-identifier">perform_bulk</span>(<span class="ruby-identifier">patient_ids</span>.<span class="ruby-identifier">zip</span>)
   <span class="ruby-keyword">end</span>
