@@ -5,8 +5,20 @@
   &.nhsuk-card {
     background-color: color.scale(nhsuk-colour("grey-4"), $alpha: -50%);
 
+    @include nhsuk-responsive-padding(4, "left");
+    @include nhsuk-responsive-padding(4, "right");
+    @include nhsuk-responsive-padding(2, "bottom");
+
     .nhsuk-card__heading {
+      margin-left: #{nhsuk-spacing(-3) - 1px};
+      padding-left: nhsuk-spacing(3);
       background-color: nhsuk-colour("grey-1");
+
+      // stylelint-disable-next-line max-nesting-depth
+      @include nhsuk-media-query($from: tablet) {
+        margin-left: #{nhsuk-spacing(-4) - 1px};
+        padding-left: nhsuk-spacing(4);
+      }
     }
   }
 
