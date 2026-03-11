@@ -937,7 +937,7 @@
     <span class="ruby-identifier">session</span>.<span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">flat_map</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">programme</span><span class="ruby-operator">|</span>
       <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">variants</span>.<span class="ruby-identifier">map</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">programme_variant</span><span class="ruby-operator">|</span>
         <span class="ruby-identifier">label</span> = <span class="ruby-node">&quot;Download the #{programme_variant.name} consent form (PDF)&quot;</span>
-        <span class="ruby-identifier">link_to</span>(<span class="ruby-identifier">label</span>, <span class="ruby-identifier">consent_form_download_path</span>(<span class="ruby-identifier">programme_variant</span>.<span class="ruby-identifier">type</span>))
+        <span class="ruby-identifier">link_to</span>(<span class="ruby-identifier">label</span>, <span class="ruby-identifier">consent_form_download_path</span>(<span class="ruby-identifier">programme_variant</span>.<span class="ruby-identifier">to_param</span>))
       <span class="ruby-keyword">end</span>
     <span class="ruby-keyword">end</span>
   <span class="ruby-keyword">end</span>
@@ -1233,7 +1233,7 @@
   <span class="ruby-identifier">session</span>.<span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">flat_map</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">programme</span><span class="ruby-operator">|</span>
     <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">variants</span>.<span class="ruby-identifier">map</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">programme_variant</span><span class="ruby-operator">|</span>
       <span class="ruby-identifier">label</span> = <span class="ruby-node">&quot;Download the #{programme_variant.name} consent form (PDF)&quot;</span>
-      <span class="ruby-identifier">link_to</span>(<span class="ruby-identifier">label</span>, <span class="ruby-identifier">consent_form_download_path</span>(<span class="ruby-identifier">programme_variant</span>.<span class="ruby-identifier">type</span>))
+      <span class="ruby-identifier">link_to</span>(<span class="ruby-identifier">label</span>, <span class="ruby-identifier">consent_form_download_path</span>(<span class="ruby-identifier">programme_variant</span>.<span class="ruby-identifier">to_param</span>))
     <span class="ruby-keyword">end</span>
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
