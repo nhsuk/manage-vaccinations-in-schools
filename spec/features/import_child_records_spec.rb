@@ -61,11 +61,10 @@ describe "Import child records" do
     then_i_should_see_import_issues_with_the_count
   end
 
-  context "when PDS lookup during import and import_review_screenis enabled" do
+  context "when PDS lookup during import is enabled" do
     scenario "User uploads a file" do
       given_the_app_is_setup
       and_pds_lookup_during_import_is_enabled
-      and_import_review_screen_is_enabled
 
       when_i_visit_the_import_page
       and_i_choose_to_import_child_records
@@ -124,7 +123,6 @@ describe "Import child records" do
 
     scenario "Keep both records assigns changesets and PDS search results to the new patient" do
       given_the_app_is_setup
-      and_import_review_screen_is_enabled
       and_pds_lookup_during_import_is_enabled
       stub_pds_search_to_return_no_patients
       and_an_existing_patient_record_exists_with_same_name_and_dob
@@ -187,10 +185,6 @@ describe "Import child records" do
       "birthdate" => "eq2010-01-03",
       "address-postalcode" => "SW1A 1AA"
     )
-  end
-
-  def and_import_review_screen_is_enabled
-    Flipper.enable(:import_review_screen)
   end
 
   def when_i_visit_the_import_page
@@ -339,7 +333,6 @@ describe "Import child records" do
     perform_enqueued_jobs(only: ProcessImportJob)
     perform_enqueued_jobs(only: PDSCascadingSearchJob)
     perform_enqueued_jobs(only: ProcessPatientChangesetJob)
-    perform_enqueued_jobs(only: CommitImportJob)
   end
 
   def then_i_should_see_the_holding_page
