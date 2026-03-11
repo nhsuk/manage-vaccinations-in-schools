@@ -38,6 +38,7 @@ describe "Schools" do
     then_i_see_the_send_invitations_button
 
     when_i_click_send_clinic_invitations
+    then_i_should_see_programmes_i_can_send_invitations_for
     and_i_select_programmes_and_send
     then_i_see_the_invitation_confirmation
     and_the_parents_receive_invitations
@@ -173,6 +174,15 @@ describe "Schools" do
     # We create these to ensure these children aren't invited.
     create(
       :patient,
+      :consent_no_response,
+      school: nil,
+      parents: [],
+      programmes:,
+      location: @generic_clinic,
+      academic_year: AcademicYear.pending
+    )
+    create(
+      :patient,
       :consent_refused,
       school: nil,
       parents: [build(:parent)],
@@ -207,6 +217,12 @@ describe "Schools" do
 
   def when_i_click_send_clinic_invitations
     click_on "Send clinic invitations"
+  end
+
+  def then_i_should_see_programmes_i_can_send_invitations_for
+    expect(page).to have_content(
+      "10 children have not been invited to a clinic yet"
+    )
   end
 
   def and_i_select_programmes_and_send
