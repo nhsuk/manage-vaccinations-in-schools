@@ -21,7 +21,11 @@ describe CommitPatientChangesetsJob do
   end
 
   before do
-    PatientChangeset.find_each(&:committing!)
+    PatientChangeset.find_each do |changeset|
+      changeset.calculate_review_data!
+      changeset.assign_patient_id
+      changeset.committing!
+    end
     import.save!
   end
 
@@ -419,7 +423,17 @@ describe CommitPatientChangesetsJob do
 
     context "with an existing patient not in the class list" do
       let!(:existing_patient) do
-        create(:patient, nhs_number: "9322774096", session:, year_group: 8)
+        create(:patient, nhs_number: "9322774096", session:, year_group: 9)
+      end
+
+      before do
+        create(
+          :patient_changeset,
+          import:,
+          patient: existing_patient,
+          row_number: nil,
+          status: :committing
+        )
       end
 
       it "proposes a school move for the child" do

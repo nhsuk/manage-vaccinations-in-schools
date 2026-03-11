@@ -199,22 +199,16 @@ describe CohortImport do
         process!
 
         expect(configured_job).to have_received(:perform_later).exactly(3).times
-
-        expect(CommitImportJob).not_to have_enqueued_sidekiq_job
       end
     end
 
     context "when import_search_pds flag is disabled" do
       before { Flipper.disable(:import_search_pds) }
 
-      it "marks all changesets as processed and enqueues CommitImportJob" do
-        process!
-
-        expect(CommitImportJob).to have_enqueued_sidekiq_job(
-          cohort_import.to_global_id.to_s
-        )
-
-        expect(configured_job).not_to have_received(:perform_later)
+      it "enqueues ReviewPatientChangesetJob for each changeset" do
+        expect { process! }.to have_enqueued_job(
+          ReviewPatientChangesetJob
+        ).exactly(3).times
       end
     end
   end

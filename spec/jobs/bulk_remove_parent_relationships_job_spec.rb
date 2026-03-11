@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 describe BulkRemoveParentRelationshipsJob do
+  include ImportsHelper
+  include ActiveJob::TestHelper
+
   subject(:perform_job) do
     described_class.new.perform(
       import.to_global_id.to_s,
@@ -18,8 +21,7 @@ describe BulkRemoveParentRelationshipsJob do
   let(:user) { create(:user, team:) }
 
   before do
-    import.process!
-    CommitImportJob.drain
+    process_and_approve_import(import)
     create(
       :consent,
       :given,
