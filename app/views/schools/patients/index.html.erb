@@ -9,6 +9,8 @@
 
 <% if @location.school? %>
   <%= govuk_button_link_to "Import class lists", new_school_import_path(@location), secondary: true %>
+<% elsif @location.generic_clinic? %>
+  <%= govuk_button_link_to "Send clinic invitations", edit_school_invite_to_clinic_path(Location::URN_UNKNOWN), secondary: true %>
 <% end %>
 
 <div class="nhsuk-grid-row">
