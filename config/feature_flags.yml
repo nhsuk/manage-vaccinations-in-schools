@@ -47,8 +47,6 @@ import_search_pds: Perform PDS lookups as part of the patient import processing.
 
 ops_tools: Enable the operational support tools; timeline and graph.
 
-pds_cascading_search: Enable cascading PDS searches for patients without an NHS number.
-
 sync_national_reporting_to_imms_api: |
   Sync immunisations records uploaded as part of national reporting to the NHS
   Immunisations API.

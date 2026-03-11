@@ -20,10 +20,12 @@ module ImportsHelper
   def wait_for_import_to_complete_until_review(import_class)
     perform_enqueued_jobs(only: ProcessImportJob)
 
-    perform_enqueued_jobs_while_exists(only: PDSCascadingSearchJob)
-    perform_enqueued_jobs_while_exists(only: ProcessPatientChangesetJob)
-    perform_enqueued_jobs_while_exists(only: ReviewPatientChangesetJob)
-    perform_enqueued_jobs(only: ReviewClassImportSchoolMoveJob)
+    if import_class != ImmunisationImport
+      perform_enqueued_jobs_while_exists(only: PDSCascadingSearchJob)
+      perform_enqueued_jobs_while_exists(only: ProcessPatientChangesetJob)
+      perform_enqueued_jobs_while_exists(only: ReviewPatientChangesetJob)
+      perform_enqueued_jobs(only: ReviewClassImportSchoolMoveJob)
+    end
 
     if Flipper.enabled?(:import_review_screen)
       click_on_most_recent_import(import_class)
