@@ -32,8 +32,8 @@ en:
                 Choose whether you want to send an email and text message confirming their decision
             notify_parents_on_vaccination:
               inclusion: >-
-                Choose whether the child wants their parent or guardian to get confirmation of
-                the vaccination
+                Choose whether the child wants their parent or guardian to get confirmation of the
+                vaccination
             reason_for_refusal:
               inclusion: Choose a reason
             notes:
@@ -432,8 +432,8 @@ en:
               empty: Choose a CSV file with at least one record
               invalid: Choose a CSV file in the correct format
               too_many_rows: >-
-                The row limit for CSV uploads is %{count}.
-                Split your CSV file into smaller files of less than %{count} rows
+                The row limit for CSV uploads is %{count}. Split your CSV file into smaller files of
+                less than %{count} rows
         cohort_import:
           attributes:
             csv:
@@ -441,8 +441,8 @@ en:
               empty: Choose a CSV file with at least one record
               invalid: Choose a CSV file in the correct format
               too_many_rows: >-
-                The row limit for CSV uploads is %{count}.
-                Split your CSV file into smaller files of less than %{count} rows
+                The row limit for CSV uploads is %{count}. Split your CSV file into smaller files of
+                less than %{count} rows
         consent:
           attributes:
             notes:
@@ -461,12 +461,10 @@ en:
             address_line_1:
               blank: Enter the first line of your address
               too_long: >-
-                Enter a first line of address that is less than 300 characters
-                long
+                Enter a first line of address that is less than 300 characters long
             address_line_2:
               too_long: >-
-                Enter a second line of address that is less than 300 characters
-                long
+                Enter a second line of address that is less than 300 characters long
             address_postcode:
               blank: Enter a postcode
             address_town:
@@ -563,8 +561,8 @@ en:
               empty: Choose a CSV file with at least one record
               invalid: Choose a CSV file in the correct format
               too_many_rows: >-
-                The row limit for CSV uploads is %{count}.
-                Split your CSV file into smaller files of less than %{count} rows
+                The row limit for CSV uploads is %{count}. Split your CSV file into smaller files of
+                less than %{count} rows
         note:
           attributes:
             body:
@@ -709,8 +707,8 @@ en:
       without_gelatine:
         legend: Do they want their child to have a vaccine without gelatine?
         hint: >-
-          One type of %{programme_name} vaccine contains gelatine from pigs.
-          An alternative %{programme_name} vaccine is available that does not contain gelatine.
+          One type of %{programme_name} vaccine contains gelatine from pigs. An alternative
+          %{programme_name} vaccine is available that does not contain gelatine.
         "yes": Yes, they want their child to have a vaccine that does not contain gelatine
         "no": Their child can have either type of vaccine
     notes:
@@ -738,16 +736,15 @@ en:
           keep_both: The existing record will stay in Mavis and the uploaded record will be added
         archived:
           apply: >-
-            The uploaded record will replace the archived record, which will be reinstated with
-            any changes
+            The uploaded record will replace the archived record, which will be reinstated with any
+            changes
           discard: The archived record will remain archived and the uploaded record will be deleted
   hosting_environment: This is a %{name} environment. Do not use it to make clinical decisions.
   imports:
     index:
       title: Imports
       title_short: Imports
-      description:
-        Import child, cohort and vaccination records and see important notices
+      description: Import child, cohort and vaccination records and see important notices
       description_national_reporting:
         Upload flu and HPV vaccination records and share them with NHS England
     notices:
@@ -876,13 +873,13 @@ en:
         label: Send reminders
         title: Manage consent reminders
         description: >
-          Mavis automatically sends email and text reminders to parents who have not
-          responded to the initial consent request.
+          Mavis automatically sends email and text reminders to parents who have not responded to
+          the initial consent request.
 
           Automatic reminders are sent a set time before each session.
 
-          You can also send reminders manually. Mavis will then skip the next automatic
-          reminder if it's due to be sent within 3 days.
+          You can also send reminders manually. Mavis will then skip the next automatic reminder if
+          it's due to be sent within 3 days.
         your_schedule: For this session, reminders are sent %{days} (%{weeks}) before each session.
         reminder_dates:
           label: Automatic consent reminder schedule
@@ -903,11 +900,11 @@ en:
       show:
         eligibility_message:
           one: >-
-            There is 1 child with consent for the nasal flu vaccine who
-            does not require triage and does not yet have a PSD in place.
+            There is 1 child with consent for the nasal flu vaccine who does not require triage and
+            does not yet have a PSD in place.
           other: >-
-            There are %{count} children with consent for the nasal flu vaccine
-            who do not require triage and do not yet have a PSD in place.
+            There are %{count} children with consent for the nasal flu vaccine who do not require
+            triage and do not yet have a PSD in place.
   table:
     no_filtered_results: We couldn’t find any children that matched your filters.
     no_results: No results

@@ -57,9 +57,9 @@ jobs:
         id: check-image
         env:
           GIT_REF: >-
-            ${{ inputs.git_reference_for_application_image &&
-            format('origin/{0}', inputs.git_reference_for_application_image) ||
-            github.event.pull_request.head.sha || github.sha }}
+            ${{ inputs.git_reference_for_application_image && format('origin/{0}',
+            inputs.git_reference_for_application_image) || github.event.pull_request.head.sha ||
+            github.sha }}
         run: |
           GIT_REF_SHA=$(git rev-parse "$GIT_REF")
           echo "GIT_REF_SHA=$GIT_REF_SHA" >> "$GITHUB_OUTPUT"
@@ -123,9 +123,9 @@ jobs:
         id: check-image
         env:
           GIT_REF: >-
-            ${{ inputs.git_reference_for_database_image &&
-            format('origin/{0}', inputs.git_reference_for_database_image) ||
-            github.event.pull_request.base.sha || github.sha }}
+            ${{ inputs.git_reference_for_database_image && format('origin/{0}',
+            inputs.git_reference_for_database_image) || github.event.pull_request.base.sha ||
+            github.sha }}
         run: |
           GIT_REF_SHA=$(git rev-parse "$GIT_REF")
           echo "GIT_REF_SHA=$GIT_REF_SHA" >> "$GITHUB_OUTPUT"
@@ -153,8 +153,7 @@ jobs:
       - check-database-image-presence
       - build-and-push-database-image
     if: >-
-      ${{ !cancelled() &&
-      (needs.build-and-push-development-image.result == 'success' ||
+      ${{ !cancelled() && (needs.build-and-push-development-image.result == 'success' ||
       (needs.check-development-image-presence.result == 'success' &&
       needs.build-and-push-development-image.result == 'skipped')) &&
       (needs.build-and-push-database-image.result == 'success' ||
@@ -178,7 +177,9 @@ jobs:
           task-definition-family: assurance-testing-mavis-development-task-definition-template
           container-name: mavis-development-web
           # yamllint disable-line rule:line-length
-          image: 393416225559.dkr.ecr.eu-west-2.amazonaws.com/mavis/development:${{ needs.check-development-image-presence.outputs.application-image-git-ref }}
+          image:
+            393416225559.dkr.ecr.eu-west-2.amazonaws.com/mavis/development:${{
+            needs.check-development-image-presence.outputs.application-image-git-ref }}
       - name: Render task definition database
         id: render-task-definition-database
         uses: aws-actions/amazon-ecs-render-task-definition@v1
@@ -186,7 +187,9 @@ jobs:
           task-definition: ${{ steps.render-task-definition-web.outputs.task-definition }}
           container-name: mavis-development-db
           # yamllint disable-line rule:line-length
-          image: 393416225559.dkr.ecr.eu-west-2.amazonaws.com/mavis/development/postgres_db:${{ needs.check-database-image-presence.outputs.db_git_ref_sha }}
+          image:
+            393416225559.dkr.ecr.eu-west-2.amazonaws.com/mavis/development/postgres_db:${{
+            needs.check-database-image-presence.outputs.db_git_ref_sha }}
       - name: Render task definition sidekiq
         id: render-task-definition-sidekiq
         uses: aws-actions/amazon-ecs-render-task-definition@v1
@@ -194,7 +197,9 @@ jobs:
           task-definition: ${{ steps.render-task-definition-database.outputs.task-definition }}
           container-name: mavis-development-sidekiq
           # yamllint disable-line rule:line-length
-          image: 393416225559.dkr.ecr.eu-west-2.amazonaws.com/mavis/development:${{ needs.check-development-image-presence.outputs.application-image-git-ref }}
+          image:
+            393416225559.dkr.ecr.eu-west-2.amazonaws.com/mavis/development:${{
+            needs.check-development-image-presence.outputs.application-image-git-ref }}
       - name: Prepare deployment
         id: prepare-deployment
         run: |
@@ -216,11 +221,11 @@ jobs:
         uses: aws-actions/amazon-ecs-deploy-task-definition@v2
         id: run-task
         with:
-          task-definition: 'assurance-testing-mavis-development-task-definition.json'
+          task-definition: "assurance-testing-mavis-development-task-definition.json"
           cluster: assurance-testing
           run-task: true
           run-task-subnets: ${{ steps.prepare-deployment.outputs.run-task-subnets }}
-          run-task-launch-type: 'FARGATE'
+          run-task-launch-type: "FARGATE"
           run-task-security-groups: ${{ steps.prepare-deployment.outputs.run-task-security-groups }}
           run-task-assign-public-IP: ENABLED
   wait-for-task-stability:
@@ -353,18 +358,17 @@ jobs:
   call-end-to-end-tests:
     needs: [launch-dockerized-devimage, wait-for-task-stability, find-correct-test-branch]
     if: >-
-      !cancelled() &&
-      needs.launch-dockerized-devimage.result == 'success' &&
+      !cancelled() && needs.launch-dockerized-devimage.result == 'success' &&
       needs.wait-for-task-stability.result == 'success'
-    uses:
-      NHSDigital/manage-vaccinations-in-schools-testing/.github/workflows/end-to-end-tests.yaml@main
+    # yamllint disable-line rule:line-length
+    uses: NHSDigital/manage-vaccinations-in-schools-testing/.github/workflows/end-to-end-tests.yaml@main
     permissions:
       contents: write
       id-token: write
     with:
       cross_service_tests: false
       github_ref: ${{ needs.find-correct-test-branch.outputs.test_branch }}
-      endpoint: 'http://${{ needs.wait-for-task-stability.outputs.container_ip }}:4000'
+      endpoint: "http://${{ needs.wait-for-task-stability.outputs.container_ip }}:4000"
     secrets:
       HTTP_AUTH_TOKEN_FOR_TESTS: ${{ secrets.HTTP_AUTH_TOKEN_FOR_TESTS }}
       MAVIS_TESTING_REPO_ACCESS_TOKEN: ${{ secrets.MAVIS_TESTING_REPO_ACCESS_TOKEN }}
@@ -382,6 +386,5 @@ jobs:
           aws-region: eu-west-2
       - name: Stop dockerized dev image
         run: >-
-          aws ecs stop-task
-          --cluster assurance-testing
-          --task ${{ needs.wait-for-task-stability.outputs.task_arn }}
+          aws ecs stop-task --cluster assurance-testing --task ${{
+          needs.wait-for-task-stability.outputs.task_arn }}
