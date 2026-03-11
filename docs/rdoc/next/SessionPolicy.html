@@ -568,6 +568,8 @@
 
         <li ><a href="#method-i-make_in_progress-3F">make_in_progress?</a></li>
 
+        <li ><a href="#method-i-manage_consent_reminders-3F">manage_consent_reminders?</a></li>
+
         <li ><a href="#method-i-show-3F">show?</a></li>
 
         <li ><a href="#method-i-update-3F">update?</a></li>
@@ -667,6 +669,10 @@
   <span class="ruby-identifier">update?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">record</span>.<span class="ruby-identifier">school?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">record</span>.<span class="ruby-identifier">completed?</span>
 <span class="ruby-keyword">end</span>
 
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">manage_consent_reminders?</span>
+  <span class="ruby-identifier">update?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">record</span>.<span class="ruby-identifier">school?</span>
+<span class="ruby-keyword">end</span>
+
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">make_in_progress?</span> = <span class="ruby-identifier">update?</span>
 
 <span class="ruby-keyword">class</span> <span class="ruby-constant">Scope</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">ApplicationPolicy</span><span class="ruby-operator">::</span><span class="ruby-constant">Scope</span>
@@ -714,6 +720,10 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">invite_to_clinic?</span>
   <span class="ruby-identifier">update?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">record</span>.<span class="ruby-identifier">school?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">record</span>.<span class="ruby-identifier">completed?</span>
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">manage_consent_reminders?</span>
+  <span class="ruby-identifier">update?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">record</span>.<span class="ruby-identifier">school?</span>
 <span class="ruby-keyword">end</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">make_in_progress?</span> = <span class="ruby-identifier">update?</span>
@@ -772,6 +782,10 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">invite_to_clinic?</span>
   <span class="ruby-identifier">update?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">record</span>.<span class="ruby-identifier">school?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">record</span>.<span class="ruby-identifier">completed?</span>
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">manage_consent_reminders?</span>
+  <span class="ruby-identifier">update?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">record</span>.<span class="ruby-identifier">school?</span>
 <span class="ruby-keyword">end</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">make_in_progress?</span> = <span class="ruby-identifier">update?</span>
@@ -858,11 +872,53 @@
             </details>
           </div>
           <div class="method-source-code" id="make_in_progress-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/policies/session_policy.rb, line 18</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/policies/session_policy.rb, line 22</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">make_in_progress?</span> = <span class="ruby-identifier">update?</span>
 
 <span class="ruby-keyword">class</span> <span class="ruby-constant">Scope</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">ApplicationPolicy</span><span class="ruby-operator">::</span><span class="ruby-constant">Scope</span>
   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">resolve</span> = <span class="ruby-identifier">scope</span>.<span class="ruby-identifier">for_team</span>(<span class="ruby-identifier">team</span>)
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-i-manage_consent_reminders-3F" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-manage_consent_reminders-3F" title="Link to this method">
+                <span class="method-name">manage_consent_reminders?</span>
+                <span class="method-args">()</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="manage_consent_reminders-3F-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/policies/session_policy.rb, line 18</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">manage_consent_reminders?</span>
+  <span class="ruby-identifier">update?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">record</span>.<span class="ruby-identifier">school?</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -911,6 +967,10 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">invite_to_clinic?</span>
   <span class="ruby-identifier">update?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">record</span>.<span class="ruby-identifier">school?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">record</span>.<span class="ruby-identifier">completed?</span>
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">manage_consent_reminders?</span>
+  <span class="ruby-identifier">update?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">record</span>.<span class="ruby-identifier">school?</span>
 <span class="ruby-keyword">end</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">make_in_progress?</span> = <span class="ruby-identifier">update?</span>
@@ -962,6 +1022,10 @@
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">invite_to_clinic?</span>
   <span class="ruby-identifier">update?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">record</span>.<span class="ruby-identifier">school?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">record</span>.<span class="ruby-identifier">completed?</span>
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">manage_consent_reminders?</span>
+  <span class="ruby-identifier">update?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">record</span>.<span class="ruby-identifier">school?</span>
 <span class="ruby-keyword">end</span>
 
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">make_in_progress?</span> = <span class="ruby-identifier">update?</span>
