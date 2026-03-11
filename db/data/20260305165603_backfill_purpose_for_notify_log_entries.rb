@@ -5,58 +5,51 @@ class BackfillPurposeForNotifyLogEntries < ActiveRecord::Migration[8.1]
     migration = self.class.name
     started_at = Time.zone.now
 
-    batch_size = 1000
-    total_records = NotifyLogEntry.count
-    total_batches = (total_records / batch_size.to_f).ceil
+    scope = NotifyLogEntry.where(purpose: nil)
+    distinct_pairs = scope.distinct.pluck(:template_id, :type)
 
-    batch_processed = 0
     records_updated = 0
 
-    # Helps us monitor progress in CloudWatch
-    Rails.logger.info(event: "data_migration_start", migration:, total_records:, total_batches:)
+    Rails.logger.info(
+      event: "data_migration_start",
+      migration:,
+      total_records: scope.count,
+      distinct_pairs_count: distinct_pairs.size
+    )
 
-    NotifyLogEntry.find_in_batches(batch_size:) do |notify_log_entries|
-      notify_log_entries.filter_map do |notify_log_entry|
-        template_name = NotifyTemplate.find_by_id(
-          notify_log_entry.template_id,
-          channel: notify_log_entry.type.to_sym
-        )&.name
+    distinct_pairs.each_with_index do |template_id, type, index|
+      template_name = NotifyTemplate.find_by_id(template_id, channel: type.to_sym)&.name
+      next unless template_name
 
-        next unless template_name
+      purpose = NotifyLogEntry.purpose_for_template_name(template_name)
+      next unless purpose
 
-        purpose = NotifyLogEntry.purpose_for_template_name(template_name)
+      updated_count = NotifyLogEntry
+        .where(purpose: nil, template_id:, type:)
+        .update_all(purpose: NotifyLogEntry.purposes.fetch(purpose))
 
-        next unless purpose
-
-        notify_log_entry.update_column(
-          :purpose,
-          NotifyLogEntry.purposes.fetch(purpose)
-        )
-
-        records_updated += 1
-      end
-
-      batch_processed += 1
+      records_updated += updated_count
 
       Rails.logger.info(
-        event: "data_migration_batch",
+        event: "data_migration_pair",
         migration:,
-        records_updated:,
-        batch_size:,
-        batch_processed:,
-        total_batches:,
-        )
+        pair_index: index + 1,
+        total_pairs: distinct_pairs.size,
+        template_id:,
+        type:,
+        purpose:,
+        updated_count:
+      )
     end
 
-    duration_minutes =  ((Time.zone.now - started_at) / 60.0).round
+    duration_minutes = ((Time.zone.now - started_at) / 60.0).round
 
     Rails.logger.info(
       event: "data_migration_finish",
       migration:,
       duration_minutes:,
-      total_records:,
-      records_updated:,
-      )
+      records_updated:
+    )
   end
 
   def down
