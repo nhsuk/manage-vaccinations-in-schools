@@ -35,18 +35,27 @@ class BulkRemoveParentRelationshipsJob < ApplicationJob
 
       invalidate_consents!(user, consents) if remove_option == "all"
 
-      parents_to_check = parent_relationships_to_remove.map(&:parent)
+      parent_ids_to_check = parent_relationships_to_remove.map(&:parent_id).uniq
       patient_ids = parent_relationships_to_remove.map(&:patient_id)
 
+      parent_relationship_ids = parent_relationships_to_remove.map(&:id)
+      ClassImportsParentRelationship.where(
+        parent_relationship_id: parent_relationship_ids
+      ).delete_all
+      CohortImportsParentRelationship.where(
+        parent_relationship_id: parent_relationship_ids
+      ).delete_all
       parent_relationships_to_remove.each(&:destroy!)
 
-      parents_to_check.each do |parent|
-        next if parent.destroyed?
-        next if parent.parent_relationships.exists?
-        next if parent.consents.exists?
+      Parent
+        .where(id: parent_ids_to_check)
+        .find_each do |parent|
+          next if parent.destroyed?
+          next if parent.parent_relationships.exists?
+          next if parent.consents.exists?
 
-        parent.destroy!
-      end
+          parent.destroy!
+        end
 
       PatientStatusUpdaterJob.perform_bulk(patient_ids.zip)
     end
