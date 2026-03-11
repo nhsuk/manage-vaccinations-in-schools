@@ -179,7 +179,12 @@ class CohortImportsController < ApplicationController
         .from_file
         .ready_for_review
         .select(&:inter_team_move?)
-    @new_records = @cohort_import.changesets.ready_for_review.new_patient
+    @new_records =
+      pagy(
+        @cohort_import.changesets.ready_for_review.new_patient.order(
+          :row_number
+        )
+      )
     @auto_matched_records =
       @cohort_import.changesets.ready_for_review.auto_match - @inter_team
     @import_issues =
