@@ -199,10 +199,11 @@ class AppSessionSummaryComponent < ViewComponent::Base
   end
 
   def download_consent_links
-    session.programmes.map do |programme|
-      name = I18n.t(programme.type, scope: :programme_types)
-      label = "Download the #{name} consent form (PDF)"
-      link_to(label, consent_form_download_path(programme))
+    session.programmes.flat_map do |programme|
+      programme.variants.map do |programme_variant|
+        label = "Download the #{programme_variant.name} consent form (PDF)"
+        link_to(label, consent_form_download_path(programme_variant.type))
+      end
     end
   end
 
