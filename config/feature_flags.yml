@@ -45,9 +45,6 @@ import_low_pds_match_rate: Prevent processing uploads with a low pds match rate.
 import_review_screen:
   Enable the import review screen to allow users to review changesets before they are committed.
 
-import_row_count_limit: |
-  Controls whether to limit the number of rows that can be imported in a single CSV file.
-
 import_search_pds: Perform PDS lookups as part of the patient import processing.
 
 ops_tools: Enable the operational support tools; timeline and graph.

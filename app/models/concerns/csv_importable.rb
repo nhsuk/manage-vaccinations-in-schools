@@ -190,7 +190,7 @@ module CSVImportable
   end
 
   def csv_is_not_too_large
-    return unless data && Flipper.enabled?(:import_row_count_limit)
+    return unless data
 
     if rows_count > MAX_CSV_ROWS
       errors.add(:csv, :too_many_rows, count: MAX_CSV_ROWS)
