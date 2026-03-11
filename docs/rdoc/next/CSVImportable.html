@@ -1014,7 +1014,7 @@
           <div class="method-source-code" id="csv_is_not_too_large-source">
             <pre class="ruby"><span class="ruby-comment"># File app/models/concerns/csv_importable.rb, line 192</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">csv_is_not_too_large</span>
-  <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">data</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-constant">Flipper</span>.<span class="ruby-identifier">enabled?</span>(<span class="ruby-value">:import_row_count_limit</span>)
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">data</span>
 
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">rows_count</span> <span class="ruby-operator">&gt;</span> <span class="ruby-constant">MAX_CSV_ROWS</span>
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:csv</span>, <span class="ruby-value">:too_many_rows</span>, <span class="ruby-value">count:</span> <span class="ruby-constant">MAX_CSV_ROWS</span>)
