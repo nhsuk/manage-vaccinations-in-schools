@@ -182,7 +182,7 @@ jobs:
       - run: echo "Proceeding with deployment to $environment"
 
   pre-deploy:
-    name: Pre deploy
+    name: Pre-deploy
     runs-on: ubuntu-latest
     needs: approve-deployments
     permissions:
@@ -362,7 +362,7 @@ jobs:
           fi
         # yamllint enable rule:line-length
   post-deploy:
-    name: Post deploy
+    name: Post-deploy
     runs-on: ubuntu-latest
     needs: [approve-deployments, deploy-service]
     if: ${{ !cancelled() && needs.deploy-service.result != 'failure' }}
@@ -376,6 +376,11 @@ jobs:
         with:
           role-to-assume: arn:aws:iam::${{ env.aws_account_id }}:role/GithubDeployECSService
           aws-region: eu-west-2
+      - name: Download ops task definition artifact
+        uses: actions/download-artifact@v8
+        with:
+          path: ${{ runner.temp }}
+          name: ${{ inputs.environment }}-ops-task-definition
       - name: Register post deploy task definition
         id: register-post-deploy-task-definition
         run: |
