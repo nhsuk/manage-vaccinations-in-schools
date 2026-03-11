@@ -94,7 +94,13 @@ class Schools::InviteToClinicController < Schools::BaseController
               [programme],
               team: current_team,
               academic_year: @academic_year
-            )
+            ) &&
+              patient.notifier.can_send_clinic_invitation?(
+                [programme],
+                team: current_team,
+                academic_year: @academic_year,
+                include_already_invited_programmes: false
+              )
           end
       end
   end
