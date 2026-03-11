@@ -135,6 +135,11 @@ GEM
       io-event (~> 1.11)
       metrics (~> 0.12)
       traces (~> 0.18)
+    async-bus (0.3.2)
+      async
+      io-endpoint
+      io-stream
+      msgpack
     async-cable (0.3.0)
       actioncable-next
       async (~> 2.9)
@@ -166,6 +171,14 @@ GEM
       async
       async-container (~> 0.34)
       string-format (~> 0.2)
+    async-service-supervisor (0.13.0)
+      async-bus
+      async-service (~> 0.15)
+      async-utilization (~> 0.3)
+      io-endpoint
+      memory (~> 0.7)
+      memory-leak (~> 0.10)
+      process-metrics
     async-utilization (0.3.1)
       console (~> 1.0)
     async-websocket (0.30.0)
@@ -483,6 +496,12 @@ GEM
       webrick (~> 1.7)
       webrobots (~> 0.1.2)
     memo_wise (1.13.0)
+    memory (0.12.0)
+      bake (~> 0.15)
+      console
+      msgpack
+    memory-leak (0.10.3)
+      process-metrics (>= 0.10.1)
     method_source (1.1.0)
     metrics (0.15.0)
     mime-types (3.7.0)
@@ -563,6 +582,9 @@ GEM
     prettier_print (1.2.1)
     prettyprint (0.2.0)
     prism (1.9.0)
+    process-metrics (0.11.0)
+      console (~> 1.8)
+      json (~> 2)
     propshaft (1.3.1)
       actionpack (>= 7.0.0)
       activesupport (>= 7.0.0)
@@ -931,6 +953,7 @@ DEPENDENCIES
   array_enum
   asciidoctor
   asciidoctor-diagram
+  async-service-supervisor
   audited!
   aws-sdk-accessanalyzer
   aws-sdk-ec2
