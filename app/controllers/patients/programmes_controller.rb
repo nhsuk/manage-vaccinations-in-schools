@@ -17,16 +17,6 @@ class Patients::ProgrammesController < Patients::BaseController
   def invite_to_clinic
     authorize @patient
 
-    ActiveRecord::Base.transaction do
-      PatientLocation.find_or_create_by!(
-        patient: @patient,
-        location: current_team.generic_clinic,
-        academic_year: @academic_year
-      )
-
-      PatientTeamUpdater.call(patient: @patient.id, team: current_team)
-    end
-
     @patient.notifier.send_clinic_invitation(
       [@programme],
       team: current_team,
