@@ -6,6 +6,7 @@ class CohortImportsController < ApplicationController
   before_action :set_draft_import, only: %i[new create]
   before_action :set_cohort_import,
                 only: %i[show update approve cancel re_review imported_records]
+  before_action :set_open_sections, only: %i[show re_review]
   before_action :set_review_records, only: %i[re_review imported_records]
 
   skip_after_action :verify_policy_scoped, only: %i[new create]
@@ -183,7 +184,8 @@ class CohortImportsController < ApplicationController
       pagy(
         @cohort_import.changesets.ready_for_review.new_patient.order(
           :row_number
-        )
+        ),
+        page_param: :new_records_page
       )
     @auto_matched_records =
       @cohort_import.changesets.ready_for_review.auto_match - @inter_team
@@ -208,4 +210,13 @@ class CohortImportsController < ApplicationController
   end
 
   def error_rows_limit = 100
+
+  def set_open_sections
+    @open_sections =
+      params
+        .keys
+        .map { |key| key.match(/(.+)_page/) }
+        .compact
+        .map { |match| match[1].to_sym }
+  end
 end
