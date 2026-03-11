@@ -64,27 +64,25 @@ class ClassImport < PatientImport
 
     unknown_patients = patients_to_create_moves_for(patients_in_import)
 
-    if Flipper.enabled?(:import_review_screen)
-      valid_changesets =
-        changesets.not_from_file.committing.where(
-          patient_id: unknown_patients.pluck(:id)
-        )
-      valid_patients = Patient.joins(:changesets).merge(valid_changesets)
+    valid_changesets =
+      changesets.not_from_file.committing.where(
+        patient_id: unknown_patients.pluck(:id)
+      )
+    valid_patients = Patient.joins(:changesets).merge(valid_changesets)
 
-      changesets
-        .not_from_file
-        .committing
-        .where.not(id: valid_changesets.ids)
-        .destroy_all
+    changesets
+      .not_from_file
+      .committing
+      .where.not(id: valid_changesets.ids)
+      .destroy_all
 
-      missed_patients = unknown_patients - valid_patients
-      if missed_patients.any? && (processed? || partially_processed?)
-        update_columns(status: :calculating_re_review, processed_at: nil)
-        ReviewClassImportSchoolMoveJob.perform_later(id)
-      end
-
-      unknown_patients = valid_patients
+    missed_patients = unknown_patients - valid_patients
+    if missed_patients.any? && (processed? || partially_processed?)
+      update_columns(status: :calculating_re_review, processed_at: nil)
+      ReviewClassImportSchoolMoveJob.perform_later(id)
     end
+
+    unknown_patients = valid_patients
 
     school_moves =
       unknown_patients.map do |patient|

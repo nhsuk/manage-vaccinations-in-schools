@@ -40,9 +40,6 @@ import_concurrency_per_server: |
   Controls whether to limit the concurrency of the import jobs to be global or
   to be per-server.
 
-import_review_screen: |
-  Enable the import review screen to allow users to review changesets before they are committed.
-
 import_search_pds: Perform PDS lookups as part of the patient import processing.
 
 ops_tools: Enable the operational support tools; timeline and graph.

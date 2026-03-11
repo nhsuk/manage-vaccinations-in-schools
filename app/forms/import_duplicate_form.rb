@@ -77,8 +77,6 @@ class ImportDuplicateForm
   def changeset_for_keep_both
     scope = object.changesets.includes(:import).order(:created_at)
 
-    return scope.last unless Flipper.enabled?(:import_review_screen)
-
     completed_import_statuses = %w[
       processed
       partially_processed
