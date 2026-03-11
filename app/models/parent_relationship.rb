@@ -57,7 +57,7 @@ class ParentRelationship < ApplicationRecord
   end
 
   def label_with_parent
-    unknown? ? parent.label : "#{parent.label} (#{label})"
+    unknown? ? parent.label : "#{parent.label} (#{label.downcase})"
   end
 
   def ordinal_label
