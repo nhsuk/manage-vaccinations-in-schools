@@ -148,10 +148,9 @@ jobs:
         run: docker load -i image.tar
       - name: Tag Docker image
         run: >-
-          docker tag
-          mavis-${{ matrix.image_type }}:latest
-          "${{ steps.login-ecr.outputs.registry }}/mavis/${{ matrix.image_type }}":"$git_ref"
+          docker tag mavis-${{ matrix.image_type }}:latest "${{ steps.login-ecr.outputs.registry
+          }}/mavis/${{ matrix.image_type }}":"$git_ref"
       - name: Push Docker image
         run: >-
-          docker push
-          "${{ steps.login-ecr.outputs.registry }}/mavis/${{ matrix.image_type }}":"$git_ref"
+          docker push "${{ steps.login-ecr.outputs.registry }}/mavis/${{ matrix.image_type
+          }}":"$git_ref"

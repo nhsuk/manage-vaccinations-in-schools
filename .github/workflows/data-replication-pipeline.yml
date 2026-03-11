@@ -1,8 +1,7 @@
 name: Deploy data replication
 run-name: >-
-  Deploy data replication
-  from ${{ inputs.git_ref_to_deploy || github.ref_name }}
-  to ${{ inputs.environment }}
+  Deploy data replication from ${{ inputs.git_ref_to_deploy || github.ref_name }} to ${{
+  inputs.environment }}
 
 on:
   workflow_dispatch:
@@ -19,8 +18,7 @@ on:
           - sandbox-alpha
           - sandbox-beta
       git_ref_to_deploy:
-        description:
-          | # Use blank unicode character (U+2800) to force line-break
+        description: | # Use blank unicode character (U+2800) to force line-break
           Use code from: ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
           (Git ref to deploy, for example, a tag, branch name or commit SHA. Will use workflow ref
           if not provided.)
@@ -41,9 +39,10 @@ permissions: {}
 env:
   environment: ${{ inputs.environment }}
   git_ref_to_deploy: ${{ inputs.git_ref_to_deploy || github.sha }}
-  aws_role: ${{ inputs.environment == 'production'
-    && 'arn:aws:iam::820242920762:role/GithubDeployDataReplicationInfrastructure'
-    || 'arn:aws:iam::393416225559:role/GithubDeployDataReplicationInfrastructure' }}
+  aws_role:
+    ${{ inputs.environment == 'production' &&
+    'arn:aws:iam::820242920762:role/GithubDeployDataReplicationInfrastructure' ||
+    'arn:aws:iam::393416225559:role/GithubDeployDataReplicationInfrastructure' }}
   aws_account_id: ${{ inputs.environment == 'production' && '820242920762' || '393416225559' }}
 
 concurrency:
@@ -132,13 +131,14 @@ jobs:
             mavis-data-replication-task-definition-${{ inputs.environment }}-template
           container-name: application
           # yamllint disable-line rule:line-length
-          image: ${{ env.aws_account_id }}.dkr.ecr.eu-west-2.amazonaws.com/mavis/webapp@${{ steps.get-image-digest.outputs.digest }}
+          image:
+            ${{ env.aws_account_id }}.dkr.ecr.eu-west-2.amazonaws.com/mavis/webapp@${{
+            steps.get-image-digest.outputs.digest }}
           environment-variables: ${{ steps.parse-environment-variables.outputs.parsed_env_vars }}
       - name: Rename task definition file
         run: >-
-          mv
-          ${{ steps.create-task-definition.outputs.task-definition }}
-          ${{ runner.temp }}/data-replication-task-definition.json
+          mv ${{ steps.create-task-definition.outputs.task-definition }} ${{ runner.temp
+          }}/data-replication-task-definition.json
       - name: Upload artifact for data-replication task definition
         uses: actions/upload-artifact@v7
         with:

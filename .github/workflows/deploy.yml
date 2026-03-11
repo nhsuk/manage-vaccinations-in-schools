@@ -13,8 +13,7 @@ on:
   workflow_dispatch:
     inputs:
       git_ref_to_deploy:
-        description:
-          | # Use blank unicode character (U+2800) to force line-break
+        description: | # Use blank unicode character (U+2800) to force line-break
           Use code from: ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
           (Git ref to deploy, for example, a tag, branch name or commit SHA. Will use workflow ref
           if not provided.)
@@ -99,8 +98,7 @@ jobs:
       fail-fast: true
       matrix:
         service: >-
-          ${{ inputs.server_types == 'all' &&
-          fromJSON('["web", "sidekiq", "ops"]') ||
+          ${{ inputs.server_types == 'all' && fromJSON('["web", "sidekiq", "ops"]') ||
           fromJSON(format('["{0}"]', inputs.server_types)) }}
     env:
       repository_name: ${{ matrix.service == 'ops' && 'mavis/ops' || 'mavis/webapp' }}
@@ -134,14 +132,15 @@ jobs:
             mavis-${{ matrix.service }}-task-definition-${{ inputs.environment }}-template
           container-name: application
           # yamllint disable-line rule:line-length
-          image: ${{ env.aws_account_id }}.dkr.ecr.eu-west-2.amazonaws.com/${{ env.repository_name }}@${{ steps.get-image-digest.outputs.digest }}
+          image:
+            ${{ env.aws_account_id }}.dkr.ecr.eu-west-2.amazonaws.com/${{ env.repository_name }}@${{
+            steps.get-image-digest.outputs.digest }}
           environment-variables: |
             APP_VERSION=${{ env.app_version }}
       - name: Rename task definition file
         run: >-
-          mv
-          ${{ steps.create-task-definition.outputs.task-definition }}
-          ${{ runner.temp }}/${{ matrix.service }}-task-definition.json
+          mv ${{ steps.create-task-definition.outputs.task-definition }} ${{ runner.temp }}/${{
+          matrix.service }}-task-definition.json
       - name: Upload artifact for ${{ matrix.service }} task definition
         uses: actions/upload-artifact@v7
         with:
@@ -321,8 +320,7 @@ jobs:
       fail-fast: false
       matrix:
         service: >-
-          ${{ inputs.server_types == 'all' &&
-          fromJSON('["web", "sidekiq", "ops"]') ||
+          ${{ inputs.server_types == 'all' && fromJSON('["web", "sidekiq", "ops"]') ||
           fromJSON(format('["{0}"]', inputs.server_types)) }}
     steps:
       - name: Configure AWS Credentials
@@ -499,8 +497,7 @@ jobs:
     steps:
       - name: Notify deployment success
         if: >-
-          ${{ needs.deploy-service.result == 'success' ||
-          needs.post-deploy.result == 'success' }}
+          ${{ needs.deploy-service.result == 'success' || needs.post-deploy.result == 'success' }}
         uses: slackapi/slack-github-action@91efab103c0de0a537f72a35f6b8cda0ee76bf0a
         with:
           webhook: ${{ secrets.SLACK_MAVIS_RELEASES_WEBHOOK_URL }}
@@ -514,8 +511,7 @@ jobs:
                   text: "*${{ env.app_version }}* is deployed :ship:"
       - name: Notify deployment failure
         if: >-
-          ${{ needs.deploy-service.result == 'failure' ||
-          needs.pre-deploy.result == 'failure' }}
+          ${{ needs.deploy-service.result == 'failure' || needs.pre-deploy.result == 'failure' }}
         uses: slackapi/slack-github-action@91efab103c0de0a537f72a35f6b8cda0ee76bf0a
         with:
           webhook: ${{ secrets.SLACK_MAVIS_RELEASES_WEBHOOK_URL }}
