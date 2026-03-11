@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_03_152926) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_10_195113) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pg_catalog.plpgsql"
@@ -101,6 +101,36 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_03_152926) do
     t.bigint "vaccine_id", null: false
     t.index ["team_id", "number", "expiry", "vaccine_id"], name: "index_batches_on_team_id_and_number_and_expiry_and_vaccine_id", unique: true
     t.index ["vaccine_id"], name: "index_batches_on_vaccine_id"
+  end
+
+  create_table "careplus_export_vaccination_records", primary_key: ["careplus_export_id", "vaccination_record_id"], force: :cascade do |t|
+    t.bigint "careplus_export_id", null: false
+    t.integer "change_type", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "vaccination_record_id", null: false
+    t.index ["careplus_export_id"], name: "idx_on_careplus_export_id_8ce4ed1ff0"
+    t.index ["vaccination_record_id"], name: "idx_on_vaccination_record_id_d4c93aefb7"
+  end
+
+  create_table "careplus_exports", force: :cascade do |t|
+    t.integer "academic_year", null: false
+    t.datetime "created_at", null: false
+    t.text "csv_data"
+    t.text "csv_filename"
+    t.datetime "csv_removed_at"
+    t.date "date_from", null: false
+    t.date "date_to", null: false
+    t.enum "programme_types", null: false, array: true, enum_type: "programme_type"
+    t.datetime "scheduled_at", null: false
+    t.datetime "sent_at"
+    t.integer "status", default: 0, null: false
+    t.bigint "team_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["programme_types"], name: "index_careplus_exports_on_programme_types", using: :gin
+    t.index ["status", "scheduled_at"], name: "index_careplus_exports_on_status_and_scheduled_at"
+    t.index ["team_id", "academic_year"], name: "index_careplus_exports_on_team_id_and_academic_year"
+    t.index ["team_id"], name: "index_careplus_exports_on_team_id"
   end
 
   create_table "class_imports", force: :cascade do |t|
@@ -1044,6 +1074,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_03_152926) do
   add_foreign_key "attendance_records", "patients"
   add_foreign_key "batches", "teams"
   add_foreign_key "batches", "vaccines"
+  add_foreign_key "careplus_export_vaccination_records", "careplus_exports", on_delete: :cascade
+  add_foreign_key "careplus_export_vaccination_records", "vaccination_records"
+  add_foreign_key "careplus_exports", "teams"
   add_foreign_key "class_imports", "locations"
   add_foreign_key "class_imports", "teams"
   add_foreign_key "class_imports", "users", column: "uploaded_by_user_id"
