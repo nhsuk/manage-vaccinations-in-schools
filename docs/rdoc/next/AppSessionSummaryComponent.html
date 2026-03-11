@@ -934,10 +934,11 @@
   <span class="ruby-keyword">end</span>
 
   <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">download_consent_links</span>
-    <span class="ruby-identifier">session</span>.<span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">map</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">programme</span><span class="ruby-operator">|</span>
-      <span class="ruby-identifier">name</span> = <span class="ruby-constant">I18n</span>.<span class="ruby-identifier">t</span>(<span class="ruby-identifier">programme</span>.<span class="ruby-identifier">type</span>, <span class="ruby-value">scope:</span> <span class="ruby-value">:programme_types</span>)
-      <span class="ruby-identifier">label</span> = <span class="ruby-node">&quot;Download the #{name} consent form (PDF)&quot;</span>
-      <span class="ruby-identifier">link_to</span>(<span class="ruby-identifier">label</span>, <span class="ruby-identifier">consent_form_download_path</span>(<span class="ruby-identifier">programme</span>))
+    <span class="ruby-identifier">session</span>.<span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">flat_map</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">programme</span><span class="ruby-operator">|</span>
+      <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">variants</span>.<span class="ruby-identifier">map</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">programme_variant</span><span class="ruby-operator">|</span>
+        <span class="ruby-identifier">label</span> = <span class="ruby-node">&quot;Download the #{programme_variant.name} consent form (PDF)&quot;</span>
+        <span class="ruby-identifier">link_to</span>(<span class="ruby-identifier">label</span>, <span class="ruby-identifier">consent_form_download_path</span>(<span class="ruby-identifier">programme_variant</span>.<span class="ruby-identifier">type</span>))
+      <span class="ruby-keyword">end</span>
     <span class="ruby-keyword">end</span>
   <span class="ruby-keyword">end</span>
 
@@ -983,7 +984,7 @@
             </details>
           </div>
           <div class="method-source-code" id="classes-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/components/app_session_summary_component.rb, line 209</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/components/app_session_summary_component.rb, line 210</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">classes</span>
   <span class="ruby-identifier">full_width</span> <span class="ruby-operator">?</span> <span class="ruby-node">%w[app-summary-list--full-width]</span> <span class="ruby-operator">:</span> []
 <span class="ruby-keyword">end</span></pre>
@@ -1229,10 +1230,11 @@
           <div class="method-source-code" id="download_consent_links-source">
             <pre class="ruby"><span class="ruby-comment"># File app/components/app_session_summary_component.rb, line 201</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">download_consent_links</span>
-  <span class="ruby-identifier">session</span>.<span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">map</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">programme</span><span class="ruby-operator">|</span>
-    <span class="ruby-identifier">name</span> = <span class="ruby-constant">I18n</span>.<span class="ruby-identifier">t</span>(<span class="ruby-identifier">programme</span>.<span class="ruby-identifier">type</span>, <span class="ruby-value">scope:</span> <span class="ruby-value">:programme_types</span>)
-    <span class="ruby-identifier">label</span> = <span class="ruby-node">&quot;Download the #{name} consent form (PDF)&quot;</span>
-    <span class="ruby-identifier">link_to</span>(<span class="ruby-identifier">label</span>, <span class="ruby-identifier">consent_form_download_path</span>(<span class="ruby-identifier">programme</span>))
+  <span class="ruby-identifier">session</span>.<span class="ruby-identifier">programmes</span>.<span class="ruby-identifier">flat_map</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">programme</span><span class="ruby-operator">|</span>
+    <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">variants</span>.<span class="ruby-identifier">map</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">programme_variant</span><span class="ruby-operator">|</span>
+      <span class="ruby-identifier">label</span> = <span class="ruby-node">&quot;Download the #{programme_variant.name} consent form (PDF)&quot;</span>
+      <span class="ruby-identifier">link_to</span>(<span class="ruby-identifier">label</span>, <span class="ruby-identifier">consent_form_download_path</span>(<span class="ruby-identifier">programme_variant</span>.<span class="ruby-identifier">type</span>))
+    <span class="ruby-keyword">end</span>
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
