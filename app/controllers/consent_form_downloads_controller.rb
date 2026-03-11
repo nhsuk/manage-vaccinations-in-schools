@@ -3,7 +3,7 @@
 class ConsentFormDownloadsController < ApplicationController
   skip_after_action :verify_policy_scoped
 
-  CONSENT_FORM_TYPES = %w[flu hpv menacwy mmr td_ipv].freeze
+  CONSENT_FORM_TYPES = %w[flu hpv menacwy mmr mmrv td_ipv].freeze
 
   def show
     authorize ConsentForm, :download?
