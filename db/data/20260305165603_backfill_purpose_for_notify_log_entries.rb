@@ -17,7 +17,7 @@ class BackfillPurposeForNotifyLogEntries < ActiveRecord::Migration[8.1]
       distinct_pairs_count: distinct_pairs.size
     )
 
-    distinct_pairs.each_with_index do |template_id, type, index|
+    distinct_pairs.each_with_index do |(template_id, type), index|
       template_name = NotifyTemplate.find_by_id(template_id, channel: type.to_sym)&.name
       next unless template_name
 
