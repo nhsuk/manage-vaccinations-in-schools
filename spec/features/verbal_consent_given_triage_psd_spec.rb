@@ -65,12 +65,12 @@ describe "Verbal consent" do
       "Choose who you are trying to get consent from"
     )
 
-    choose "#{@parent.full_name} (#{@patient.parent_relationships.first.label})"
+    choose "#{@parent.full_name} (#{@patient.parent_relationships.first.label.downcase})"
     click_button "Continue"
 
     # Details for parent or guardian
     expect(page).to have_content(
-      "Details for #{@parent.full_name} (#{@patient.parent_relationships.first.label})"
+      "Details for #{@parent.full_name} (#{@patient.parent_relationships.first.label.downcase})"
     )
     # don't change any details
     click_button "Continue"
