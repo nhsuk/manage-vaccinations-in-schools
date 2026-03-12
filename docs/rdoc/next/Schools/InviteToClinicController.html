@@ -712,7 +712,7 @@
 
   <span class="ruby-keyword">if</span> <span class="ruby-ivar">@form</span>.<span class="ruby-identifier">valid?</span>
     <span class="ruby-identifier">clinic_notifcations</span> =
-      <span class="ruby-ivar">@eligible_patients_not_vaccinated</span>.<span class="ruby-identifier">filter_map</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">patient</span><span class="ruby-operator">|</span>
+      <span class="ruby-ivar">@patients_to_invite</span>.<span class="ruby-identifier">filter_map</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">patient</span><span class="ruby-operator">|</span>
         <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">notifier</span>.<span class="ruby-identifier">send_clinic_invitation</span>(
           <span class="ruby-constant">Programme</span>.<span class="ruby-identifier">find_all</span>(<span class="ruby-ivar">@form</span>.<span class="ruby-identifier">programme_types</span>),
           <span class="ruby-value">team:</span> <span class="ruby-identifier">current_team</span>,
