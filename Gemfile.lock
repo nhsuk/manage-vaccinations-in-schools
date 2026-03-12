@@ -326,7 +326,7 @@ GEM
       railties (>= 6.1.0)
     faker (3.6.1)
       i18n (>= 1.8.11, < 2)
-    falcon (0.55.0)
+    falcon (0.55.1)
       async
       async-container (~> 0.20)
       async-http (~> 0.75)
