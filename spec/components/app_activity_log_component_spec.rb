@@ -179,8 +179,8 @@ describe AppActivityLogComponent do
         patient:,
         session:,
         performed_at: Date.new(2025, 1, 6),
+        created_at: Time.zone.local(2025, 2, 15, 14, 33, 23),
         performed_by: nil,
-        reported_at: Time.zone.local(2025, 2, 15, 14, 33, 23),
         source: :manual_report,
         vaccine: nil
       )
@@ -191,8 +191,8 @@ describe AppActivityLogComponent do
         patient:,
         session: nil,
         performed_at: Date.new(2025, 1, 24),
+        created_at: Time.zone.local(2025, 2, 15, 14, 33, 23),
         performed_by: nil,
-        reported_at: Time.zone.local(2025, 2, 15, 14, 33, 23),
         source: :historical_upload,
         vaccine: nil
       )
