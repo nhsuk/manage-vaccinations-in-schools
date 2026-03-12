@@ -69,6 +69,28 @@ describe "Parental consent" do
     then_the_nurse_should_see_home_schooled
   end
 
+  scenario "submitting a consent form with mismatched contact details warns existing parent" do
+    stub_pds_search_to_return_no_patients
+
+    given_an_hpv_programme_is_underway
+    and_the_patient_has_a_parent_with_known_contact_details
+
+    when_i_go_to_the_consent_form
+    and_i_fill_in_my_childs_name_and_birthday
+    when_i_choose_yes # home educated
+    then_i_see_the_parent_step
+
+    when_i_give_consent
+    and_i_answer_no_to_all_the_medical_questions
+    then_i_can_check_my_answers
+
+    when_i_submit_the_consent_form
+    and_i_refuse_to_answer_questions_on_ethnicity
+    then_i_see_a_confirmation_page_in_clinic
+
+    then_the_existing_parent_receives_a_contact_details_mismatch_warning
+  end
+
   scenario "Child attending a clinic is not in education" do
     stub_pds_search_to_return_no_patients
 
@@ -243,6 +265,7 @@ describe "Parental consent" do
     expect(page).not_to have_content("at school")
 
     perform_enqueued_jobs # match consent form with patient
+    expect_email_to "jane@example.com", :consent_confirmation_clinic, :any
   end
 
   def when_the_nurse_checks_the_school_moves
@@ -305,5 +328,29 @@ describe "Parental consent" do
 
     choose "No, skip the ethnicity questions"
     click_on "Continue"
+  end
+
+  def and_the_patient_has_a_parent_with_known_contact_details
+    @existing_parent =
+      create(
+        :parent,
+        email: "original@example.com",
+        phone: "07700 900100",
+        phone_receive_updates: true
+      )
+    create(
+      :parent_relationship,
+      :mother,
+      patient: @child,
+      parent: @existing_parent
+    )
+  end
+
+  def then_the_existing_parent_receives_a_contact_details_mismatch_warning
+    perform_enqueued_jobs
+    expect_email_to "original@example.com",
+                    :consent_unknown_contact_details_warning,
+                    :any
+    expect_sms_to "07700 900100", :consent_unknown_contact_details_warning, :any
   end
 end

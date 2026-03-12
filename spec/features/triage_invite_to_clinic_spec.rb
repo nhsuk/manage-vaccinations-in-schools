@@ -52,9 +52,41 @@ describe "Triage" do
     and_i_am_able_to_update_the_triage
   end
 
+  scenario "invite to clinic sends LPT-specific email for teams with ODS code RT5" do
+    given_a_programme_with_a_running_session_for_team(ods_code: "RT5")
+    and_i_am_signed_in
+    and_a_patient_who_needs_triage_exists
+
+    when_i_go_to_the_patients_tab
+    when_i_click_on_a_patient
+    and_i_enter_a_note_and_invite_to_clinic
+    then_i_see_an_alert_saying_the_record_was_saved
+    and_a_vaccination_at_clinic_rt5_email_is_sent_to_the_parent
+  end
+
+  scenario "invite to clinic sends CWPT-specific email for teams with ODS code RYG" do
+    given_a_programme_with_a_running_session_for_team(ods_code: "RYG")
+    and_i_am_signed_in
+    and_a_patient_who_needs_triage_exists
+
+    when_i_go_to_the_patients_tab
+    when_i_click_on_a_patient
+    and_i_enter_a_note_and_invite_to_clinic
+    then_i_see_an_alert_saying_the_record_was_saved
+    and_a_vaccination_at_clinic_ryg_email_is_sent_to_the_parent
+  end
+
   def given_a_programme_with_a_running_session
     programmes = [Programme.hpv]
     @team = create(:team, :with_one_nurse, programmes:)
+    @school = create(:school, team: @team)
+
+    @session = create(:session, team: @team, programmes:, location: @school)
+  end
+
+  def given_a_programme_with_a_running_session_for_team(ods_code:)
+    programmes = [Programme.hpv]
+    @team = create(:team, :with_one_nurse, programmes:, ods_code:)
     @school = create(:school, team: @team)
 
     @session = create(:session, team: @team, programmes:, location: @school)
@@ -131,6 +163,16 @@ describe "Triage" do
   def and_a_vaccination_at_clinic_email_is_sent_to_the_parent
     expect_email_to @patient.consents.first.parent.email,
                     :triage_vaccination_at_clinic
+  end
+
+  def and_a_vaccination_at_clinic_rt5_email_is_sent_to_the_parent
+    expect_email_to @patient.consents.first.parent.email,
+                    :triage_vaccination_at_clinic_rt5
+  end
+
+  def and_a_vaccination_at_clinic_ryg_email_is_sent_to_the_parent
+    expect_email_to @patient.consents.first.parent.email,
+                    :triage_vaccination_at_clinic_ryg
   end
 
   def when_i_filter_by_invited_to_clinic

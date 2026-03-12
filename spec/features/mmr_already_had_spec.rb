@@ -91,6 +91,18 @@ describe "MMR/MMRV" do
     then_i_see_the_mmr_date_instead_of_the_mmr_or_mmrv_page
   end
 
+  scenario "parents are notified when their child's prior vaccination is added to the record" do
+    given_an_mmr_programme_with_a_session
+    and_a_patient_with_a_consenting_parent_is_in_the_session
+    and_the_patients_prior_vaccination_is_recorded
+
+    when_the_status_updater_runs
+
+    when_the_prior_vaccination_notification_is_sent
+    then_the_parent_receives_a_vaccination_already_had_email
+    and_the_parent_receives_a_vaccination_already_had_sms
+  end
+
   scenario "record a patient born after January 2020 as already had their 2nd MMRV dose outside the school session" do
     given_an_mmr_programme_with_a_session
     and_a_patient_is_in_the_session_born_after_january_2020
@@ -430,5 +442,49 @@ describe "MMR/MMRV" do
         "MMRV Record added to Mavis 1 July 2025 at 12:00am · " \
         "Vaccination given #{@vaccination_date.strftime("%-d %B %Y")}"
     )
+  end
+
+  def and_a_patient_with_a_consenting_parent_is_in_the_session
+    @parent = create(:parent, phone_receive_updates: true)
+    @patient =
+      create(
+        :patient,
+        session: @session,
+        date_of_birth: Date.new(2020, 1, 1),
+        parents: [@parent]
+      )
+    create(
+      :consent,
+      :given,
+      patient: @patient,
+      programme: @programme,
+      parent: @parent,
+      team: @session.team
+    )
+  end
+
+  def and_the_patients_prior_vaccination_is_recorded
+    @vaccination_record =
+      create(
+        :vaccination_record,
+        :already_had,
+        :sourced_from_manual_report,
+        patient: @patient,
+        programme: @programme,
+        session: @session,
+        performed_at: 6.months.ago
+      )
+  end
+
+  def when_the_prior_vaccination_notification_is_sent
+    AlreadyHadNotificationSender.call(vaccination_record: @vaccination_record)
+  end
+
+  def then_the_parent_receives_a_vaccination_already_had_email
+    expect_email_to @parent.email, :vaccination_already_had
+  end
+
+  def and_the_parent_receives_a_vaccination_already_had_sms
+    expect_sms_to @parent.phone, :vaccination_already_had, :any
   end
 end

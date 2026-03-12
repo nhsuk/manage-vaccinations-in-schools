@@ -3,7 +3,7 @@
 describe "School sessions" do
   around { |example| travel_to(Time.zone.local(2024, 2, 18)) { example.run } }
 
-  scenario "adding a new session, closing consent, and closing the session" do
+  scenario "adding a new session, closing consent, closing the session, then sending clinic invitations" do
     given_my_team_is_running_an_hpv_vaccination_programme
     and_i_am_signed_in
 
@@ -76,6 +76,34 @@ describe "School sessions" do
     and_the_parent_receives_an_invitation
   end
 
+  scenario "sending clinic invitations to unvaccinated children uses RT5-specific template for RT5 teams" do
+    given_my_team_is_running_an_hpv_vaccination_programme_for_ods_code("RT5")
+    and_i_am_signed_in
+
+    when_i_go_to_todays_sessions_as_a_nurse
+    and_i_go_to_completed_sessions
+    when_i_click_on_the_school
+    and_i_click_on_send_invitations
+    then_i_see_the_send_invitations_page
+    when_i_click_on_send_invitations
+    then_i_see_the_invitation_confirmation
+    then_the_parent_receives_an_rt5_clinic_invitation
+  end
+
+  scenario "sending clinic invitations to unvaccinated children uses RYG-specific template for RYG teams" do
+    given_my_team_is_running_an_hpv_vaccination_programme_for_ods_code("RYG")
+    and_i_am_signed_in
+
+    when_i_go_to_todays_sessions_as_a_nurse
+    and_i_go_to_completed_sessions
+    when_i_click_on_the_school
+    and_i_click_on_send_invitations
+    then_i_see_the_send_invitations_page
+    when_i_click_on_send_invitations
+    then_i_see_the_invitation_confirmation
+    then_the_parent_receives_a_ryg_clinic_invitation
+  end
+
   def given_my_team_is_running_an_hpv_vaccination_programme
     @programme = Programme.hpv
     @other_programme = Programme.flu
@@ -106,26 +134,26 @@ describe "School sessions" do
         programmes: [@programme, @other_programme]
       )
 
-    patient_already_in_clinic_without_invitiation =
+    patient_already_in_clinic_without_invitation =
       create(:patient, year_group: 8, location: @location)
     create(
       :patient_location,
-      patient: patient_already_in_clinic_without_invitiation,
+      patient: patient_already_in_clinic_without_invitation,
       session: clinic_session
     )
 
-    patient_already_in_clinic_with_invitiation =
+    patient_already_in_clinic_with_invitation =
       create(:patient, year_group: 8, location: @location)
     create(
       :patient_location,
-      patient: patient_already_in_clinic_with_invitiation,
+      patient: patient_already_in_clinic_with_invitation,
       session: clinic_session
     )
     create(
       :clinic_notification,
       :initial_invitation,
       session: clinic_session,
-      patient: patient_already_in_clinic_with_invitiation
+      patient: patient_already_in_clinic_with_invitation
     )
   end
 
@@ -422,5 +450,96 @@ describe "School sessions" do
     perform_enqueued_jobs
 
     expect_email_to @parent.email, :clinic_initial_invitation
+    expect_sms_to @parent.phone, :clinic_initial_invitation, :any
+  end
+
+  def given_my_team_is_running_an_hpv_vaccination_programme_for_ods_code(
+    ods_code
+  )
+    @programme = Programme.hpv
+    @other_programme = Programme.flu
+
+    programmes = [@programme, @other_programme]
+
+    @team =
+      create(
+        :team,
+        :with_one_nurse,
+        :with_generic_clinic,
+        programmes:,
+        ods_code:
+      )
+    @location = create(:school, :secondary, team: @team, programmes:)
+
+    @parent = create(:parent)
+
+    @patient =
+      create(
+        :patient,
+        :consent_no_response,
+        year_group: 8,
+        location: @location,
+        parents: [@parent],
+        programmes:
+      )
+
+    school_session =
+      create(
+        :session,
+        :completed,
+        team: @team,
+        location: @location,
+        programmes: [@programme, @other_programme]
+      )
+
+    create(
+      :attendance_record,
+      :present,
+      patient: @patient,
+      session: school_session
+    )
+
+    clinic_session =
+      create(
+        :session,
+        date: 1.month.from_now.to_date,
+        team: @team,
+        location: @team.generic_clinic,
+        programmes: [@programme, @other_programme]
+      )
+
+    patient_already_in_clinic_without_invitation =
+      create(:patient, year_group: 8, location: @location)
+    create(
+      :patient_location,
+      patient: patient_already_in_clinic_without_invitation,
+      session: clinic_session
+    )
+
+    patient_already_in_clinic_with_invitation =
+      create(:patient, year_group: 8, location: @location)
+    create(
+      :patient_location,
+      patient: patient_already_in_clinic_with_invitation,
+      session: clinic_session
+    )
+    create(
+      :clinic_notification,
+      :initial_invitation,
+      session: clinic_session,
+      patient: patient_already_in_clinic_with_invitation
+    )
+  end
+
+  def then_the_parent_receives_an_rt5_clinic_invitation
+    perform_enqueued_jobs
+    expect_email_to @parent.email, :clinic_initial_invitation_rt5
+    expect_sms_to @parent.phone, :clinic_initial_invitation_rt5, :any
+  end
+
+  def then_the_parent_receives_a_ryg_clinic_invitation
+    perform_enqueued_jobs
+    expect_email_to @parent.email, :clinic_initial_invitation_ryg
+    expect_sms_to @parent.phone, :clinic_initial_invitation_ryg, :any
   end
 end

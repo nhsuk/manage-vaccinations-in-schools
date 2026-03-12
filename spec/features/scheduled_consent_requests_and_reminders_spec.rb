@@ -43,9 +43,16 @@ describe "Scheduled consent requests and reminders" do
     ["07700 900000", "07700 900001", "07700 900002", "07700 900003"]
   end
 
+  let(:mmrv_parent_emails) do
+    %w[parent1.child3@example.com parent2.child3@example.com]
+  end
+
+  let(:mmrv_parent_phones) { ["07700 900004", "07700 900005"] }
+
   scenario "Consent requests and reminders are sent automatically" do
     given_my_team_is_running_all_vaccination_programmes
     and_one_unscheduled_session_exists_with_two_children_and_two_parents_each
+    and_an_mmrv_eligible_child_with_two_parents_exists
     and_i_am_signed_in
 
     when_i_go_to_my_team_page
@@ -75,7 +82,7 @@ describe "Scheduled consent requests and reminders" do
       Programme.td_ipv
     ]
     @team = create(:team, :with_one_nurse, :with_generic_clinic, programmes:)
-    @location = create(:school, :secondary, team: @team)
+    @location = create(:school, team: @team)
     @session =
       create(
         :session,
@@ -114,6 +121,33 @@ describe "Scheduled consent requests and reminders" do
         parents:
       )
     end
+  end
+
+  def and_an_mmrv_eligible_child_with_two_parents_exists
+    parents = [
+      create(
+        :parent,
+        email: "parent1.child3@example.com",
+        phone: "07700900004",
+        phone_receive_updates: true
+      ),
+      create(
+        :parent,
+        email: "parent2.child3@example.com",
+        phone: "07700900005",
+        phone_receive_updates: true
+      )
+    ]
+    # Child3 is born after the MMRV eligibility cutoff (2020-01-01) so they
+    # receive MMRV consent request and reminder emails.
+    create(
+      :patient,
+      date_of_birth: Date.new(2020, 6, 1),
+      session: @session,
+      given_name: "Child3",
+      family_name: "Test",
+      parents:
+    )
   end
 
   def and_i_am_signed_in
@@ -205,6 +239,16 @@ describe "Scheduled consent requests and reminders" do
     parent_phones.each do |phone|
       expect_sms_to(phone, :consent_school_request, :any)
     end
+
+    mmrv_parent_emails.each do |email|
+      expect(email_deliveries).to include(
+        matching_notify_email(to: email, template: :consent_school_request_mmrv)
+      )
+    end
+
+    mmrv_parent_phones.each do |phone|
+      expect_sms_to(phone, :consent_school_request, :any)
+    end
   end
 
   def then_all_four_parents_received_all_programme_initial_reminders
@@ -223,6 +267,19 @@ describe "Scheduled consent requests and reminders" do
     parent_phones.each do |phone|
       expect_sms_to(phone, :consent_school_reminder, :any)
     end
+
+    mmrv_parent_emails.each do |email|
+      expect(email_deliveries).to include(
+        matching_notify_email(
+          to: email,
+          template: :consent_school_initial_reminder_mmrv
+        )
+      )
+    end
+
+    mmrv_parent_phones.each do |phone|
+      expect_sms_to(phone, :consent_school_reminder, :any)
+    end
   end
 
   def then_all_four_parents_received_all_programme_subsequent_reminders
@@ -239,6 +296,19 @@ describe "Scheduled consent requests and reminders" do
     end
 
     parent_phones.each do |phone|
+      expect_sms_to(phone, :consent_school_reminder, :any)
+    end
+
+    mmrv_parent_emails.each do |email|
+      expect(email_deliveries).to include(
+        matching_notify_email(
+          to: email,
+          template: :consent_school_subsequent_reminder_mmrv
+        )
+      )
+    end
+
+    mmrv_parent_phones.each do |phone|
       expect_sms_to(phone, :consent_school_reminder, :any)
     end
   end
