@@ -80,6 +80,7 @@ Style/FrozenStringLiteralComment:
 
 Style/NumericLiterals:
   Exclude:
+    - db/data_schema.rb
     - db/schema.rb
 
 Rails/ApplicationController:
