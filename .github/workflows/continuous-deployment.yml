@@ -25,8 +25,8 @@ jobs:
       run_pre_deploy_migrations: false
   end-to-end-tests:
     needs: [deploy]
-    if: ${{ contains(needs.deploy.result, 'success') && github.ref_name == 'next' }}
     uses: ./.github/workflows/call-end-to-end-tests.yml
+    secrets: inherit
     with:
       cross_service_tests: true
       endpoint: https://qa.mavistesting.com
@@ -41,8 +41,9 @@ jobs:
         if: needs.test.result == 'failure' || needs.deploy.result == 'failure'
         uses: slackapi/slack-github-action@91efab103c0de0a537f72a35f6b8cda0ee76bf0a
         with:
-          webhook: ${{ secrets.SLACK_MAVIS_ALERTS_WEBHOOK_URL }}
+          webhook: ${{ secrets.SLACK_MAVIS_TECH_WEBHOOK_URL }}
           webhook-type: incoming-webhook
+          errors: true
           # yamllint disable rule:line-length
           payload: |
             text: ":rotating_light: Continuous Deployment failed :rotating_light:"
@@ -57,8 +58,9 @@ jobs:
         if: needs.end-to-end-tests.result == 'failure'
         uses: slackapi/slack-github-action@91efab103c0de0a537f72a35f6b8cda0ee76bf0a
         with:
-          webhook: ${{ secrets.SLACK_MAVIS_ALERTS_WEBHOOK_URL }}
+          webhook: ${{ secrets.SLACK_MAVIS_TECH_WEBHOOK_URL }}
           webhook-type: incoming-webhook
+          errors: true
           # yamllint disable rule:line-length
           payload: |
             text: ":rotating_light: E2E tests failed on next :rotating_light:"
