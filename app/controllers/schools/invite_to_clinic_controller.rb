@@ -71,6 +71,7 @@ class Schools::InviteToClinicController < Schools::BaseController
           }
         )
         .where(school_id: @location.school_id)
+        .not_archived(team: current_team)
         .includes_statuses
         .has_programme_status(
           @programme_statuses,
