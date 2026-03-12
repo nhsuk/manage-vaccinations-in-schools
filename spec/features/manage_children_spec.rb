@@ -511,9 +511,7 @@ describe "Manage children" do
 
   def and_i_see_the_child_is_home_schooled
     expect(page).to have_content("Home-educated")
-    expect(@patient.reload.home_educated).to be true
-    expect(@patient.school).to be_nil
-    expect(@patient.home_educated).to be true
+    expect(@patient.reload.school).to eq(@team.home_educated_school)
   end
 
   def and_the_important_notice_is_dismissed
