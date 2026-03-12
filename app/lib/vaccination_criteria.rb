@@ -114,12 +114,16 @@ class VaccinationCriteria
     # year of age and the second above 15 months and the doses at least 4
     # weeks apart is eligible for catch up vaccinations by SAIS until they
     # have had two valid doses.
+    #
+    # Use `performed_at_date` (always a Date) rather than `performed_at` to
+    # avoid type-mixing issues in sort order, comparison, and arithmetic.
 
-    sorted_vaccination_records = vaccination_records.sort_by(&:performed_at)
+    sorted_vaccination_records =
+      vaccination_records.sort_by(&:performed_at_date)
 
     first_dose =
       sorted_vaccination_records.find do
-        patient.age_months(now: it.performed_at) >= 12
+        patient.age_months(now: it.performed_at_date) >= 12
       end
 
     return [] if first_dose.nil?
@@ -127,15 +131,15 @@ class VaccinationCriteria
     # The second dose must be at least 28 days after the most recent dose
     second_dose =
       sorted_vaccination_records.find do |record|
-        next if record.performed_at <= first_dose.performed_at
+        next if record.performed_at_date <= first_dose.performed_at_date
 
         previous_dose =
           sorted_vaccination_records
-            .select { it.performed_at < record.performed_at }
+            .select { it.performed_at_date < record.performed_at_date }
             .last
 
-        record.performed_at >= previous_dose.performed_at + 28.days &&
-          patient.age_months(now: record.performed_at) >= 15
+        record.performed_at_date >= previous_dose.performed_at_date + 28.days &&
+          patient.age_months(now: record.performed_at_date) >= 15
       end
 
     [second_dose, first_dose].compact

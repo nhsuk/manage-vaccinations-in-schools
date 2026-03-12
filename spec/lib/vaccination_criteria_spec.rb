@@ -379,6 +379,53 @@ describe VaccinationCriteria do
         it { should be(true) }
       end
 
+      context "with two date-only doses 28 days apart and duplicate records with times" do
+        let(:session) { create(:session, programmes: [programme]) }
+        let(:patient) do
+          create(:patient, :consent_given_triage_not_needed, session:)
+        end
+
+        let(:first_dose_date) { patient.date_of_birth + 2.years }
+        let(:second_dose_date) { first_dose_date + 28.days }
+
+        before do
+          # Historical upload records (date only, no time)
+          create(
+            :vaccination_record,
+            patient:,
+            programme:,
+            performed_at_date: first_dose_date,
+            performed_at_time: nil,
+            source: "historical_upload"
+          )
+          create(
+            :vaccination_record,
+            patient:,
+            programme:,
+            performed_at_date: second_dose_date,
+            performed_at_time: nil,
+            source: "historical_upload"
+          )
+          # NHS Imms API records (same dates but with times)
+          create(
+            :vaccination_record,
+            :sourced_from_nhs_immunisations_api,
+            patient:,
+            programme:,
+            performed_at: Time.zone.parse("#{first_dose_date} 16:09:17")
+          )
+          create(
+            :vaccination_record,
+            :sourced_from_nhs_immunisations_api,
+            patient:,
+            programme:,
+            performed_at: Time.zone.parse("#{second_dose_date} 16:37:49")
+          )
+        end
+
+        it { should be(true) }
+      end
+
       context "with two doses with 27 days between each one" do
         let(:session) { create(:session, programmes: [programme]) }
         let(:patient) do
