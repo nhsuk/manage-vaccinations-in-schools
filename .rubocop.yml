@@ -76,6 +76,7 @@ Style/FrozenStringLiteralComment:
   Enabled: true
   EnforcedStyle: always_true
   Exclude:
+    - db/data_schema.rb
     - db/schema.rb
 
 Style/NumericLiterals:
