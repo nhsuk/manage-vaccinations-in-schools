@@ -123,7 +123,7 @@ describe "Import child records" do
         gias_year_groups: [7, 8, 9, 10],
         team: @team
       )
-    @clinic = create(:generic_clinic, team: @team)
+    @clinic = @team.generic_clinic
 
     @session =
       create(:session, team: @team, location: @school, programmes: [@programme])

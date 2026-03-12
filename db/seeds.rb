@@ -26,7 +26,6 @@ def create_team(ods_code:, workgroup: nil, type: :point_of_care)
   Team.find_by(workgroup:) ||
     FactoryBot.create(
       :team,
-      :with_generic_clinic,
       :with_careplus_enabled,
       ods_code:,
       programmes: Programme.all,

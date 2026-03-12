@@ -31,7 +31,7 @@ class GenericClinicFactory
 
   def location
     @location ||=
-      team.generic_clinic ||
+      team.generic_clinics.first ||
         Location.create!(
           name: "Community clinic",
           alternative_name:

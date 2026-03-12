@@ -50,7 +50,7 @@ describe "Schools" do
   def given_a_team_exists_with_a_few_schools
     programmes = [Programme.flu, Programme.hpv]
 
-    @team = create(:team, :with_generic_clinic, programmes:)
+    @team = create(:team, programmes:)
 
     @primary_school = create(:school, :primary, team: @team)
     @secondary_school = create(:school, :secondary, team: @team)
@@ -155,7 +155,7 @@ describe "Schools" do
 
   def given_a_team_with_no_known_school_children
     programmes = [Programme.hpv]
-    @team = create(:team, :with_generic_clinic, programmes:)
+    @team = create(:team, programmes:)
     @generic_clinic = @team.generic_clinic
 
     @patients =

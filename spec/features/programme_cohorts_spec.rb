@@ -29,13 +29,7 @@ describe "Programme" do
   def given_an_hpv_programme_is_underway
     @academic_year = AcademicYear.current
     @programme = Programme.hpv
-    @team =
-      create(
-        :team,
-        :with_one_nurse,
-        :with_generic_clinic,
-        programmes: [@programme]
-      )
+    @team = create(:team, :with_one_nurse, programmes: [@programme])
 
     sign_in @team.users.first
   end

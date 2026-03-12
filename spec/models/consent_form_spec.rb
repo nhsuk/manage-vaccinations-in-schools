@@ -684,7 +684,7 @@ describe ConsentForm do
     let(:team) { create(:team, programmes:) }
 
     let!(:school) { create(:school, team:) }
-    let!(:generic_clinic) { create(:generic_clinic, team:) }
+    let!(:generic_clinic) { team.generic_clinic }
 
     let!(:generic_clinic_session) do
       create(:session, location: generic_clinic, team:, programmes:)

@@ -12,15 +12,7 @@ describe API::Testing::TeamsController do
   describe "DELETE" do
     let(:programmes) { [Programme.hpv] }
 
-    let(:team) do
-      create(
-        :team,
-        :with_generic_clinic,
-        ods_code: "R1L",
-        workgroup: "r1l",
-        programmes:
-      )
-    end
+    let(:team) { create(:team, ods_code: "R1L", workgroup: "r1l", programmes:) }
 
     let(:cohort_import) do
       create(

@@ -6,7 +6,7 @@ describe PatientsAgedOutOfSchoolJob do
   around { |example| travel_to(today) { example.run } }
 
   let(:programme) { Programme.flu }
-  let(:team) { create(:team, :with_generic_clinic, programmes: [programme]) }
+  let(:team) { create(:team, programmes: [programme]) }
   let(:school) { create(:school, :secondary, team:) }
 
   # This date of birth corresponds to year 11 in 2024/25.

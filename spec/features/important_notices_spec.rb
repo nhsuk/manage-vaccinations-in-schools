@@ -111,13 +111,7 @@ describe "Important notices" do
 
   def given_my_team_exists
     @programme = Programme.hpv
-    @team =
-      create(
-        :team,
-        :with_generic_clinic,
-        :with_one_nurse,
-        programmes: [@programme]
-      )
+    @team = create(:team, :with_one_nurse, programmes: [@programme])
     @school = create(:school, :secondary, team: @team, urn: "123456")
     @session =
       create(
@@ -130,13 +124,7 @@ describe "Important notices" do
   end
 
   def and_another_team_exists
-    @other_team =
-      create(
-        :team,
-        :with_generic_clinic,
-        :with_one_nurse,
-        programmes: [@programme]
-      )
+    @other_team = create(:team, :with_one_nurse, programmes: [@programme])
     @other_school =
       create(:school, :secondary, team: @other_team, urn: "888888")
     @other_session =

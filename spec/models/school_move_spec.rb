@@ -54,7 +54,7 @@ describe SchoolMove do
     let(:today) { nil }
     let(:user) { create(:user) }
     let(:programmes) { [Programme.sample] }
-    let(:team) { create(:team, :with_generic_clinic, programmes:) }
+    let(:team) { create(:team, programmes:) }
     let(:generic_clinic_session) do
       create(
         :session,
@@ -373,7 +373,7 @@ describe SchoolMove do
             create(:school_move, :to_school, patient:, school:)
           end
 
-          let(:new_team) { create(:team, :with_generic_clinic, programmes:) }
+          let(:new_team) { create(:team, programmes:) }
           let(:school) { create(:school, team: new_team) }
           let(:new_sessions) do
             create_list(
@@ -399,7 +399,7 @@ describe SchoolMove do
             create(:school_move, :to_home_educated, team: new_team, patient:)
           end
 
-          let(:new_team) { create(:team, :with_generic_clinic, programmes:) }
+          let(:new_team) { create(:team, programmes:) }
           let(:generic_clinic_session) do
             create(
               :session,
@@ -488,7 +488,7 @@ describe SchoolMove do
             create(:school_move, :to_school, patient:, school:)
           end
 
-          let(:new_team) { create(:team, :with_generic_clinic, programmes:) }
+          let(:new_team) { create(:team, programmes:) }
           let(:school) { create(:school, team: new_team) }
           let(:new_sessions) do
             create_list(
@@ -527,7 +527,7 @@ describe SchoolMove do
                 )
             )
           end
-          let(:new_team) { create(:team, :with_generic_clinic, programmes:) }
+          let(:new_team) { create(:team, programmes:) }
           let(:generic_clinic_session) do
             create(
               :session,
@@ -615,7 +615,7 @@ describe SchoolMove do
             create(:school_move, :to_school, patient:, school:)
           end
 
-          let(:new_team) { create(:team, :with_generic_clinic, programmes:) }
+          let(:new_team) { create(:team, programmes:) }
           let(:school) { create(:school, team: new_team) }
           let(:new_sessions) do
             create_list(
@@ -654,7 +654,7 @@ describe SchoolMove do
                 )
             )
           end
-          let(:new_team) { create(:team, :with_generic_clinic, programmes:) }
+          let(:new_team) { create(:team, programmes:) }
           let(:generic_clinic_session) do
             create(
               :session,

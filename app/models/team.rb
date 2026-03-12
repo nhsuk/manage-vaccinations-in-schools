@@ -109,7 +109,9 @@ class Team < ApplicationRecord
 
   def to_param = workgroup
 
-  def generic_clinic = generic_clinics.first
+  def generic_clinic
+    @generic_clinic ||= generic_clinics.sole
+  end
 
   def year_groups(academic_year: nil)
     return NATIONAL_REPORTING_YEAR_GROUPS if has_national_reporting_access?

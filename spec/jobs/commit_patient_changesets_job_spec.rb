@@ -4,7 +4,7 @@ describe CommitPatientChangesetsJob do
   subject(:perform_job) { described_class.new.perform(changesets.pluck(:id)) }
 
   let(:programmes) { [Programme.hpv] }
-  let(:team) { create(:team, :with_generic_clinic, programmes:) }
+  let(:team) { create(:team, programmes:) }
   let(:location) { create(:school, team:) }
   let(:session) { create(:session, location:, programmes:, team:) }
 

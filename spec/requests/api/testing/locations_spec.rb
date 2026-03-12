@@ -10,7 +10,7 @@ describe "/api/testing/locations" do
     create(:community_clinic, :open, name: "Location A", team:)
   end
   let!(:generic_clinic) do
-    create(:generic_clinic, :closed, name: "Location B", team:)
+    Team.includes(:generic_clinics).find(team.id).generic_clinic
   end
   let!(:gp_practice) do
     create(:gp_practice, :closed, name: "Location C", team:)
@@ -30,7 +30,7 @@ describe "/api/testing/locations" do
 
       locations = JSON.parse(response.body)
 
-      expect(locations).to eq(
+      expect(locations).to match_array(
         [
           community_clinic,
           generic_clinic,

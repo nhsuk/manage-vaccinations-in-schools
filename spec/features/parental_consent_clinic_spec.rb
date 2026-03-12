@@ -125,7 +125,7 @@ describe "Parental consent" do
     @programme = Programme.hpv
     @team = create(:team, :with_one_nurse, programmes: [@programme])
 
-    location = create(:generic_clinic, team: @team)
+    location = @team.generic_clinic
 
     @session =
       create(

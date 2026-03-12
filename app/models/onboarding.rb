@@ -241,10 +241,8 @@ class Onboarding
 
       @users.each { |user| user.teams << team }
 
-      unless team.has_national_reporting_access?
-        academic_years.each do |academic_year|
-          GenericClinicFactory.call(team:, academic_year:)
-        end
+      academic_years.each do |academic_year|
+        GenericClinicFactory.call(team:, academic_year:)
       end
 
       PatientTeamUpdater.call(team_scope: Team.where(id: team.id))

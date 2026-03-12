@@ -205,13 +205,7 @@ describe "Manage children" do
   def given_my_team_exists
     @flu = Programme.flu
     @hpv = Programme.hpv
-    @team =
-      create(
-        :team,
-        :with_generic_clinic,
-        :with_one_nurse,
-        programmes: [@flu, @hpv]
-      )
+    @team = create(:team, :with_one_nurse, programmes: [@flu, @hpv])
   end
 
   def given_patients_exist

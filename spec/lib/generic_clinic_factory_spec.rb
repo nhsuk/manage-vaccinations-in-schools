@@ -45,7 +45,7 @@ describe GenericClinicFactory do
     end
 
     context "with an existing team" do
-      let(:team) { create(:team, :with_generic_clinic, programmes:) }
+      let(:team) { create(:team, programmes:) }
 
       it "doesn't create a generic clinic location" do
         team
