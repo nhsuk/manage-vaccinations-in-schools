@@ -79,7 +79,6 @@ class SchoolMove < ApplicationRecord
 
   def confirm!(user: nil)
     ActiveRecord::Base.transaction do
-      # We need to set this before updating patient locations
       move_across_teams = from_another_team?
 
       update_patient!
@@ -90,6 +89,7 @@ class SchoolMove < ApplicationRecord
 
       update_patient_teams!
       update_patient_statuses!
+
       if move_across_teams
         create_important_notice!(log_entry)
         update_important_notices!
@@ -191,9 +191,6 @@ class SchoolMove < ApplicationRecord
         columns: %i[date_range]
       }
     )
-
-    PatientTeamUpdater.call(patient:)
-    PatientStatusUpdater.call(patient:)
   end
 
   def create_log_entry!(user:)
