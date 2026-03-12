@@ -460,7 +460,7 @@ describe "Manage children" do
   end
 
   def when_i_choose_home_schooled
-    select "Home-schooled", from: "What school does the child go to?"
+    select "Home-educated", from: "What school does the child go to?"
     click_on "Continue"
   end
 
@@ -516,7 +516,7 @@ describe "Manage children" do
   end
 
   def and_i_see_the_child_is_home_schooled
-    expect(page).to have_content("Home-schooled")
+    expect(page).to have_content("Home-educated")
     expect(@patient.reload.home_educated).to be true
     expect(@patient.school).to be_nil
     expect(@patient.home_educated).to be true

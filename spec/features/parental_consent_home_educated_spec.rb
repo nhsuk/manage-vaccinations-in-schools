@@ -79,7 +79,7 @@ describe "Parental consent" do
   end
 
   def when_i_choose_home_schooled
-    select "Home-schooled"
+    select "Home-educated"
     click_on "Continue"
   end
 
@@ -124,6 +124,6 @@ describe "Parental consent" do
     expect(page).to have_content(
       "Child’s name#{@child.full_name(context: :parents)}"
     )
-    expect(page).to have_content("SchoolHome-schooled")
+    expect(page).to have_content("SchoolHome-educated")
   end
 end

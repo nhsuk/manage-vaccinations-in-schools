@@ -315,7 +315,7 @@ describe "Parental consent" do
 
   def then_the_nurse_should_see_home_schooled
     click_on "View full child record"
-    expect(page).to have_content("SchoolHome-schooled")
+    expect(page).to have_content("SchoolHome-educated")
   end
 
   def then_the_nurse_should_see_unknown_school
