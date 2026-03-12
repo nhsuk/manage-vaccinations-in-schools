@@ -9,17 +9,17 @@ module HasManyTeamLocations
     has_many :locations, through: :team_locations
 
     has_many :generic_clinics,
-             -> { generic_clinic },
+             -> { distinct.generic_clinic },
              through: :team_locations,
              source: :location
 
     has_many :community_clinics,
-             -> { community_clinic },
+             -> { distinct.community_clinic },
              through: :team_locations,
              source: :location
 
     has_many :schools,
-             -> { school },
+             -> { distinct.school },
              through: :team_locations,
              source: :location
   end
