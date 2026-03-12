@@ -120,7 +120,7 @@ jobs:
         # yamllint disable rule:line-length
       - name: Build and push webapp image
         if: needs.check-image-presence.outputs.webapp-build-needed == 'true'
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: .
           push: true
@@ -132,7 +132,7 @@ jobs:
             }}/mavis/webapp:buildcache,mode=max,image-manifest=true,oci-mediatypes=true
       - name: Build and push ops image
         if: needs.check-image-presence.outputs.ops-build-needed == 'true'
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: .
           file: ops.Dockerfile
