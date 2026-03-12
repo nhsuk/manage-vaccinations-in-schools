@@ -272,7 +272,7 @@ class DraftSession
   def reset_unused_attributes
     if location_type == "generic_clinic"
       self.location_id = team.generic_clinic.id
-      self.year_groups = Location::YearGroup::CLINIC_VALUE_RANGE.to_a
+      self.year_groups = Location::YearGroup::GENERIC_VALUE_RANGE.to_a
     end
   end
 

@@ -97,7 +97,7 @@ FactoryBot.define do
     end
 
     after(:create) do |team|
-      GenericClinicFactory.call(team:, academic_year: AcademicYear.pending)
+      GenericLocationFactory.call(team:, academic_year: AcademicYear.pending)
     end
   end
 end

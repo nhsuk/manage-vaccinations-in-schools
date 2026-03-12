@@ -85,12 +85,12 @@ FactoryBot.define do
           team.team_locations.create!(location:, academic_year:, subteam:)
         end
 
-        year_groups = Location::YearGroup::CLINIC_VALUE_RANGE.to_a
+        year_groups = Location::YearGroup::GENERIC_VALUE_RANGE.to_a
 
         location.import_year_groups!(
           year_groups,
           academic_year:,
-          source: "generic_clinic_factory"
+          source: "generic_location_factory"
         )
         location.import_default_programme_year_groups!(
           evaluator.programmes,
@@ -111,6 +111,27 @@ FactoryBot.define do
       trait :home_educated do
         name { "Home-educated" }
         urn { Location::URN_HOME_EDUCATED }
+      end
+
+      after(:create) do |location, evaluator|
+        academic_year = evaluator.academic_year
+        subteam = evaluator.subteam
+
+        if (team = evaluator.team)
+          team.team_locations.create!(location:, academic_year:, subteam:)
+        end
+
+        year_groups = Location::YearGroup::GENERIC_VALUE_RANGE.to_a
+
+        location.import_year_groups!(
+          year_groups,
+          academic_year:,
+          source: "generic_location_factory"
+        )
+        location.import_default_programme_year_groups!(
+          evaluator.programmes,
+          academic_year:
+        )
       end
     end
 

@@ -251,9 +251,9 @@ describe "Import child records" do
 
       @generic_clinic.attach_to_team!(@team, academic_year:)
       @generic_clinic.import_year_groups!(
-        Location::YearGroup::CLINIC_VALUE_RANGE,
+        Location::YearGroup::GENERIC_VALUE_RANGE,
         academic_year:,
-        source: "generic_clinic_factory"
+        source: "generic_location_factory"
       )
       @generic_clinic.import_default_programme_year_groups!(
         programmes,
