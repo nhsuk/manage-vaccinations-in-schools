@@ -172,6 +172,8 @@ describe "Schools" do
       end
 
     # We create these to ensure these children aren't invited.
+
+    # No parent contact details
     create(
       :patient,
       :consent_no_response,
@@ -181,6 +183,8 @@ describe "Schools" do
       location: @generic_clinic,
       academic_year: AcademicYear.pending
     )
+
+    # Refused consent
     create(
       :patient,
       :consent_refused,
@@ -190,6 +194,8 @@ describe "Schools" do
       location: @generic_clinic,
       academic_year: AcademicYear.pending
     )
+
+    # Conflicting consent
     create(
       :patient,
       :consent_conflicting,
@@ -198,6 +204,19 @@ describe "Schools" do
       programmes:,
       location: @generic_clinic,
       academic_year: AcademicYear.pending
+    )
+
+    # Archived
+    create(
+      :patient,
+      :consent_no_response,
+      :archived,
+      school: nil,
+      parents: [build(:parent)],
+      programmes:,
+      location: @generic_clinic,
+      academic_year: AcademicYear.pending,
+      team: @team
     )
 
     @nurse = create(:nurse, team: @team)
