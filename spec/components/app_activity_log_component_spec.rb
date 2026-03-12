@@ -372,6 +372,30 @@ describe AppActivityLogComponent do
                      programme: "HPV"
   end
 
+  describe "historical upload" do
+    let(:date_and_time) { Time.zone.local(2026, 3, 4, 11, 30) }
+
+    around { |example| travel_to(date_and_time { example.run }) }
+
+    before do
+      create(
+        :vaccination_record,
+        programme: programmes.first,
+        patient:,
+        performed_at: Date.new(2026, 1, 1),
+        created_at: date_and_time,
+        session: nil,
+        source: :historical_upload
+      )
+    end
+
+    include_examples "card",
+                     title: "Vaccination record uploaded",
+                     date:
+                       "Record added to Mavis Today at 11:30am · Vaccination given 1 January 2026",
+                     programme: "HPV"
+  end
+
   describe "discarded vaccination" do
     before do
       create(
