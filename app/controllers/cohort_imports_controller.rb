@@ -6,7 +6,7 @@ class CohortImportsController < ApplicationController
   before_action :set_draft_import, only: %i[new create]
   before_action :set_cohort_import,
                 only: %i[show update approve cancel re_review imported_records]
-  before_action :set_open_sections, only: %i[show re_review]
+  before_action :set_open_sections, only: %i[show]
   before_action :set_review_records, only: %i[re_review imported_records]
 
   skip_after_action :verify_policy_scoped, only: %i[new create]

@@ -3,7 +3,7 @@
     <p class="nhsuk-u-reading-width">
         <%= new_records_message %>
     </p>
-    <%= render AppDetailsComponent.new(expander: true, sticky: true, id: :new_records, open: @open_sections.include?(:new_records)) do |c| %>
+    <%= render AppDetailsComponent.new(expander: true, sticky: true, id: :new_records, open: @open_sections&.include?(:new_records)) do |c| %>
         <% c.with_summary do %>
           <%= pluralize(@new_records_pagy.count, "new record") %>
           <% if @new_records_pagy.count > @new_records_pagy.limit %>
@@ -16,6 +16,8 @@
 
 <% if @auto_matched_records.any? %>
     <h2 class="nhsuk-heading-m">Records already in Mavis</h2>
+    <p class="nhsuk-u-reading-width">
+      <%= auto_matched_message %>
     </p>
     <%= render AppDetailsComponent.new(expander: true, sticky: true) do |c| %>
         <% c.with_summary do %>
