@@ -206,6 +206,24 @@ describe EmailDeliveryJob do
         expect(notify_log_entry.programmes.map(&:type)).to eq(programme_types)
       end
 
+      context "when the consent form is matched to a patient" do
+        let(:matched_patient) { create(:patient) }
+
+        before do
+          create(
+            :consent,
+            programme: session.programmes.first,
+            consent_form:,
+            patient: matched_patient
+          )
+        end
+
+        it "sets patient on the log entry from the matched consent form" do
+          perform_now
+          expect(NotifyLogEntry.last.patient).to eq(matched_patient)
+        end
+      end
+
       context "when the parent doesn't have a phone number" do
         let(:consent_form) do
           create(:consent_form, session:, parent_email: nil)

@@ -121,5 +121,6 @@ describe "Parental consent given with an inexact automatic match" do
     expect(page).to have_content("Consent unknown contact details warning sent")
     expect(page).to have_content(@parent.email)
     expect(page).to have_content(@parent.phone)
+    expect(page).to have_content("Consent confirmation given sent")
   end
 end
