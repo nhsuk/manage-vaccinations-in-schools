@@ -4,7 +4,7 @@ class Schools::InviteToClinicController < Schools::BaseController
   before_action :check_can_send_clinic_invitations
   before_action :set_back_link_path
   before_action :set_programme_statuses
-  before_action :set_eligible_patients_not_vaccinated
+  before_action :set_patients_to_invite
   before_action :set_invitations_count_by_programme_type
 
   layout "two_thirds"
@@ -22,7 +22,7 @@ class Schools::InviteToClinicController < Schools::BaseController
 
     if @form.valid?
       clinic_notifcations =
-        @eligible_patients_not_vaccinated.filter_map do |patient|
+        @patients_to_invite.filter_map do |patient|
           patient.notifier.send_clinic_invitation(
             Programme.find_all(@form.programme_types),
             team: current_team,
@@ -60,8 +60,8 @@ class Schools::InviteToClinicController < Schools::BaseController
         Patient::ProgrammeStatus::VACCINATED_STATUSES.keys
   end
 
-  def set_eligible_patients_not_vaccinated
-    @eligible_patients_not_vaccinated =
+  def set_patients_to_invite
+    @patients_to_invite =
       Patient
         .joins(:patient_locations)
         .where(
@@ -82,7 +82,7 @@ class Schools::InviteToClinicController < Schools::BaseController
   def set_invitations_count_by_programme_type
     @invitations_count_by_programme_type =
       current_team.programmes.index_with do |programme|
-        @eligible_patients_not_vaccinated
+        @patients_to_invite
           .includes(:clinic_notifications)
           .has_programme_status(
             @programme_statuses,

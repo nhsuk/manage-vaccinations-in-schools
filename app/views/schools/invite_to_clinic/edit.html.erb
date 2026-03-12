@@ -12,7 +12,7 @@
 
   <p><%= link_to "Return to school", school_patients_path(Location::URN_UNKNOWN) %></p>
 <% else %>
-  <p><%= I18n.t("children_be", count: @eligible_patients_not_vaccinated.count) %> due a vaccination for at least 1 programme.</p>
+  <p><%= I18n.t("children_be", count: @patients_to_invite.count) %> due a vaccination for at least 1 programme.</p>
 
   <p>You can now send clinic booking invitations to their parents.</p>
 
