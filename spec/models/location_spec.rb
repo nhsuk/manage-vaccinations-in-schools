@@ -9,7 +9,6 @@
 #  address_line_2            :text
 #  address_postcode          :text
 #  address_town              :text
-#  alternative_name          :text
 #  gias_establishment_number :integer
 #  gias_local_authority_code :integer
 #  gias_phase                :integer
@@ -91,12 +90,6 @@ describe Location do
 
       context "with an exact match on the name" do
         let(:query) { "Community clinic" }
-
-        it { should contain_exactly(clinic) }
-      end
-
-      context "with a partial match on the alternative name" do
-        let(:query) { "No known school" }
 
         it { should contain_exactly(clinic) }
       end

@@ -9,7 +9,6 @@
 #  address_line_2            :text
 #  address_postcode          :text
 #  address_town              :text
-#  alternative_name          :text
 #  gias_establishment_number :integer
 #  gias_local_authority_code :integer
 #  gias_phase                :integer
@@ -33,10 +32,11 @@
 #  index_locations_on_urn_and_site    (urn,site) UNIQUE
 #
 class Location < ApplicationRecord
+  self.ignored_columns = %w[alternative_name]
+  self.inheritance_column = nil
+
   include AddressConcern
   include ODSCodeConcern
-
-  self.inheritance_column = nil
 
   URN_HOME_EDUCATED = "999999"
   URN_UNKNOWN = "888888"
@@ -112,18 +112,11 @@ class Location < ApplicationRecord
   scope :search_by_name,
         ->(query) do
           sanitized_name = "TRANSLATE(locations.name, '.''', '')"
-          sanitized_alternative_name =
-            "TRANSLATE(locations.alternative_name, '.''', '')"
           sanitized_query = "TRANSLATE(:query, '.''', '')"
 
-          where(
-            "#{sanitized_query} <% #{sanitized_name} OR " \
-              "#{sanitized_query} <% #{sanitized_alternative_name}",
-            query:
-          ).order(
+          where("#{sanitized_query} <% #{sanitized_name}", query:).order(
             Arel.sql(
-              "GREATEST(SIMILARITY(#{sanitized_name}, #{sanitized_query}), " \
-                "SIMILARITY(#{sanitized_alternative_name}, #{sanitized_query})) DESC",
+              "SIMILARITY(#{sanitized_name}, #{sanitized_query}) DESC",
               query:
             )
           )
@@ -249,19 +242,8 @@ class Location < ApplicationRecord
     end
   end
 
-  def school_id = school? ? id : nil
-
-  def school_name
-    generic_clinic? ? alternative_name : name
-  end
-
   def as_json
-    super.except(
-      "alternative_name",
-      "created_at",
-      "systm_one_code",
-      "updated_at"
-    ).merge(
+    super.except("created_at", "systm_one_code", "updated_at").merge(
       "is_attached_to_team" =>
         team_locations.any? { it.academic_year == AcademicYear.pending }
     )

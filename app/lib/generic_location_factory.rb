@@ -53,12 +53,7 @@ class GenericLocationFactory
   def generic_clinic_location
     @generic_clinic_location ||=
       team.generic_clinics.first ||
-        Location.create!(
-          name: "Community clinic",
-          alternative_name:
-            "No known school (including home-schooled children)",
-          type: :generic_clinic
-        )
+        Location.create!(name: "Community clinic", type: :generic_clinic)
   end
 
   def home_educated_school_location
