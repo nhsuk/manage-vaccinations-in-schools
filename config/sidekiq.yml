@@ -68,6 +68,10 @@
       cron: "0 0,6,12,18 * * *"
       class: EnqueueUpdatePatientsFromPDSJob
       description: Keep patient details up to date with PDS
+    process_unmatched_consent_forms:
+      cron: "0 4 * * *"
+      class: EnqueueProcessUnmatchedConsentFormsJob
+      description: Re-process unmatched consent forms to attempt automatic matching
     vaccination_confirmations:
       cron: "0 13,16,19 * * *"
       class: SendVaccinationConfirmationsJob

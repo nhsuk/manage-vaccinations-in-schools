@@ -17,4 +17,4 @@
 <%= render AppHealthAnswersCardComponent.new(@consent_form) %>
 
 <%= govuk_button_to "Create a new record from response",
-                    patient_consent_form_path(@consent_form) %>
+                    patient_consent_form_path(@consent_form) unless @nhs_number_taken %>

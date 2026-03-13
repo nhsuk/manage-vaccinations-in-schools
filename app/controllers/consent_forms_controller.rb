@@ -7,6 +7,7 @@ class ConsentFormsController < ApplicationController
   before_action :set_consent_form, except: :index
   before_action :set_patient, only: %i[edit_match update_match]
   before_action :set_search_params_present, only: :search
+  before_action :set_nhs_number_taken, only: %i[show search new_patient]
 
   skip_after_action :verify_policy_scoped, only: :search
 
@@ -163,5 +164,10 @@ class ConsentFormsController < ApplicationController
 
   def set_search_params_present
     @search_params_present = @form.any_filters_applied?
+  end
+
+  def set_nhs_number_taken
+    @existing_patient = Patient.find_by(nhs_number: @consent_form.nhs_number)
+    @nhs_number_taken = @consent_form.nhs_number.present? && @existing_patient
   end
 end

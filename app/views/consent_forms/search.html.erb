@@ -39,7 +39,7 @@
         <%= link_to "View full consent response", consent_form_path(@consent_form) %>
       </p>
 
-      <%= govuk_button_link_to "Create new record", patient_consent_form_path(@consent_form), secondary: true %>
+      <%= govuk_button_link_to "Create new record", patient_consent_form_path(@consent_form), secondary: true unless @nhs_number_taken %>
     <% end %>
   </div>
 
