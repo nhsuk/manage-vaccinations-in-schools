@@ -53,13 +53,7 @@ class PatientImport < ApplicationRecord
     validate_changeset_uniqueness!
     return if changesets_are_invalid?
 
-    if Flipper.enabled?(:import_review_screen)
-      enqueue_review_jobs(self.changesets)
-    else
-      changesets.each(&:committing!)
-
-      CommitImportJob.perform_async(to_global_id.to_s)
-    end
+    enqueue_review_jobs(self.changesets)
   end
 
   def validate_pds_match_rate!
@@ -157,13 +151,8 @@ class PatientImport < ApplicationRecord
         nhs_number: nil,
         created_at: Time.current
       }
-      if Flipper.enabled?(:import_review_screen)
-        cs.calculating_review!
-        ReviewPatientChangesetJob.perform_later(cs.id)
-      else
-        cs.assign_patient_id
-        cs.committing!
-      end
+      cs.calculating_review!
+      ReviewPatientChangesetJob.perform_later(cs.id)
     end
   end
 

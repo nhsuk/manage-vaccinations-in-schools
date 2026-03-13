@@ -5,7 +5,6 @@ describe "Import class lists" do
     given_i_am_signed_in
     and_an_hpv_programme_is_underway
     and_patients_exist
-    and_import_review_is_enabled
 
     when_i_visit_a_school_page_for_the_hpv_programme
     and_i_start_adding_children_to_the_school
@@ -24,7 +23,6 @@ describe "Import class lists" do
     given_i_am_signed_in
     and_an_hpv_programme_is_underway
     and_two_patients_exists_in_the_session
-    and_import_review_is_enabled
 
     when_i_visit_a_school_page_for_the_hpv_programme
     and_i_start_adding_children_to_the_school
@@ -66,7 +64,6 @@ describe "Import class lists" do
   scenario "Import with re-review for school moves out of school only - ignoring changes" do
     given_i_am_signed_in
     and_an_hpv_programme_is_underway
-    and_import_review_is_enabled
 
     when_i_visit_a_school_page_for_the_hpv_programme
     and_i_start_adding_children_to_the_school
@@ -88,7 +85,6 @@ describe "Import class lists" do
   scenario "Import with re-review for school moves out of school only - approving import" do
     given_i_am_signed_in
     and_an_hpv_programme_is_underway
-    and_import_review_is_enabled
 
     when_i_visit_a_school_page_for_the_hpv_programme
     and_i_start_adding_children_to_the_school
@@ -144,10 +140,6 @@ describe "Import class lists" do
         location: @other_school,
         programmes: [@programme]
       )
-  end
-
-  def and_import_review_is_enabled
-    Flipper.enable(:import_review_screen)
   end
 
   def when_i_visit_the_import_page

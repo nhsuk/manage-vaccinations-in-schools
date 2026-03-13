@@ -6,7 +6,6 @@ describe "Import child records review" do
   scenario "Skips moving child from another team to unknown school" do
     given_i_am_signed_in
     and_two_teams_exist
-    and_import_review_is_enabled
     and_a_patient_exists_in_another_teams_school
 
     when_i_visit_the_import_page
@@ -46,10 +45,6 @@ describe "Import child records review" do
         name: "Other Team School",
         team: @other_team
       )
-  end
-
-  def and_import_review_is_enabled
-    Flipper.enable(:import_review_screen)
   end
 
   def and_a_patient_exists_in_another_teams_school

@@ -250,33 +250,8 @@ describe ImportDuplicateForm do
       )
     end
 
-    let!(:newest_processed_but_incomplete_import) do
-      create(
-        :patient_changeset,
-        :class_import,
-        :import_issue,
-        import: incomplete_import,
-        patient: existing_patient,
-        status: :processed,
-        matched_on_nhs_number: false,
-        created_at: 1.minute.ago
-      )
-    end
-
-    context "when import_review_screen is enabled" do
-      before { Flipper.enable(:import_review_screen) }
-
-      it "returns the latest processed changeset from a completed import" do
-        expect(selected_changeset.id).to eq(eligible_old.id)
-      end
-    end
-
-    context "when import_review_screen is disabled" do
-      it "returns the latest changeset regardless of statuses" do
-        expect(selected_changeset.id).to eq(
-          newest_processed_but_incomplete_import.id
-        )
-      end
+    it "returns the latest processed changeset from a completed import" do
+      expect(selected_changeset.id).to eq(eligible_old.id)
     end
   end
 end

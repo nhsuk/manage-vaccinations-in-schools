@@ -189,20 +189,16 @@ describe ClassImport do
         expect(without_postcode.search_results.first["result"]).to eq(
           "no_postcode"
         )
-
-        expect(CommitImportJob).not_to have_enqueued_sidekiq_job
       end
     end
 
     context "when import_search_pds flag is disabled" do
       before { Flipper.disable(:import_search_pds) }
 
-      it "marks all changesets as processed and enqueues CommitImportJob" do
-        process!
-
-        expect(CommitImportJob).to have_enqueued_sidekiq_job(
-          class_import.to_global_id.to_s
-        )
+      it "enqueues ReviewPatientChangesetJob for each changeset" do
+        expect { process! }.to have_enqueued_job(
+          ReviewPatientChangesetJob
+        ).exactly(4).times
 
         expect(configured_job).not_to have_received(:perform_later)
       end

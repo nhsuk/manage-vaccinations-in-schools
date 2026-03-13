@@ -80,7 +80,6 @@ describe "Important notices" do
   end
 
   scenario "Team changed notice is created, can be dismissed, and resolves when patient returns to team" do
-    given_import_review_is_enabled
     and_another_team_exists
 
     when_i_import_a_patient_into_team_one
@@ -148,10 +147,6 @@ describe "Important notices" do
         team: @other_team,
         programmes: [@programme]
       )
-  end
-
-  def given_import_review_is_enabled
-    Flipper.enable(:import_review_screen)
   end
 
   def given_a_patient_exists

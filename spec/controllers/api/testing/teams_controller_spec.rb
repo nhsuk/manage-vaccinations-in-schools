@@ -2,6 +2,7 @@
 
 describe API::Testing::TeamsController do
   include ActiveJob::TestHelper
+  include ImportsHelper
 
   before { Flipper.enable(:testing_api) }
   after { Flipper.disable(:testing_api) }
@@ -55,8 +56,7 @@ describe API::Testing::TeamsController do
       session =
         create(:session, team:, location: team.schools.first, programmes:)
 
-      cohort_import.process!
-      CommitImportJob.drain
+      process_and_approve_import(cohort_import)
       immunisation_import.process!
 
       Patient.find_each do |patient|
