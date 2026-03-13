@@ -385,7 +385,15 @@ describe "Triage" do
     current_patient =
       @patient_triage_needed || @patient_injection_only || @patient_nasal_only
     current_patient.parents.each do |parent|
-      expect_email_to parent.email, :triage_vaccination_will_happen, :any
+      expect(email_deliveries).to include(
+        matching_notify_email(
+          to: parent.email,
+          template: :triage_vaccination_will_happen
+        ).with_content_including(
+          "confirmed it\u2019s safe",
+          "We\u2019ll let you know once"
+        )
+      )
     end
   end
 
