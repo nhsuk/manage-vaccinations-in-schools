@@ -279,7 +279,6 @@ describe "Import child records" do
 
   def and_pds_lookups_dont_return_any_matches
     Flipper.enable(:import_search_pds)
-    Flipper.enable(:import_low_pds_match_rate)
 
     csv =
       CSV.new(

@@ -177,77 +177,39 @@ describe ProcessPatientChangesetJob do
         end
 
         context "when import_search_pds flag is disabled" do
-          context "when low_pds_match_rate flag is disabled" do
-            it "doesn't change import status" do
-              described_class.perform_now(patient_changeset.id)
-              expect(import.reload.status).to eq("pending_import")
-            end
-
-            it "enqueues CommitImportJob" do
-              expect {
-                described_class.perform_now(patient_changeset.id)
-              }.to enqueue_sidekiq_job(CommitImportJob).with(
-                import.to_global_id.to_s
-              )
-            end
+          it "doesn't change import status" do
+            described_class.perform_now(patient_changeset.id)
+            expect(import.reload.status).to eq("pending_import")
           end
 
-          context "when low_pds_match_rate flag is enabled" do
-            before { Flipper.enable(:import_low_pds_match_rate) }
-
-            it "doesn't change import status" do
+          it "enqueues CommitImportJob" do
+            expect {
               described_class.perform_now(patient_changeset.id)
-              expect(import.reload.status).to eq("pending_import")
-            end
-
-            it "enqueues CommitImportJob" do
-              expect {
-                described_class.perform_now(patient_changeset.id)
-              }.to enqueue_sidekiq_job(CommitImportJob).with(
-                import.to_global_id.to_s
-              )
-            end
+            }.to enqueue_sidekiq_job(CommitImportJob).with(
+              import.to_global_id.to_s
+            )
           end
         end
 
         context "when import_search_pds flag is enabled" do
           before { Flipper.enable(:import_search_pds) }
 
-          context "when low_pds_match_rate flag is enabled" do
-            before { Flipper.enable(:import_low_pds_match_rate) }
-
-            it "marks import as low_pds_match_rate and stops" do
-              described_class.perform_now(patient_changeset.id)
-              expect(import.reload.status).to eq("low_pds_match_rate")
-            end
-
-            it "updates changesets to import_invalid and stops" do
-              described_class.perform_now(patient_changeset.id)
-              expect(import.changesets.pluck(:status).uniq).to eq(
-                ["import_invalid"]
-              )
-            end
-
-            it "doesn't enqueue CommitImportJob" do
-              expect {
-                described_class.perform_now(patient_changeset.id)
-              }.not_to enqueue_sidekiq_job(CommitImportJob)
-            end
+          it "marks import as low_pds_match_rate and stops" do
+            described_class.perform_now(patient_changeset.id)
+            expect(import.reload.status).to eq("low_pds_match_rate")
           end
 
-          context "when low_pds_match_rate flag is disabled" do
-            it "doesn't change import status" do
-              described_class.perform_now(patient_changeset.id)
-              expect(import.reload.status).to eq("pending_import")
-            end
+          it "updates changesets to import_invalid and stops" do
+            described_class.perform_now(patient_changeset.id)
+            expect(import.changesets.pluck(:status).uniq).to eq(
+              ["import_invalid"]
+            )
+          end
 
-            it "enqueues CommitImportJob" do
-              expect {
-                described_class.perform_now(patient_changeset.id)
-              }.to enqueue_sidekiq_job(CommitImportJob).with(
-                import.to_global_id.to_s
-              )
-            end
+          it "doesn't enqueue CommitImportJob" do
+            expect {
+              described_class.perform_now(patient_changeset.id)
+            }.not_to enqueue_sidekiq_job(CommitImportJob)
           end
         end
       end
