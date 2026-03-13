@@ -830,12 +830,16 @@
   <span class="ruby-comment"># year of age and the second above 15 months and the doses at least 4</span>
   <span class="ruby-comment"># weeks apart is eligible for catch up vaccinations by SAIS until they</span>
   <span class="ruby-comment"># have had two valid doses.</span>
+  <span class="ruby-comment">#</span>
+  <span class="ruby-comment"># Use `performed_at_date` (always a Date) rather than `performed_at` to</span>
+  <span class="ruby-comment"># avoid type-mixing issues in sort order, comparison, and arithmetic.</span>
 
-  <span class="ruby-identifier">sorted_vaccination_records</span> = <span class="ruby-identifier">vaccination_records</span>.<span class="ruby-identifier">sort_by</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:performed_at</span>)
+  <span class="ruby-identifier">sorted_vaccination_records</span> =
+    <span class="ruby-identifier">vaccination_records</span>.<span class="ruby-identifier">sort_by</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:performed_at_date</span>)
 
   <span class="ruby-identifier">first_dose</span> =
     <span class="ruby-identifier">sorted_vaccination_records</span>.<span class="ruby-identifier">find</span> <span class="ruby-keyword">do</span>
-      <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">age_months</span>(<span class="ruby-value">now:</span> <span class="ruby-identifier">it</span>.<span class="ruby-identifier">performed_at</span>) <span class="ruby-operator">&gt;=</span> <span class="ruby-value">12</span>
+      <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">age_months</span>(<span class="ruby-value">now:</span> <span class="ruby-identifier">it</span>.<span class="ruby-identifier">performed_at_date</span>) <span class="ruby-operator">&gt;=</span> <span class="ruby-value">12</span>
     <span class="ruby-keyword">end</span>
 
   <span class="ruby-keyword">return</span> [] <span class="ruby-keyword">if</span> <span class="ruby-identifier">first_dose</span>.<span class="ruby-identifier">nil?</span>
@@ -843,15 +847,15 @@
   <span class="ruby-comment"># The second dose must be at least 28 days after the most recent dose</span>
   <span class="ruby-identifier">second_dose</span> =
     <span class="ruby-identifier">sorted_vaccination_records</span>.<span class="ruby-identifier">find</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">record</span><span class="ruby-operator">|</span>
-      <span class="ruby-keyword">next</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">record</span>.<span class="ruby-identifier">performed_at</span> <span class="ruby-operator">&lt;=</span> <span class="ruby-identifier">first_dose</span>.<span class="ruby-identifier">performed_at</span>
+      <span class="ruby-keyword">next</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">record</span>.<span class="ruby-identifier">performed_at_date</span> <span class="ruby-operator">&lt;=</span> <span class="ruby-identifier">first_dose</span>.<span class="ruby-identifier">performed_at_date</span>
 
       <span class="ruby-identifier">previous_dose</span> =
         <span class="ruby-identifier">sorted_vaccination_records</span>
-          .<span class="ruby-identifier">select</span> { <span class="ruby-identifier">it</span>.<span class="ruby-identifier">performed_at</span> <span class="ruby-operator">&lt;</span> <span class="ruby-identifier">record</span>.<span class="ruby-identifier">performed_at</span> }
+          .<span class="ruby-identifier">select</span> { <span class="ruby-identifier">it</span>.<span class="ruby-identifier">performed_at_date</span> <span class="ruby-operator">&lt;</span> <span class="ruby-identifier">record</span>.<span class="ruby-identifier">performed_at_date</span> }
           .<span class="ruby-identifier">last</span>
 
-      <span class="ruby-identifier">record</span>.<span class="ruby-identifier">performed_at</span> <span class="ruby-operator">&gt;=</span> <span class="ruby-identifier">previous_dose</span>.<span class="ruby-identifier">performed_at</span> <span class="ruby-operator">+</span> <span class="ruby-value">28</span>.<span class="ruby-identifier">days</span> <span class="ruby-operator">&amp;&amp;</span>
-        <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">age_months</span>(<span class="ruby-value">now:</span> <span class="ruby-identifier">record</span>.<span class="ruby-identifier">performed_at</span>) <span class="ruby-operator">&gt;=</span> <span class="ruby-value">15</span>
+      <span class="ruby-identifier">record</span>.<span class="ruby-identifier">performed_at_date</span> <span class="ruby-operator">&gt;=</span> <span class="ruby-identifier">previous_dose</span>.<span class="ruby-identifier">performed_at_date</span> <span class="ruby-operator">+</span> <span class="ruby-value">28</span>.<span class="ruby-identifier">days</span> <span class="ruby-operator">&amp;&amp;</span>
+        <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">age_months</span>(<span class="ruby-value">now:</span> <span class="ruby-identifier">record</span>.<span class="ruby-identifier">performed_at_date</span>) <span class="ruby-operator">&gt;=</span> <span class="ruby-value">15</span>
     <span class="ruby-keyword">end</span>
 
   [<span class="ruby-identifier">second_dose</span>, <span class="ruby-identifier">first_dose</span>].<span class="ruby-identifier">compact</span>
@@ -894,7 +898,7 @@
             </details>
           </div>
           <div class="method-source-code" id="programme-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/lib/vaccination_criteria.rb, line 144</span>
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/vaccination_criteria.rb, line 148</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">programme</span>
   <span class="ruby-ivar">@programme</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">Programme</span>.<span class="ruby-identifier">find</span>(<span class="ruby-identifier">programme_type</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -1010,12 +1014,16 @@
     <span class="ruby-comment"># year of age and the second above 15 months and the doses at least 4</span>
     <span class="ruby-comment"># weeks apart is eligible for catch up vaccinations by SAIS until they</span>
     <span class="ruby-comment"># have had two valid doses.</span>
+    <span class="ruby-comment">#</span>
+    <span class="ruby-comment"># Use `performed_at_date` (always a Date) rather than `performed_at` to</span>
+    <span class="ruby-comment"># avoid type-mixing issues in sort order, comparison, and arithmetic.</span>
 
-    <span class="ruby-identifier">sorted_vaccination_records</span> = <span class="ruby-identifier">vaccination_records</span>.<span class="ruby-identifier">sort_by</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:performed_at</span>)
+    <span class="ruby-identifier">sorted_vaccination_records</span> =
+      <span class="ruby-identifier">vaccination_records</span>.<span class="ruby-identifier">sort_by</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:performed_at_date</span>)
 
     <span class="ruby-identifier">first_dose</span> =
       <span class="ruby-identifier">sorted_vaccination_records</span>.<span class="ruby-identifier">find</span> <span class="ruby-keyword">do</span>
-        <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">age_months</span>(<span class="ruby-value">now:</span> <span class="ruby-identifier">it</span>.<span class="ruby-identifier">performed_at</span>) <span class="ruby-operator">&gt;=</span> <span class="ruby-value">12</span>
+        <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">age_months</span>(<span class="ruby-value">now:</span> <span class="ruby-identifier">it</span>.<span class="ruby-identifier">performed_at_date</span>) <span class="ruby-operator">&gt;=</span> <span class="ruby-value">12</span>
       <span class="ruby-keyword">end</span>
 
     <span class="ruby-keyword">return</span> [] <span class="ruby-keyword">if</span> <span class="ruby-identifier">first_dose</span>.<span class="ruby-identifier">nil?</span>
@@ -1023,15 +1031,15 @@
     <span class="ruby-comment"># The second dose must be at least 28 days after the most recent dose</span>
     <span class="ruby-identifier">second_dose</span> =
       <span class="ruby-identifier">sorted_vaccination_records</span>.<span class="ruby-identifier">find</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">record</span><span class="ruby-operator">|</span>
-        <span class="ruby-keyword">next</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">record</span>.<span class="ruby-identifier">performed_at</span> <span class="ruby-operator">&lt;=</span> <span class="ruby-identifier">first_dose</span>.<span class="ruby-identifier">performed_at</span>
+        <span class="ruby-keyword">next</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">record</span>.<span class="ruby-identifier">performed_at_date</span> <span class="ruby-operator">&lt;=</span> <span class="ruby-identifier">first_dose</span>.<span class="ruby-identifier">performed_at_date</span>
 
         <span class="ruby-identifier">previous_dose</span> =
           <span class="ruby-identifier">sorted_vaccination_records</span>
-            .<span class="ruby-identifier">select</span> { <span class="ruby-identifier">it</span>.<span class="ruby-identifier">performed_at</span> <span class="ruby-operator">&lt;</span> <span class="ruby-identifier">record</span>.<span class="ruby-identifier">performed_at</span> }
+            .<span class="ruby-identifier">select</span> { <span class="ruby-identifier">it</span>.<span class="ruby-identifier">performed_at_date</span> <span class="ruby-operator">&lt;</span> <span class="ruby-identifier">record</span>.<span class="ruby-identifier">performed_at_date</span> }
             .<span class="ruby-identifier">last</span>
 
-        <span class="ruby-identifier">record</span>.<span class="ruby-identifier">performed_at</span> <span class="ruby-operator">&gt;=</span> <span class="ruby-identifier">previous_dose</span>.<span class="ruby-identifier">performed_at</span> <span class="ruby-operator">+</span> <span class="ruby-value">28</span>.<span class="ruby-identifier">days</span> <span class="ruby-operator">&amp;&amp;</span>
-          <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">age_months</span>(<span class="ruby-value">now:</span> <span class="ruby-identifier">record</span>.<span class="ruby-identifier">performed_at</span>) <span class="ruby-operator">&gt;=</span> <span class="ruby-value">15</span>
+        <span class="ruby-identifier">record</span>.<span class="ruby-identifier">performed_at_date</span> <span class="ruby-operator">&gt;=</span> <span class="ruby-identifier">previous_dose</span>.<span class="ruby-identifier">performed_at_date</span> <span class="ruby-operator">+</span> <span class="ruby-value">28</span>.<span class="ruby-identifier">days</span> <span class="ruby-operator">&amp;&amp;</span>
+          <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">age_months</span>(<span class="ruby-value">now:</span> <span class="ruby-identifier">record</span>.<span class="ruby-identifier">performed_at_date</span>) <span class="ruby-operator">&gt;=</span> <span class="ruby-value">15</span>
       <span class="ruby-keyword">end</span>
 
     [<span class="ruby-identifier">second_dose</span>, <span class="ruby-identifier">first_dose</span>].<span class="ruby-identifier">compact</span>
