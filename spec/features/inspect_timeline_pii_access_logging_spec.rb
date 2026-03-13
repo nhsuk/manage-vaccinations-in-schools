@@ -30,6 +30,7 @@ describe "Inspect timeline PII access logging", :cis2 do
     @team_support =
       create(
         :team,
+        :support,
         organisation: @organisation_support,
         workgroup: CIS2Info::SUPPORT_WORKGROUP
       )

@@ -69,6 +69,15 @@ FactoryBot.define do
       programmes { [Programme.flu, Programme.hpv] }
     end
 
+    trait :support do
+      type { :support }
+
+      email { nil }
+      phone { nil }
+      privacy_notice_url { nil }
+      privacy_policy_url { nil }
+    end
+
     trait :with_one_nurse do
       users { [create(:user, :nurse, team: instance)] }
     end

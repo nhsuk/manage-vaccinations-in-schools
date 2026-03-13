@@ -4,7 +4,7 @@ namespace :ops_support do
   desc "Create an organisation and team for ops support users to access ops tools."
   task seed: :environment do
     organisation =
-      Organisation.find_or_create_by!(ods_code: CIS2Info::SUPPORT_ORGANISATION)
+      Organisation.find_or_create_by!(ods_code: CIS2Info.support_organisation)
 
     Team.find_or_create_by!(
       organisation:,

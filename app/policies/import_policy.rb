@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
 class ImportPolicy < ApplicationPolicy
-  def index? = true
+  def index? = team.is_sais_team?
 
-  def create? = true
+  def create? = team.is_sais_team?
 
-  def show? = true
+  def show? = team.is_sais_team?
 
-  def update? = true
+  def update? = team.is_sais_team?
 
-  def records? = true
+  def records? = team.is_sais_team?
 end

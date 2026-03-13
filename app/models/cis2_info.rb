@@ -8,7 +8,10 @@ class CIS2Info
   SUPPORT_ROLE = "S8001:G8005:R8015"
 
   SUPPORT_WORKGROUP = "mavissupport"
-  SUPPORT_ORGANISATION = Settings.cis2.support_organisation
+
+  def self.support_organisation
+    Settings.cis2.support_organisation
+  end
 
   ACCESS_SENSITIVE_FLAGGED_RECORDS_ACTIVITY_CODE = "B1611"
   INDEPENDENT_PRESCRIBING_ACTIVITY_CODE = "B0420"
@@ -90,21 +93,16 @@ class CIS2Info
   end
 
   def is_support_without_pii_access?
-    is_support_without_activities? &&
+    role_code == SUPPORT_ROLE &&
       can_view_shared_non_patient_identifiable_information?
   end
 
   def is_support_with_pii_access?
-    is_support_without_activities? && can_access_sensitive_flagged_records? &&
+    role_code == SUPPORT_ROLE && can_access_sensitive_flagged_records? &&
       can_view_detailed_health_records?
   end
 
   private
-
-  def is_support_without_activities?
-    workgroups&.include?(SUPPORT_WORKGROUP) && role_code == SUPPORT_ROLE &&
-      organisation_code == SUPPORT_ORGANISATION
-  end
 
   def request_session_key = "cis2_info"
 end
