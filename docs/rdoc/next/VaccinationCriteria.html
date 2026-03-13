@@ -5,17 +5,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>class CohortImportRow - Mavis Documentation</title>
+<title>class VaccinationCriteria - Mavis Documentation</title>
 
 
   <meta
     name="keywords"
-    content="ruby,class,CohortImportRow"
+    content="ruby,class,VaccinationCriteria"
   >
 
     <meta
       name="description"
-      content="Documentation for the CohortImportRow class"
+      content="class VaccinationCriteria: This class handles all the business logic related to determining whether a patient should be considered vaccinated for a particular programme type and"
     >
 
 
@@ -24,14 +24,11 @@
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content="website">
-<meta property="og:title" content="class CohortImportRow - Mavis Documentation">
+<meta property="og:title" content="class VaccinationCriteria - Mavis Documentation">
 
 
 
-    <meta
-      property="og:description"
-      content="Documentation for CohortImportRow class - API reference and code examples"
-    >
+    <meta property="og:description" content="This class handles all the business logic related to determining whether a patient should be considered vaccinated for a particular programme type and">
 
 
 
@@ -39,14 +36,11 @@
 
 <!-- Twitter -->
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="class CohortImportRow - Mavis Documentation">
+<meta name="twitter:title" content="class VaccinationCriteria - Mavis Documentation">
 
 
 
-    <meta
-      name="twitter:description"
-      content="Documentation for CohortImportRow class - API reference and code examples"
-    >
+    <meta name="twitter:description" content="This class handles all the business logic related to determining whether a patient should be considered vaccinated for a particular programme type and">
 
 
 
@@ -533,7 +527,7 @@
         <svg><use href="#icon-chevron"></use></svg>
       </span>
     </summary>
-    <ul><li><a href="PatientImportRow.html">PatientImportRow</a><ul><li>Object</li></ul></li></ul>
+    <ul><li>Object</li></ul>
   </details>
 </div>
 
@@ -556,7 +550,7 @@
       </summary>
       <ul class="nav-list" role="directory">
 
-        <li class="calls-super" ><a href="#method-c-new">new</a></li>
+        <li ><a href="#method-c-new">new</a></li>
 
       </ul>
     </details>
@@ -577,21 +571,19 @@
       </summary>
       <ul class="nav-list" role="directory">
 
-        <li ><a href="#method-i-home_educated">home_educated</a></li>
+        <li ><a href="#method-i-filter_doubles_vaccination_records">filter_doubles_vaccination_records</a></li>
 
-        <li ><a href="#method-i-school">school</a></li>
+        <li ><a href="#method-i-filter_hpv_vaccination_records">filter_hpv_vaccination_records</a></li>
 
-        <li ><a href="#method-i-school_move_source">school_move_source</a></li>
+        <li ><a href="#method-i-filter_mmr_vaccination_records">filter_mmr_vaccination_records</a></li>
 
-        <li ><a href="#method-i-school_urn">school_urn</a></li>
+        <li ><a href="#method-i-programme">programme</a></li>
 
-        <li ><a href="#method-i-schools">schools</a></li>
+        <li ><a href="#method-i-vaccinated-3F">vaccinated?</a></li>
 
-        <li ><a href="#method-i-stage_registration-3F">stage_registration?</a></li>
+        <li ><a href="#method-i-vaccinated_vaccination_record">vaccinated_vaccination_record</a></li>
 
-        <li ><a href="#method-i-validate_address_postcode">validate_address_postcode</a></li>
-
-        <li ><a href="#method-i-validate_school_urn">validate_school_urn</a></li>
+        <li ><a href="#method-i-valid_vaccination_records">valid_vaccination_records</a></li>
 
       </ul>
     </details>
@@ -616,17 +608,21 @@
 
 </nav>
 
-<main role="main" aria-labelledby="class-cohortimportrow">
+<main role="main" aria-labelledby="class-vaccinationcriteria">
   
   
 
-  <span id="class-CohortImportRow" class="legacy-anchor"></span>
-  <h1 id="class-cohortimportrow" class="anchor-link class">
-    class CohortImportRow
+  <span id="class-VaccinationCriteria" class="legacy-anchor"></span>
+  <h1 id="class-vaccinationcriteria" class="anchor-link class">
+    class VaccinationCriteria
   </h1>
 
   <section class="description">
     
+<p>This class handles all the business logic related to determining whether a patient should be considered vaccinated for a particular programme type and academic year.</p>
+
+<p>This reason this exists outside the <a href="StatusGenerator.html"><code>StatusGenerator</code></a> module is that it is used by each of the status generators but is not a status by itself.</p>
+
   </section>
 
 
@@ -636,31 +632,6 @@
 
 
 
-
-    <section class="constants-list">
-      <header>
-        <h3 id="untitled-constants"><a href="#untitled-constants">Constants</a></h3>
-      </header>
-      <dl>
-
-        <dt id="SCHOOL_URN_HOME_EDUCATED">SCHOOL_URN_HOME_EDUCATED</dt>
-
-        <dd>
-
-          
-        </dd>
-
-
-        <dt id="SCHOOL_URN_UNKNOWN">SCHOOL_URN_UNKNOWN</dt>
-
-        <dd>
-
-          
-        </dd>
-
-
-      </dl>
-    </section>
 
 
 
@@ -681,7 +652,7 @@
             <div class="method-heading">
               <a href="#method-c-new" title="Link to this method">
                 <span class="method-name">new</span>
-                <span class="method-args">(data:, team:, academic_year:)</span>
+                <span class="method-args">( programme_type:, academic_year:, patient:, vaccination_records: )</span>
               </a>
             </div>
 
@@ -694,9 +665,26 @@
             </details>
           </div>
           <div class="method-source-code" id="new-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/cohort_import_row.rb, line 9</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-value">data:</span>, <span class="ruby-value">team:</span>, <span class="ruby-value">academic_year:</span>)
-  <span class="ruby-keyword">super</span>(<span class="ruby-value">data:</span>, <span class="ruby-value">team:</span>, <span class="ruby-value">academic_year:</span>, <span class="ruby-value">year_groups:</span> <span class="ruby-identifier">team</span>.<span class="ruby-identifier">year_groups</span>)
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/vaccination_criteria.rb, line 21</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(
+  <span class="ruby-value">programme_type:</span>,
+  <span class="ruby-value">academic_year:</span>,
+  <span class="ruby-value">patient:</span>,
+  <span class="ruby-value">vaccination_records:</span>
+)
+  <span class="ruby-ivar">@programme_type</span> = <span class="ruby-identifier">programme_type</span>
+  <span class="ruby-ivar">@academic_year</span> = <span class="ruby-identifier">academic_year</span>
+  <span class="ruby-ivar">@patient</span> = <span class="ruby-identifier">patient</span>
+
+  <span class="ruby-ivar">@vaccination_records</span> =
+    <span class="ruby-identifier">vaccination_records</span>.<span class="ruby-identifier">select</span> <span class="ruby-keyword">do</span>
+      <span class="ruby-identifier">it</span>.<span class="ruby-identifier">patient_id</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">id</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">it</span>.<span class="ruby-identifier">programme_type</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">programme_type</span> <span class="ruby-operator">&amp;&amp;</span>
+        <span class="ruby-keyword">if</span> <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">seasonal?</span>
+          <span class="ruby-identifier">it</span>.<span class="ruby-identifier">academic_year</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">academic_year</span>
+        <span class="ruby-keyword">else</span>
+          <span class="ruby-identifier">it</span>.<span class="ruby-identifier">academic_year</span> <span class="ruby-operator">&lt;=</span> <span class="ruby-identifier">academic_year</span>
+        <span class="ruby-keyword">end</span>
+    <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -705,13 +693,10 @@
         <div class="method-description">
 
 
-          
+          <p>Create a new instance of the class for the <code>programme_type</code>, <a href="app/lib/academic_year_rb.html">academic_year</a>, and <code>patient</code>.</p>
 
+<p>The <a href="app/lib/generate/vaccination_records_rb.html">vaccination_records</a> argument is required to allow for a preloaded array to be passed in, rather than fetching the records from the database. Any vaccination records can be passed in and will be filtered on the patient, programme type, and academic year. The filtered list is then available to read back as the <a href="app/lib/generate/vaccination_records_rb.html">vaccination_records</a> method on the class instance.</p>
 
-            <div class="method-calls-super">
-              Calls superclass method
-              <a href="PatientImportRow.html#method-c-new"><code>PatientImportRow::new</code></a>
-            </div>
 
         </div>
 
@@ -736,13 +721,13 @@
        </header>
 
 
-      <div id="method-i-home_educated" class="method-detail anchor-link ">
+      <div id="method-i-filter_doubles_vaccination_records" class="method-detail anchor-link ">
         <div class="method-header">
 
             <div class="method-heading">
-              <a href="#method-i-home_educated" title="Link to this method">
-                <span class="method-name">home_educated</span>
-                <span class="method-args">()</span>
+              <a href="#method-i-filter_doubles_vaccination_records" title="Link to this method">
+                <span class="method-name">filter_doubles_vaccination_records</span>
+                <span class="method-args">(vaccination_records)</span>
               </a>
             </div>
 
@@ -754,14 +739,10 @@
               <summary>Source</summary>
             </details>
           </div>
-          <div class="method-source-code" id="home_educated-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/cohort_import_row.rb, line 28</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">home_educated</span>
-  <span class="ruby-keyword">if</span> <span class="ruby-identifier">school_urn</span>&amp;.<span class="ruby-identifier">to_s</span> <span class="ruby-operator">==</span> <span class="ruby-constant">SCHOOL_URN_HOME_EDUCATED</span>
-    <span class="ruby-keyword">true</span>
-  <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">school_urn</span>&amp;.<span class="ruby-identifier">to_s</span> <span class="ruby-operator">==</span> <span class="ruby-constant">SCHOOL_URN_UNKNOWN</span>
-    <span class="ruby-keyword">false</span>
-  <span class="ruby-keyword">end</span>
+          <div class="method-source-code" id="filter_doubles_vaccination_records-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/vaccination_criteria.rb, line 104</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">filter_doubles_vaccination_records</span>(<span class="ruby-identifier">vaccination_records</span>)
+  <span class="ruby-identifier">vaccination_records</span>.<span class="ruby-identifier">select</span> { <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">age_years</span>(<span class="ruby-value">now:</span> <span class="ruby-identifier">it</span>.<span class="ruby-identifier">performed_at</span>) <span class="ruby-operator">&gt;=</span> <span class="ruby-value">10</span> }
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -782,13 +763,13 @@
       </div>
 
 
-      <div id="method-i-school" class="method-detail anchor-link ">
+      <div id="method-i-filter_hpv_vaccination_records" class="method-detail anchor-link ">
         <div class="method-header">
 
             <div class="method-heading">
-              <a href="#method-i-school" title="Link to this method">
-                <span class="method-name">school</span>
-                <span class="method-args">()</span>
+              <a href="#method-i-filter_hpv_vaccination_records" title="Link to this method">
+                <span class="method-name">filter_hpv_vaccination_records</span>
+                <span class="method-args">(vaccination_records)</span>
               </a>
             </div>
 
@@ -800,15 +781,80 @@
               <summary>Source</summary>
             </details>
           </div>
-          <div class="method-source-code" id="school-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/cohort_import_row.rb, line 19</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">school</span>
-  <span class="ruby-ivar">@school</span> <span class="ruby-operator">||=</span>
-    <span class="ruby-keyword">if</span> (<span class="ruby-identifier">urn</span> = <span class="ruby-identifier">school_urn</span>&amp;.<span class="ruby-identifier">to_s</span>).<span class="ruby-identifier">present?</span> <span class="ruby-operator">&amp;&amp;</span>
-         <span class="ruby-operator">!</span>[<span class="ruby-constant">SCHOOL_URN_HOME_EDUCATED</span>, <span class="ruby-constant">SCHOOL_URN_UNKNOWN</span>].<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">urn</span>)
-      <span class="ruby-identifier">schools</span>.<span class="ruby-identifier">find_by_urn_and_site</span>(<span class="ruby-identifier">urn</span>) <span class="ruby-operator">||</span>
-        <span class="ruby-identifier">schools</span>.<span class="ruby-identifier">find_by</span>(<span class="ruby-value">systm_one_code:</span> <span class="ruby-identifier">urn</span>)
+          <div class="method-source-code" id="filter_hpv_vaccination_records-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/vaccination_criteria.rb, line 108</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">filter_hpv_vaccination_records</span>(<span class="ruby-identifier">vaccination_records</span>)
+  <span class="ruby-identifier">vaccination_records</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-i-filter_mmr_vaccination_records" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-filter_mmr_vaccination_records" title="Link to this method">
+                <span class="method-name">filter_mmr_vaccination_records</span>
+                <span class="method-args">(vaccination_records)</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="filter_mmr_vaccination_records-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/vaccination_criteria.rb, line 112</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">filter_mmr_vaccination_records</span>(<span class="ruby-identifier">vaccination_records</span>)
+  <span class="ruby-comment"># Any child who hasn&#39;t had two doses of MMR with the first dose above 1</span>
+  <span class="ruby-comment"># year of age and the second above 15 months and the doses at least 4</span>
+  <span class="ruby-comment"># weeks apart is eligible for catch up vaccinations by SAIS until they</span>
+  <span class="ruby-comment"># have had two valid doses.</span>
+
+  <span class="ruby-identifier">sorted_vaccination_records</span> = <span class="ruby-identifier">vaccination_records</span>.<span class="ruby-identifier">sort_by</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:performed_at</span>)
+
+  <span class="ruby-identifier">first_dose</span> =
+    <span class="ruby-identifier">sorted_vaccination_records</span>.<span class="ruby-identifier">find</span> <span class="ruby-keyword">do</span>
+      <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">age_months</span>(<span class="ruby-value">now:</span> <span class="ruby-identifier">it</span>.<span class="ruby-identifier">performed_at</span>) <span class="ruby-operator">&gt;=</span> <span class="ruby-value">12</span>
     <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">return</span> [] <span class="ruby-keyword">if</span> <span class="ruby-identifier">first_dose</span>.<span class="ruby-identifier">nil?</span>
+
+  <span class="ruby-comment"># The second dose must be at least 28 days after the most recent dose</span>
+  <span class="ruby-identifier">second_dose</span> =
+    <span class="ruby-identifier">sorted_vaccination_records</span>.<span class="ruby-identifier">find</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">record</span><span class="ruby-operator">|</span>
+      <span class="ruby-keyword">next</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">record</span>.<span class="ruby-identifier">performed_at</span> <span class="ruby-operator">&lt;=</span> <span class="ruby-identifier">first_dose</span>.<span class="ruby-identifier">performed_at</span>
+
+      <span class="ruby-identifier">previous_dose</span> =
+        <span class="ruby-identifier">sorted_vaccination_records</span>
+          .<span class="ruby-identifier">select</span> { <span class="ruby-identifier">it</span>.<span class="ruby-identifier">performed_at</span> <span class="ruby-operator">&lt;</span> <span class="ruby-identifier">record</span>.<span class="ruby-identifier">performed_at</span> }
+          .<span class="ruby-identifier">last</span>
+
+      <span class="ruby-identifier">record</span>.<span class="ruby-identifier">performed_at</span> <span class="ruby-operator">&gt;=</span> <span class="ruby-identifier">previous_dose</span>.<span class="ruby-identifier">performed_at</span> <span class="ruby-operator">+</span> <span class="ruby-value">28</span>.<span class="ruby-identifier">days</span> <span class="ruby-operator">&amp;&amp;</span>
+        <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">age_months</span>(<span class="ruby-value">now:</span> <span class="ruby-identifier">record</span>.<span class="ruby-identifier">performed_at</span>) <span class="ruby-operator">&gt;=</span> <span class="ruby-value">15</span>
+    <span class="ruby-keyword">end</span>
+
+  [<span class="ruby-identifier">second_dose</span>, <span class="ruby-identifier">first_dose</span>].<span class="ruby-identifier">compact</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -829,12 +875,12 @@
       </div>
 
 
-      <div id="method-i-school_move_source" class="method-detail anchor-link ">
+      <div id="method-i-programme" class="method-detail anchor-link ">
         <div class="method-header">
 
             <div class="method-heading">
-              <a href="#method-i-school_move_source" title="Link to this method">
-                <span class="method-name">school_move_source</span>
+              <a href="#method-i-programme" title="Link to this method">
+                <span class="method-name">programme</span>
                 <span class="method-args">()</span>
               </a>
             </div>
@@ -847,10 +893,10 @@
               <summary>Source</summary>
             </details>
           </div>
-          <div class="method-source-code" id="school_move_source-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/cohort_import_row.rb, line 15</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">school_move_source</span>
-  <span class="ruby-value">:cohort_import</span>
+          <div class="method-source-code" id="programme-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/vaccination_criteria.rb, line 144</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">programme</span>
+  <span class="ruby-ivar">@programme</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">Programme</span>.<span class="ruby-identifier">find</span>(<span class="ruby-identifier">programme_type</span>)
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -871,13 +917,13 @@
       </div>
 
 
-      <div id="method-i-school_urn" class="method-detail anchor-link ">
+      <div id="method-i-vaccinated-3F" class="method-detail anchor-link ">
         <div class="method-header">
 
             <div class="method-heading">
-              <a href="#method-i-school_urn" title="Link to this method">
-                <span class="method-name">school_urn</span>
-                <span class="method-args">(= @data[:child_school_urn])</span>
+              <a href="#method-i-vaccinated-3F" title="Link to this method">
+                <span class="method-name">vaccinated?</span>
+                <span class="method-args">(= vaccinated_vaccination_record != nil)</span>
               </a>
             </div>
 
@@ -889,88 +935,233 @@
               <summary>Source</summary>
             </details>
           </div>
-          <div class="method-source-code" id="school_urn-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/cohort_import_row.rb, line 13</span>
-  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">school_urn</span> = <span class="ruby-ivar">@data</span>[<span class="ruby-value">:child_school_urn</span>]
+          <div class="method-source-code" id="vaccinated-3F-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/vaccination_criteria.rb, line 44</span>
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccinated?</span> = <span class="ruby-identifier">vaccinated_vaccination_record</span> <span class="ruby-operator">!=</span> <span class="ruby-keyword">nil</span>
 
-  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">school_move_source</span>
-    <span class="ruby-value">:cohort_import</span>
-  <span class="ruby-keyword">end</span>
+  <span class="ruby-comment">##</span>
+  <span class="ruby-comment"># Returns the first vaccination record that confirms that the patient is</span>
+  <span class="ruby-comment"># vaccinated.</span>
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccinated_vaccination_record</span>
+    <span class="ruby-ivar">@vaccinated_vaccination_record</span> <span class="ruby-operator">||=</span>
+      <span class="ruby-keyword">begin</span>
+        <span class="ruby-keyword">if</span> (<span class="ruby-identifier">already_had_record</span> = <span class="ruby-identifier">valid_vaccination_records</span>.<span class="ruby-identifier">find</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:already_had?</span>))
+          <span class="ruby-keyword">return</span> <span class="ruby-identifier">already_had_record</span>
+        <span class="ruby-keyword">end</span>
 
-  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">school</span>
-    <span class="ruby-ivar">@school</span> <span class="ruby-operator">||=</span>
-      <span class="ruby-keyword">if</span> (<span class="ruby-identifier">urn</span> = <span class="ruby-identifier">school_urn</span>&amp;.<span class="ruby-identifier">to_s</span>).<span class="ruby-identifier">present?</span> <span class="ruby-operator">&amp;&amp;</span>
-           <span class="ruby-operator">!</span>[<span class="ruby-constant">SCHOOL_URN_HOME_EDUCATED</span>, <span class="ruby-constant">SCHOOL_URN_UNKNOWN</span>].<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">urn</span>)
-        <span class="ruby-identifier">schools</span>.<span class="ruby-identifier">find_by_urn_and_site</span>(<span class="ruby-identifier">urn</span>) <span class="ruby-operator">||</span>
-          <span class="ruby-identifier">schools</span>.<span class="ruby-identifier">find_by</span>(<span class="ruby-value">systm_one_code:</span> <span class="ruby-identifier">urn</span>)
+        <span class="ruby-keyword">if</span> <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">mmr?</span>
+          <span class="ruby-keyword">if</span> <span class="ruby-identifier">valid_vaccination_records</span>.<span class="ruby-identifier">count</span> <span class="ruby-operator">&gt;=</span> <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">maximum_dose_sequence</span>
+            <span class="ruby-identifier">valid_vaccination_records</span>.<span class="ruby-identifier">first</span>
+          <span class="ruby-keyword">end</span>
+        <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">td_ipv?</span>
+          <span class="ruby-identifier">valid_vaccination_records</span>.<span class="ruby-identifier">find</span> <span class="ruby-keyword">do</span>
+            <span class="ruby-identifier">it</span>.<span class="ruby-identifier">dose_sequence</span> <span class="ruby-operator">==</span> <span class="ruby-value">5</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">it</span>.<span class="ruby-identifier">sourced_from_service?</span>
+          <span class="ruby-keyword">end</span>
+        <span class="ruby-keyword">else</span>
+          <span class="ruby-identifier">valid_vaccination_records</span>.<span class="ruby-identifier">first</span>
+        <span class="ruby-keyword">end</span>
       <span class="ruby-keyword">end</span>
   <span class="ruby-keyword">end</span>
 
-  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">home_educated</span>
-    <span class="ruby-keyword">if</span> <span class="ruby-identifier">school_urn</span>&amp;.<span class="ruby-identifier">to_s</span> <span class="ruby-operator">==</span> <span class="ruby-constant">SCHOOL_URN_HOME_EDUCATED</span>
-      <span class="ruby-keyword">true</span>
-    <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">school_urn</span>&amp;.<span class="ruby-identifier">to_s</span> <span class="ruby-operator">==</span> <span class="ruby-constant">SCHOOL_URN_UNKNOWN</span>
-      <span class="ruby-keyword">false</span>
-    <span class="ruby-keyword">end</span>
+  <span class="ruby-comment">##</span>
+  <span class="ruby-comment"># Returns the administered vaccination records that are considered valid</span>
+  <span class="ruby-comment"># doses according to the specific criteria of the programme.</span>
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">valid_vaccination_records</span>
+    <span class="ruby-ivar">@valid_vaccination_records</span> <span class="ruby-operator">||=</span>
+      <span class="ruby-keyword">if</span> <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">seasonal?</span>
+        <span class="ruby-identifier">vaccination_records</span>.<span class="ruby-identifier">select</span> { <span class="ruby-identifier">it</span>.<span class="ruby-identifier">administered?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">it</span>.<span class="ruby-identifier">already_had?</span> }
+      <span class="ruby-keyword">else</span>
+        <span class="ruby-keyword">if</span> (
+             <span class="ruby-identifier">already_had_records</span> = <span class="ruby-identifier">vaccination_records</span>.<span class="ruby-identifier">select</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:already_had?</span>)
+           ).<span class="ruby-identifier">present?</span>
+          <span class="ruby-keyword">return</span> <span class="ruby-identifier">already_had_records</span>
+        <span class="ruby-keyword">end</span>
+
+        <span class="ruby-identifier">administered_records</span> = <span class="ruby-identifier">vaccination_records</span>.<span class="ruby-identifier">select</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:administered?</span>)
+
+        <span class="ruby-keyword">if</span> <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">doubles?</span>
+          <span class="ruby-identifier">filter_doubles_vaccination_records</span>(<span class="ruby-identifier">administered_records</span>)
+        <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">hpv?</span>
+          <span class="ruby-identifier">filter_hpv_vaccination_records</span>(<span class="ruby-identifier">administered_records</span>)
+        <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">mmr?</span>
+          <span class="ruby-identifier">filter_mmr_vaccination_records</span>(<span class="ruby-identifier">administered_records</span>)
+        <span class="ruby-keyword">else</span>
+          <span class="ruby-identifier">raise</span> <span class="ruby-constant">UnsupportedProgrammeType</span>, <span class="ruby-identifier">programme_type</span>
+        <span class="ruby-keyword">end</span>
+      <span class="ruby-keyword">end</span>
   <span class="ruby-keyword">end</span>
+
+  <span class="ruby-identifier">attr_reader</span> <span class="ruby-value">:vaccination_records</span>
 
   <span class="ruby-identifier">private</span>
 
-  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">schools</span>
-    <span class="ruby-constant">Location</span>
-      .<span class="ruby-identifier">school</span>
-      .<span class="ruby-identifier">joins</span>(<span class="ruby-value">:team_locations</span>)
-      .<span class="ruby-identifier">where</span>(<span class="ruby-value">team_locations:</span> { <span class="ruby-value">team:</span>, <span class="ruby-value">academic_year:</span> })
+  <span class="ruby-identifier">attr_reader</span> <span class="ruby-value">:programme_type</span>, <span class="ruby-value">:academic_year</span>, <span class="ruby-value">:patient</span>
+
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">filter_doubles_vaccination_records</span>(<span class="ruby-identifier">vaccination_records</span>)
+    <span class="ruby-identifier">vaccination_records</span>.<span class="ruby-identifier">select</span> { <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">age_years</span>(<span class="ruby-value">now:</span> <span class="ruby-identifier">it</span>.<span class="ruby-identifier">performed_at</span>) <span class="ruby-operator">&gt;=</span> <span class="ruby-value">10</span> }
   <span class="ruby-keyword">end</span>
 
-  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">stage_registration?</span>
-    <span class="ruby-keyword">true</span>
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">filter_hpv_vaccination_records</span>(<span class="ruby-identifier">vaccination_records</span>)
+    <span class="ruby-identifier">vaccination_records</span>
   <span class="ruby-keyword">end</span>
 
-  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_address_postcode</span>
-    <span class="ruby-keyword">if</span> <span class="ruby-identifier">address_postcode</span>.<span class="ruby-identifier">nil?</span>
-      <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_POSTCODE&lt;/code&gt; is required&quot;</span>)
-    <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">address_postcode</span>.<span class="ruby-identifier">blank?</span>
-      <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(
-        <span class="ruby-identifier">address_postcode</span>.<span class="ruby-identifier">header</span>,
-        <span class="ruby-string">&quot;Enter a valid postcode, like SW1A 1AA.&quot;</span>
-      )
-    <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">address_postcode</span>.<span class="ruby-identifier">to_postcode</span>.<span class="ruby-identifier">nil?</span>
-      <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">address_postcode</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;should be a postcode, like SW1A 1AA&quot;</span>)
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">filter_mmr_vaccination_records</span>(<span class="ruby-identifier">vaccination_records</span>)
+    <span class="ruby-comment"># Any child who hasn&#39;t had two doses of MMR with the first dose above 1</span>
+    <span class="ruby-comment"># year of age and the second above 15 months and the doses at least 4</span>
+    <span class="ruby-comment"># weeks apart is eligible for catch up vaccinations by SAIS until they</span>
+    <span class="ruby-comment"># have had two valid doses.</span>
+
+    <span class="ruby-identifier">sorted_vaccination_records</span> = <span class="ruby-identifier">vaccination_records</span>.<span class="ruby-identifier">sort_by</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:performed_at</span>)
+
+    <span class="ruby-identifier">first_dose</span> =
+      <span class="ruby-identifier">sorted_vaccination_records</span>.<span class="ruby-identifier">find</span> <span class="ruby-keyword">do</span>
+        <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">age_months</span>(<span class="ruby-value">now:</span> <span class="ruby-identifier">it</span>.<span class="ruby-identifier">performed_at</span>) <span class="ruby-operator">&gt;=</span> <span class="ruby-value">12</span>
+      <span class="ruby-keyword">end</span>
+
+    <span class="ruby-keyword">return</span> [] <span class="ruby-keyword">if</span> <span class="ruby-identifier">first_dose</span>.<span class="ruby-identifier">nil?</span>
+
+    <span class="ruby-comment"># The second dose must be at least 28 days after the most recent dose</span>
+    <span class="ruby-identifier">second_dose</span> =
+      <span class="ruby-identifier">sorted_vaccination_records</span>.<span class="ruby-identifier">find</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">record</span><span class="ruby-operator">|</span>
+        <span class="ruby-keyword">next</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">record</span>.<span class="ruby-identifier">performed_at</span> <span class="ruby-operator">&lt;=</span> <span class="ruby-identifier">first_dose</span>.<span class="ruby-identifier">performed_at</span>
+
+        <span class="ruby-identifier">previous_dose</span> =
+          <span class="ruby-identifier">sorted_vaccination_records</span>
+            .<span class="ruby-identifier">select</span> { <span class="ruby-identifier">it</span>.<span class="ruby-identifier">performed_at</span> <span class="ruby-operator">&lt;</span> <span class="ruby-identifier">record</span>.<span class="ruby-identifier">performed_at</span> }
+            .<span class="ruby-identifier">last</span>
+
+        <span class="ruby-identifier">record</span>.<span class="ruby-identifier">performed_at</span> <span class="ruby-operator">&gt;=</span> <span class="ruby-identifier">previous_dose</span>.<span class="ruby-identifier">performed_at</span> <span class="ruby-operator">+</span> <span class="ruby-value">28</span>.<span class="ruby-identifier">days</span> <span class="ruby-operator">&amp;&amp;</span>
+          <span class="ruby-identifier">patient</span>.<span class="ruby-identifier">age_months</span>(<span class="ruby-value">now:</span> <span class="ruby-identifier">record</span>.<span class="ruby-identifier">performed_at</span>) <span class="ruby-operator">&gt;=</span> <span class="ruby-value">15</span>
+      <span class="ruby-keyword">end</span>
+
+    [<span class="ruby-identifier">second_dose</span>, <span class="ruby-identifier">first_dose</span>].<span class="ruby-identifier">compact</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">programme</span>
+    <span class="ruby-ivar">@programme</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">Programme</span>.<span class="ruby-identifier">find</span>(<span class="ruby-identifier">programme_type</span>)
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+
+
+
+        <div class="method-description">
+
+
+          <p>Returns <code>true</code> if the patient should be considered vaccinated.</p>
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-i-vaccinated_vaccination_record" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-vaccinated_vaccination_record" title="Link to this method">
+                <span class="method-name">vaccinated_vaccination_record</span>
+                <span class="method-args">()</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="vaccinated_vaccination_record-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/vaccination_criteria.rb, line 49</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">vaccinated_vaccination_record</span>
+  <span class="ruby-ivar">@vaccinated_vaccination_record</span> <span class="ruby-operator">||=</span>
+    <span class="ruby-keyword">begin</span>
+      <span class="ruby-keyword">if</span> (<span class="ruby-identifier">already_had_record</span> = <span class="ruby-identifier">valid_vaccination_records</span>.<span class="ruby-identifier">find</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:already_had?</span>))
+        <span class="ruby-keyword">return</span> <span class="ruby-identifier">already_had_record</span>
+      <span class="ruby-keyword">end</span>
+
+      <span class="ruby-keyword">if</span> <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">mmr?</span>
+        <span class="ruby-keyword">if</span> <span class="ruby-identifier">valid_vaccination_records</span>.<span class="ruby-identifier">count</span> <span class="ruby-operator">&gt;=</span> <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">maximum_dose_sequence</span>
+          <span class="ruby-identifier">valid_vaccination_records</span>.<span class="ruby-identifier">first</span>
+        <span class="ruby-keyword">end</span>
+      <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">td_ipv?</span>
+        <span class="ruby-identifier">valid_vaccination_records</span>.<span class="ruby-identifier">find</span> <span class="ruby-keyword">do</span>
+          <span class="ruby-identifier">it</span>.<span class="ruby-identifier">dose_sequence</span> <span class="ruby-operator">==</span> <span class="ruby-value">5</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">it</span>.<span class="ruby-identifier">sourced_from_service?</span>
+        <span class="ruby-keyword">end</span>
+      <span class="ruby-keyword">else</span>
+        <span class="ruby-identifier">valid_vaccination_records</span>.<span class="ruby-identifier">first</span>
+      <span class="ruby-keyword">end</span>
     <span class="ruby-keyword">end</span>
-  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
 
-  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_school_urn</span>
-    <span class="ruby-keyword">if</span> <span class="ruby-identifier">school_urn</span>.<span class="ruby-identifier">nil?</span>
-      <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_SCHOOL_URN&lt;/code&gt; is required&quot;</span>)
-    <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">school_urn</span>.<span class="ruby-identifier">blank?</span>
-      <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">school_urn</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;Enter a school URN.&quot;</span>)
-    <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">schools</span>.<span class="ruby-identifier">where</span>(<span class="ruby-value">urn:</span> <span class="ruby-identifier">school_urn</span>.<span class="ruby-identifier">to_s</span>).<span class="ruby-identifier">where</span>.<span class="ruby-identifier">not</span>(<span class="ruby-value">site:</span> <span class="ruby-keyword">nil</span>).<span class="ruby-identifier">exists?</span>
-      <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(
-        <span class="ruby-identifier">school_urn</span>.<span class="ruby-identifier">header</span>,
-        <span class="ruby-node">&quot;The URN #{school_urn} has been split into sites. &quot;</span> \
-          <span class="ruby-node">&quot;Use #{
-            schools
-              .where(urn: school_urn.to_s)
-              .map(&amp;:urn_and_site)
-              .sort
-              .to_sentence(
-                two_words_connector: &quot; or &quot;,
-                last_word_connector: &quot; or &quot;
-              )
-          } instead.&quot;</span>
-      )
-    <span class="ruby-keyword">elsif</span> <span class="ruby-operator">!</span><span class="ruby-identifier">school_urn</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">in?</span>(
-          [<span class="ruby-constant">SCHOOL_URN_HOME_EDUCATED</span>, <span class="ruby-constant">SCHOOL_URN_UNKNOWN</span>]
-        ) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">schools</span>.<span class="ruby-identifier">where_urn_and_site</span>(<span class="ruby-identifier">school_urn</span>.<span class="ruby-identifier">to_s</span>).<span class="ruby-identifier">exists?</span> <span class="ruby-operator">&amp;&amp;</span>
-          <span class="ruby-operator">!</span><span class="ruby-identifier">schools</span>.<span class="ruby-identifier">exists?</span>(<span class="ruby-value">systm_one_code:</span> <span class="ruby-identifier">school_urn</span>.<span class="ruby-identifier">to_s</span>)
-      <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(
-        <span class="ruby-identifier">school_urn</span>.<span class="ruby-identifier">header</span>,
-        <span class="ruby-string">&quot;The school URN is not recognised. If you’ve checked the URN, &quot;</span> \
-          <span class="ruby-string">&quot;and you believe it’s valid, contact our support team.&quot;</span>
-      )
+
+
+        <div class="method-description">
+
+
+          <p>Returns the first vaccination record that confirms that the patient is vaccinated.</p>
+
+
+        </div>
+
+
+
+
+
+      </div>
+
+
+      <div id="method-i-valid_vaccination_records" class="method-detail anchor-link ">
+        <div class="method-header">
+
+            <div class="method-heading">
+              <a href="#method-i-valid_vaccination_records" title="Link to this method">
+                <span class="method-name">valid_vaccination_records</span>
+                <span class="method-args">()</span>
+              </a>
+            </div>
+
+        </div>
+
+
+          <div class="method-controls">
+            <details class="method-source-toggle">
+              <summary>Source</summary>
+            </details>
+          </div>
+          <div class="method-source-code" id="valid_vaccination_records-source">
+            <pre class="ruby"><span class="ruby-comment"># File app/lib/vaccination_criteria.rb, line 73</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">valid_vaccination_records</span>
+  <span class="ruby-ivar">@valid_vaccination_records</span> <span class="ruby-operator">||=</span>
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">seasonal?</span>
+      <span class="ruby-identifier">vaccination_records</span>.<span class="ruby-identifier">select</span> { <span class="ruby-identifier">it</span>.<span class="ruby-identifier">administered?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">it</span>.<span class="ruby-identifier">already_had?</span> }
+    <span class="ruby-keyword">else</span>
+      <span class="ruby-keyword">if</span> (
+           <span class="ruby-identifier">already_had_records</span> = <span class="ruby-identifier">vaccination_records</span>.<span class="ruby-identifier">select</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:already_had?</span>)
+         ).<span class="ruby-identifier">present?</span>
+        <span class="ruby-keyword">return</span> <span class="ruby-identifier">already_had_records</span>
+      <span class="ruby-keyword">end</span>
+
+      <span class="ruby-identifier">administered_records</span> = <span class="ruby-identifier">vaccination_records</span>.<span class="ruby-identifier">select</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:administered?</span>)
+
+      <span class="ruby-keyword">if</span> <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">doubles?</span>
+        <span class="ruby-identifier">filter_doubles_vaccination_records</span>(<span class="ruby-identifier">administered_records</span>)
+      <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">hpv?</span>
+        <span class="ruby-identifier">filter_hpv_vaccination_records</span>(<span class="ruby-identifier">administered_records</span>)
+      <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">programme</span>.<span class="ruby-identifier">mmr?</span>
+        <span class="ruby-identifier">filter_mmr_vaccination_records</span>(<span class="ruby-identifier">administered_records</span>)
+      <span class="ruby-keyword">else</span>
+        <span class="ruby-identifier">raise</span> <span class="ruby-constant">UnsupportedProgrammeType</span>, <span class="ruby-identifier">programme_type</span>
+      <span class="ruby-keyword">end</span>
     <span class="ruby-keyword">end</span>
-  <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
 
@@ -979,215 +1170,7 @@
         <div class="method-description">
 
 
-          
-
-
-        </div>
-
-
-
-
-
-      </div>
-
-
-      <div id="method-i-schools" class="method-detail anchor-link ">
-        <div class="method-header">
-
-            <div class="method-heading">
-              <a href="#method-i-schools" title="Link to this method">
-                <span class="method-name">schools</span>
-                <span class="method-args">()</span>
-              </a>
-            </div>
-
-        </div>
-
-
-          <div class="method-controls">
-            <details class="method-source-toggle">
-              <summary>Source</summary>
-            </details>
-          </div>
-          <div class="method-source-code" id="schools-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/cohort_import_row.rb, line 38</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">schools</span>
-  <span class="ruby-constant">Location</span>
-    .<span class="ruby-identifier">school</span>
-    .<span class="ruby-identifier">joins</span>(<span class="ruby-value">:team_locations</span>)
-    .<span class="ruby-identifier">where</span>(<span class="ruby-value">team_locations:</span> { <span class="ruby-value">team:</span>, <span class="ruby-value">academic_year:</span> })
-<span class="ruby-keyword">end</span></pre>
-          </div>
-
-
-
-        <div class="method-description">
-
-
-          
-
-
-        </div>
-
-
-
-
-
-      </div>
-
-
-      <div id="method-i-stage_registration-3F" class="method-detail anchor-link ">
-        <div class="method-header">
-
-            <div class="method-heading">
-              <a href="#method-i-stage_registration-3F" title="Link to this method">
-                <span class="method-name">stage_registration?</span>
-                <span class="method-args">()</span>
-              </a>
-            </div>
-
-        </div>
-
-
-          <div class="method-controls">
-            <details class="method-source-toggle">
-              <summary>Source</summary>
-            </details>
-          </div>
-          <div class="method-source-code" id="stage_registration-3F-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/cohort_import_row.rb, line 45</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">stage_registration?</span>
-  <span class="ruby-keyword">true</span>
-<span class="ruby-keyword">end</span></pre>
-          </div>
-
-
-
-        <div class="method-description">
-
-
-          
-
-
-        </div>
-
-
-
-
-
-      </div>
-
-
-      <div id="method-i-validate_address_postcode" class="method-detail anchor-link ">
-        <div class="method-header">
-
-            <div class="method-heading">
-              <a href="#method-i-validate_address_postcode" title="Link to this method">
-                <span class="method-name">validate_address_postcode</span>
-                <span class="method-args">()</span>
-              </a>
-            </div>
-
-        </div>
-
-
-          <div class="method-controls">
-            <details class="method-source-toggle">
-              <summary>Source</summary>
-            </details>
-          </div>
-          <div class="method-source-code" id="validate_address_postcode-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/cohort_import_row.rb, line 49</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_address_postcode</span>
-  <span class="ruby-keyword">if</span> <span class="ruby-identifier">address_postcode</span>.<span class="ruby-identifier">nil?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_POSTCODE&lt;/code&gt; is required&quot;</span>)
-  <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">address_postcode</span>.<span class="ruby-identifier">blank?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(
-      <span class="ruby-identifier">address_postcode</span>.<span class="ruby-identifier">header</span>,
-      <span class="ruby-string">&quot;Enter a valid postcode, like SW1A 1AA.&quot;</span>
-    )
-  <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">address_postcode</span>.<span class="ruby-identifier">to_postcode</span>.<span class="ruby-identifier">nil?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">address_postcode</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;should be a postcode, like SW1A 1AA&quot;</span>)
-  <span class="ruby-keyword">end</span>
-<span class="ruby-keyword">end</span></pre>
-          </div>
-
-
-
-        <div class="method-description">
-
-
-          
-
-
-        </div>
-
-
-
-
-
-      </div>
-
-
-      <div id="method-i-validate_school_urn" class="method-detail anchor-link ">
-        <div class="method-header">
-
-            <div class="method-heading">
-              <a href="#method-i-validate_school_urn" title="Link to this method">
-                <span class="method-name">validate_school_urn</span>
-                <span class="method-args">()</span>
-              </a>
-            </div>
-
-        </div>
-
-
-          <div class="method-controls">
-            <details class="method-source-toggle">
-              <summary>Source</summary>
-            </details>
-          </div>
-          <div class="method-source-code" id="validate_school_urn-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/models/cohort_import_row.rb, line 62</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">validate_school_urn</span>
-  <span class="ruby-keyword">if</span> <span class="ruby-identifier">school_urn</span>.<span class="ruby-identifier">nil?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:base</span>, <span class="ruby-string">&quot;&lt;code&gt;CHILD_SCHOOL_URN&lt;/code&gt; is required&quot;</span>)
-  <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">school_urn</span>.<span class="ruby-identifier">blank?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">school_urn</span>.<span class="ruby-identifier">header</span>, <span class="ruby-string">&quot;Enter a school URN.&quot;</span>)
-  <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">schools</span>.<span class="ruby-identifier">where</span>(<span class="ruby-value">urn:</span> <span class="ruby-identifier">school_urn</span>.<span class="ruby-identifier">to_s</span>).<span class="ruby-identifier">where</span>.<span class="ruby-identifier">not</span>(<span class="ruby-value">site:</span> <span class="ruby-keyword">nil</span>).<span class="ruby-identifier">exists?</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(
-      <span class="ruby-identifier">school_urn</span>.<span class="ruby-identifier">header</span>,
-      <span class="ruby-node">&quot;The URN #{school_urn} has been split into sites. &quot;</span> \
-        <span class="ruby-node">&quot;Use #{
-          schools
-            .where(urn: school_urn.to_s)
-            .map(&amp;:urn_and_site)
-            .sort
-            .to_sentence(
-              two_words_connector: &quot; or &quot;,
-              last_word_connector: &quot; or &quot;
-            )
-        } instead.&quot;</span>
-    )
-  <span class="ruby-keyword">elsif</span> <span class="ruby-operator">!</span><span class="ruby-identifier">school_urn</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">in?</span>(
-        [<span class="ruby-constant">SCHOOL_URN_HOME_EDUCATED</span>, <span class="ruby-constant">SCHOOL_URN_UNKNOWN</span>]
-      ) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">schools</span>.<span class="ruby-identifier">where_urn_and_site</span>(<span class="ruby-identifier">school_urn</span>.<span class="ruby-identifier">to_s</span>).<span class="ruby-identifier">exists?</span> <span class="ruby-operator">&amp;&amp;</span>
-        <span class="ruby-operator">!</span><span class="ruby-identifier">schools</span>.<span class="ruby-identifier">exists?</span>(<span class="ruby-value">systm_one_code:</span> <span class="ruby-identifier">school_urn</span>.<span class="ruby-identifier">to_s</span>)
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(
-      <span class="ruby-identifier">school_urn</span>.<span class="ruby-identifier">header</span>,
-      <span class="ruby-string">&quot;The school URN is not recognised. If you’ve checked the URN, &quot;</span> \
-        <span class="ruby-string">&quot;and you believe it’s valid, contact our support team.&quot;</span>
-    )
-  <span class="ruby-keyword">end</span>
-<span class="ruby-keyword">end</span></pre>
-          </div>
-
-
-
-        <div class="method-description">
-
-
-          
+          <p>Returns the administered vaccination records that are considered valid doses according to the specific criteria of the programme.</p>
 
 
         </div>
