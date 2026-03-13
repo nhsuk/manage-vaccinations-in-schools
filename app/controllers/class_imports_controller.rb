@@ -200,9 +200,24 @@ class ClassImportsController < ApplicationController
         .from_file
         .ready_for_review
         .select(&:inter_team_move?)
-    @new_records = @class_import.changesets.ready_for_review.new_patient
+    @inter_team_ids = @inter_team.map(&:id) || []
+    @new_records =
+      pagy(
+        @class_import.changesets.ready_for_review.new_patient.order(
+          :row_number
+        ),
+        page_param: :new_records_page
+      )
     @auto_matched_records =
-      @class_import.changesets.ready_for_review.auto_match - @inter_team
+      pagy(
+        @class_import
+          .changesets
+          .ready_for_review
+          .auto_match
+          .where.not(id: @inter_team_ids)
+          .order(:row_number),
+        page_param: :auto_matched_records_page
+      )
     @import_issues =
       @class_import
         .changesets
