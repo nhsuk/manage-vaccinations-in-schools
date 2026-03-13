@@ -5,17 +5,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>class PatientStatusUpdaterJob - Mavis Documentation</title>
+<title>class EnqueueProcessUnmatchedConsentFormsJob - Mavis Documentation</title>
 
 
   <meta
     name="keywords"
-    content="ruby,class,PatientStatusUpdaterJob"
+    content="ruby,class,EnqueueProcessUnmatchedConsentFormsJob"
   >
 
     <meta
       name="description"
-      content="Documentation for the PatientStatusUpdaterJob class"
+      content="Documentation for the EnqueueProcessUnmatchedConsentFormsJob class"
     >
 
 
@@ -24,13 +24,13 @@
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content="website">
-<meta property="og:title" content="class PatientStatusUpdaterJob - Mavis Documentation">
+<meta property="og:title" content="class EnqueueProcessUnmatchedConsentFormsJob - Mavis Documentation">
 
 
 
     <meta
       property="og:description"
-      content="Documentation for PatientStatusUpdaterJob class - API reference and code examples"
+      content="Documentation for EnqueueProcessUnmatchedConsentFormsJob class - API reference and code examples"
     >
 
 
@@ -39,13 +39,13 @@
 
 <!-- Twitter -->
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="class PatientStatusUpdaterJob - Mavis Documentation">
+<meta name="twitter:title" content="class EnqueueProcessUnmatchedConsentFormsJob - Mavis Documentation">
 
 
 
     <meta
       name="twitter:description"
-      content="Documentation for PatientStatusUpdaterJob class - API reference and code examples"
+      content="Documentation for EnqueueProcessUnmatchedConsentFormsJob class - API reference and code examples"
     >
 
 
@@ -533,7 +533,7 @@
         <svg><use href="#icon-chevron"></use></svg>
       </span>
     </summary>
-    <ul><li>Object</li></ul>
+    <ul><li><a href="ApplicationJob.html">ApplicationJob</a><ul><li>ActiveJob::Base</li></ul></li></ul>
   </details>
 </div>
 
@@ -554,7 +554,7 @@
     <ul class="nav-list">
 
 
-      <li><span class="include">Sidekiq::Job</span></li>
+      <li><a class="include" href="SingleConcurrencyConcern.html">SingleConcurrencyConcern</a></li>
 
 
     </ul>
@@ -605,13 +605,13 @@
 
 </nav>
 
-<main role="main" aria-labelledby="class-patientstatusupdaterjob">
+<main role="main" aria-labelledby="class-enqueueprocessunmatchedconsentformsjob">
   
   
 
-  <span id="class-PatientStatusUpdaterJob" class="legacy-anchor"></span>
-  <h1 id="class-patientstatusupdaterjob" class="anchor-link class">
-    class PatientStatusUpdaterJob
+  <span id="class-EnqueueProcessUnmatchedConsentFormsJob" class="legacy-anchor"></span>
+  <h1 id="class-enqueueprocessunmatchedconsentformsjob" class="anchor-link class">
+    class EnqueueProcessUnmatchedConsentFormsJob
   </h1>
 
   <section class="description">
@@ -651,7 +651,7 @@
             <div class="method-heading">
               <a href="#method-i-perform" title="Link to this method">
                 <span class="method-name">perform</span>
-                <span class="method-args">(patient_id = nil)</span>
+                <span class="method-args">()</span>
               </a>
             </div>
 
@@ -664,11 +664,11 @@
             </details>
           </div>
           <div class="method-source-code" id="perform-source">
-            <pre class="ruby"><span class="ruby-comment"># File app/jobs/patient_status_updater_job.rb, line 8</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">perform</span>(<span class="ruby-identifier">patient_id</span> = <span class="ruby-keyword">nil</span>)
-  <span class="ruby-identifier">academic_years</span> = [<span class="ruby-constant">AcademicYear</span>.<span class="ruby-identifier">current</span>, <span class="ruby-constant">AcademicYear</span>.<span class="ruby-identifier">pending</span>].<span class="ruby-identifier">uniq</span>
-  <span class="ruby-identifier">patient</span> = (<span class="ruby-identifier">patient_id</span> <span class="ruby-operator">?</span> <span class="ruby-constant">Patient</span>.<span class="ruby-identifier">find</span>(<span class="ruby-identifier">patient_id</span>) <span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span>)
-  <span class="ruby-constant">PatientStatusUpdater</span>.<span class="ruby-identifier">call</span>(<span class="ruby-value">patient:</span>, <span class="ruby-value">academic_years:</span>)
+            <pre class="ruby"><span class="ruby-comment"># File app/jobs/enqueue_process_unmatched_consent_forms_job.rb, line 8</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">perform</span>
+  <span class="ruby-constant">ConsentForm</span>.<span class="ruby-identifier">unmatched</span>.<span class="ruby-identifier">find_each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">consent_form</span><span class="ruby-operator">|</span>
+    <span class="ruby-constant">ProcessConsentFormJob</span>.<span class="ruby-identifier">perform_later</span>(<span class="ruby-identifier">consent_form</span>.<span class="ruby-identifier">id</span>)
+  <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
 
