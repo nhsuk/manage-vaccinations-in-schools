@@ -77,7 +77,7 @@ class Notifier::Consent
   def resolve_email_template(template_name, team)
     ods_code = team.organisation.ods_code.downcase
     template_names = [:"#{template_name}_#{ods_code}", template_name]
-    template_names.find { GOVUK_NOTIFY_EMAIL_TEMPLATES.key?(it) }
+    template_names.find { NotifyTemplate.exists?(it, channel: :email) }
   end
 
   def patient_eligible_for_additional_dose?(session)
