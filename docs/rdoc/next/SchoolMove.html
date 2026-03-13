@@ -745,7 +745,6 @@ fk_rails_...  (team_id =&gt; teams.id)</pre>
             <pre class="ruby"><span class="ruby-comment"># File app/models/school_move.rb, line 80</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">confirm!</span>(<span class="ruby-value">user:</span> <span class="ruby-keyword">nil</span>)
   <span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span>.<span class="ruby-identifier">transaction</span> <span class="ruby-keyword">do</span>
-    <span class="ruby-comment"># We need to set this before updating patient locations</span>
     <span class="ruby-identifier">move_across_teams</span> = <span class="ruby-identifier">from_another_team?</span>
 
     <span class="ruby-identifier">update_patient!</span>
@@ -756,6 +755,7 @@ fk_rails_...  (team_id =&gt; teams.id)</pre>
 
     <span class="ruby-identifier">update_patient_teams!</span>
     <span class="ruby-identifier">update_patient_statuses!</span>
+
     <span class="ruby-keyword">if</span> <span class="ruby-identifier">move_across_teams</span>
       <span class="ruby-identifier">create_important_notice!</span>(<span class="ruby-identifier">log_entry</span>)
       <span class="ruby-identifier">update_important_notices!</span>
