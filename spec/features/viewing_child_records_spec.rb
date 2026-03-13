@@ -6,8 +6,7 @@ describe "View children" do
   before { given_my_team_exists }
 
   scenario "Viewing children" do
-    given_that_the_child_record_redesign_feature_flag_is_enabled
-    and_patients_exist
+    given_patients_exist
     and_the_patient_is_vaccinated
 
     when_i_click_on_children
@@ -31,10 +30,6 @@ describe "View children" do
     and_i_see_the_activity_log_for_hpv
   end
 
-  def given_that_the_child_record_redesign_feature_flag_is_enabled
-    Flipper.enable(:child_record_redesign)
-  end
-
   def given_my_team_exists
     @hpv = Programme.hpv
     @flu = Programme.flu
@@ -47,7 +42,7 @@ describe "View children" do
       )
   end
 
-  def and_patients_exist
+  def given_patients_exist
     school = create(:school, team: @team)
 
     @ineligible_school =

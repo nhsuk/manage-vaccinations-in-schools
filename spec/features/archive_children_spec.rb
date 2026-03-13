@@ -224,7 +224,7 @@ describe "Archive children" do
   end
 
   def and_i_see_an_activity_log_entry
-    click_on "Activity log"
+    within(".app-secondary-navigation") { click_on "HPV" }
     expect(page).to have_content("Record archived:")
   end
 

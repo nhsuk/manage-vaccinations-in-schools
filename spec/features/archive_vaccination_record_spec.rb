@@ -200,6 +200,7 @@ describe "Archive vaccination record" do
   end
 
   def and_i_click_on_the_vaccination_record
+    within(".app-secondary-navigation") { click_on @programme.name }
     click_on Date.current.to_fs(:long)
   end
 
@@ -241,6 +242,7 @@ describe "Archive vaccination record" do
   end
 
   def when_i_click_on_the_session
+    within(".app-secondary-navigation") { click_on @programme.name }
     click_on @session.location.name
   end
 
@@ -250,7 +252,8 @@ describe "Archive vaccination record" do
   end
 
   def and_they_have_no_vaccinations
-    expect(page).to have_content("No vaccinations")
+    within(".app-secondary-navigation") { click_on @programme.name }
+    expect(page).to have_content("No vaccination record")
   end
 
   def when_i_click_on_the_log

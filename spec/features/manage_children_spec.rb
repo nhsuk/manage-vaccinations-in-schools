@@ -17,9 +17,6 @@ describe "Manage children" do
 
     when_i_click_on_a_child
     then_i_see_the_child
-
-    when_i_click_on_activity_log
-    then_i_see_the_activity_log
   end
 
   scenario "viewing children paginated" do
@@ -78,7 +75,7 @@ describe "Manage children" do
     and_the_vaccination_record_is_updated_with_the_nhs
 
     when_i_go_back_to_the_patient_page
-    and_i_click_on_activity_log
+    and_i_click_on_a_programme
     then_i_see_the_patient_merge_in_the_activity_log
   end
 
@@ -110,7 +107,7 @@ describe "Manage children" do
     when_i_click_on_children
     and_i_filter_for_children
     and_i_click_on_a_child
-    then_i_see_the_child
+    and_i_click_on_a_programme
     and_i_dont_see_a_community_clinic_session
 
     when_i_click_on_invite_to_clinic
@@ -121,30 +118,6 @@ describe "Manage children" do
     when_i_click_on_children
     and_i_check_invited_to_clinic
     then_i_see_the_child_has_been_invited
-  end
-
-  context "with new child record design" do
-    before { Flipper.enable(:child_record_redesign) }
-
-    scenario "inviting to community clinic" do
-      given_patients_exist
-      and_a_clinic_session_exists
-
-      when_i_click_on_children
-      and_i_filter_for_children
-      and_i_click_on_a_child
-      and_i_click_on_a_programme
-      and_i_dont_see_a_community_clinic_session
-
-      when_i_click_on_invite_to_clinic
-      then_i_see_a_success_banner
-      and_i_see_a_community_clinic_session
-      and_i_dont_see_an_invite_to_clinic_button
-
-      when_i_click_on_children
-      and_i_check_invited_to_clinic
-      then_i_see_the_child_has_been_invited
-    end
   end
 
   scenario "Removing an NHS number" do
@@ -425,17 +398,6 @@ describe "Manage children" do
   def then_i_see_the_child_has_been_invited
     expect(page).to have_content("SMITH, John")
     expect(page).to have_content("Clinic invitationsFlu")
-  end
-
-  def when_i_click_on_activity_log
-    click_on "Activity log"
-  end
-
-  alias_method :and_i_click_on_activity_log, :when_i_click_on_activity_log
-
-  def then_i_see_the_activity_log
-    expect(page).to have_content("Added to the session")
-    expect(page).to have_content("Vaccinated")
   end
 
   def when_i_click_on_edit_child_record

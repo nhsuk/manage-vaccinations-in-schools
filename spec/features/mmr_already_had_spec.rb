@@ -42,10 +42,9 @@ describe "MMR/MMRV" do
 
     when_the_status_updater_runs
     and_i_navigate_to_the_patient_record
+    and_i_click_on_the_mmr_programme
     then_i_see_that_the_vaccination_record_has_outcome_vaccinated
-
-    when_i_open_the_activity_log
-    then_i_see_a_historical_vaccination_log_entry
+    and_i_see_a_historical_vaccination_log_entry
     and_it_includes_the_mmr_programme_and_both_reported_and_performed_at_dates
   end
 
@@ -137,10 +136,9 @@ describe "MMR/MMRV" do
 
     when_the_status_updater_runs
     and_i_navigate_to_the_patient_record
+    and_i_click_on_the_mmr_programme
     then_i_see_that_the_vaccination_record_has_outcome_vaccinated
-
-    when_i_open_the_activity_log
-    then_i_see_a_historical_vaccination_log_entry
+    and_i_see_a_historical_vaccination_log_entry
     and_it_includes_the_mmrv_programme_and_both_reported_and_performed_at_dates
   end
 
@@ -410,21 +408,20 @@ describe "MMR/MMRV" do
     visit patient_path(@patient)
   end
 
+  def and_i_click_on_the_mmr_programme
+    within(".app-secondary-navigation") { click_on "MMR" }
+  end
+
   def then_i_see_that_the_vaccination_record_has_outcome_vaccinated
     expect(page).to have_content(
       "Vaccination date #{@vaccination_date.strftime("%-d %B %Y")}"
     )
-    expect(page).to have_content("Location Unknown")
     expect(page).to have_content("Programme MMR")
     expect(page).to have_content("Source Manual report")
     expect(page).to have_content("Outcome Vaccinated")
   end
 
-  def when_i_open_the_activity_log
-    click_on "Activity log"
-  end
-
-  def then_i_see_a_historical_vaccination_log_entry
+  def and_i_see_a_historical_vaccination_log_entry
     expect(page).to have_content("Vaccination record added manually")
   end
 
