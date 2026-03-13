@@ -21,7 +21,7 @@ jobs:
           cache: yarn
           node-version-file: .tool-versions
       - run: yarn install --immutable --immutable-cache --check-cache
-      - uses: jdx/mise-action@v3
+      - uses: jdx/mise-action@v4
         with:
           install_args: actionlint hk pkl shellcheck yamllint
       - run: hk check --all
