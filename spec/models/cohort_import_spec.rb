@@ -67,21 +67,9 @@ describe CohortImport do
 
       before { stub_const("CSVImportable::MAX_CSV_ROWS", 2) }
 
-      context "when import_row_count_limit flag is enabled" do
-        before { Flipper.enable(:import_row_count_limit) }
-
-        it "is invalid" do
-          expect(cohort_import).to be_invalid
-          expect(cohort_import.errors[:csv]).to include(/less than 2 rows/)
-        end
-      end
-
-      context "when import_row_count_limit flag is disabled" do
-        before { Flipper.disable(:import_row_count_limit) }
-
-        it "is valid" do
-          expect(cohort_import).to be_valid
-        end
+      it "is invalid" do
+        expect(cohort_import).to be_invalid
+        expect(cohort_import.errors[:csv]).to include(/less than 2 rows/)
       end
     end
   end

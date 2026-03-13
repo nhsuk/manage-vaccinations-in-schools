@@ -3,158 +3,145 @@
 describe "MMR/MMRV" do
   around { |example| travel_to(Date.new(2025, 7, 1)) { example.run } }
 
-  context "when `already_vaccinated` feature flag is NOT enabled" do
-    scenario "record a patient born after January 2020 as already had their 1st MMR dose" do
-      given_an_mmr_programme_with_a_session
-      and_a_patient_is_in_the_session_born_after_january_2020
-      and_the_patient_doesnt_need_triage
-      and_the_patient_has_not_had_a_first_dose
+  scenario "record a patient born after January 2020 as already had their 1st MMR dose outside the school session" do
+    given_an_mmr_programme_with_a_session
+    and_a_patient_is_in_the_session_born_after_january_2020
+    and_the_patient_doesnt_need_triage
+    and_the_patient_has_not_had_a_first_dose
 
-      when_i_go_the_session
-      then_i_see_one_patient_needing_consent
-      and_i_click_on_the_patient
-      then_i_see_the_patient_needs_consent
+    when_i_go_the_session
+    then_i_see_one_patient_needing_consent
+    and_i_click_on_the_patient
+    then_i_see_the_patient_needs_consent
 
-      when_i_click_record_as_already_vaccinated
-      when_i_click_back
-      then_i_see_the_patient_session_page
+    when_i_click_record_as_already_had_first_dose
+    when_i_click_back
+    then_i_see_the_patient_session_page
 
-      when_i_click_record_as_already_vaccinated
-      then_i_see_the_confirmation_page
-    end
+    when_i_click_record_as_already_had_first_dose
+    then_i_see_the_did_you_have_mmr_or_mmrv_page
+
+    when_i_choose_mmr_and_continue
+    then_i_see_the_mmr_date_page
+
+    when_i_fill_in_the_date_and_time_and_continue
+    then_i_see_the_confirmation_page
+    and_the_confirmation_summary_is_not_displayed_as_a_warning
+
+    when_i_confirm_the_details
+    then_i_see_the_patient_is_already_vaccinated
+    and_i_see_that_the_vaccinator_is_unknown
+    and_i_see_that_the_location_is_unknown
+    and_i_see_that_the_reporter_is_set
+    and_i_see_that_there_are_no_vaccine_batch_details
+    expect(page).to have_content("LocationUnknown")
+    and_had_been_vaccinated_with_mmr
+    and_the_dose_number_is_first
+    and_the_consent_requests_are_sent
+    then_the_parent_doesnt_receive_a_consent_request
+
+    when_the_status_updater_runs
+    and_i_navigate_to_the_patient_record
+    then_i_see_that_the_vaccination_record_has_outcome_vaccinated
+
+    when_i_open_the_activity_log
+    then_i_see_a_historical_vaccination_log_entry
+    and_it_includes_the_mmr_programme_and_both_reported_and_performed_at_dates
   end
 
-  context "when `already_vaccinated` feature flag is enabled" do
-    before { Flipper.enable(:already_vaccinated) }
+  scenario "record a patient as already had their 1st MMR dose and then edit dates" do
+    given_an_mmr_programme_with_a_session
+    and_a_patient_is_in_the_session_born_after_january_2020
+    and_the_patient_doesnt_need_triage
+    and_the_patient_has_not_had_a_first_dose
 
-    scenario "record a patient born after January 2020 as already had their 1st MMR dose outside the school session" do
-      given_an_mmr_programme_with_a_session
-      and_a_patient_is_in_the_session_born_after_january_2020
-      and_the_patient_doesnt_need_triage
-      and_the_patient_has_not_had_a_first_dose
+    when_i_go_the_session
+    then_i_see_one_patient_needing_consent
+    and_i_click_on_the_patient
+    then_i_see_the_patient_needs_consent
 
-      when_i_go_the_session
-      then_i_see_one_patient_needing_consent
-      and_i_click_on_the_patient
-      then_i_see_the_patient_needs_consent
+    when_i_click_record_as_already_had_first_dose
+    then_i_see_the_did_you_have_mmr_or_mmrv_page
 
-      when_i_click_record_as_already_had_first_dose
-      when_i_click_back
-      then_i_see_the_patient_session_page
+    when_i_choose_mmr_and_continue
+    then_i_see_the_mmr_date_page
 
-      when_i_click_record_as_already_had_first_dose
-      then_i_see_the_did_you_have_mmr_or_mmrv_page
+    when_i_fill_in_the_date_and_time_and_continue
+    then_i_see_the_confirmation_page
 
-      when_i_choose_mmr_and_continue
-      then_i_see_the_mmr_date_page
+    when_i_click_link_to_change_the_date
+    then_i_see_the_mmr_date_page
+    when_i_change_the_date_and_continue
+    then_i_see_the_confirmation_page
+    and_i_see_the_updated_date_in_the_summary
+  end
 
-      when_i_fill_in_the_date_and_time_and_continue
-      then_i_see_the_confirmation_page
-      and_the_confirmation_summary_is_not_displayed_as_a_warning
+  scenario "record a patient born before January 2020 as already had their 1st MMR dose outside the school session" do
+    given_an_mmr_programme_with_a_session
+    and_a_patient_is_in_the_session_born_before_january_2020
+    and_the_patient_doesnt_need_triage
+    and_the_patient_has_not_had_a_first_dose
 
-      when_i_confirm_the_details
-      then_i_see_the_patient_is_already_vaccinated
-      and_i_see_that_the_vaccinator_is_unknown
-      and_i_see_that_the_location_is_unknown
-      and_i_see_that_the_reporter_is_set
-      and_i_see_that_there_are_no_vaccine_batch_details
-      expect(page).to have_content("LocationUnknown")
-      and_had_been_vaccinated_with_mmr
-      and_the_dose_number_is_first
-      and_the_consent_requests_are_sent
-      then_the_parent_doesnt_receive_a_consent_request
+    when_i_go_the_session
+    then_i_see_one_patient_needing_consent
+    and_i_click_on_the_patient
+    then_i_see_the_patient_needs_consent
 
-      when_the_status_updater_runs
-      and_i_navigate_to_the_patient_record
-      then_i_see_that_the_vaccination_record_has_outcome_vaccinated
+    when_i_click_record_as_already_had_first_dose
+    then_i_see_the_mmr_date_instead_of_the_mmr_or_mmrv_page
+  end
 
-      when_i_open_the_activity_log
-      then_i_see_a_historical_vaccination_log_entry
-      and_it_includes_the_mmr_programme_and_both_reported_and_performed_at_dates
-    end
+  scenario "parents are notified when their child's prior vaccination is added to the record" do
+    given_an_mmr_programme_with_a_session
+    and_a_patient_with_a_consenting_parent_is_in_the_session
+    and_the_patients_prior_vaccination_is_recorded
 
-    scenario "record a patient as already had their 1st MMR dose and then edit dates" do
-      given_an_mmr_programme_with_a_session
-      and_a_patient_is_in_the_session_born_after_january_2020
-      and_the_patient_doesnt_need_triage
-      and_the_patient_has_not_had_a_first_dose
+    when_the_status_updater_runs
 
-      when_i_go_the_session
-      then_i_see_one_patient_needing_consent
-      and_i_click_on_the_patient
-      then_i_see_the_patient_needs_consent
+    when_the_prior_vaccination_notification_is_sent
+    then_the_parent_receives_a_vaccination_already_had_email
+    and_the_parent_receives_a_vaccination_already_had_sms
+  end
 
-      when_i_click_record_as_already_had_first_dose
-      then_i_see_the_did_you_have_mmr_or_mmrv_page
+  scenario "record a patient born after January 2020 as already had their 2nd MMRV dose outside the school session" do
+    given_an_mmr_programme_with_a_session
+    and_a_patient_is_in_the_session_born_after_january_2020
+    and_the_patient_doesnt_need_triage
+    and_the_patient_already_has_first_dose
 
-      when_i_choose_mmr_and_continue
-      then_i_see_the_mmr_date_page
+    when_i_go_the_session
+    then_i_see_one_patient_needing_consent
+    and_i_click_on_the_patient
+    then_i_see_the_patient_needs_consent
 
-      when_i_fill_in_the_date_and_time_and_continue
-      then_i_see_the_confirmation_page
+    when_i_click_record_as_already_had_second_dose
+    then_i_see_the_did_you_have_mmr_or_mmrv_page
 
-      when_i_click_link_to_change_the_date
-      then_i_see_the_mmr_date_page
-      when_i_change_the_date_and_continue
-      then_i_see_the_confirmation_page
-      and_i_see_the_updated_date_in_the_summary
-    end
+    when_i_choose_mmrv_and_continue
+    then_i_see_the_mmrv_date_page
 
-    scenario "record a patient born before January 2020 as already had their 1st MMR dose outside the school session" do
-      given_an_mmr_programme_with_a_session
-      and_a_patient_is_in_the_session_born_before_january_2020
-      and_the_patient_doesnt_need_triage
-      and_the_patient_has_not_had_a_first_dose
+    when_i_fill_in_the_date_and_continue
+    then_i_see_the_confirmation_page
+    and_the_confirmation_summary_is_not_displayed_as_a_warning
 
-      when_i_go_the_session
-      then_i_see_one_patient_needing_consent
-      and_i_click_on_the_patient
-      then_i_see_the_patient_needs_consent
+    when_i_confirm_the_details
+    then_i_see_the_patient_is_already_vaccinated
+    and_i_see_that_the_vaccinator_is_unknown
+    and_i_see_that_the_location_is_unknown
+    and_i_see_that_the_reporter_is_set
+    and_i_see_that_there_are_no_vaccine_batch_details
+    and_had_been_vaccinated_with_mmrv
+    and_the_dose_number_is_second
+    and_the_consent_requests_are_sent
+    then_the_parent_doesnt_receive_a_consent_request
 
-      when_i_click_record_as_already_had_first_dose
-      then_i_see_the_mmr_date_instead_of_the_mmr_or_mmrv_page
-    end
+    when_the_status_updater_runs
+    and_i_navigate_to_the_patient_record
+    then_i_see_that_the_vaccination_record_has_outcome_vaccinated
 
-    scenario "record a patient born after January 2020 as already had their 2nd MMRV dose outside the school session" do
-      given_an_mmr_programme_with_a_session
-      and_a_patient_is_in_the_session_born_after_january_2020
-      and_the_patient_doesnt_need_triage
-      and_the_patient_already_has_first_dose
-
-      when_i_go_the_session
-      then_i_see_one_patient_needing_consent
-      and_i_click_on_the_patient
-      then_i_see_the_patient_needs_consent
-
-      when_i_click_record_as_already_had_second_dose
-      then_i_see_the_did_you_have_mmr_or_mmrv_page
-
-      when_i_choose_mmrv_and_continue
-      then_i_see_the_mmrv_date_page
-
-      when_i_fill_in_the_date_and_continue
-      then_i_see_the_confirmation_page
-      and_the_confirmation_summary_is_not_displayed_as_a_warning
-
-      when_i_confirm_the_details
-      then_i_see_the_patient_is_already_vaccinated
-      and_i_see_that_the_vaccinator_is_unknown
-      and_i_see_that_the_location_is_unknown
-      and_i_see_that_the_reporter_is_set
-      and_i_see_that_there_are_no_vaccine_batch_details
-      and_had_been_vaccinated_with_mmrv
-      and_the_dose_number_is_second
-      and_the_consent_requests_are_sent
-      then_the_parent_doesnt_receive_a_consent_request
-
-      when_the_status_updater_runs
-      and_i_navigate_to_the_patient_record
-      then_i_see_that_the_vaccination_record_has_outcome_vaccinated
-
-      when_i_open_the_activity_log
-      then_i_see_a_historical_vaccination_log_entry
-      and_it_includes_the_mmrv_programme_and_both_reported_and_performed_at_dates
-    end
+    when_i_open_the_activity_log
+    then_i_see_a_historical_vaccination_log_entry
+    and_it_includes_the_mmrv_programme_and_both_reported_and_performed_at_dates
   end
 
   def given_an_mmr_programme_with_a_session(clinic: false)
@@ -455,5 +442,49 @@ describe "MMR/MMRV" do
         "MMRV Record added to Mavis 1 July 2025 at 12:00am · " \
         "Vaccination given #{@vaccination_date.strftime("%-d %B %Y")}"
     )
+  end
+
+  def and_a_patient_with_a_consenting_parent_is_in_the_session
+    @parent = create(:parent, phone_receive_updates: true)
+    @patient =
+      create(
+        :patient,
+        session: @session,
+        date_of_birth: Date.new(2020, 1, 1),
+        parents: [@parent]
+      )
+    create(
+      :consent,
+      :given,
+      patient: @patient,
+      programme: @programme,
+      parent: @parent,
+      team: @session.team
+    )
+  end
+
+  def and_the_patients_prior_vaccination_is_recorded
+    @vaccination_record =
+      create(
+        :vaccination_record,
+        :already_had,
+        :sourced_from_manual_report,
+        patient: @patient,
+        programme: @programme,
+        session: @session,
+        performed_at: 6.months.ago
+      )
+  end
+
+  def when_the_prior_vaccination_notification_is_sent
+    AlreadyHadNotificationSender.call(vaccination_record: @vaccination_record)
+  end
+
+  def then_the_parent_receives_a_vaccination_already_had_email
+    expect_email_to @parent.email, :vaccination_already_had
+  end
+
+  def and_the_parent_receives_a_vaccination_already_had_sms
+    expect_sms_to @parent.phone, :vaccination_already_had, :any
   end
 end

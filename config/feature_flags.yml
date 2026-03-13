@@ -1,9 +1,4 @@
-already_vaccinated: |
-  New questions for the already vaccinated flow triggered
-  from the 'Record as already vaccinated' link on the session > children page.
-
-basic_auth: Require users to sign in with basic authentication before they
-  can use the service.
+basic_auth: Require users to sign in with basic authentication before they can use the service.
 
 child_record_redesign: |
   Child record pages will be updated to show a tab for each vaccination programme,
@@ -23,21 +18,23 @@ imms_api_enqueue_session_searches: |
 
 imms_api_integration: Umbrella flag to switch off ALL API integration (including CLI tools).
 
-imms_api_search_job: Flag to switch off any automated receipt of vaccination records (Search),
-  as part of the search job.
+imms_api_search_job:
+  Flag to switch off any automated receipt of vaccination records (Search), as part of the search
+  job.
 
 imms_api_sentry_warnings: |
   Enable sending non-fatal Immunisations API warnings to Sentry (e.g. OperationOutcome and
   Bundle link param mismatches). When disabled, these warnings are logged but not sent to Sentry.
 
-imms_api_sync_job: Flag to switch off any automated sending of vaccination records
-  (Create, Update, Delete), triggered by the creation/edit/delete of any vaccination records.
-  This can be controlled on a per-programme basis.
+imms_api_sync_job:
+  Flag to switch off any automated sending of vaccination records (Create, Update, Delete),
+  triggered by the creation/edit/delete of any vaccination records. This can be controlled on a
+  per-programme basis.
 
 import_bulk_remove_parents: Allow user to bulk remove parent relationships from imports.
 
-import_choose_academic_year: Add an option to choose the academic year when
-  importing patients during the preparation period.
+import_choose_academic_year:
+  Add an option to choose the academic year when importing patients during the preparation period.
 
 import_concurrency_per_server: |
   Controls whether to limit the concurrency of the import jobs to be global or
@@ -45,21 +42,14 @@ import_concurrency_per_server: |
 
 import_low_pds_match_rate: Prevent processing uploads with a low pds match rate.
 
-import_review_screen: Enable the import review screen to allow users to review changesets
-  before they are committed.
-
-import_row_count_limit: |
-  Controls whether to limit the number of rows that can be imported in a single CSV file.
+import_review_screen:
+  Enable the import review screen to allow users to review changesets before they are committed.
 
 import_search_pds: Perform PDS lookups as part of the patient import processing.
 
 ops_tools: Enable the operational support tools; timeline and graph.
 
 pds_cascading_search: Enable cascading PDS searches for patients without an NHS number.
-
-reporting_api: Enables the Commissioner reporting component to authenticate to Mavis via OAUTH 2.0
-  Authorization Code Flow (https://datatracker.ietf.org/doc/html/rfc6749#section-4.1), and retrieve
-  statistics from /api/reporting/
 
 sync_national_reporting_to_imms_api: |
   Sync immunisations records uploaded as part of national reporting to the NHS

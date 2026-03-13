@@ -89,23 +89,9 @@ describe ImmunisationImport do
 
       before { stub_const("CSVImportable::MAX_CSV_ROWS", 2) }
 
-      context "when import_row_count_limit flag is enabled" do
-        before { Flipper.enable(:import_row_count_limit) }
-
-        it "is invalid" do
-          expect(immunisation_import).to be_invalid
-          expect(immunisation_import.errors[:csv]).to include(
-            /less than 2 rows/
-          )
-        end
-      end
-
-      context "when import_row_count_limit flag is disabled" do
-        before { Flipper.disable(:import_row_count_limit) }
-
-        it "is valid" do
-          expect(immunisation_import).to be_valid
-        end
+      it "is invalid" do
+        expect(immunisation_import).to be_invalid
+        expect(immunisation_import.errors[:csv]).to include(/less than 2 rows/)
       end
     end
 
@@ -118,10 +104,10 @@ describe ImmunisationImport do
         it "is invalid" do
           expect(immunisation_import).to be_invalid
           expect(immunisation_import.rows.first.errors[:base]).to include(
-            /appears more than once/
+            /The record on this row appears to be a duplicate of row 3\./
           )
           expect(immunisation_import.rows.second.errors[:base]).to include(
-            /appears more than once/
+            /The record on this row appears to be a duplicate of row 2\./
           )
         end
       end

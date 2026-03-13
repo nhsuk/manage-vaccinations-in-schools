@@ -65,7 +65,7 @@ class DraftVaccinationRecord
       (:notes unless national_reporting_user_and_record?),
       (
         if programme&.mmr? && (administered? || already_had?) &&
-             patient.eligible_for_mmrv? && Flipper.enabled?(:already_vaccinated)
+             patient.eligible_for_mmrv?
           :mmr_or_mmrv
         end
       ),
@@ -152,6 +152,7 @@ class DraftVaccinationRecord
     validates :outcome, presence: true
     validates :notes, length: { maximum: 1000 }
     validate :validate_patient_attendance
+    validate :validate_batch_presence
   end
 
   on_wizard_step :vaccinator, exact: true do
@@ -163,7 +164,7 @@ class DraftVaccinationRecord
     validates :dose_sequence,
               presence: true,
               inclusion: {
-                in: ->(record) { 1..record.programme.maximum_dose_sequence }
+                in: :allowed_dose_sequences
               }
   end
 
@@ -199,8 +200,7 @@ class DraftVaccinationRecord
   end
 
   def reported_as_already_vaccinated?
-    Flipper.enabled?(:already_vaccinated) && administered? &&
-      sourced_from_manual_report?
+    administered? && sourced_from_manual_report?
   end
 
   # So that a form error matches to a field in this model
@@ -398,7 +398,19 @@ class DraftVaccinationRecord
 
   def dose_sequence_can_be_modified?
     !reported_as_already_vaccinated? &&
-      (national_reporting_user_and_record? || programme&.td_ipv?)
+      (national_reporting_user_and_record? || programme&.doubles?)
+  end
+
+  def allowed_dose_sequences
+    # New MenACWY records created in mavis have a dose sequence
+    # Old records may not, but can be edited to have a dose sequence of 1
+    max =
+      if sourced_from_service? && programme&.menacwy?
+        1
+      else
+        programme.maximum_dose_sequence
+      end
+    1..max
   end
 
   private
@@ -534,6 +546,12 @@ class DraftVaccinationRecord
     unless VaccinationRecord.delivery_sites.keys.include?(delivery_site)
       errors.add(:delivery_site, :inclusion)
     end
+  end
+
+  def validate_batch_presence
+    return unless administered? && sourced_from_service?
+
+    errors.add(:batch_number, :blank) if batch_number.blank?
   end
 
   def validate_patient_attendance

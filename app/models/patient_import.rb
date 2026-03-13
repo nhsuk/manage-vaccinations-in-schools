@@ -219,10 +219,6 @@ class PatientImport < ApplicationRecord
     other_rows = duplicate_rows[start_row, count + 1] - [current_row]
     other_row_numbers = other_rows.map(&:csv_row_number)
 
-    if other_row_numbers.size == 1
-      "row #{other_row_numbers.first}"
-    else
-      "rows #{other_row_numbers[0..-2].join(", ")} and #{other_row_numbers[-1]}"
-    end
+    "#{"row".pluralize(other_row_numbers.size)} #{other_row_numbers.to_sentence(last_word_connector: " and ")}"
   end
 end

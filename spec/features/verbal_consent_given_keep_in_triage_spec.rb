@@ -69,6 +69,14 @@ describe "Verbal consent" do
   end
 
   def then_an_email_is_sent_to_the_parent_about_triage
-    expect_email_to(@parent.email, :consent_confirmation_triage)
+    expect(email_deliveries).to include(
+      matching_notify_email(
+        to: @parent.email,
+        template: :consent_confirmation_triage
+      ).with_content_including(
+        "we need to review your answers",
+        "We’ll let you know once we’ve done this"
+      )
+    )
   end
 end

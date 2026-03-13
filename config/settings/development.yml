@@ -5,7 +5,8 @@ web_concurrency: 0
 cis2:
   enabled: false
   authentication_assurance_level: 1
-  issuer: "https://am.nhsdev.auth-ptl.cis2.spineservices.nhs.uk:443/openam/oauth2/realms/root/realms/oidc"
+  # yamllint disable-line rule:line-length
+  issuer: https://am.nhsdev.auth-ptl.cis2.spineservices.nhs.uk:443/openam/oauth2/realms/root/realms/oidc
 
 govuk_notify:
   enabled: false
@@ -13,7 +14,7 @@ govuk_notify:
   callback_bearer_token: dev-bearer-token
 
 nhs_api:
-  base_url: "https://sandbox.api.service.nhs.uk"
+  base_url: https://sandbox.api.service.nhs.uk
   disable_authentication: true
 
 pds:

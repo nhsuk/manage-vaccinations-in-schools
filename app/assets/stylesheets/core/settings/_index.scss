@@ -1,7 +1,0 @@
-@use "sass:color";
-@use "../../vendor/nhsuk-frontend" as *;
-
-$dark-orange-colour: color.scale(
-  color.mix(nhsuk-colour("red"), nhsuk-colour("yellow"), 60%),
-  $lightness: -10%
-);

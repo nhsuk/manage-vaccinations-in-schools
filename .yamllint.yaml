@@ -1,0 +1,15 @@
+---
+extends: default
+
+ignore:
+  - config/settings.yml
+  - node_modules
+
+rules:
+  comments:
+    min-spaces-from-content: 1
+  document-start: disable
+  line-length:
+    max: 100
+  truthy:
+    ignore: .github/workflows/*

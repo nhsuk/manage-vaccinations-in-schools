@@ -9,7 +9,13 @@ describe AppSessionOverviewComponent do
 
   let(:component) { described_class.new(session) }
 
-  before { stub_authorization(allowed: true) }
+  before do
+    stub_authorization(
+      allowed: true,
+      klass: SessionPolicy,
+      methods: %i[edit? invite_to_clinic? manage_consent_reminders?]
+    )
+  end
 
   shared_examples "displays correct count" do |programme_name, tally_name, count|
     it "displays correct #{tally_name.downcase} count" do

@@ -29,12 +29,16 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        image_type: ["webapp", "ops"]
+        image_type: [webapp, ops]
     permissions:
       id-token: write
     outputs:
-      webapp-build-needed: ${{ steps.check-dev-image.outputs.webapp-build-needed || steps.check-prod-image.outputs.webapp-build-needed }}
-      ops-build-needed: ${{ steps.check-dev-image.outputs.ops-build-needed || steps.check-prod-image.outputs.ops-build-needed }}
+      webapp-build-needed: >-
+        ${{ steps.check-dev-image.outputs.webapp-build-needed ||
+        steps.check-prod-image.outputs.webapp-build-needed }}
+      ops-build-needed: >-
+        ${{ steps.check-dev-image.outputs.ops-build-needed ||
+        steps.check-prod-image.outputs.ops-build-needed }}
     steps:
       - name: Configure AWS Dev Credentials
         uses: aws-actions/configure-aws-credentials@v6
@@ -44,7 +48,8 @@ jobs:
       - name: Check if dev image exists
         id: check-dev-image
         run: |
-          if aws ecr describe-images --repository-name mavis/${{ matrix.image_type }} --image-ids "imageTag=$git_ref" > /dev/null 2>&1; then
+          if aws ecr describe-images --repository-name mavis/${{ matrix.image_type }} \
+              --image-ids "imageTag=$git_ref" > /dev/null 2>&1; then
             echo "Dev image with given tag already exists"
           else
             echo "Dev image does not exist. Build needed"
@@ -60,7 +65,8 @@ jobs:
         if: env.PUSH_IMAGE_TO_PRODUCTION == 'true'
         id: check-prod-image
         run: |
-          if aws ecr describe-images --repository-name mavis/${{ matrix.image_type }} --image-ids "imageTag=$git_ref" > /dev/null 2>&1; then
+          if aws ecr describe-images --repository-name mavis/${{ matrix.image_type }} \
+              --image-ids "imageTag=$git_ref" > /dev/null 2>&1; then
             echo "Production image with given tag already exists"
           else
             echo "Production image does not exist. Build needed"
@@ -75,18 +81,25 @@ jobs:
     steps:
       - name: Set aws roles
         id: determine-aws-roles
+        # yamllint disable rule:line-length
         run: |
           if [ "$PUSH_IMAGE_TO_PRODUCTION" = "true" ]; then
             echo 'aws-roles=["arn:aws:iam::393416225559:role/GithubDeployMavisAndInfrastructure", "arn:aws:iam::820242920762:role/GithubDeployMavisAndInfrastructure"]' >> "$GITHUB_OUTPUT"
           else
             echo 'aws-roles=["arn:aws:iam::393416225559:role/GithubDeployMavisAndInfrastructure"]' >> "$GITHUB_OUTPUT"
           fi
-  build:
-    needs: check-image-presence
-    if: needs.check-image-presence.outputs.webapp-build-needed == 'true' || needs.check-image-presence.outputs.ops-build-needed  == 'true'
+        # yamllint enable rule:line-length
+  build-and-push:
+    needs: [check-image-presence, define-matrix]
+    if: >-
+      needs.check-image-presence.outputs.webapp-build-needed == 'true' ||
+      needs.check-image-presence.outputs.ops-build-needed == 'true'
     runs-on: ubuntu-latest
     permissions:
       id-token: write
+    strategy:
+      matrix:
+        aws-role: ${{ fromJSON(needs.define-matrix.outputs.aws-roles) }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
@@ -94,38 +107,6 @@ jobs:
           ref: ${{ env.git_ref }}
       - name: Write build SHA
         run: git rev-parse HEAD > public/sha
-      - name: Build webapp docker image
-        run: docker build -t "mavis-webapp:latest" .
-      - name: Save web image
-        run: docker save -o image.tar mavis-webapp:latest
-      - name: Upload web image
-        uses: actions/upload-artifact@v7
-        with:
-          name: webapp-image
-          path: image.tar
-      - name: Build ops docker image
-        run: docker build -f ops.Dockerfile -t "mavis-ops:latest" .
-      - name: Save ops image
-        run: docker save -o image.tar mavis-ops:latest
-      - name: Upload ops image
-        uses: actions/upload-artifact@v7
-        with:
-          name: ops-image
-          path: image.tar
-  push:
-    runs-on: ubuntu-latest
-    needs: [build, define-matrix]
-    permissions:
-      id-token: write
-    strategy:
-      matrix:
-        aws-role: ${{ fromJSON(needs.define-matrix.outputs.aws-roles) }}
-        image_type: ["webapp", "ops"]
-    steps:
-      - name: Download Docker image
-        uses: actions/download-artifact@v8
-        with:
-          name: ${{ matrix.image_type }}-image
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v6
         with:
@@ -134,9 +115,34 @@ jobs:
       - name: Login to ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
-      - name: Load Docker image
-        run: docker load -i image.tar
-      - name: Tag Docker image
-        run: docker tag mavis-${{ matrix.image_type }}:latest "${{ steps.login-ecr.outputs.registry }}/mavis/${{ matrix.image_type }}":"$git_ref"
-      - name: Push Docker image
-        run: docker push "${{ steps.login-ecr.outputs.registry }}/mavis/${{ matrix.image_type }}":"$git_ref"
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+        # yamllint disable rule:line-length
+      - name: Build and push webapp image
+        if: needs.check-image-presence.outputs.webapp-build-needed == 'true'
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.login-ecr.outputs.registry }}/mavis/webapp:${{ env.git_ref }}
+          cache-from:
+            type=registry,ref=${{ steps.login-ecr.outputs.registry }}/mavis/webapp:buildcache
+          cache-to:
+            type=registry,ref=${{ steps.login-ecr.outputs.registry
+            }}/mavis/webapp:buildcache,mode=max,image-manifest=true,oci-mediatypes=true
+      - name: Build and push ops image
+        if: needs.check-image-presence.outputs.ops-build-needed == 'true'
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ops.Dockerfile
+          push: true
+          tags: ${{ steps.login-ecr.outputs.registry }}/mavis/ops:${{ env.git_ref }}
+          build-args: |
+            REPOSITORY=${{ steps.login-ecr.outputs.registry }}/mavis/webapp
+            IMAGE_TAG=${{ env.git_ref }}
+          cache-from: type=registry,ref=${{ steps.login-ecr.outputs.registry }}/mavis/ops:buildcache
+          cache-to:
+            type=registry,ref=${{ steps.login-ecr.outputs.registry
+            }}/mavis/ops:buildcache,mode=max,image-manifest=true,oci-mediatypes=true
+            # yamllint enable rule:line-length

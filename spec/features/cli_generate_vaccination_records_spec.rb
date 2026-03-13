@@ -20,6 +20,12 @@ describe "mavis generate vaccination-records" do
   def given_a_team_with_sessions_exists
     @programme = Programme.hpv
     @team = create(:team, programmes: [@programme])
+    create(
+      :batch,
+      :not_expired,
+      team: @team,
+      vaccine: @programme.vaccines.active.first
+    )
 
     @session1 =
       create(

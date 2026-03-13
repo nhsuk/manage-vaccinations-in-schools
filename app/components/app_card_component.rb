@@ -45,8 +45,7 @@ class AppCardComponent < ViewComponent::Base
     secondary: false,
     compact: false,
     filters: false,
-    section: false,
-    disabled: false
+    section: false
   )
     @link_to = link_to
     @colour = colour
@@ -55,7 +54,6 @@ class AppCardComponent < ViewComponent::Base
     @compact = compact
     @filters = filters
     @section = section
-    @disabled = disabled
   end
 
   private
@@ -71,8 +69,7 @@ class AppCardComponent < ViewComponent::Base
       "app-card",
       ("app-card--compact" if @compact),
       ("app-card--#{@colour}" if @colour.present?),
-      ("app-filters" if @filters),
-      ("app-card--disabled" if @disabled)
+      ("app-filters" if @filters)
     ].compact.join(" ")
   end
 

@@ -6,48 +6,25 @@ shared_examples "a ReportingAPI controller" do
 
   include ReportingAPIHelper
 
-  context "when the reporting_api feature flag is disabled" do
-    before { Flipper.disable(:reporting_api) }
+  describe "#index" do
+    context "when the request has a JWT param" do
+      let(:params) { { jwt: jwt } }
 
-    describe "#index" do
-      context "when the request has a JWT param" do
-        let(:params) { { jwt: jwt } }
+      context "which is valid" do
+        let(:jwt) { valid_jwt }
 
-        context "which is valid" do
-          let(:jwt) { valid_jwt }
-
-          it "responds with status :forbidden" do
-            get :index, params: { jwt: jwt }
-            expect(response.status).to eq(403)
-          end
+        it "responds with status 200" do
+          get :index, params: { jwt: jwt }
+          expect(response.status).to eq(200)
         end
       end
-    end
-  end
 
-  context "when the :reporting_api feature flag is enabled" do
-    before { Flipper.enable(:reporting_api) }
+      context "which is not valid" do
+        let(:jwt) { jwt_with_invalid_payload }
 
-    describe "#index" do
-      context "when the request has a JWT param" do
-        let(:params) { { jwt: jwt } }
-
-        context "which is valid" do
-          let(:jwt) { valid_jwt }
-
-          it "responds with status 200" do
-            get :index, params: { jwt: jwt }
-            expect(response.status).to eq(200)
-          end
-        end
-
-        context "which is not valid" do
-          let(:jwt) { jwt_with_invalid_payload }
-
-          it "responds with status :forbidden" do
-            get :index, params: { jwt: jwt }
-            expect(response.status).to eq(403)
-          end
+        it "responds with status :forbidden" do
+          get :index, params: { jwt: jwt }
+          expect(response.status).to eq(403)
         end
       end
     end

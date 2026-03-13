@@ -21,7 +21,7 @@ Layout/EmptyLineAfterMagicComment:
   Enabled: true
 
 Layout/LineLength:
-  AllowedPatterns: [idx_on,index_,idx_]
+  AllowedPatterns: [idx_on, index_, idx_]
   Exclude:
     - db/schema.rb
 
@@ -76,10 +76,12 @@ Style/FrozenStringLiteralComment:
   Enabled: true
   EnforcedStyle: always_true
   Exclude:
+    - db/data_schema.rb
     - db/schema.rb
 
 Style/NumericLiterals:
   Exclude:
+    - db/data_schema.rb
     - db/schema.rb
 
 Rails/ApplicationController:

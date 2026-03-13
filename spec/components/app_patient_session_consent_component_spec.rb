@@ -57,7 +57,7 @@ describe AppPatientSessionConsentComponent do
 
     it do
       expect(rendered).to have_css(
-        ".app-card__heading--aqua-green",
+        ".app-card__heading--green",
         text: "Consent given"
       )
     end

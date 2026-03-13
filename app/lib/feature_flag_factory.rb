@@ -15,11 +15,9 @@ class FeatureFlagFactory
   end
 
   FEATURES_FOR_DEVELOPMENT = %i[
-    already_vaccinated
     child_record_redesign
     dev_tools
     import_review_screen
-    reporting_api
     testing_api
   ].freeze
 

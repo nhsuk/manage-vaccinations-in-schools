@@ -1,0 +1,45 @@
+name: Call end-to-end tests
+
+on:
+  workflow_call:
+    inputs:
+      cross_service_tests:
+        required: true
+        type: boolean
+      endpoint:
+        required: true
+        type: string
+      github_ref:
+        required: true
+        type: string
+    secrets:
+      HTTP_AUTH_TOKEN_FOR_TESTS:
+        description: HTTP Basic Auth token for the environment under test
+        required: false
+      MAVIS_TESTING_REPO_ACCESS_TOKEN:
+        description: Access token for the manage-vaccinations-in-schools-testing repository
+        required: false
+      IMMS_API_KEY_FOR_TESTS:
+        description: API key to use NHS Immunisations API
+        required: false
+      IMMS_API_KID_FOR_TESTS:
+        description: API KID to use NHS Immunisations API
+        required: false
+      IMMS_API_PEM_FOR_TESTS:
+        description: API PEM to use NHS Immunisations API
+        required: false
+
+jobs:
+  call-tests:
+    # yamllint disable-line rule:line-length
+    uses: NHSDigital/manage-vaccinations-in-schools-testing/.github/workflows/end-to-end-tests.yaml@main
+    with:
+      cross_service_tests: ${{ inputs.cross_service_tests }}
+      github_ref: ${{ inputs.github_ref }}
+      endpoint: ${{ inputs.endpoint }}
+    secrets:
+      HTTP_AUTH_TOKEN_FOR_TESTS: ${{ secrets.HTTP_AUTH_TOKEN_FOR_TESTS }}
+      MAVIS_TESTING_REPO_ACCESS_TOKEN: ${{ secrets.MAVIS_TESTING_REPO_ACCESS_TOKEN }}
+      IMMS_API_KEY: ${{ secrets.IMMS_API_KEY_FOR_TESTS }}
+      IMMS_API_KID: ${{ secrets.IMMS_API_KID_FOR_TESTS }}
+      IMMS_API_PEM: ${{ secrets.IMMS_API_PEM_FOR_TESTS }}

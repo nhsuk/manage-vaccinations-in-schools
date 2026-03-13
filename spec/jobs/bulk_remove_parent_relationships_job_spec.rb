@@ -35,7 +35,7 @@ describe BulkRemoveParentRelationshipsJob do
   end
 
   describe "#perform" do
-    context "remove only parents that havent consented" do
+    context "when removing only parents that havent consented" do
       let(:remove_option) { "unconsented_only" }
 
       it "removes only unconsented parents" do
@@ -51,16 +51,22 @@ describe BulkRemoveParentRelationshipsJob do
       end
     end
 
-    context "remove all parents" do
+    context "when removing all parents" do
       let(:remove_option) { "all" }
       let(:consent_with_given_response) { Consent.response_given.sample }
       let(:consent_with_refused_response) { Consent.response_refused.sample }
 
-      it "removes all parents" do
-        expect(import.parent_relationships.count).to eq(5)
+      it "removes all parent relationships" do
         expect { perform_job }.to change {
           import.parent_relationships.count
         }.by(-5)
+      end
+
+      it "removes all parents that are no longer associated with a patient" do
+        import_parents = import.parents.ids
+        expect { perform_job }.to change {
+          Parent.where(id: import_parents).count
+        }.by(-3)
       end
 
       it "invalidates consents" do

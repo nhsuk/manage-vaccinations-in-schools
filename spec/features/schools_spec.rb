@@ -29,6 +29,24 @@ describe "Schools" do
     then_i_see_the_secondary_sessions
   end
 
+  scenario "Sending clinic invitations to children in no known school" do
+    given_a_team_with_no_known_school_children
+    and_i_am_signed_in
+
+    when_i_visit_the_schools_page
+    and_i_click_on_no_known_school
+    then_i_see_the_send_invitations_button
+
+    when_i_click_send_clinic_invitations
+    then_i_should_see_programmes_i_can_send_invitations_for
+    and_i_select_programmes_and_send
+    then_i_see_the_invitation_confirmation
+    and_the_parents_receive_invitations
+
+    when_i_click_send_clinic_invitations
+    then_i_see_no_invitations_need_to_be_sent
+  end
+
   def given_a_team_exists_with_a_few_schools
     programmes = [Programme.flu, Programme.hpv]
 
@@ -133,5 +151,123 @@ describe "Schools" do
 
   def and_i_click_on_back
     click_on "Back"
+  end
+
+  def given_a_team_with_no_known_school_children
+    programmes = [Programme.hpv]
+    @team = create(:team, :with_generic_clinic, programmes:)
+    @generic_clinic = @team.generic_clinic
+
+    @patients =
+      10.times.map do
+        create(
+          :patient,
+          :consent_no_response,
+          school: nil,
+          parents: [build(:parent)],
+          programmes:,
+          location: @generic_clinic,
+          academic_year: AcademicYear.pending
+        )
+      end
+
+    # We create these to ensure these children aren't invited.
+
+    # No parent contact details
+    create(
+      :patient,
+      :consent_no_response,
+      school: nil,
+      parents: [],
+      programmes:,
+      location: @generic_clinic,
+      academic_year: AcademicYear.pending
+    )
+
+    # Refused consent
+    create(
+      :patient,
+      :consent_refused,
+      school: nil,
+      parents: [build(:parent)],
+      programmes:,
+      location: @generic_clinic,
+      academic_year: AcademicYear.pending
+    )
+
+    # Conflicting consent
+    create(
+      :patient,
+      :consent_conflicting,
+      school: nil,
+      parents: [build(:parent)],
+      programmes:,
+      location: @generic_clinic,
+      academic_year: AcademicYear.pending
+    )
+
+    # Archived
+    create(
+      :patient,
+      :consent_no_response,
+      :archived,
+      school: nil,
+      parents: [build(:parent)],
+      programmes:,
+      location: @generic_clinic,
+      academic_year: AcademicYear.pending,
+      team: @team
+    )
+
+    @nurse = create(:nurse, team: @team)
+  end
+
+  def when_i_visit_the_schools_page
+    visit schools_path
+  end
+
+  def and_i_click_on_no_known_school
+    click_on "No known school"
+  end
+
+  def then_i_see_the_send_invitations_button
+    expect(page).to have_content("Send clinic invitations")
+  end
+
+  def when_i_click_send_clinic_invitations
+    click_on "Send clinic invitations"
+  end
+
+  def then_i_should_see_programmes_i_can_send_invitations_for
+    expect(page).to have_content(
+      "10 children have not been invited to a clinic yet"
+    )
+  end
+
+  def and_i_select_programmes_and_send
+    check "HPV"
+    click_on "Send clinic invitations"
+  end
+
+  def then_i_see_the_invitation_confirmation
+    expect(page).to have_content("10 children invited to the clinic")
+  end
+
+  def and_the_parents_receive_invitations
+    perform_enqueued_jobs
+
+    expect(email_deliveries.count).to eq(@patients.count)
+
+    @patients.each do |patient|
+      patient.parents.each do |parent|
+        expect_email_to parent.email, :clinic_initial_invitation, :any
+      end
+    end
+  end
+
+  def then_i_see_no_invitations_need_to_be_sent
+    expect(page).to have_content(
+      "You do not need to send any clinic invitations."
+    )
   end
 end

@@ -263,7 +263,7 @@ class Reports::CareplusExporter
     elsif programme.hpv?
       "HPV"
     elsif programme.menacwy?
-      "ACWYX14"
+      "ACWYX4"
     elsif programme.mmr?
       programme.mmrv_variant? ? "MMRV" : "MMR"
     elsif programme.td_ipv?

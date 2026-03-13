@@ -26,14 +26,16 @@ users:
 
 schools:
   generic:
-    - 115529 # primary
-    - 131806 # primary
-    - 145212 # primary
-    - 118853 # primary
-    - 145482 # secondary
-    - 137236 # secondary
-    - 136642 # secondary
-    - 135970 # secondary
+    # Primary schools
+    - 115529
+    - 131806
+    - 145212
+    - 118853
+    # Secondary schools
+    - 145482
+    - 137236
+    - 136642
+    - 135970
 
 clinics:
   generic:

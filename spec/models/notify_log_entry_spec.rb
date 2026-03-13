@@ -152,7 +152,7 @@ describe NotifyLogEntry do
           :notify_log_entry,
           :email,
           template_id:
-            GOVUK_NOTIFY_EMAIL_TEMPLATES.fetch(:consent_clinic_request)
+            NotifyTemplate.find(:consent_clinic_request, channel: :email).id
         )
       end
 

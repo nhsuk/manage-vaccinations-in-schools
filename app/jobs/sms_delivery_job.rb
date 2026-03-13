@@ -43,20 +43,18 @@ class SMSDeliveryJob < NotifyDeliveryJob
       end
     return if phone_number.nil?
 
-    sms_renderer = NotifyTemplateRenderer.for(:sms)
-    api_template_id, personalisation_hash, log_template_id =
-      if use_local_template?(template_name_sym)
-        rendered = sms_renderer.render(template_name_sym, personalisation)
-        [
-          sms_renderer.passthrough_template_id,
-          { body: rendered[:body] },
-          sms_renderer.template_id_for(template_name_sym)
-        ]
+    template = NotifyTemplate.find(template_name_sym, channel: :sms)
+    raise UnknownTemplate if template.nil?
+
+    personalisation_hash =
+      if template.local?
+        rendered = template.render(personalisation)
+        { body: rendered[:body] }
       else
-        tid = sms_renderer.template_id_for(template_name_sym)
-        raise UnknownTemplate if tid.nil?
-        [tid, personalisation.to_h, tid]
+        personalisation.to_h
       end
+    api_template_id = template.delivery_id
+    log_template_id = template.id
 
     args = {
       personalisation: personalisation_hash,
@@ -104,15 +102,5 @@ class SMSDeliveryJob < NotifyDeliveryJob
           { programme_type: it.type, disease_types: it.disease_types }
         end
     )
-  end
-
-  def use_local_template?(template_name_sym)
-    return false unless passthrough_sms_configured?
-
-    NotifyTemplateRenderer.for(:sms).template_exists?(template_name_sym)
-  end
-
-  def passthrough_sms_configured?
-    NotifyTemplateRenderer.for(:sms).passthrough_configured?
   end
 end

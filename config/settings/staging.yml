@@ -5,12 +5,13 @@ govuk_notify:
   mode: team
 
 nhs_api:
-  base_url: "https://int.api.service.nhs.uk"
+  base_url: https://int.api.service.nhs.uk
 
 # NHS Care Identity Service OIDC integration configuration, used by Omniauth via
 # Devise.
 cis2:
-  issuer: "https://am.nhsint.auth-ptl.cis2.spineservices.nhs.uk:443/openam/oauth2/realms/root/realms/NHSIdentity/realms/Healthcare"
+  # yamllint disable-line rule:line-length
+  issuer: https://am.nhsint.auth-ptl.cis2.spineservices.nhs.uk:443/openam/oauth2/realms/root/realms/NHSIdentity/realms/Healthcare
   support_organisation: RX4
 
 pds:

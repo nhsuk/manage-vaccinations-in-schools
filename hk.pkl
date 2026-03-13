@@ -4,7 +4,9 @@ import "package://github.com/jdx/hk/releases/download/v1.37.0/hk@1.37.0#/Builtin
 local linters = new Mapping<String, Group> {
     ["all"] = new Group {
         steps = new Mapping<String, Step> {
-            ["actionlint"] = Builtins.actionlint
+            ["actionlint"] = (Builtins.actionlint) {
+                fix = "actionlint {{ files }}"
+            }
 
             ["brakeman"] = new Step {
                 check = "bin/brakeman --quiet --no-summary --no-pager"
@@ -12,7 +14,7 @@ local linters = new Mapping<String, Group> {
 
             ["prettier"] = new Step {
                 batch = true
-                glob = List("Gemfile", "*.rb", "*.rake", "*.md", "*.js", "*.html", "*.erb", "*.css", "*.ejs", "*.mjs", "*.scss", "*.yaml", "*.json")
+                glob = List("Gemfile", "*.rb", "*.rake", "*.md", "*.js", "*.html", "*.erb", "*.css", "*.ejs", "*.mjs", "*.scss", "*.yaml", "*.yml", "*.json")
                 check = "bin/prettier --check --ignore-unknown {{ files }}"
                 check_list_files = "bin/prettier --list-different --ignore-unknown {{ files }}"
                 fix = "bin/prettier --write --ignore-unknown {{ files }}"
@@ -37,6 +39,10 @@ local linters = new Mapping<String, Group> {
                 check = "bin/stylelint {{ files }}"
                 fix = "bin/stylelint --fix {{ files }}"
             }
+
+            ["yamllint"] = (Builtins.yamllint) {
+                fix = "yamllint {{ files }}"
+            }
         }
     }
 
@@ -49,7 +55,7 @@ local linters = new Mapping<String, Group> {
     }
 
     ["pre-commit"] = new Group {
-        steps = steps_with_staged_fixes.toMap().remove("actionlint").remove("brakeman").toMapping()
+        steps = steps_with_staged_fixes.toMap().remove("brakeman").toMapping()
     }
 }
 

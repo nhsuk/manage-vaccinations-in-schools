@@ -1,14 +1,6 @@
 @use "../vendor/nhsuk-frontend" as *;
 @use "../core" as app;
 
-.nhsuk-tag {
-  &--dark-orange {
-    border-color: nhsuk-shade(app.$dark-orange-colour, 50%);
-    color: nhsuk-shade(app.$dark-orange-colour, 50%);
-    background-color: nhsuk-tint(app.$dark-orange-colour, 80%);
-  }
-}
-
 .nhsuk-tag + .nhsuk-u-secondary-text-colour {
   margin-left: nhsuk-spacing(2);
 

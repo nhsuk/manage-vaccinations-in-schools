@@ -34,8 +34,6 @@ RSpec.describe API::Reporting::OneTimeTokensController do
 
   describe "#authorize" do
     context "given a valid client_id when reporting_api is enabled" do
-      before { Flipper.enable(:reporting_api) }
-
       let(:client_id) { Settings.reporting_api.client_app.client_id }
       let(:grant_type) { "some_grant_type" }
 
@@ -234,8 +232,6 @@ RSpec.describe API::Reporting::OneTimeTokensController do
         cis2_info: cis2_info_hash
       )
     end
-
-    before { Flipper.enable(:reporting_api) }
 
     it "returns 200" do
       post :authorize,

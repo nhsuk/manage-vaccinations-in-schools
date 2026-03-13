@@ -1,19 +1,15 @@
 # frozen_string_literal: true
 
 class Sessions::InviteToClinicController < Sessions::BaseController
-  before_action :check_can_send_clinic_invitations
-  before_action :set_generic_clinic_session
+  before_action :authorize_session
   before_action :set_patients_to_invite
   before_action :set_invitations_to_send
 
-  skip_after_action :verify_policy_scoped
-
   def edit
-    @initial_invitations = @session.school?
   end
 
   def update
-    factory.create_patient_locations! if @session.school?
+    factory.create_patient_locations!
 
     @patients_to_invite.each do |patient|
       patient.notifier.send_clinic_invitation(
@@ -24,43 +20,21 @@ class Sessions::InviteToClinicController < Sessions::BaseController
       )
     end
 
-    children_count = I18n.t("children", count: @invitations_to_send)
-
-    flash[:success] = if @session.school?
-      "#{children_count} invited to the clinic"
-    else
-      "Booking reminders sent for #{children_count}"
-    end
+    flash[
+      :success
+    ] = "#{I18n.t("children", count: @invitations_to_send)} invited to the clinic"
 
     redirect_to session_path(@session)
   end
 
   private
 
-  def check_can_send_clinic_invitations
-    render status: :not_found unless @session.can_send_clinic_invitations?
-  end
-
-  def set_generic_clinic_session
-    @generic_clinic_session =
-      if @session.clinic?
-        @session
-      else
-        GenericClinicSessionFinder.call(
-          team: @session.team,
-          academic_year: @session.academic_year,
-          programmes: @session.programmes
-        )
-      end
+  def authorize_session
+    authorize @session, :invite_to_clinic?
   end
 
   def set_patients_to_invite
-    @patients_to_invite =
-      if @session.school?
-        factory.patient_locations_to_create.map(&:patient)
-      else
-        @session.patients
-      end
+    @patients_to_invite = factory.patient_locations_to_create.map(&:patient)
   end
 
   def set_invitations_to_send
@@ -68,9 +42,6 @@ class Sessions::InviteToClinicController < Sessions::BaseController
   end
 
   def factory
-    @factory ||=
-      if @session.school?
-        ClinicPatientLocationsFactory.new(school_session: @session)
-      end
+    @factory ||= ClinicPatientLocationsFactory.new(school_session: @session)
   end
 end

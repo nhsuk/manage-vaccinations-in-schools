@@ -4,7 +4,7 @@ class BulkRemoveParentsForm
   include ActiveModel::Model
   include ActiveModel::Attributes
 
-  BATCH_SIZE = 100
+  BATCH_SIZE = 10
 
   attr_accessor :current_user
   attr_reader :import, :consents

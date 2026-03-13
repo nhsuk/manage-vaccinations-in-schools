@@ -25,7 +25,9 @@ class GovukNotifyPersonalisation
     @consent = consent
     @consent_form = consent_form
     @parent = parent || consent&.parent
-    @patient = patient || consent&.patient || vaccination_record&.patient
+    @patient =
+      patient || consent&.patient || vaccination_record&.patient ||
+        Patient.find_by(id: consent_form&.matched_patient&.id)
     @session = session || consent_form&.session || vaccination_record&.session
     @team =
       team || session&.team || consent_form&.team || consent&.team ||

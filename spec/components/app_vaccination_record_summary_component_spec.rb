@@ -214,7 +214,7 @@ describe AppVaccinationRecordSummaryComponent do
       context "and a unknown dose sequence" do
         before { vaccination_record.dose_sequence = nil }
 
-        it { should_not have_content("Dose number") }
+        it { should have_content("Dose numberUnknown") }
       end
 
       context "and a specific dose sequence" do
@@ -227,6 +227,40 @@ describe AppVaccinationRecordSummaryComponent do
 
           it { should have_content("Dose number2nd") }
         end
+      end
+    end
+
+    context "for a MenACWY programme" do
+      let(:programme) { Programme.menacwy }
+      let(:vaccine) { programme.vaccines.find_by!(brand: "MenQuadfi") }
+
+      context "and a unknown dose sequence" do
+        before { vaccination_record.dose_sequence = nil }
+
+        it { should have_content("Dose numberUnknown") }
+      end
+
+      context "and a specific dose sequence" do
+        before { vaccination_record.dose_sequence = 1 }
+
+        it { should have_content("Dose number1st") }
+      end
+    end
+
+    context "for a Td/IPV programme" do
+      let(:programme) { Programme.td_ipv }
+      let(:vaccine) { programme.vaccines.find_by!(brand: "Revaxis") }
+
+      context "and a unknown dose sequence" do
+        before { vaccination_record.dose_sequence = nil }
+
+        it { should have_content("Dose numberUnknown") }
+      end
+
+      context "and a specific dose sequence" do
+        before { vaccination_record.dose_sequence = 5 }
+
+        it { should have_content("Dose number5th") }
       end
     end
   end

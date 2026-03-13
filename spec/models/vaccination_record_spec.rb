@@ -101,6 +101,9 @@ describe VaccinationRecord do
         before { vaccination_record.source = :service }
 
         it { should validate_presence_of(:protocol) }
+        it { should validate_presence_of(:vaccine_id) }
+        it { should validate_presence_of(:batch_number) }
+        it { should validate_presence_of(:batch_expiry) }
       end
     end
 
@@ -108,6 +111,9 @@ describe VaccinationRecord do
       before { vaccination_record.outcome = "already_had" }
 
       it { should_not validate_presence_of(:protocol) }
+      it { should_not validate_presence_of(:vaccine_id) }
+      it { should_not validate_presence_of(:batch_number) }
+      it { should_not validate_presence_of(:batch_expiry) }
 
       it { should_not validate_presence_of(:full_dose) }
     end

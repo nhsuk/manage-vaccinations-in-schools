@@ -268,6 +268,11 @@ Rails.application.routes.draw do
   end
 
   resources :schools, only: :index, param: :urn_and_site do
+    resource :invite_to_clinic,
+             only: %i[edit update],
+             path: "invite-to-clinic",
+             controller: "schools/invite_to_clinic"
+
     resources :import, only: :new, controller: "schools/import"
     resources :patients, only: :index, controller: "schools/patients"
     resources :sessions, only: :index, controller: "schools/sessions"

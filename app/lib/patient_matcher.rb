@@ -13,43 +13,19 @@ module PatientMatcher
     nhs_number = normalise_nhs_number(nhs_number)
     address_postcode = normalise_postcode(address_postcode)
 
-    given_name_ilike = ActiveRecord::Base.sanitize_sql_like(given_name)
-    family_name_ilike = ActiveRecord::Base.sanitize_sql_like(family_name)
-
     if nhs_number.present? && (patient = relation.find_by(nhs_number:)).present?
       return [patient]
     end
 
-    scope =
-      relation.where(
-        "given_name ILIKE ? AND family_name ILIKE ?",
-        given_name_ilike,
-        family_name_ilike
-      ).where(date_of_birth:)
+    scope = relation.where(given_name:, family_name:, date_of_birth:)
 
     if address_postcode.present?
       scope =
         if include_3_out_of_4_matches
           scope
-            .or(
-              relation.where(
-                "given_name ILIKE ? AND family_name ILIKE ?",
-                given_name_ilike,
-                family_name_ilike
-              ).where(address_postcode:)
-            )
-            .or(
-              relation.where("given_name ILIKE ?", given_name_ilike).where(
-                date_of_birth:,
-                address_postcode:
-              )
-            )
-            .or(
-              relation.where("family_name ILIKE ?", family_name_ilike).where(
-                date_of_birth:,
-                address_postcode:
-              )
-            )
+            .or(relation.where(given_name:, family_name:, address_postcode:))
+            .or(relation.where(given_name:, date_of_birth:, address_postcode:))
+            .or(relation.where(family_name:, date_of_birth:, address_postcode:))
         else
           scope.where(address_postcode:)
         end

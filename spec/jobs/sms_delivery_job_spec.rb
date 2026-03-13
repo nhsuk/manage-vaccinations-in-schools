@@ -76,7 +76,8 @@ describe SMSDeliveryJob do
     it "sends a text using GOV.UK Notify" do
       expect(notifications_client).to receive(:send_sms).with(
         phone_number: "01234 567890",
-        template_id: GOVUK_NOTIFY_SMS_TEMPLATES[template_name],
+        template_id:
+          NotifyTemplate.find(template_name, channel: :sms).delivery_id,
         personalisation: an_instance_of(Hash)
       )
       perform_now
@@ -90,7 +91,7 @@ describe SMSDeliveryJob do
       expect(notify_log_entry.delivery_id).to eq(response.id)
       expect(notify_log_entry.recipient).to eq("01234 567890")
       expect(notify_log_entry.template_id).to eq(
-        GOVUK_NOTIFY_SMS_TEMPLATES[template_name]
+        NotifyTemplate.find(template_name, channel: :sms).id
       )
       expect(notify_log_entry.purpose).to eq("consent_request")
       expect(notify_log_entry.parent).to eq(parent)
@@ -129,7 +130,7 @@ describe SMSDeliveryJob do
         expect(notify_log_entry.delivery_id).to be_nil
         expect(notify_log_entry.recipient).to eq("01234 567890")
         expect(notify_log_entry.template_id).to eq(
-          GOVUK_NOTIFY_SMS_TEMPLATES[template_name]
+          NotifyTemplate.find(template_name, channel: :sms).id
         )
         expect(notify_log_entry.purpose).to eq("consent_request")
         expect(notify_log_entry.parent).to eq(parent)
@@ -160,7 +161,7 @@ describe SMSDeliveryJob do
         expect(notify_log_entry.delivery_id).to be_nil
         expect(notify_log_entry.recipient).to eq("01234 567890")
         expect(notify_log_entry.template_id).to eq(
-          GOVUK_NOTIFY_SMS_TEMPLATES[template_name]
+          NotifyTemplate.find(template_name, channel: :sms).id
         )
         expect(notify_log_entry.purpose).to eq("consent_request")
         expect(notify_log_entry.parent).to eq(parent)
@@ -180,7 +181,8 @@ describe SMSDeliveryJob do
       it "sends a text using GOV.UK Notify" do
         expect(notifications_client).to receive(:send_sms).with(
           phone_number: "01234 567890",
-          template_id: GOVUK_NOTIFY_SMS_TEMPLATES[template_name],
+          template_id:
+            NotifyTemplate.find(template_name, channel: :sms).delivery_id,
           personalisation: an_instance_of(Hash)
         )
         perform_now
@@ -194,7 +196,7 @@ describe SMSDeliveryJob do
         expect(notify_log_entry.delivery_id).to eq(response.id)
         expect(notify_log_entry.recipient).to eq("01234 567890")
         expect(notify_log_entry.template_id).to eq(
-          GOVUK_NOTIFY_SMS_TEMPLATES[template_name]
+          NotifyTemplate.find(template_name, channel: :sms).id
         )
         expect(notify_log_entry.purpose).to eq("consent_request")
         expect(notify_log_entry.consent_form).to eq(consent_form)
@@ -248,7 +250,7 @@ describe SMSDeliveryJob do
           expect(notify_log_entry.delivery_id).to be_nil
           expect(notify_log_entry.recipient).to eq("01234 567890")
           expect(notify_log_entry.template_id).to eq(
-            GOVUK_NOTIFY_SMS_TEMPLATES[template_name]
+            NotifyTemplate.find(template_name, channel: :sms).id
           )
           expect(notify_log_entry.purpose).to eq("consent_request")
           expect(notify_log_entry.consent_form).to eq(consent_form)
@@ -261,7 +263,7 @@ describe SMSDeliveryJob do
 
   describe "#perform_later" do
     subject(:perform_later) do
-      described_class.perform_later(GOVUK_NOTIFY_SMS_TEMPLATES.keys.first)
+      described_class.perform_later(:consent_school_request)
     end
 
     it "uses the notifications queue" do

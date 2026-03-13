@@ -4,6 +4,7 @@ class Patients::ProgrammesController < Patients::BaseController
   before_action :set_programme
   before_action :set_academic_year
   before_action :set_can_invite_to_clinic
+  before_action :record_access_log_entry, only: :show
 
   skip_after_action :verify_policy_scoped
 
@@ -62,5 +63,13 @@ class Patients::ProgrammesController < Patients::BaseController
         academic_year: @academic_year,
         include_already_invited_programmes: false
       )
+  end
+
+  def record_access_log_entry
+    @patient.access_log_entries.create!(
+      user: current_user,
+      controller: "patients_programmes",
+      action: action_name
+    )
   end
 end
