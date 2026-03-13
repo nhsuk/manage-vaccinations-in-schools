@@ -84,8 +84,7 @@ describe EmailDeliveryJob do
         email_address: "test@example.com",
         email_reply_to_id: "54bf1d28-8851-43f2-893d-1853f43a50cd",
         personalisation: an_instance_of(Hash),
-        template_id:
-          NotifyTemplate.find(template_name, channel: :email).delivery_id
+        template_id: NotifyTemplate.find(template_name, channel: :email).id
       )
       perform_now
     end
@@ -97,8 +96,7 @@ describe EmailDeliveryJob do
         expect(notifications_client).to receive(:send_email).with(
           email_address: "test@example.com",
           personalisation: an_instance_of(Hash),
-          template_id:
-            NotifyTemplate.find(template_name, channel: :email).delivery_id
+          template_id: NotifyTemplate.find(template_name, channel: :email).id
         )
         perform_now
       end
@@ -112,7 +110,7 @@ describe EmailDeliveryJob do
       expect(notify_log_entry.delivery_id).to eq(response.id)
       expect(notify_log_entry.recipient).to eq("test@example.com")
       expect(notify_log_entry.template_id).to eq(
-        NotifyTemplate.find(template_name, channel: :email).delivery_id
+        NotifyTemplate.find(template_name, channel: :email).id
       )
       expect(notify_log_entry.parent).to eq(parent)
       expect(notify_log_entry.patient).to eq(patient)
@@ -176,8 +174,7 @@ describe EmailDeliveryJob do
           email_address: "test@example.com",
           email_reply_to_id: "54bf1d28-8851-43f2-893d-1853f43a50cd",
           personalisation: an_instance_of(Hash),
-          template_id:
-            NotifyTemplate.find(template_name, channel: :email).delivery_id
+          template_id: NotifyTemplate.find(template_name, channel: :email).id
         )
         perform_now
       end
@@ -189,8 +186,7 @@ describe EmailDeliveryJob do
           expect(notifications_client).to receive(:send_email).with(
             email_address: "test@example.com",
             personalisation: an_instance_of(Hash),
-            template_id:
-              NotifyTemplate.find(template_name, channel: :email).delivery_id
+            template_id: NotifyTemplate.find(template_name, channel: :email).id
           )
           perform_now
         end
@@ -204,7 +200,7 @@ describe EmailDeliveryJob do
         expect(notify_log_entry.delivery_id).to eq(response.id)
         expect(notify_log_entry.recipient).to eq("test@example.com")
         expect(notify_log_entry.template_id).to eq(
-          NotifyTemplate.find(template_name, channel: :email).delivery_id
+          NotifyTemplate.find(template_name, channel: :email).id
         )
         expect(notify_log_entry.consent_form).to eq(consent_form)
         expect(notify_log_entry.programmes.map(&:type)).to eq(programme_types)

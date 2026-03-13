@@ -1,11 +1,6 @@
 # frozen_string_literal: true
 
 class NotifyTemplate
-  PASSTHROUGH_TEMPLATE_IDS = {
-    email: "305a53f8-86eb-485e-85a5-328c9aabba45",
-    sms: "c242b359-73d6-4b74-bda2-136093550636"
-  }.freeze
-
   attr_reader :name, :channel, :id
 
   def self.find(name, channel:)
@@ -62,8 +57,6 @@ class NotifyTemplate
   end
 
   def local? = @local
-  def passthrough_id = PASSTHROUGH_TEMPLATE_IDS[@channel]
-  def delivery_id = local? ? passthrough_id : id
 
   def render(personalisation)
     CommsTemplate.find(@name, channel: @channel).render(personalisation)

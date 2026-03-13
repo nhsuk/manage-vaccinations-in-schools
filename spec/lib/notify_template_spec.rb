@@ -13,12 +13,6 @@ describe NotifyTemplate do
       it "has a UUID as the template ID" do
         expect(template.id).to match(/\A[0-9a-f-]{36}\z/)
       end
-
-      it "has the passthrough delivery ID" do
-        expect(template.delivery_id).to eq(
-          NotifyTemplate::PASSTHROUGH_TEMPLATE_IDS[:email]
-        )
-      end
     end
 
     context "with a locally-migrated SMS template" do
@@ -28,12 +22,6 @@ describe NotifyTemplate do
 
       it { should_not be_nil }
       it { should be_local }
-
-      it "has the passthrough delivery ID for SMS" do
-        expect(template.delivery_id).to eq(
-          NotifyTemplate::PASSTHROUGH_TEMPLATE_IDS[:sms]
-        )
-      end
     end
 
     context "with a Notify-hosted email template" do
@@ -43,10 +31,6 @@ describe NotifyTemplate do
 
       it { should_not be_nil }
       it { should_not be_local }
-
-      it "has the same ID for both id and delivery_id" do
-        expect(template.id).to eq(template.delivery_id)
-      end
     end
 
     context "with a Notify-hosted SMS template" do

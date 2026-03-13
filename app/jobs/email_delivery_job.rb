@@ -3,6 +3,8 @@
 class EmailDeliveryJob < NotifyDeliveryJob
   include NotifyThrottlingConcern
 
+  PASSTHROUGH_TEMPLATE_ID = "305a53f8-86eb-485e-85a5-328c9aabba45"
+
   def perform(
     template_name,
     academic_year: nil,
@@ -52,7 +54,7 @@ class EmailDeliveryJob < NotifyDeliveryJob
       else
         personalisation.to_h
       end
-    api_template_id = template.delivery_id
+    api_template_id = template.local? ? PASSTHROUGH_TEMPLATE_ID : template.id
     log_template_id = template.id
 
     args = {

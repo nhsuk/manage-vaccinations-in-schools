@@ -76,8 +76,7 @@ describe SMSDeliveryJob do
     it "sends a text using GOV.UK Notify" do
       expect(notifications_client).to receive(:send_sms).with(
         phone_number: "01234 567890",
-        template_id:
-          NotifyTemplate.find(template_name, channel: :sms).delivery_id,
+        template_id: SMSDeliveryJob::PASSTHROUGH_TEMPLATE_ID,
         personalisation: an_instance_of(Hash)
       )
       perform_now
@@ -181,8 +180,7 @@ describe SMSDeliveryJob do
       it "sends a text using GOV.UK Notify" do
         expect(notifications_client).to receive(:send_sms).with(
           phone_number: "01234 567890",
-          template_id:
-            NotifyTemplate.find(template_name, channel: :sms).delivery_id,
+          template_id: SMSDeliveryJob::PASSTHROUGH_TEMPLATE_ID,
           personalisation: an_instance_of(Hash)
         )
         perform_now
