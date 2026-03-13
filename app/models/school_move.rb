@@ -68,14 +68,6 @@ class SchoolMove < ApplicationRecord
               unless: -> { school.nil? }
             }
 
-  def assign_from(school:, home_educated:, team:)
-    if school
-      assign_attributes(school:, home_educated: nil, team: nil)
-    else
-      assign_attributes(school: nil, home_educated:, team:)
-    end
-  end
-
   def confirm!(user: nil)
     ActiveRecord::Base.transaction do
       move_across_teams = from_another_team?

@@ -44,8 +44,7 @@ class PatientsAgedOutOfSchoolJob
 
         SchoolMove.new(
           patient:,
-          home_educated: false,
-          team:,
+          school: team.unknown_school,
           academic_year:
         ).confirm!
       end

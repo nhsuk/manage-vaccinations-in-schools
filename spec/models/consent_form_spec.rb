@@ -1077,9 +1077,8 @@ describe ConsentForm do
           :count
         ).by(1)
 
-        school_move = patient.school_moves.first
-        expect(school_move.school).to be_nil
-        expect(school_move.home_educated).to be(true)
+        school_move = patient.school_moves.includes(:school).first
+        expect(school_move.school).to eq(team.home_educated_school)
       end
     end
   end
