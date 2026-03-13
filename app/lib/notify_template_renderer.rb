@@ -24,7 +24,11 @@ class NotifyTemplateRenderer
     body = render_erb(body_content, context_binding)
 
     if @channel == :sms
-      { body: }
+      # sanitise smart quotes in the body
+      # to avoid potential encoding switch to UCS-2
+      # and dropping the character limit per SMS to 70 characters
+      # https://www.notifications.service.gov.uk/pricing/text-messages
+      { body: SmartQuoteSanitiser.call(body) }
     else
       subject =
         if frontmatter["subject"]
