@@ -11,42 +11,47 @@ class NotifyTemplate
   def self.find(name, channel:)
     name = name.to_sym
     channel = channel.to_sym
-    id = template_id_for(name, channel)
-    return nil unless id
 
-    new(name:, channel:, id:, local: template_path(name, channel).exist?)
+    if (template = CommsTemplate.find(name, channel:))
+      new(name:, channel:, id: template.id, local: true)
+    elsif (id = config_hash(channel)[name])
+      new(name:, channel:, id:, local: false)
+    end
   end
 
   def self.find_by_id(template_id, channel:)
     return nil if template_id.blank?
 
     channel = channel.to_sym
-    name =
-      template_name_for(template_id, channel) ||
-        GOVUK_NOTIFY_UNUSED_TEMPLATES[template_id.to_s]
-    return nil unless name
 
-    new(
-      name:,
-      channel:,
-      id: template_id.to_s,
-      local: template_path(name, channel).exist?
-    )
+    if (template = CommsTemplate.find_by_id(template_id, channel:))
+      new(name: template.name, channel:, id: template_id.to_s, local: true)
+    elsif (
+          name =
+            config_hash(channel).key(template_id) ||
+              GOVUK_NOTIFY_UNUSED_TEMPLATES[template_id.to_s]
+        )
+      new(name:, channel:, id: template_id.to_s, local: false)
+    end
   end
 
   def self.exists?(name, channel:, source: :any)
     channel = channel.to_sym
-    path = template_path(name, channel)
     case source
     when :local
-      path.exist?
+      CommsTemplate.exists?(name, channel:)
     when :govuk_notify
       config_hash(channel)[name.to_sym].present?
     when :any
-      path.exist? || config_hash(channel)[name.to_sym].present?
+      CommsTemplate.exists?(name, channel:) ||
+        config_hash(channel)[name.to_sym].present?
     else
       raise ArgumentError, "Unknown source: #{source}"
     end
+  end
+
+  def self.all_ids(channel:)
+    (config_hash(channel).values + CommsTemplate.all_ids(channel:)).uniq.freeze
   end
 
   def initialize(name:, channel:, id:, local:)
@@ -55,64 +60,17 @@ class NotifyTemplate
     @id = id
     @local = local
   end
+
   def local? = @local
   def passthrough_id = PASSTHROUGH_TEMPLATE_IDS[@channel]
   def delivery_id = local? ? passthrough_id : id
 
   def render(personalisation)
-    NotifyTemplateRenderer.for(@channel).render(@name, personalisation)
+    CommsTemplate.find(@name, channel: @channel).render(personalisation)
   end
 
   class << self
     private
-
-    def template_id_for(name, channel)
-      path = template_path(name, channel)
-      if path.exist?
-        content = File.read(path)
-        frontmatter, = parse_frontmatter(content)
-        if frontmatter["template_id"].present?
-          return frontmatter["template_id"].to_s
-        end
-      end
-      config_hash(channel)[name.to_sym]
-    end
-
-    def template_name_for(template_id, channel)
-      dir = Rails.root.join("app/views/notify_templates", channel.to_s)
-      if Dir.exist?(dir)
-        Dir.each_child(dir) do |filename|
-          next unless filename.end_with?(".text.erb")
-
-          name = filename.delete_suffix(".text.erb").to_sym
-          content = File.read(File.join(dir, filename))
-          frontmatter, = parse_frontmatter(content)
-          return name if frontmatter["template_id"].to_s == template_id.to_s
-        end
-      end
-      config_hash(channel).key(template_id)
-    end
-
-    def template_path(name, channel)
-      Rails.root.join(
-        "app/views/notify_templates",
-        channel.to_s,
-        "#{name}.text.erb"
-      )
-    end
-
-    def parse_frontmatter(content)
-      delimiter = "---\n"
-      separator = "\n---\n"
-      return {}, content unless content.start_with?(delimiter)
-
-      frontmatter_block, body_content = content.split(separator, 2)
-      return {}, content if body_content.nil?
-
-      frontmatter_str = frontmatter_block.delete_prefix(delimiter)
-      frontmatter = YAML.safe_load(frontmatter_str) || {}
-      [frontmatter, body_content]
-    end
 
     def config_hash(channel)
       case channel
