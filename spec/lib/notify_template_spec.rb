@@ -38,10 +38,7 @@ describe NotifyTemplate do
 
     context "with a Notify-hosted email template" do
       subject(:template) do
-        described_class.find(
-          GOVUK_NOTIFY_EMAIL_TEMPLATES.keys.first,
-          channel: :email
-        )
+        described_class.find(:clinic_initial_invitation, channel: :email)
       end
 
       it { should_not be_nil }
@@ -54,10 +51,7 @@ describe NotifyTemplate do
 
     context "with a Notify-hosted SMS template" do
       subject(:template) do
-        described_class.find(
-          GOVUK_NOTIFY_SMS_TEMPLATES.keys.first,
-          channel: :sms
-        )
+        described_class.find(:clinic_initial_invitation, channel: :sms)
       end
 
       it { should_not be_nil }
@@ -96,7 +90,9 @@ describe NotifyTemplate do
         described_class.find_by_id(template_id, channel: :email)
       end
 
-      let(:template_id) { GOVUK_NOTIFY_EMAIL_TEMPLATES.values.first }
+      let(:template_id) do
+        described_class.find(:clinic_initial_invitation, channel: :email).id
+      end
 
       it { should_not be_nil }
       it { should_not be_local }
@@ -164,7 +160,7 @@ describe NotifyTemplate do
     end
 
     context "with a Notify-hosted template" do
-      let(:template_name) { GOVUK_NOTIFY_EMAIL_TEMPLATES.keys.first }
+      let(:template_name) { :clinic_initial_invitation }
 
       it "returns false for source: :local" do
         expect(
