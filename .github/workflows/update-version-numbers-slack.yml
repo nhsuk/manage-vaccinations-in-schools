@@ -61,7 +61,7 @@ jobs:
           echo "MAVIS_TECH_TOPIC=$TOPIC" >> "$GITHUB_ENV"
         # yamllint enable rule:line-length
       - name: Update mavis tech channel topic
-        uses: slackapi/slack-github-action@91efab103c0de0a537f72a35f6b8cda0ee76bf0a
+        uses: slackapi/slack-github-action@af78098f536edbc4de71162a307590698245be95
         with:
           method: conversations.setTopic
           token: ${{ secrets.MAVIS_DEPLOYMENT_BOT_OAUTH_TOKEN }}

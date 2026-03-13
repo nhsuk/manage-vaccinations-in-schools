@@ -159,7 +159,7 @@ jobs:
     needs: prepare-deployment
     steps:
       - name: Notify approval required
-        uses: slackapi/slack-github-action@91efab103c0de0a537f72a35f6b8cda0ee76bf0a
+        uses: slackapi/slack-github-action@af78098f536edbc4de71162a307590698245be95
         with:
           webhook: ${{ secrets.SLACK_MAVIS_RELEASES_WEBHOOK_URL }}
           webhook-type: incoming-webhook
@@ -303,7 +303,7 @@ jobs:
         # yamllint enable rule:line-length
       - name: Notify migrations completed
         if: ${{ env.environment == 'production' }}
-        uses: slackapi/slack-github-action@91efab103c0de0a537f72a35f6b8cda0ee76bf0a
+        uses: slackapi/slack-github-action@af78098f536edbc4de71162a307590698245be95
         with:
           webhook: ${{ secrets.SLACK_MAVIS_RELEASES_WEBHOOK_URL }}
           webhook-type: incoming-webhook
@@ -483,7 +483,7 @@ jobs:
         # yamllint enable rule:line-length
       - name: Notify data migrations completed
         if: ${{ env.environment == 'production' }}
-        uses: slackapi/slack-github-action@91efab103c0de0a537f72a35f6b8cda0ee76bf0a
+        uses: slackapi/slack-github-action@af78098f536edbc4de71162a307590698245be95
         with:
           webhook: ${{ secrets.SLACK_MAVIS_RELEASES_WEBHOOK_URL }}
           webhook-type: incoming-webhook
@@ -503,7 +503,7 @@ jobs:
       - name: Notify deployment success
         if: >-
           ${{ needs.deploy-service.result == 'success' || needs.post-deploy.result == 'success' }}
-        uses: slackapi/slack-github-action@91efab103c0de0a537f72a35f6b8cda0ee76bf0a
+        uses: slackapi/slack-github-action@af78098f536edbc4de71162a307590698245be95
         with:
           webhook: ${{ secrets.SLACK_MAVIS_RELEASES_WEBHOOK_URL }}
           webhook-type: incoming-webhook
@@ -517,7 +517,7 @@ jobs:
       - name: Notify deployment failure
         if: >-
           ${{ needs.deploy-service.result == 'failure' || needs.pre-deploy.result == 'failure' }}
-        uses: slackapi/slack-github-action@91efab103c0de0a537f72a35f6b8cda0ee76bf0a
+        uses: slackapi/slack-github-action@af78098f536edbc4de71162a307590698245be95
         with:
           webhook: ${{ secrets.SLACK_MAVIS_RELEASES_WEBHOOK_URL }}
           webhook-type: incoming-webhook
