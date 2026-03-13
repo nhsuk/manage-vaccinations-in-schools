@@ -80,6 +80,25 @@ describe "Parental consent" do
     and_an_activity_log_entry_is_visible_for_the_text("HPV")
   end
 
+  scenario "Send clinic request for doubles" do
+    given_programmes_exists(:td_ipv, :menacwy)
+    and_a_patient_without_consent_exists
+    and_i_am_signed_in
+
+    when_i_go_to_a_patient_without_consent
+    then_i_see_no_requests_sent
+
+    when_i_click_send_consent_request
+    then_i_see_the_confirmation_banner
+    and_i_see_a_consent_request_has_been_sent
+    and_a_clinic_request_email_is_sent_to_the_parent
+    and_a_clinic_request_sms_is_sent_to_the_parent
+
+    when_i_click_on_session_activity_and_notes
+    then_an_activity_log_entry_is_visible_for_the_email("MenACWY Td/IPV")
+    and_an_activity_log_entry_is_visible_for_the_text("MenACWY Td/IPV")
+  end
+
   scenario "Send clinic request where patient is eligible for MMRV" do
     given_a_programme_exists(:mmr)
     and_a_patient_without_consent_exists
@@ -264,11 +283,28 @@ describe "Parental consent" do
   end
 
   def and_a_clinic_request_email_is_sent_to_the_parent
-    expect_email_to(@parent.email, :consent_clinic_request)
+    expect(email_deliveries).to include(
+      matching_notify_email(
+        to: @parent.email,
+        template: :consent_clinic_request
+      ).with_content_including(
+        "You recently booked",
+        "Please give consent",
+        "If you need to contact us"
+      )
+    )
   end
 
   def and_a_clinic_request_sms_is_sent_to_the_parent
-    expect_sms_to(@parent.phone, :consent_clinic_request)
+    expect(sms_deliveries).to include(
+      matching_notify_sms(
+        phone_number: @parent.phone,
+        template: :consent_clinic_request
+      ).with_content_including(
+        "You recently booked a clinic appointment",
+        "Please give consent for them to get the"
+      )
+    )
   end
 
   def and_an_hpv_school_request_email_is_sent_to_the_parent
@@ -296,9 +332,35 @@ describe "Parental consent" do
   end
 
   def and_an_mmrv_school_request_email_is_sent_to_the_parent(outbreak: false)
-    template = "consent_school_request_mmrv"
-    template += "_outbreak" if outbreak
-    expect_email_to(@parent.email, template)
+    template =
+      (
+        if outbreak
+          :consent_school_request_mmrv_outbreak
+        else
+          :consent_school_request_mmrv
+        end
+      )
+    content =
+      if outbreak
+        [
+          "The number of measles cases in your area is high right now.",
+          "## We’re offering catch-up vaccinations",
+          "Respond to the consent request now",
+          "## Contact us"
+        ]
+      else
+        [
+          "## About the MMRV vaccine",
+          "Respond to the consent request now",
+          "## Contact us"
+        ]
+      end
+    expect(email_deliveries).to include(
+      matching_notify_email(
+        to: @parent.email,
+        template:
+      ).with_content_including(*content)
+    )
   end
 
   def and_an_mmrv_school_request_sms_is_sent_to_the_parent(outbreak: false)
@@ -317,7 +379,23 @@ describe "Parental consent" do
           :consent_school_request_mmr
         end
       )
-    expect_email_to(@parent.email, template)
+    content =
+      if outbreak
+        [
+          "The number of measles cases in your area is high right now.",
+          "## We’re offering catch-up vaccinations",
+          "Respond to the consent request now",
+          "## Contact us"
+        ]
+      else
+        ["Respond to the consent request now", "## Contact us"]
+      end
+    expect(email_deliveries).to include(
+      matching_notify_email(
+        to: @parent.email,
+        template:
+      ).with_content_including(*content)
+    )
   end
 
   def and_an_mmr_school_request_sms_is_sent_to_the_parent(

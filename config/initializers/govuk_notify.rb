@@ -6,30 +6,6 @@ GOVUK_NOTIFY_EMAIL_TEMPLATES = {
   clinic_initial_invitation_ryg: "5fe4fb4d-6f0a-4149-a80a-232bdfdf4f73",
   clinic_subsequent_invitation: "a86a3b3f-a848-41d8-9a6f-d38174981388",
   clinic_subsequent_invitation_ryg: "eee59c1b-3af4-4ccd-8653-940887066390",
-  consent_clinic_request: "14e88a09-4281-4257-9574-6afeaeb42715",
-  consent_school_initial_reminder_doubles:
-    "3523d4b8-530b-42dd-8b9b-7fed8d1dfff1",
-  consent_school_initial_reminder_flu: "7f85a5b4-5240-4ae9-94f7-43913852943c",
-  consent_school_initial_reminder_hpv: "0d78bff0-9dde-4192-8cf8-10e83486b54f",
-  consent_school_initial_reminder_mmr: "5462c441-81c0-4ac0-821f-713b4178f8ba",
-  consent_school_initial_reminder_mmrv: "fe47875a-a0a6-40d9-bd41-a411ebb31cff",
-  consent_school_request_doubles: "9b1a015d-6caa-47c5-a223-f72377586602",
-  consent_school_request_flu: "017853bc-2b35-4aff-99b1-193e514613a0",
-  consent_school_request_hpv: "7b9bb010-0742-460a-ae25-1922355b6776",
-  consent_school_request_mmr: "7e86e688-ceca-4dcc-a1cf-19cb559d38a8",
-  consent_school_request_mmr_outbreak: "517b02ee-2b1c-493e-bec2-1ee39f73dbae",
-  consent_school_request_mmrv: "fe194b88-5692-49a2-ab14-648e8ce2af63",
-  consent_school_request_mmrv_outbreak: "abe274c2-cd29-4099-b3ff-0e5ed710e532",
-  consent_school_subsequent_reminder_doubles:
-    "ea03aada-0912-4373-91e1-80082071a7aa",
-  consent_school_subsequent_reminder_flu:
-    "c942ce27-590e-4387-9aa8-5b9b4f2796d1",
-  consent_school_subsequent_reminder_hpv:
-    "5f70d21d-00b6-41e6-bdc9-e64455972b43",
-  consent_school_subsequent_reminder_mmr:
-    "5462c441-81c0-4ac0-821f-713b4178f8ba",
-  consent_school_subsequent_reminder_mmrv:
-    "fe47875a-a0a6-40d9-bd41-a411ebb31cff",
   session_school_reminder: "8b8a9566-bb03-4b3c-8abc-5bd5a4b8797d",
   triage_vaccination_at_clinic: "3c7461bd-e3cf-4ff9-9053-b4e87490aa45",
   triage_vaccination_at_clinic_rt5: "5cacefcd-44f2-43ff-8fc0-008890406504",
@@ -55,9 +31,6 @@ GOVUK_NOTIFY_SMS_TEMPLATES = {
   clinic_initial_invitation_ryg: "8ef5712f-bb7f-4911-8f3b-19df6f8a7179",
   clinic_subsequent_invitation: "ce7a6a1b-465e-4be4-b9e0-47ddb64f3adb",
   clinic_subsequent_invitation_ryg: "018f146d-e7b7-4b63-ae26-bb07ca6fe2f9",
-  consent_clinic_request: "03a0d572-ca5b-417e-87c3-838872a9eabc",
-  consent_school_reminder: "26029539-60e4-416b-a3a8-40b82c2babc1",
-  consent_school_request: "2d3e2370-7faa-4798-b7ae-607692a85059",
   session_school_reminder: "cc4a7f89-d260-461c-80f0-7e6e9af75e7a",
   vaccination_administered: "395a3ea1-df07-4dd6-8af1-64cc597ef383",
   vaccination_already_had: "fab1e355-bde1-47d5-835c-103bfd232b93",

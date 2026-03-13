@@ -11,7 +11,7 @@ describe NotifyTemplateRenderer do
       vaccination_and_dates: "HPV vaccination on Monday 10 March",
       location_name: "Springfield Primary",
       consented_vaccine_methods_message:
-        "You've agreed for Alex to have the nasal spray.",
+        "You’ve agreed for Alex to have the nasal spray.",
       subteam_name: "School Nursing Team",
       subteam_email: "school@example.com",
       subteam_phone: "01234 567890"
@@ -80,7 +80,7 @@ describe NotifyTemplateRenderer do
 
       it "renders the body with personalisation" do
         expect(rendered).not_to have_key(:subject)
-        expect(rendered[:body]).to include("You've given consent for Alex")
+        expect(rendered[:body]).to include("You’ve given consent for Alex")
         expect(rendered[:body]).to include("01234 567890")
       end
 

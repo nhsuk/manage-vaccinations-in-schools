@@ -327,7 +327,7 @@ describe "Verbal consent" do
         phone_number: @parent.phone,
         template: :consent_confirmation_given
       ).with_content_including(
-        "You've given consent for Alex",
+        "You’ve given consent for Alex",
         "Please let them know what to expect"
       )
     )

@@ -155,6 +155,16 @@ describe "Manual consent reminders" do
       :any
     )
 
+    expect(sms_deliveries).to include(
+      matching_notify_sms(
+        phone_number: @parents[0].phone,
+        template: :consent_school_reminder
+      ).with_content_including(
+        "We recently asked you to give or refuse consent",
+        "Go to"
+      )
+    )
+
     # Verify exactly 2 emails were sent (parents[2] already has consent so no email sent)
     expect(email_deliveries.count).to eq(2)
   end
