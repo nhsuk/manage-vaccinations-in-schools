@@ -86,6 +86,8 @@ en:
               inclusion: Choose if this is the correct school
             name:
               blank: Enter a name
+            selected_year_groups:
+              blank: Choose which year groups are in this school
         draft_session:
           attributes:
             location_id:
