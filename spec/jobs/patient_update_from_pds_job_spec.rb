@@ -49,9 +49,7 @@ describe PatientUpdateFromPDSJob do
       end
 
       it "doesn't queue a job to look up NHS number" do
-        expect { perform_now }.not_to have_enqueued_job(
-          PatientNHSNumberLookupJob
-        )
+        expect { perform_now }.not_to have_enqueued_job(PDSCascadingSearchJob)
       end
 
       context "when the patient is invalidated" do
@@ -108,27 +106,10 @@ describe PatientUpdateFromPDSJob do
         perform_now
       end
 
-      it "queues a job to look up NHS number" do
-        expect { perform_now }.to have_enqueued_job(
-          PatientNHSNumberLookupJob
-        ).with(patient)
-      end
-
-      context "when PDS cascading search is enabled" do
-        before { Flipper.enable(:pds_cascading_search) }
-        after { Flipper.disable(:pds_cascading_search) }
-
-        it "queues a job to look up NHS number using PDS cascading search" do
-          expect { perform_now }.to have_enqueued_job(
-            PDSCascadingSearchJob
-          ).with(patient)
-        end
-
-        it "does not queue PatientNHSNumberLookupJob" do
-          expect { perform_now }.not_to have_enqueued_job(
-            PatientNHSNumberLookupJob
-          )
-        end
+      it "queues a job to look up NHS number using PDS cascading search" do
+        expect { perform_now }.to have_enqueued_job(PDSCascadingSearchJob).with(
+          patient
+        )
       end
     end
 
@@ -157,27 +138,10 @@ describe PatientUpdateFromPDSJob do
         expect { perform_now }.not_to change(patient, :nhs_number)
       end
 
-      it "queues a job to look up NHS number" do
-        expect { perform_now }.to have_enqueued_job(
-          PatientNHSNumberLookupJob
-        ).with(patient)
-      end
-
-      context "when PDS cascading search is enabled" do
-        before { Flipper.enable(:pds_cascading_search) }
-        after { Flipper.disable(:pds_cascading_search) }
-
-        it "queues a job to look up NHS number using PDS cascading search" do
-          expect { perform_now }.to have_enqueued_job(
-            PDSCascadingSearchJob
-          ).with(patient)
-        end
-
-        it "does not queue PatientNHSNumberLookupJob" do
-          expect { perform_now }.not_to have_enqueued_job(
-            PatientNHSNumberLookupJob
-          )
-        end
+      it "queues a job to look up NHS number using PDS cascading search" do
+        expect { perform_now }.to have_enqueued_job(PDSCascadingSearchJob).with(
+          patient
+        )
       end
     end
 
@@ -206,27 +170,10 @@ describe PatientUpdateFromPDSJob do
         expect { perform_now }.to change(patient, :nhs_number).to(nil)
       end
 
-      it "queues a job to look up NHS number" do
-        expect { perform_now }.to have_enqueued_job(
-          PatientNHSNumberLookupJob
-        ).with(patient)
-      end
-
-      context "when PDS cascading search is enabled" do
-        before { Flipper.enable(:pds_cascading_search) }
-        after { Flipper.disable(:pds_cascading_search) }
-
-        it "queues a job to look up NHS number using PDS cascading search" do
-          expect { perform_now }.to have_enqueued_job(
-            PDSCascadingSearchJob
-          ).with(patient)
-        end
-
-        it "does not queue PatientNHSNumberLookupJob" do
-          expect { perform_now }.not_to have_enqueued_job(
-            PatientNHSNumberLookupJob
-          )
-        end
+      it "queues a job to look up NHS number using PDS cascading search" do
+        expect { perform_now }.to have_enqueued_job(PDSCascadingSearchJob).with(
+          patient
+        )
       end
     end
   end

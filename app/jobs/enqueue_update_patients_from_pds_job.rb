@@ -6,12 +6,7 @@ class EnqueueUpdatePatientsFromPDSJob < ApplicationJob
   queue_as :pds
 
   def perform
-    scope =
-      if Flipper.enabled?(:pds_cascading_search)
-        Patient.not_deceased
-      else
-        Patient.with_nhs_number.not_deceased
-      end
+    scope = Patient.not_deceased
 
     patients =
       scope
