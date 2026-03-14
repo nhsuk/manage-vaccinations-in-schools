@@ -123,4 +123,23 @@ describe CommsTemplate do
       end
     end
   end
+
+  context "local SMS templates" do
+    # smart quotes should not be used in SMS template bodies and subject lines
+    # to avoid Notify switching to UCS-2 encoding and
+    # dropping the character limit per SMS to 70 characters
+    # https://www.notifications.service.gov.uk/pricing/text-messages
+
+    it "does not contain any smart quotes of any kind" do
+      described_class
+        .all_ids(channel: :sms)
+        .each do |id|
+          template = described_class.find_by_id(id, channel: :sms)
+          %w[“ ’ ’ ”].each do |quote|
+            expect(template.body).not_to include(quote)
+            expect(template.subject).not_to include(quote)
+          end
+        end
+    end
+  end
 end
