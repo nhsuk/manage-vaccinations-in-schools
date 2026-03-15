@@ -3,6 +3,8 @@
 class SMSDeliveryJob < NotifyDeliveryJob
   include NotifyThrottlingConcern
 
+  PASSTHROUGH_TEMPLATE_ID = "c242b359-73d6-4b74-bda2-136093550636"
+
   INVALID_UK_MOBILE_NUMBER_ERROR = "InvalidPhoneError: Not a UK mobile number"
 
   def perform(
@@ -53,7 +55,7 @@ class SMSDeliveryJob < NotifyDeliveryJob
       else
         personalisation.to_h
       end
-    api_template_id = template.delivery_id
+    api_template_id = template.local? ? PASSTHROUGH_TEMPLATE_ID : template.id
     log_template_id = template.id
 
     args = {

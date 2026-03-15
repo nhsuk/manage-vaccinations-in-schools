@@ -307,6 +307,6 @@ class Notifier::Patient
       :"clinic_#{type}"
     ]
 
-    template_names.find { GOVUK_NOTIFY_EMAIL_TEMPLATES.key?(it) }
+    template_names.find { NotifyTemplate.exists?(it, channel: :email) }
   end
 end

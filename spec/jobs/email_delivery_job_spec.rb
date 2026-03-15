@@ -43,7 +43,7 @@ describe EmailDeliveryJob do
       )
     end
 
-    let(:template_name) { GOVUK_NOTIFY_EMAIL_TEMPLATES.keys.first }
+    let(:template_name) { :clinic_initial_invitation }
     let(:academic_year) { session.academic_year }
     let(:consent) { nil }
     let(:consent_form) { nil }
@@ -84,7 +84,7 @@ describe EmailDeliveryJob do
         email_address: "test@example.com",
         email_reply_to_id: "54bf1d28-8851-43f2-893d-1853f43a50cd",
         personalisation: an_instance_of(Hash),
-        template_id: GOVUK_NOTIFY_EMAIL_TEMPLATES[template_name]
+        template_id: NotifyTemplate.find(template_name, channel: :email).id
       )
       perform_now
     end
@@ -96,7 +96,7 @@ describe EmailDeliveryJob do
         expect(notifications_client).to receive(:send_email).with(
           email_address: "test@example.com",
           personalisation: an_instance_of(Hash),
-          template_id: GOVUK_NOTIFY_EMAIL_TEMPLATES[template_name]
+          template_id: NotifyTemplate.find(template_name, channel: :email).id
         )
         perform_now
       end
@@ -110,7 +110,7 @@ describe EmailDeliveryJob do
       expect(notify_log_entry.delivery_id).to eq(response.id)
       expect(notify_log_entry.recipient).to eq("test@example.com")
       expect(notify_log_entry.template_id).to eq(
-        GOVUK_NOTIFY_EMAIL_TEMPLATES[template_name]
+        NotifyTemplate.find(template_name, channel: :email).id
       )
       expect(notify_log_entry.parent).to eq(parent)
       expect(notify_log_entry.patient).to eq(patient)
@@ -174,7 +174,7 @@ describe EmailDeliveryJob do
           email_address: "test@example.com",
           email_reply_to_id: "54bf1d28-8851-43f2-893d-1853f43a50cd",
           personalisation: an_instance_of(Hash),
-          template_id: GOVUK_NOTIFY_EMAIL_TEMPLATES[template_name]
+          template_id: NotifyTemplate.find(template_name, channel: :email).id
         )
         perform_now
       end
@@ -186,7 +186,7 @@ describe EmailDeliveryJob do
           expect(notifications_client).to receive(:send_email).with(
             email_address: "test@example.com",
             personalisation: an_instance_of(Hash),
-            template_id: GOVUK_NOTIFY_EMAIL_TEMPLATES[template_name]
+            template_id: NotifyTemplate.find(template_name, channel: :email).id
           )
           perform_now
         end
@@ -200,7 +200,7 @@ describe EmailDeliveryJob do
         expect(notify_log_entry.delivery_id).to eq(response.id)
         expect(notify_log_entry.recipient).to eq("test@example.com")
         expect(notify_log_entry.template_id).to eq(
-          GOVUK_NOTIFY_EMAIL_TEMPLATES[template_name]
+          NotifyTemplate.find(template_name, channel: :email).id
         )
         expect(notify_log_entry.consent_form).to eq(consent_form)
         expect(notify_log_entry.programmes.map(&:type)).to eq(programme_types)
@@ -239,7 +239,7 @@ describe EmailDeliveryJob do
 
   describe "#perform_later" do
     subject(:perform_later) do
-      described_class.perform_later(GOVUK_NOTIFY_EMAIL_TEMPLATES.keys.first)
+      described_class.perform_later(:clinic_initial_invitation)
     end
 
     it "uses the notifications queue" do

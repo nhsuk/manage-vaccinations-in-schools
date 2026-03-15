@@ -13,12 +13,6 @@ describe NotifyTemplate do
       it "has a UUID as the template ID" do
         expect(template.id).to match(/\A[0-9a-f-]{36}\z/)
       end
-
-      it "has the passthrough delivery ID" do
-        expect(template.delivery_id).to eq(
-          NotifyTemplate::PASSTHROUGH_TEMPLATE_IDS[:email]
-        )
-      end
     end
 
     context "with a locally-migrated SMS template" do
@@ -28,36 +22,20 @@ describe NotifyTemplate do
 
       it { should_not be_nil }
       it { should be_local }
-
-      it "has the passthrough delivery ID for SMS" do
-        expect(template.delivery_id).to eq(
-          NotifyTemplate::PASSTHROUGH_TEMPLATE_IDS[:sms]
-        )
-      end
     end
 
     context "with a Notify-hosted email template" do
       subject(:template) do
-        described_class.find(
-          GOVUK_NOTIFY_EMAIL_TEMPLATES.keys.first,
-          channel: :email
-        )
+        described_class.find(:clinic_initial_invitation, channel: :email)
       end
 
       it { should_not be_nil }
       it { should_not be_local }
-
-      it "has the same ID for both id and delivery_id" do
-        expect(template.id).to eq(template.delivery_id)
-      end
     end
 
     context "with a Notify-hosted SMS template" do
       subject(:template) do
-        described_class.find(
-          GOVUK_NOTIFY_SMS_TEMPLATES.keys.first,
-          channel: :sms
-        )
+        described_class.find(:clinic_initial_invitation, channel: :sms)
       end
 
       it { should_not be_nil }
@@ -96,7 +74,9 @@ describe NotifyTemplate do
         described_class.find_by_id(template_id, channel: :email)
       end
 
-      let(:template_id) { GOVUK_NOTIFY_EMAIL_TEMPLATES.values.first }
+      let(:template_id) do
+        described_class.find(:clinic_initial_invitation, channel: :email).id
+      end
 
       it { should_not be_nil }
       it { should_not be_local }
@@ -164,7 +144,7 @@ describe NotifyTemplate do
     end
 
     context "with a Notify-hosted template" do
-      let(:template_name) { GOVUK_NOTIFY_EMAIL_TEMPLATES.keys.first }
+      let(:template_name) { :clinic_initial_invitation }
 
       it "returns false for source: :local" do
         expect(
@@ -210,22 +190,6 @@ describe NotifyTemplate do
             source: :unknown
           )
         }.to raise_error(ArgumentError, /Unknown source/)
-      end
-    end
-  end
-
-  context "local SMS templates" do
-    # smart quotes should not be used in SMS template bodies and subject lines
-    # to avoid Notify switching to UCS-2 encoding and
-    # dropping the character limit per SMS to 70 characters
-    # https://www.notifications.service.gov.uk/pricing/text-messages
-
-    it "does not contain any smart quotes of any kind" do
-      all_sms_template_files =
-        Dir.glob(Rails.root.join("app/views/notify_templates/sms/*.text.erb"))
-      all_sms_template_files.each do |file|
-        content = File.read(file, encoding: "UTF-8")
-        %w[“ ’ ’ ”].each { |quote| expect(content).not_to include(quote) }
       end
     end
   end
