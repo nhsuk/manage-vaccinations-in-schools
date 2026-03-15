@@ -286,7 +286,6 @@ class DraftSessionsController < ApplicationController
       dates_check: [],
       delegation: %i[psd_enabled national_protocol_enabled],
       invitations: %i[send_invitations_at],
-      location_type: %i[location_type],
       programmes: {
         programme_types: []
       },

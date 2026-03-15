@@ -90,8 +90,6 @@ en:
           attributes:
             location_id:
               inclusion: Choose the school where this session is taking place
-            location_type:
-              inclusion: Choose which type of session this is
             outbreak:
               inclusion: Choose which type of consent requests to send
             programme_types:

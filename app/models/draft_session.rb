@@ -13,7 +13,6 @@ class DraftSession
   attribute :academic_year, :integer
   attribute :days_before_consent_reminders, :integer
   attribute :location_id, :integer
-  attribute :location_type, :string
   attribute :national_protocol_enabled, :boolean
   attribute :outbreak, :boolean
   attribute :programme_types, array: true, default: []
@@ -36,9 +35,7 @@ class DraftSession
   def wizard_steps
     steps = []
 
-    steps << :location_type unless editing?
-
-    steps << :school if school? && new_record?
+    steps << :school if new_record?
 
     steps << :programmes
     steps << :programmes_check
@@ -59,10 +56,6 @@ class DraftSession
     steps << :delegation if supports_delegation?
 
     steps + %i[confirm]
-  end
-
-  on_wizard_step :location_type, exact: true do
-    validates :location_type, inclusion: %w[generic_clinic school]
   end
 
   on_wizard_step :school, exact: true do
@@ -146,9 +139,9 @@ class DraftSession
 
   delegate :id, to: :team_location, prefix: true
 
-  def generic_clinic? = location_type == "generic_clinic"
+  def school? = location&.school?
 
-  def school? = location_type == "school"
+  def generic_clinic? = location&.generic_clinic?
 
   def programmes = Programme.find_all(programme_types)
 
@@ -269,13 +262,6 @@ class DraftSession
 
   def request_session_key = "session"
 
-  def reset_unused_attributes
-    if location_type == "generic_clinic"
-      self.location_id = team.generic_clinic.id
-      self.year_groups = Location::YearGroup::GENERIC_VALUE_RANGE.to_a
-    end
-  end
-
   def readable_attribute_names
     super - %w[dates return_to session_dates]
   end
@@ -286,7 +272,6 @@ class DraftSession
         academic_year
         dates
         location_id
-        location_type
         programme_types
         return_to
         session_dates

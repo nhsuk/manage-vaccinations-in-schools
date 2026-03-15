@@ -234,11 +234,6 @@ describe "School sessions" do
   end
 
   def and_i_choose_the_school
-    expect(page).to have_content("What type of session is this?")
-
-    choose "School"
-    click_on "Continue"
-
     expect(page).to have_content("Where is this school session taking place?")
 
     select @location.name
