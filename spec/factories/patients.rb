@@ -61,7 +61,7 @@ FactoryBot.define do
   factory :patient do
     transient do
       academic_year { session&.academic_year || AcademicYear.current }
-      location { session&.location }
+      location { session&.location || school }
       location_name { nil }
       parents { [] }
       performed_by { association(:user) }
@@ -168,17 +168,6 @@ FactoryBot.define do
       team { session&.team || create(:team, programmes:) }
       school { team.home_educated_school }
       home_educated { nil }
-
-      after(:create) do |patient, evaluator|
-        clinic = create(:generic_clinic, team: evaluator.team)
-
-        create(
-          :patient_location,
-          patient:,
-          location: clinic,
-          academic_year: evaluator.academic_year
-        )
-      end
     end
 
     trait :deceased do
