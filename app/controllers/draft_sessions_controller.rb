@@ -171,16 +171,10 @@ class DraftSessionsController < ApplicationController
   end
 
   def validate_params
-    if current_step == :consent_requests
-      unless send_consent_requests_at_validator.date_params_valid?
-        @draft_session.errors.add(:send_consent_requests_at_validator, :invalid)
-        render_wizard nil, status: :unprocessable_content
-      end
-    elsif current_step == :invitations
-      unless send_invitations_at_validator.date_params_valid?
-        @draft_session.errors.add(:send_consent_requests_at_validator, :invalid)
-        render_wizard nil, status: :unprocessable_content
-      end
+    if (current_step == :consent_requests) &&
+         !send_consent_requests_at_validator.date_params_valid?
+      @draft_session.errors.add(:send_consent_requests_at_validator, :invalid)
+      render_wizard nil, status: :unprocessable_content
     end
   end
 
@@ -285,7 +279,6 @@ class DraftSessionsController < ApplicationController
       dates: dates_params,
       dates_check: [],
       delegation: %i[psd_enabled national_protocol_enabled],
-      invitations: %i[send_invitations_at],
       location_type: %i[location_type],
       programmes: {
         programme_types: []
@@ -318,15 +311,6 @@ class DraftSessionsController < ApplicationController
     @send_consent_requests_at_validator ||=
       DateParamsValidator.new(
         field_name: :send_consent_requests_at,
-        object: @draft_session,
-        params: update_params
-      )
-  end
-
-  def send_invitations_at_validator
-    @send_invitations_at_validator ||=
-      DateParamsValidator.new(
-        field_name: :send_invitations_at,
         object: @draft_session,
         params: update_params
       )

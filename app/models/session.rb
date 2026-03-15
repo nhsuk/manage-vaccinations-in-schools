@@ -12,7 +12,6 @@
 #  psd_enabled                   :boolean          default(FALSE), not null
 #  requires_registration         :boolean          default(TRUE), not null
 #  send_consent_requests_at      :date
-#  send_invitations_at           :date
 #  slug                          :string           not null
 #  created_at                    :datetime         not null
 #  updated_at                    :datetime         not null
@@ -28,6 +27,8 @@
 #  fk_rails_...  (team_location_id => team_locations.id)
 #
 class Session < ApplicationRecord
+  self.ignored_columns = %w[send_invitations_at]
+
   include BelongsToTeamLocation
   include Consentable
   include DaysBeforeToWeeksBefore
@@ -150,8 +151,6 @@ class Session < ApplicationRecord
             Date.current
           )
         end
-  scope :send_invitations,
-        -> { scheduled.where("? >= send_invitations_at", Date.current) }
 
   scope :registration_not_required, -> { where(requires_registration: false) }
 

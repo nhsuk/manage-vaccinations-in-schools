@@ -20,13 +20,4 @@ module DaysBeforeToWeeksBefore
   def weeks_before_consent_requests=(value)
     self.days_before_consent_requests = (value.blank? ? nil : value.to_i * 7)
   end
-
-  def weeks_before_invitations
-    return nil if days_before_invitations.nil?
-    (days_before_invitations / 7).to_i
-  end
-
-  def weeks_before_invitations=(value)
-    self.days_before_invitations = (value.blank? ? nil : value.to_i * 7)
-  end
 end

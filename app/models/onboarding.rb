@@ -29,7 +29,6 @@ class Onboarding
       careplus_venue_code
       days_before_consent_reminders
       days_before_consent_requests
-      days_before_invitations
       email
       name
       phone

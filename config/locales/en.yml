@@ -106,14 +106,6 @@ en:
                 Enter a date at most 3 months before the first session date (%{count})
               less_than_or_equal_to:
                 Enter a date before the first session date and first reminder (%{count})
-            send_invitations_at:
-              blank: Enter a date
-              missing_day: Enter a day
-              missing_month: Enter a month
-              missing_year: Enter a year
-              greater_than_or_equal_to:
-                Enter a date at most 3 months before the first session date (%{count})
-              less_than: Enter a date before the first session date (%{count})
             weeks_before_consent_reminders:
               blank: Enter weeks before a session takes place
               greater_than_or_equal_to: Enter %{count} or more weeks before a session

@@ -10,7 +10,6 @@
 #  careplus_venue_code             :string
 #  days_before_consent_reminders   :integer          default(7), not null
 #  days_before_consent_requests    :integer          default(21), not null
-#  days_before_invitations         :integer          default(21), not null
 #  email                           :string
 #  name                            :text             not null
 #  national_reporting_cut_off_date :date
@@ -38,6 +37,8 @@
 #  fk_rails_...  (organisation_id => organisations.id)
 #
 class Team < ApplicationRecord
+  self.ignored_columns = %w[days_before_invitations]
+
   include DaysBeforeToWeeksBefore
   include FlipperActor
   include HasManyProgrammes

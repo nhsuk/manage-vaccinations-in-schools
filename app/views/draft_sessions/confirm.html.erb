@@ -82,16 +82,6 @@
           end
         end
       
-        if (send_invitations_at = @draft_session.send_invitations_at).present?
-          summary_list.with_row do |row|
-            row.with_key { "Invitations" }
-            row.with_value { "Send on #{send_invitations_at.to_fs(:long_day_of_week)}" }
-            if @draft_session.wizard_steps.include?(:invitations)
-              row.with_action(text: "Change", href: draft_session_path("invitations"), visually_hidden_text: "invitations")
-            end
-          end
-        end
-      
         if @draft_session.supports_outbreak?
           summary_list.with_row do |row|
             row.with_key { "Type of MMR(V) consent request" }

@@ -13,13 +13,12 @@ describe EnqueueVaccinationsSearchInNHSJob do
     let(:clinic) { create(:generic_clinic, team:, programmes:) }
     let(:days_before_consent_reminders) { 7 }
     let(:session) do
-      if location.generic_clinic?
-        send_consent_requests_at = nil
-        send_invitations_at = send_consent_requests_or_invitations_at
-      else
-        send_consent_requests_at = send_consent_requests_or_invitations_at
-        send_invitations_at = nil
-      end
+      send_consent_requests_at =
+        if location.generic_clinic?
+          nil
+        else
+          send_consent_requests_or_invitations_at
+        end
 
       create(
         :session,
@@ -27,7 +26,6 @@ describe EnqueueVaccinationsSearchInNHSJob do
         academic_year: AcademicYear.pending,
         dates:,
         send_consent_requests_at:,
-        send_invitations_at:,
         days_before_consent_reminders:,
         team:,
         location:
@@ -147,47 +145,6 @@ describe EnqueueVaccinationsSearchInNHSJob do
 
       context "with a normal school session" do
         let(:location) { school }
-
-        include_examples "behaviour before, during or after consent/invitation period"
-      end
-
-      context "clinic session" do
-        let(:location) { clinic }
-
-        include_examples "behaviour before, during or after consent/invitation period"
-      end
-
-      context "mixed session types" do
-        let(:searchable_patients) do
-          clinic_session =
-            create(
-              :session,
-              programmes:,
-              academic_year: AcademicYear.pending,
-              dates:,
-              send_invitations_at: send_consent_requests_or_invitations_at,
-              send_consent_requests_at: nil,
-              days_before_consent_reminders: nil,
-              team:,
-              location: clinic
-            )
-          school_session =
-            create(
-              :session,
-              programmes:,
-              academic_year: AcademicYear.pending,
-              dates:,
-              send_invitations_at: nil,
-              send_consent_requests_at: send_consent_requests_or_invitations_at,
-              days_before_consent_reminders: 7,
-              team:,
-              location: school
-            )
-          [
-            create(:patient, team:, school:, session: clinic_session),
-            create(:patient, team:, school:, session: school_session)
-          ]
-        end
 
         include_examples "behaviour before, during or after consent/invitation period"
       end

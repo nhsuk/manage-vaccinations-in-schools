@@ -16,10 +16,6 @@ describe "Clinic sessions" do
     and_i_choose_the_dates
     then_i_see_the_confirmation_page
 
-    when_i_click_on_change_invitations
-    then_i_see_the_change_invitations_page
-    and_i_change_invitations_date
-
     when_i_save_the_session
     then_i_should_see_the_session_details
 
@@ -171,22 +167,6 @@ describe "Clinic sessions" do
   def then_i_see_the_confirmation_page
     expect(page).to have_content("Check and confirm")
     expect(page).not_to have_content("Year groups")
-    expect(page).to have_content("InvitationsSend on Sunday, 18 February 2024")
-  end
-
-  def when_i_click_on_change_invitations
-    click_on "Change invitations"
-  end
-
-  def then_i_see_the_change_invitations_page
-    expect(page).to have_content("When should parents get an invitation?")
-  end
-
-  def and_i_change_invitations_date
-    fill_in "Day", with: "1"
-    fill_in "Month", with: "3"
-    fill_in "Year", with: "2024"
-    click_on "Continue"
   end
 
   def when_i_save_the_session

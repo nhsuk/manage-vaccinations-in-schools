@@ -21,7 +21,6 @@ class DraftSession
   attribute :requires_registration, :boolean
   attribute :return_to, :string
   attribute :send_consent_requests_at, :date
-  attribute :send_invitations_at, :date
   attribute :session_dates, array: true, default: []
   attribute :team_id, :integer
   attribute :year_groups, array: true, default: []
@@ -49,9 +48,8 @@ class DraftSession
 
     steps << :consent_style if supports_outbreak?
 
-    if include_notification_steps?
-      steps += %i[consent_requests consent_reminders] if school?
-      steps << :invitations if generic_clinic?
+    if include_notification_steps? && school?
+      steps += %i[consent_requests consent_reminders]
     end
 
     steps << :register_attendance
@@ -102,15 +100,6 @@ class DraftSession
 
   on_wizard_step :consent_style, exact: true do
     validates :outbreak, inclusion: [true, false]
-  end
-
-  on_wizard_step :invitations, exact: true do
-    validates :send_invitations_at,
-              presence: true,
-              comparison: {
-                greater_than_or_equal_to: :earliest_send_notifications_at,
-                less_than: :earliest_date
-              }
   end
 
   def session
@@ -205,18 +194,14 @@ class DraftSession
       if generic_clinic?
         self.days_before_consent_reminders = nil
         self.send_consent_requests_at = nil
-        self.send_invitations_at =
-          earliest_date - team.days_before_invitations.days
       else
         self.days_before_consent_reminders = team.days_before_consent_reminders
         self.send_consent_requests_at =
           earliest_date - team.days_before_consent_requests.days
-        self.send_invitations_at = nil
       end
     else
       self.days_before_consent_reminders = nil
       self.send_consent_requests_at = nil
-      self.send_invitations_at = nil
     end
   end
 
