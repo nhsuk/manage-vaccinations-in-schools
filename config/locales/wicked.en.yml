@@ -32,7 +32,6 @@ en:
     injection_alternative: injection-alternative
     invitations: invitations
     location: location
-    location_type: location-type
     name: name
     notes: notes
     notify_parent_on_refusal: notify-parent-on-refusal

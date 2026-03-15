@@ -10,26 +10,12 @@ describe "Clinic sessions" do
     when_i_go_to_todays_sessions_as_a_nurse
     then_i_see_no_sessions
 
-    when_i_click_on_add_a_new_session
-    and_i_choose_community_clinic
-    and_i_choose_the_programmes
-    and_i_choose_the_dates
-    then_i_see_the_confirmation_page
-
-    when_i_click_on_change_invitations
-    then_i_see_the_change_invitations_page
-    and_i_change_invitations_date
-
-    when_i_save_the_session
-    then_i_should_see_the_session_details
+    when_i_click_on_the_unknown_school
+    and_i_click_on_the_patient
+    and_i_record_a_new_vaccination
+    then_i_see_the_community_clinic_session
 
     when_i_go_to_todays_sessions_as_a_nurse
-    then_i_see_no_sessions
-
-    when_i_go_to_unscheduled_sessions
-    then_i_see_no_sessions
-
-    when_i_go_to_scheduled_sessions
     then_i_see_the_community_clinic
 
     when_i_go_to_todays_sessions_as_a_nurse
@@ -59,7 +45,7 @@ describe "Clinic sessions" do
         :patient,
         :consent_no_response,
         year_group: 8,
-        location: @team.generic_clinic,
+        school: @team.unknown_school,
         parents: [@parent],
         programmes: [@programme]
       )
@@ -99,96 +85,24 @@ describe "Clinic sessions" do
     expect(page).to have_content("No sessions matching search criteria found")
   end
 
-  def when_i_click_on_the_community_clinic
-    click_link "Community clinic"
+  def when_i_click_on_the_unknown_school
+    click_on "Schools"
+    click_on "Unknown school"
   end
 
-  def then_i_see_the_clinic_session
-    expect(page).to have_content("Community clinic")
-    expect(page).to have_content("No dates scheduled")
+  def and_i_click_on_the_patient
+    click_on @patient.full_name
   end
 
-  def when_i_click_on_add_a_new_session
-    click_on "Add a new session"
+  def and_i_record_a_new_vaccination
+    within(".app-secondary-navigation") { click_on "HPV" }
+    click_on "Record a new HPV vaccination"
   end
 
-  def and_i_choose_community_clinic
-    expect(page).to have_content("What type of session is this?")
-
-    choose "Community clinic"
-    click_on "Continue"
-  end
-
-  def and_i_choose_the_programmes
-    expect(page).to have_content(
-      "Which programmes will you run in this session?"
-    )
-
-    check "HPV"
-    click_on "Continue"
-  end
-
-  def and_i_choose_the_dates
-    expect(page).to have_content("When will this session be held?")
-
-    fill_in "Day", with: "10"
-    fill_in "Month", with: "03"
-    fill_in "Year", with: "2024"
-    click_on "Add another date"
-
-    within all(".app-add-another__list-item")[1] do
-      fill_in "Day", with: "11"
-      fill_in "Month", with: "03"
-      fill_in "Year", with: "2024"
-    end
-    click_on "Add another date"
-
-    within all(".app-add-another__list-item")[2] do
-      fill_in "Day", with: "12"
-      fill_in "Month", with: "03"
-      fill_in "Year", with: "2024"
-    end
-
-    click_on "Add another date"
-
-    within all(".app-add-another__list-item")[3] do
-      click_on "Delete"
-    end
-
-    within all(".app-add-another__list-item")[2] do
-      click_on "Delete"
-    end
-
-    click_on "Continue"
-  end
-
-  def then_i_see_the_confirmation_page
-    expect(page).to have_content("Check and confirm")
-    expect(page).not_to have_content("Year groups")
-    expect(page).to have_content("InvitationsSend on Sunday, 18 February 2024")
-  end
-
-  def when_i_click_on_change_invitations
-    click_on "Change invitations"
-  end
-
-  def then_i_see_the_change_invitations_page
-    expect(page).to have_content("When should parents get an invitation?")
-  end
-
-  def and_i_change_invitations_date
-    fill_in "Day", with: "1"
-    fill_in "Month", with: "3"
-    fill_in "Year", with: "2024"
-    click_on "Continue"
-  end
-
-  def when_i_save_the_session
-    click_on "Continue"
-  end
-
-  def then_i_should_see_the_session_details
-    expect(page).to have_content("10 – 11 March 2024")
+  def then_i_see_the_community_clinic_session
+    click_on "Back"
+    expect(page).to have_content("HPV community clinic on 18 February 2024")
+    expect(page).to have_content("18 February 2024")
   end
 
   def then_i_see_the_community_clinic

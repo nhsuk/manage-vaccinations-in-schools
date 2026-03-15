@@ -112,12 +112,23 @@ describe "Manage children" do
 
     when_i_click_on_invite_to_clinic
     then_i_see_a_success_banner
-    and_i_see_a_community_clinic_session
+    and_i_dont_see_a_community_clinic_session
     and_i_dont_see_an_invite_to_clinic_button
 
     when_i_click_on_children
     and_i_check_invited_to_clinic
     then_i_see_the_child_has_been_invited
+    and_i_click_on_a_child
+    and_i_click_on_a_programme
+
+    when_i_click_on_record_new_vaccination
+    then_i_see_the_community_clinic_session
+
+    when_i_click_on_children
+    and_i_check_invited_to_clinic
+    and_i_click_on_a_child
+    and_i_click_on_a_programme
+    then_i_see_a_community_clinic_session
   end
 
   scenario "Removing an NHS number" do
@@ -556,12 +567,20 @@ describe "Manage children" do
     expect(page).to have_content("invited to the clinic")
   end
 
-  def and_i_see_a_community_clinic_session
+  def then_i_see_a_community_clinic_session
     expect(page).to have_content("Community clinic")
   end
 
   def and_i_dont_see_an_invite_to_clinic_button
     expect(page).not_to have_button("Invite to community clinic")
+  end
+
+  def when_i_click_on_record_new_vaccination
+    click_on "Record a new flu vaccination"
+  end
+
+  def then_i_see_the_community_clinic_session
+    expect(page).to have_content("Community clinic")
   end
 
   def when_i_go_to_the_dashboard

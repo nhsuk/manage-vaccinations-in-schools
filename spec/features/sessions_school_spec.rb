@@ -135,7 +135,14 @@ describe "School sessions" do
       )
 
     patient_already_in_clinic_without_invitation =
-      create(:patient, year_group: 8, location: @location)
+      create(
+        :patient,
+        :consent_no_response,
+        year_group: 8,
+        location: @location,
+        parents: [@parent],
+        programmes:
+      )
     create(
       :patient_location,
       patient: patient_already_in_clinic_without_invitation,
@@ -143,7 +150,14 @@ describe "School sessions" do
     )
 
     patient_already_in_clinic_with_invitation =
-      create(:patient, year_group: 8, location: @location)
+      create(
+        :patient,
+        :consent_no_response,
+        year_group: 8,
+        location: @location,
+        parents: [@parent],
+        programmes:
+      )
     create(
       :patient_location,
       patient: patient_already_in_clinic_with_invitation,
@@ -220,11 +234,6 @@ describe "School sessions" do
   end
 
   def and_i_choose_the_school
-    expect(page).to have_content("What type of session is this?")
-
-    choose "School"
-    click_on "Continue"
-
     expect(page).to have_content("Where is this school session taking place?")
 
     select @location.name
@@ -502,7 +511,14 @@ describe "School sessions" do
       )
 
     patient_already_in_clinic_without_invitation =
-      create(:patient, year_group: 8, location: @location)
+      create(
+        :patient,
+        :consent_no_response,
+        year_group: 8,
+        location: @location,
+        parents: [@parent],
+        programmes:
+      )
     create(
       :patient_location,
       patient: patient_already_in_clinic_without_invitation,
@@ -510,7 +526,14 @@ describe "School sessions" do
     )
 
     patient_already_in_clinic_with_invitation =
-      create(:patient, year_group: 8, location: @location)
+      create(
+        :patient,
+        :consent_no_response,
+        year_group: 8,
+        location: @location,
+        parents: [@parent],
+        programmes:
+      )
     create(
       :patient_location,
       patient: patient_already_in_clinic_with_invitation,

@@ -97,4 +97,16 @@ class PatientLocation < ApplicationRecord
   def end_date=(value)
     self.date_range = Range.new(begin_date, value)
   end
+
+  ##
+  # Extend the date range of this patient location to ensure that the +date+
+  # is within the range.
+  #
+  # If the +begin_date+ or +end_date+ are +nil+, they will be left alone since
+  # the +date+ would already be considered within the range.
+  def extend_date_range_to(date)
+    self.begin_date = [date, begin_date].min unless begin_date.nil?
+
+    self.end_date = [date, end_date].max unless end_date.nil?
+  end
 end

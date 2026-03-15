@@ -269,7 +269,7 @@ class Session < ApplicationRecord
     ).count
   end
 
-  def sync_location_programme_year_groups!(programmes:)
+  def sync_location_programme_year_groups!(programme_types:)
     location_programme_year_groups =
       Location::ProgrammeYearGroup
         .joins(:location_year_group)
@@ -278,7 +278,7 @@ class Session < ApplicationRecord
             location_id:,
             academic_year:
           },
-          programme_type: programmes.map(&:type)
+          programme_type: programme_types
         )
         .pluck(:programme_type, :"location_year_group.value")
 

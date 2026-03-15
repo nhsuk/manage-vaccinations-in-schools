@@ -154,4 +154,75 @@ describe PatientLocation do
       expect(patient_location.date_range).to eq(..Date.new(2020, 1, 31))
     end
   end
+
+  describe "#extend_date_range_to" do
+    subject(:extend_date_range_to) do
+      patient_location.extend_date_range_to(date)
+    end
+
+    let(:date) { Date.new(2020, 1, 31) }
+
+    context "with an unlimited date range" do
+      let(:patient_location) { build(:patient_location, date_range: nil...nil) }
+
+      it "doesn't change the date range" do
+        expect { extend_date_range_to }.not_to change(
+          patient_location,
+          :date_range
+        )
+      end
+    end
+
+    context "with a begin date earlier than the supplied date" do
+      let(:patient_location) do
+        build(:patient_location, date_range: Date.new(2020, 1, 30)..)
+      end
+
+      it "doesn't change the date range" do
+        expect { extend_date_range_to }.not_to change(
+          patient_location,
+          :date_range
+        )
+      end
+    end
+
+    context "with a begin date later than the supplied date" do
+      let(:patient_location) do
+        build(:patient_location, date_range: Date.new(2020, 2, 1)..)
+      end
+
+      it "changes the date range" do
+        expect { extend_date_range_to }.to change(
+          patient_location,
+          :date_range
+        ).to(Date.new(2020, 1, 31)..)
+      end
+    end
+
+    context "with an end date earlier than the supplied date" do
+      let(:patient_location) do
+        build(:patient_location, date_range: ..Date.new(2020, 1, 30))
+      end
+
+      it "changes the date range" do
+        expect { extend_date_range_to }.to change(
+          patient_location,
+          :date_range
+        ).to(..Date.new(2020, 1, 31))
+      end
+    end
+
+    context "with an end date later than the supplied date" do
+      let(:patient_location) do
+        build(:patient_location, date_range: ..Date.new(2020, 2, 1))
+      end
+
+      it "doesn't change the date range" do
+        expect { extend_date_range_to }.not_to change(
+          patient_location,
+          :date_range
+        )
+      end
+    end
+  end
 end

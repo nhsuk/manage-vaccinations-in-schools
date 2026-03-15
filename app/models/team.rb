@@ -110,7 +110,7 @@ class Team < ApplicationRecord
   def to_param = workgroup
 
   def generic_clinic
-    @generic_clinic ||= generic_clinics.includes(:team_locations).sole
+    @generic_clinic ||= generic_clinics.preload(:team_locations).sole
   end
 
   def home_educated_school
