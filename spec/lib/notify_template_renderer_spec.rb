@@ -80,7 +80,7 @@ describe NotifyTemplateRenderer do
 
       it "renders the body with personalisation" do
         expect(rendered).not_to have_key(:subject)
-        expect(rendered[:body]).to include("You’ve given consent for Alex")
+        expect(rendered[:body]).to include("You've given consent for Alex")
         expect(rendered[:body]).to include("01234 567890")
       end
 

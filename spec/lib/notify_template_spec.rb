@@ -213,4 +213,20 @@ describe NotifyTemplate do
       end
     end
   end
+
+  context "local SMS templates" do
+    # smart quotes should not be used in SMS template bodies and subject lines
+    # to avoid Notify switching to UCS-2 encoding and
+    # dropping the character limit per SMS to 70 characters
+    # https://www.notifications.service.gov.uk/pricing/text-messages
+
+    it "does not contain any smart quotes of any kind" do
+      all_sms_template_files =
+        Dir.glob(Rails.root.join("app/views/notify_templates/sms/*.text.erb"))
+      all_sms_template_files.each do |file|
+        content = File.read(file, encoding: "UTF-8")
+        %w[“ ’ ’ ”].each { |quote| expect(content).not_to include(quote) }
+      end
+    end
+  end
 end
